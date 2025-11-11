@@ -1,0 +1,52 @@
+@startuml Exercice
+
+title Diagramme de Use Case - Gestion des features
+
+left to right direction
+
+skinparam PackageStyle rect
+
+actor "Visiteur" as visiteur
+actor "Utilisateur\nConnecté" as user
+
+
+rectangle "Système de gestion des features" {
+        usecase "chercher un exercice" as UC001
+        usecase "Utiliser l'exercice sans pouvoir le modifier" as UC002
+        usecase "Enregistrer l'exercice dans l'une des playlist propriétaire " as UC004
+        usecase "Créer une nouvelle playlist propriétaire" as UC005
+        usecase "Liker une playlist ou un exercice" as UC007
+        usecase "Enregistrer l'élément dans les likes" as UC008
+        usecase "Créer un exercice" as UC009
+        usecase "Importer un partition au format xml ou un lien ireal pro" as UC010
+        usecase "Importer la playlist" as UC011
+        usecase "Importer l'exercice" as UC012
+        usecase "Enregistrer la playlist en tant que playlist propriétaire" as UC013
+        usecase "Importer des samples dans la limite de stockage autorisée" as UC014
+        usecase "Modifier un exercicec" as UC015
+}
+
+visiteur -- UC001
+
+UC001 .--> UC002 : <<include>>
+
+user -- UC007
+user -- UC011
+user -- UC012
+user -- UC005
+user -- UC009
+user -- UC014
+
+UC012 .--> UC004 : <<extends>>
+UC009 .--> UC004 : <<extends>>
+UC007 .--> UC008 : <<extends>>
+
+UC009 .--> UC010 : <<include>>
+
+UC011 .--> UC013 : <<extends>>
+
+UC004 .--> UC015 : <<include>>
+
+user -|> visiteur
+
+@enduml

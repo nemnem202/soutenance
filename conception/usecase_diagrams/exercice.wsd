@@ -1,0 +1,114 @@
+@startuml GestionExercice
+title Diagramme de Use Case - Gestion d'un exercice
+left to right direction
+
+actor "Utilisateur Connecté" as user
+
+rectangle "Gestion de l'exercice" {
+        ' --- Cas d'utilisation principaux ---
+        package "Paramètrage de l'exercice" {
+        usecase "Modifier un exercice" as UC01_ModifierExercice
+        usecase "Afficher/Gérer les modules" as UC02_GererModules
+        usecase "Modifier le nom de l'exercice" as UC03_ModifierNom
+        usecase "Modifier la visibilité de l'exercice" as UC04_ModifierVisibilite
+        usecase "Modifier les crédits de l'exercice" as UC05_ModifierCredits
+
+    }
+
+    package "Module partition" {
+        ' --- Module Partition ---
+        usecase "Modifier le module Partition" as UC06_ModifierModulePartition
+        usecase "Modifier la partition" as UC07_ModifierPartition
+        usecase "Modifier la grille d'accords" as UC08_ModifierGrilleAccords
+        usecase "Choisir des voicings (bibliothèque)" as UC09_ChoisirVoicings
+        usecase "Définir des voicings manuellement" as UC10_DefinirVoicings
+        usecase "Modifier la mélodie" as UC11_ModifierMelodie
+        usecase "Changer le mode d'affichage" as UC12_ChangerModeAffichage
+    }
+
+    package "Module accompagnement" {
+        ' --- Module Accompagnement ---
+        usecase "Modifier le module Accompagnement" as UC13_ModifierModuleAccompagnement
+        usecase "Ajouter une piste d'accompagnement" as UC14_AjouterPiste
+        usecase "Retirer une piste d'accompagnement" as UC15_RetirerPiste
+        usecase "Modifier le MIDI de l'accompagnement" as UC16_ModifierMidiAccompagnement
+    }
+
+
+    package "Module controle midi" {
+        ' --- Module Contrôleur MIDI ---
+        usecase "Modifier le module Contrôleur MIDI" as UC17_ModifierModuleControleurMidi
+        usecase "Activer le contrôle MIDI" as UC18_ActiverControleMidi
+        usecase "Désactiver le contrôle MIDI" as UC19_DesactiverControleMidi
+        usecase "Modifier le son du contrôleur MIDI" as UC20_ModifierSonMidi
+        usecase "Activer le retour d'erreur automatique" as UC21_ActiverRetourErreur
+    }
+
+    package "Module Lecture" {
+        ' --- Module Lecture ---
+        usecase "Modifier le module Lecture" as UC22_ModifierModuleLecture
+        usecase "Modifier le BPM" as UC23_ModifierBpm
+        usecase "Lancer la lecture" as UC24_LancerLecture
+        usecase "Stopper la lecture" as UC25_StopperLecture
+    }
+
+
+    package "Sampler" {
+            ' --- Outil Sampler ---
+        usecase "Utiliser le Sampler" as UC26_UtiliserSampler
+        usecase "Importer un sample" as UC27_ImporterSample
+        usecase "Utiliser la banque de samples publiques" as UC28_UtiliserBanquePublique
+        usecase "Utiliser la banque de samples privée" as UC29_UtiliserBanquePrivee
+        usecase "Utiliser le mixer" as UC30_UtiliserMixer
+        usecase "Ajouter un effet dans le mixeur" as UC31_AjouterEffet
+        usecase "Retirer un effet dans le mixeur" as UC32_RetirerEffet
+    }
+}
+
+' --- Relations principales ---
+user -- UC01_ModifierExercice
+
+UC01_ModifierExercice .--> UC03_ModifierNom : <<include..
+UC01_ModifierExercice .--> UC04_ModifierVisibilite : <<include..
+UC01_ModifierExercice .--> UC05_ModifierCredits : <<include..
+UC01_ModifierExercice .--> UC02_GererModules: <<include..
+
+' --- Relations pour le module Partition ---
+UC02_GererModules .--> UC06_ModifierModulePartition : <<include..
+UC06_ModifierModulePartition .-> UC07_ModifierPartition : <<include..
+UC06_ModifierModulePartition .-> UC08_ModifierGrilleAccords : <<include..
+UC06_ModifierModulePartition .-> UC09_ChoisirVoicings : <<include..
+UC06_ModifierModulePartition .-> UC10_DefinirVoicings : <<include..
+UC06_ModifierModulePartition .-> UC11_ModifierMelodie : <<include..
+UC06_ModifierModulePartition .-> UC12_ChangerModeAffichage : <<include..
+
+' --- Relations pour le module Accompagnement ---
+UC02_GererModules .--> UC13_ModifierModuleAccompagnement : <<include..
+UC13_ModifierModuleAccompagnement .-> UC14_AjouterPiste : <<include..
+UC13_ModifierModuleAccompagnement .-> UC15_RetirerPiste : <<include..
+UC13_ModifierModuleAccompagnement .-> UC16_ModifierMidiAccompagnement : <<include..
+UC13_ModifierModuleAccompagnement .-->UC26_UtiliserSampler  : <<extends..
+
+' --- Relations pour le module Contrôleur MIDI ---
+UC02_GererModules .--> UC17_ModifierModuleControleurMidi : <<include..
+UC17_ModifierModuleControleurMidi .-> UC18_ActiverControleMidi : <<include..
+UC17_ModifierModuleControleurMidi .-> UC19_DesactiverControleMidi : <<include..
+UC17_ModifierModuleControleurMidi .-> UC20_ModifierSonMidi : <<include..
+UC17_ModifierModuleControleurMidi .-> UC21_ActiverRetourErreur : <<include..
+UC17_ModifierModuleControleurMidi .-->UC26_UtiliserSampler : <<extends..
+
+' --- Relations pour le module Lecture ---
+UC02_GererModules .--> UC22_ModifierModuleLecture : <<include..
+UC22_ModifierModuleLecture .-> UC23_ModifierBpm : <<include..
+UC22_ModifierModuleLecture .-> UC24_LancerLecture : <<include..
+UC22_ModifierModuleLecture .-> UC25_StopperLecture : <<include..
+
+' --- Relations pour l'outil Sampler ---
+UC26_UtiliserSampler .-> UC27_ImporterSample : <<include..
+UC26_UtiliserSampler .-> UC28_UtiliserBanquePublique : <<include..
+UC26_UtiliserSampler .-> UC29_UtiliserBanquePrivee : <<include..
+UC26_UtiliserSampler .-> UC30_UtiliserMixer : <<include..
+UC30_UtiliserMixer .-> UC31_AjouterEffet : <<include..
+UC30_UtiliserMixer .-> UC32_RetirerEffet : <<include..
+
+@enduml
