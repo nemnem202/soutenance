@@ -1,4 +1,4 @@
-import { createTodoHandler } from "./create-todo-handler";
+import { createHandler } from "./createhandler";
 import { apply, serve } from "@photonjs/express";
 import express from "express";
 
@@ -9,7 +9,7 @@ export default startApp() as unknown;
 function startApp() {
   const app = express();
 
-  apply(app, [createTodoHandler]);
+  apply(app, [createHandler]);
 
   return serve(app, {
     port,

@@ -3,7 +3,7 @@
   "style": "default",
   "tailwind": {
     "config": "tailwind.config.ts",
-    "css": "layouts/tailwind.css",
+    "css": "stylesheets/tailwind.css",
     "baseColor": "gray",
     "cssVariables": true
   },
@@ -11,6 +11,9 @@
   "tsx": true,
   "aliases": {
     "utils": "@/lib/utils",
-    "components": "@/components"
+    "components": "@/components",
+    "hooks": "@/hooks",
+    "lib": "@/lib",
+    "ui": "@/components"
   }
 }
