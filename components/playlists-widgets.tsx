@@ -5,57 +5,80 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export function SmallPlaylistWidget() {
   return (
-    <div className="h-12 w-full hover:bg-popover rounded flex gap-2 cursor-pointer">
+    <a className="h-12 w-full hover:bg-popover rounded flex gap-2 cursor-pointer transition">
       <img src="assets/playlist1.png" />
       <div className="flex flex-col">
         <p className="title-4">2501 standarts</p>
         <p className="paragraph-sm text-muted-foreground">par Naïm</p>
       </div>
-    </div>
+    </a>
   );
 }
 
 export function MediumPlaylistWidget() {
   return (
-    <a className="flex flex-col w-50 gap-2.5 cursor-pointer hover:bg-popover p-2 rounded-md transition" href="#">
-      <div className="w-full aspect-square rounded overflow-hidden">
-        <img src="assets/playlist2.png" />
-      </div>
+    <div className=" w-50 gap-2.5 cursor-pointer hover:bg-popover p-2 rounded-md transition">
+      <a href="#" className="flex flex-col rounded">
+        <div className="w-full aspect-square rounded overflow-hidden">
+          <img src="assets/playlist2.png" />
+        </div>
 
-      <div className="flex-col flex w-full">
-        <h3 className="title-4">Brown Sugar</h3>
-        <div className="w-full justify-between paragraph-sm text-muted-foreground flex wrap">
-          <p>par Naïm</p>
-          <p>Jazz</p>
+        <div className="flex-col flex w-full">
+          <h3 className="title-4">Brown Sugar</h3>
+          <div className="w-full justify-between paragraph-sm text-muted-foreground flex wrap">
+            <p>par Naïm</p>
+            <p>Jazz</p>
+          </div>
+          <div className="flex wrap gap-1">
+            <Badge variant="outline" className="text-muted-foreground paragraph-xs">
+              chords
+            </Badge>
+            <Badge variant="outline" className="text-muted-foreground paragraph-xs">
+              melody
+            </Badge>
+          </div>
         </div>
-        <div className="flex wrap">
-          <Badge variant="outline" className="text-muted-foreground paragraph-xs">
-            chords
-          </Badge>
-          <Badge variant="outline" className="text-muted-foreground paragraph-xs">
-            melody
-          </Badge>
-        </div>
-      </div>
-    </a>
+      </a>
+    </div>
   );
 }
 
 export function MediumPlaylistWidgetGroup({
   containerRef,
   widgetsRef,
+  handleScroll,
+  handleScrollEnd,
+  onLastItemVisibilityChange,
 }: {
   containerRef: RefObject<HTMLDivElement | null>;
   widgetsRef: RefObject<(HTMLDivElement | null)[]>;
+  handleScroll: () => void;
+  handleScrollEnd: () => void;
+  onLastItemVisibilityChange: (isVisible: boolean) => void;
 }) {
+  const ITEMS_COUNT = 20;
+
+  useEffect(() => {
+    const lastItem = widgetsRef.current[ITEMS_COUNT - 1];
+    if (!lastItem) return;
+
+    const observer = new IntersectionObserver(([entry]) => onLastItemVisibilityChange(entry.isIntersecting), {
+      root: containerRef.current,
+      threshold: 1.0,
+    });
+
+    observer.observe(lastItem);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div
-      className="
-    w-full overflow-x-auto scrollbar-hide flex gap-8.5 scroll-smooth relative snap-x snap-mandatory
-    "
+      className="w-full overflow-x-auto scrollbar-hide flex gap-8.5 scroll-smooth relative snap-x snap-mandatory bg-background"
       ref={containerRef}
+      onScroll={handleScroll}
+      onScrollEnd={handleScrollEnd}
     >
-      {Array.from({ length: 20 }).map((_, index) => (
+      {Array.from({ length: ITEMS_COUNT }).map((_, index) => (
         <div
           key={index}
           ref={(el) => {
@@ -75,6 +98,7 @@ export interface MediumPlaylistWidgetCarousselProps {
 }
 
 export function MediumPlaylistWidgetCaroussel({ ...props }: MediumPlaylistWidgetCarousselProps) {
+  const [isLastItemVisible, setIsLastItemVisible] = useState(false);
   const [itemIndex, setItemIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetsRef = useRef<(HTMLDivElement | null)[]>([]);
@@ -109,38 +133,26 @@ export function MediumPlaylistWidgetCaroussel({ ...props }: MediumPlaylistWidget
     });
   };
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      if (!isScrollingRef.current) {
-        updateIndex();
-      }
-    };
-
-    const handleScrollEnd = () => {
-      isScrollingRef.current = false;
+  const handleScroll = () => {
+    if (!isScrollingRef.current) {
       updateIndex();
-    };
+    }
+  };
 
-    container.addEventListener("scroll", handleScroll);
-    container.addEventListener("scrollend", handleScrollEnd);
-
-    return () => {
-      container.removeEventListener("scroll", handleScroll);
-      container.removeEventListener("scrollend", handleScrollEnd);
-    };
-  }, []);
+  const handleScrollEnd = () => {
+    isScrollingRef.current = false;
+    updateIndex();
+  };
 
   return (
     <section className="container max-w-7xl flex flex-col gap-6 mx-auto px-6 mt-6">
       <div className="flex w-full justify-between items-center">
         <div className="flex items-center gap-x-5">
           <h2 className="title-2">{props.title}</h2>
-
-          <Button variant="outline" size="sm" asChild>
-            <a href="#">see all</a>
+          <Button variant="outline" size="sm" className="py-0" asChild>
+            <a href="#" className="paragraph-md !h-min py-1">
+              see all
+            </a>
           </Button>
         </div>
         <div className="flex">
@@ -158,14 +170,20 @@ export function MediumPlaylistWidgetCaroussel({ ...props }: MediumPlaylistWidget
             variant="ghost"
             size="icon"
             className="rounded-full"
-            disabled={itemIndex >= 19}
-            onClick={() => scrollToIndex(Math.min(19, itemIndex + 1))}
+            disabled={isLastItemVisible}
+            onClick={() => scrollToIndex(Math.min(widgetsRef.current.length - 1, itemIndex + 1))}
           >
-            <ChevronRight className={itemIndex === 19 ? "text-muted-foreground" : ""} />
+            <ChevronRight className={isLastItemVisible ? "text-muted-foreground" : ""} />
           </Button>
         </div>
       </div>
-      <MediumPlaylistWidgetGroup containerRef={containerRef} widgetsRef={widgetsRef} />
+      <MediumPlaylistWidgetGroup
+        containerRef={containerRef}
+        widgetsRef={widgetsRef}
+        handleScroll={handleScroll}
+        handleScrollEnd={handleScrollEnd}
+        onLastItemVisibilityChange={setIsLastItemVisible}
+      />
     </section>
   );
 }

@@ -50,7 +50,7 @@ function Link({ href, text, icon }: { href: string; text: string; icon: ReactNod
   return (
     <a
       href={href}
-      className={`title-3 h-12 flex items-center gap-2 hover:bg-popover p-2 rounded ${urlPathname === href && "text-primary fill-primary"}`}
+      className={`title-3 h-12 flex items-center gap-2 hover:bg-popover p-2 rounded ${urlPathname === href && "text-primary fill-primary transition"}`}
     >
       {icon}
       <span>{text}</span>
