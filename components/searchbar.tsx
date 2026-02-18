@@ -1,13 +1,17 @@
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./input-group";
 import { Search } from "lucide-react";
 
-export default function Searchbar() {
+interface SearchbarProps {
+  placeholder: string;
+}
+
+export default function Searchbar({ ...props }: SearchbarProps) {
   return (
-    <InputGroup className="max-w-100 border-none !bg-popover h-full">
+    <InputGroup className="w-full border-none !bg-popover h-full">
       <InputGroupAddon align="inline-start">
         <Search />
       </InputGroupAddon>
-      <InputGroupInput id="input-group-url" placeholder="Browse exercices" />
+      <InputGroupInput id="input-group-url" placeholder={props.placeholder} />
     </InputGroup>
   );
 }

@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export function SmallPlaylistWidget() {
   return (
-    <a className="h-12 w-full hover:bg-popover rounded flex gap-2 cursor-pointer transition">
+    <a className="h-12 w-full hover:bg-popover rounded flex gap-2 cursor-pointer transition" href="/playlist">
       <img src="assets/playlist1.png" />
       <div className="flex flex-col">
         <p className="title-4">2501 standarts</p>
@@ -17,8 +17,8 @@ export function SmallPlaylistWidget() {
 
 export function MediumPlaylistWidget() {
   return (
-    <div className=" w-50 gap-2.5 cursor-pointer hover:bg-popover p-2 rounded-md transition">
-      <a href="#" className="flex flex-col rounded">
+    <div className=" w-50 cursor-pointer hover:bg-popover p-2 rounded-md transition">
+      <a href="/playlist" className="flex flex-col rounded gap-2.5">
         <div className="w-full aspect-square rounded overflow-hidden">
           <img src="assets/playlist2.png" />
         </div>
@@ -145,12 +145,12 @@ export function MediumPlaylistWidgetCaroussel({ ...props }: MediumPlaylistWidget
   };
 
   return (
-    <section className="container max-w-7xl flex flex-col gap-6 mx-auto px-6 mt-6">
+    <section className="flex flex-col gap-6 mx-auto mb-6 container">
       <div className="flex w-full justify-between items-center">
         <div className="flex items-center gap-x-5">
           <h2 className="title-2">{props.title}</h2>
           <Button variant="outline" size="sm" className="py-0" asChild>
-            <a href="#" className="paragraph-md !h-min py-1">
+            <a href="/see-all" className="paragraph-md !h-min py-1">
               see all
             </a>
           </Button>
@@ -185,5 +185,17 @@ export function MediumPlaylistWidgetCaroussel({ ...props }: MediumPlaylistWidget
         onLastItemVisibilityChange={setIsLastItemVisible}
       />
     </section>
+  );
+}
+
+export function MediumPlaylistWrapper() {
+  return (
+    <div className="flex  gap-x-auto gap-y-5 flex-wrap container">
+      {Array.from({ length: 50 }).map((_, index) => (
+        <div className="mr-6.5">
+          <MediumPlaylistWidget />
+        </div>
+      ))}
+    </div>
   );
 }
