@@ -1,8 +1,31 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+
+@font-face {
+  font-family: "ZingRust";
+  src: url("assets/fonts/Zing Rust Demo Base.woff") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter", sans-serif;
+  src: url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+  font-optical-sizing: auto;
+  font-weight: normal;
+  font-style: normal;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  font-size: 16px;
+
+  --headline-font: "ZingRust", sans-serif;
+  --title-font: Arial, Helvetica, sans-serif;
+  --general-font: "Inter", sans-serif;
+
   --primary: #bb73ff;
   --primary-highlight: #ad47ff;
   --primary-muted: #7e4eab;
@@ -114,12 +137,59 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+@layer utilities {
+  .headline {
+    font-size: 3rem;
+    font-family: var(--headline-font);
+  }
+
+  .title-1 {
+    font-size: 2rem;
+    font-family: var(--title-font);
+    font-weight: bold;
+  }
+
+  .title-2 {
+    font-size: 1.25rem;
+    font-family: var(--title-font);
+    font-weight: bold;
+  }
+
+  .title-3 {
+    font-size: 1.115rem;
+    font-family: var(--title-font);
+    font-weight: bold;
+  }
+
+  .title-4 {
+    font-size: 1rem;
+    font-family: var(--title-font);
+  }
+
+  .paragraph-md,
+  .paragraph {
+    font-family: var(--general-font);
+    font-size: 0.885rem;
+  }
+
+  .paragraph-sm {
+    font-family: var(--general-font);
+    font-size: 0.75rem;
+  }
+
+  .paragraph-xs {
+    font-family: var(--general-font);
+    font-size: 0.615rem;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--general-font);
   }
   ::-webkit-scrollbar-track {
     @apply border-s-[1px] border-border;

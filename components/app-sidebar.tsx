@@ -50,7 +50,7 @@ function Link({ href, text, icon }: { href: string; text: string; icon: ReactNod
   return (
     <a
       href={href}
-      className={`h-12 flex items-center gap-2 hover:bg-popover p-2 rounded ${urlPathname === href && "text-primary fill-primary"}`}
+      className={`title-3 h-12 flex items-center gap-2 hover:bg-popover p-2 rounded ${urlPathname === href && "text-primary fill-primary"}`}
     >
       {icon}
       <span>{text}</span>
@@ -62,12 +62,12 @@ function Playlists() {
   return (
     <div className="w-full flex flex-col gap-5">
       <div className="w-full flex justify-between items-center">
-        <h2>Playlists</h2>
+        <h2 className="title-3">Playlists</h2>
         <Button size={"icon"} variant={"ghost"} className="rounded-full">
           <Plus />
         </Button>
       </div>
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full gap-2">
         <SmallPlaylistWidget />
         <SmallPlaylistWidget />
         <SmallPlaylistWidget />
@@ -83,9 +83,9 @@ function Recents() {
   return (
     <div className="w-full flex flex-col gap-5">
       <div className="w-full flex justify-between">
-        <h2>Recents</h2>
+        <h2 className="title-3">Recents</h2>
       </div>
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full gap-2">
         <SmallPlaylistWidget />
         <SmallPlaylistWidget />
         <SmallPlaylistWidget />
