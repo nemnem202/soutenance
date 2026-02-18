@@ -15,5 +15,5 @@ export default function Layout({ children }: { children: ReactNode }) {
 }
 
 function MainPannel({ children }: { children: ReactNode }) {
-  return <main className="h-[200vh] pt-20 pl-70">{children}</main>;
+  return <main className=" pt-20 pl-70">{children}</main>;
 }

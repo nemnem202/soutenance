@@ -7,7 +7,7 @@ export default function Searchbar() {
       <InputGroupAddon align="inline-start">
         <Search />
       </InputGroupAddon>
-      <InputGroupInput id="input-group-url" placeholder="example.com" />
+      <InputGroupInput id="input-group-url" placeholder="Browse exercices" />
     </InputGroup>
   );
 }

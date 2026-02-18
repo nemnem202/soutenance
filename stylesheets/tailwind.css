@@ -194,4 +194,16 @@
   ::-webkit-scrollbar-track {
     @apply border-s-[1px] border-border;
   }
+
+  .transition {
+    transition: all 0.1s ease;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
