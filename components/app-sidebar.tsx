@@ -4,13 +4,14 @@ import { Compass, Heart, House, LayoutDashboard, Plus } from "lucide-react";
 import { usePageContext } from "vike-react/usePageContext";
 import { SmallPlaylistWidget } from "./playlists-widgets";
 import { Button } from "./button";
+import Logo from "./logo";
 
 export default function Sidebar() {
   return (
     <div className="bg-card w-70 fixed z-2 h-screen left-0 top-0 flex flex-col border-e-[1px]">
       <div className="w-full ">
         <div className="h-20 p-4 flex items-center">
-          <img src={"assets/logo.svg"} alt="Logo" className="h-8" />
+          <Logo />
         </div>
         <SidebarSection>
           <NavBar />

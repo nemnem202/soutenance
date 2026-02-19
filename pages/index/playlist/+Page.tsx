@@ -95,9 +95,9 @@ interface PLaylistItemProps {
 
 function PlaylistItem({ ...props }: PLaylistItemProps) {
   return (
-    <a className=" flex justify-between items-center py-1 relative cursor-pointer hover:bg-popover pr-4">
+    <a className=" flex justify-between items-center py-1 relative cursor-pointer hover:bg-popover pr-4" href="/game">
       <div className="flex items-center">
-        <img className="w-15 h-15" width={60} height={60} src="assets/playlist1.png" />
+        <img className="w-15 h-15" width={60} height={60} src="assets/playlist2.png" />
         <div className="flex flex-col pl-2 gap-1">
           <Label className="title-4">Feel like makin' love</Label>
           <Label className="paragraph-md text-muted-foreground">Erold Graner</Label>
@@ -106,7 +106,7 @@ function PlaylistItem({ ...props }: PLaylistItemProps) {
       <div className="flex items-center">
         <PlaylistItemBox>
           <Button size={"icon"} variant={"ghost"} className="rounded-full">
-            <Heart />
+            <Heart className="stroke-muted-foreground" />
           </Button>
         </PlaylistItemBox>
         <PlaylistItemBox>
