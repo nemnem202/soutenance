@@ -1,7 +1,8 @@
-import { RefObject, useEffect, useRef, useState } from "react";
+import { RefObject, useEffect } from "react";
 import { Badge } from "./badge";
 import { Button } from "./button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import usePlaylistCaroussel from "@/hooks/use-playlist-caroussel";
 
 export function SmallPlaylistWidget() {
   return (
@@ -43,19 +44,16 @@ export function MediumPlaylistWidget() {
   );
 }
 
-export function MediumPlaylistWidgetGroup({
-  containerRef,
-  widgetsRef,
-  handleScroll,
-  handleScrollEnd,
-  onLastItemVisibilityChange,
-}: {
+interface MediumPlaylistWidgetGroupProps {
   containerRef: RefObject<HTMLDivElement | null>;
   widgetsRef: RefObject<(HTMLDivElement | null)[]>;
   handleScroll: () => void;
   handleScrollEnd: () => void;
   onLastItemVisibilityChange: (isVisible: boolean) => void;
-}) {
+}
+
+export function MediumPlaylistWidgetGroup(props: MediumPlaylistWidgetGroupProps) {
+  const { containerRef, widgetsRef, handleScroll, handleScrollEnd, onLastItemVisibilityChange } = props;
   const ITEMS_COUNT = 20;
 
   useEffect(() => {
@@ -98,52 +96,16 @@ export interface MediumPlaylistWidgetCarousselProps {
 }
 
 export function MediumPlaylistWidgetCaroussel({ ...props }: MediumPlaylistWidgetCarousselProps) {
-  const [isLastItemVisible, setIsLastItemVisible] = useState(false);
-  const [itemIndex, setItemIndex] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const widgetsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const isScrollingRef = useRef(false);
-
-  const updateIndex = () => {
-    const container = containerRef.current;
-    if (!container || widgetsRef.current.length === 0) return;
-
-    const scrollLeft = container.scrollLeft;
-
-    const itemWidth = widgetsRef.current[0]?.offsetWidth || 0;
-    const gap = 34;
-
-    const newIndex = Math.round(scrollLeft / (itemWidth + gap));
-
-    setItemIndex(newIndex);
-  };
-
-  const scrollToIndex = (index: number) => {
-    const container = containerRef.current;
-    const target = widgetsRef.current[index];
-
-    if (!container || !target) return;
-
-    isScrollingRef.current = true;
-    setItemIndex(index);
-
-    container.scrollTo({
-      left: target.offsetLeft,
-      behavior: "smooth",
-    });
-  };
-
-  const handleScroll = () => {
-    if (!isScrollingRef.current) {
-      updateIndex();
-    }
-  };
-
-  const handleScrollEnd = () => {
-    isScrollingRef.current = false;
-    updateIndex();
-  };
-
+  const {
+    isLastItemVisible,
+    itemIndex,
+    containerRef,
+    widgetsRef,
+    scrollToIndex,
+    handleScroll,
+    handleScrollEnd,
+    setIsLastItemVisible,
+  } = usePlaylistCaroussel();
   return (
     <section className="flex flex-col gap-6 mx-auto mb-6 container">
       <div className="flex w-full justify-between items-center">

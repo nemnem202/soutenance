@@ -1,10 +1,10 @@
 import { ReactNode } from "react";
 import { Separator } from "./separator";
 import { Compass, Heart, House, LayoutDashboard, Plus } from "lucide-react";
-import { usePageContext } from "vike-react/usePageContext";
 import { SmallPlaylistWidget } from "./playlists-widgets";
 import { Button } from "./button";
 import Logo from "./logo";
+import Link from "./link";
 
 export default function Sidebar() {
   return (
@@ -31,7 +31,7 @@ export default function Sidebar() {
     </div>
   );
 }
-function SidebarSection({ children }: { children: ReactNode }) {
+export function SidebarSection({ children }: { children: ReactNode }) {
   return <div className="w-full p-4">{children}</div>;
 }
 
@@ -43,19 +43,6 @@ function NavBar() {
       <Link href="/favorites" text="Favorites" icon={<Heart />} />
       <Link href="/dashboard" text="Dashboard" icon={<LayoutDashboard />} />
     </nav>
-  );
-}
-
-function Link({ href, text, icon }: { href: string; text: string; icon: ReactNode }) {
-  const { urlPathname } = usePageContext();
-  return (
-    <a
-      href={href}
-      className={`title-3 h-12 flex items-center gap-2 hover:bg-popover p-2 rounded ${urlPathname === href && "text-primary fill-primary transition"}`}
-    >
-      {icon}
-      <span>{text}</span>
-    </a>
   );
 }
 

@@ -1,33 +1,24 @@
+import { Button } from "@/components/button";
 import { Field, FieldLabel } from "@/components/field";
 import Header from "@/components/game-header";
-import { ControlsSection, IconButton } from "@/components/game/gameAssets";
+import { ControlsSection, IconButton } from "@/components/game/game-assets";
+import GameSidebar from "@/components/game/game-sidebar";
 import { Input } from "@/components/input";
 import { Separator } from "@/components/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/tabs";
 import { TabsContent } from "@radix-ui/react-tabs";
-import { Play, Settings, Square } from "lucide-react";
-import { useState } from "react";
+import { Maximize, Minimize, Play, Settings, Square } from "lucide-react";
+import { ReactNode, useState } from "react";
 
 export default function Page() {
   const [sidebarOpen, setOpen] = useState(false);
   return (
     <div className="flex col w-screen h-screen">
       <GameSidebar sidebarOpen={sidebarOpen} />
-      <div className="w-full h-screen flex flex-col">
+      <div className="flex-1 h-screen flex flex-col" onClickCapture={() => setOpen(false)}>
         <Header />
         <Game openSidebar={() => setOpen((prev) => !prev)} />
       </div>
-    </div>
-  );
-}
-
-function GameSidebar({ sidebarOpen }: { sidebarOpen: boolean }) {
-  return (
-    <div
-      className={`bg-card  overflow-hidden transition-all duration-100 ease-in-out ${sidebarOpen && "border-r"} `}
-      style={{ width: sidebarOpen ? "350px" : "0px" }}
-    >
-      <div className="w-[350px]"></div>
     </div>
   );
 }
@@ -40,9 +31,9 @@ function Game({ ...props }: Gameprops) {
   return (
     <main className="flex-1 flex flex-col items-center pt-5">
       <h1 className="headline select-none">Brown Sugar</h1>
-      <div className=" w-full px-20 py-5 h-full flex flex-col gap-5">
+      <div className=" size-full px-20 py-5  flex flex-col gap-2">
         <div className="flex-1">
-          <Tabs defaultValue="piano-roll" className="w-full h-full">
+          <Tabs defaultValue="piano-roll" className="size-full flex flex-col gap-2">
             <div className="w-full flex justify-center">
               <TabsList className="rounded-full">
                 <TabsTrigger value="piano-roll" className="rounded-full rounded-e-sm select-none paragraph-md">
@@ -57,9 +48,21 @@ function Game({ ...props }: Gameprops) {
               </TabsList>
             </div>
 
-            <TabsContent value="piano-roll"></TabsContent>
-            <TabsContent value="sheet"></TabsContent>
-            <TabsContent value="guitar"></TabsContent>
+            <TabsContent value="piano-roll" className="flex-1  size-full">
+              <Tab>
+                <></>
+              </Tab>
+            </TabsContent>
+            <TabsContent value="sheet" className="flex-1  size-full">
+              <Tab>
+                <></>
+              </Tab>
+            </TabsContent>
+            <TabsContent value="guitar" className="flex-1  size-full">
+              <Tab>
+                <></>
+              </Tab>
+            </TabsContent>
           </Tabs>
         </div>
         <ControlsSection>
@@ -83,4 +86,54 @@ function Game({ ...props }: Gameprops) {
       </div>
     </main>
   );
+}
+
+function FullScreenButton({
+  hover,
+  fullScreen,
+  setFullScreen,
+}: {
+  hover: boolean;
+  fullScreen: boolean;
+  setFullScreen: (full: boolean) => void;
+}) {
+  return (
+    <div className={`absolute m-2 top-0 right-0 transition ${hover ? "opacity-100" : "opacity-0"}`}>
+      <Button variant={"ghost"} onClick={() => setFullScreen(!fullScreen)}>
+        {fullScreen ? (
+          <Minimize className=" stroke-muted-foreground !hover:stroke-foreground" />
+        ) : (
+          <Maximize className=" stroke-muted-foreground !hover:stroke-foreground" />
+        )}
+      </Button>
+    </div>
+  );
+}
+
+function Tab({ children }: { children: ReactNode }) {
+  const [hover, setHover] = useState(false);
+  const [fullScreen, setFullScreen] = useState(false);
+  if (!fullScreen) {
+    return (
+      <div
+        className="size-full bg-card rounded-md relative"
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+      >
+        <FullScreenButton hover={hover} fullScreen={fullScreen} setFullScreen={setFullScreen} />
+        {children}
+      </div>
+    );
+  } else {
+    return (
+      <div
+        className="inset-0 absolute top-0 left-0 z-100 bg-background"
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+      >
+        <FullScreenButton hover={hover} fullScreen={fullScreen} setFullScreen={setFullScreen} />
+        {children}
+      </div>
+    );
+  }
 }

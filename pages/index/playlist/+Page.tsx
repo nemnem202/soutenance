@@ -78,7 +78,7 @@ function PlaylistItemsList() {
       <Separator orientation="horizontal" />
       <div className="w-full flex flex-col justify-between  py-0 mt-2">
         {Array.from({ length: 40 }).map((_, index) => (
-          <PlaylistItem index={index} />
+          <PlaylistItem index={index} key={index} />
         ))}
       </div>
     </div>
