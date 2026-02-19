@@ -13,11 +13,11 @@ import { Input } from "../input";
 export default function GameSidebar({ sidebarOpen }: { sidebarOpen: boolean }) {
   return (
     <div
-      className={`bg-card  overflow-y-auto overflow-x-hidden transition-all duration-100 ease-in-out ${sidebarOpen && "border-r"} `}
+      className={`bg-card h-screen overflow-x-hidden transition-all duration-100 ease-in-out ${sidebarOpen && "border-r"} `}
       style={{ width: sidebarOpen ? "350px" : "0px" }}
     >
-      <div className="w-[350px]">
-        <div className="w-full ">
+      <div className="w-[350px] h-full">
+        <div className="w-full h-full flex flex-col">
           <div className="h-20 p-4 flex items-center justify-between w-full">
             <h2 className="headline !text-[2rem]">Settings</h2>
             <PresetSelect />
@@ -26,27 +26,28 @@ export default function GameSidebar({ sidebarOpen }: { sidebarOpen: boolean }) {
             <TabBar />
           </SidebarSection>
           <Separator />
-          <SidebarSection>
-            <BackingTrackSettings />
-          </SidebarSection>
-          <Separator />
-          <SidebarSection>
-            <GeneralSettings />
-          </SidebarSection>
-          <Separator />
-          <SidebarSection>
-            <AppearanceSettings />
-          </SidebarSection>
-          <Separator />
-          <SidebarSection>
-            <MidiSettings />
-          </SidebarSection>
-          <Separator />
-          <div className="p-4">
-            <Button className="title-2 w-full">Save settings</Button>
+          <div className="flex-1 overflow-y-auto">
+            <SidebarSection>
+              <BackingTrackSettings />
+            </SidebarSection>
+            <Separator />
+            <SidebarSection>
+              <GeneralSettings />
+            </SidebarSection>
+            <Separator />
+            <SidebarSection>
+              <AppearanceSettings />
+            </SidebarSection>
+            <Separator />
+            <SidebarSection>
+              <MidiSettings />
+            </SidebarSection>
+            <Separator />
+            <div className="p-4">
+              <Button className="title-2 w-full">Save settings</Button>
+            </div>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto "></div>
       </div>
     </div>
   );
@@ -245,6 +246,9 @@ function MidiSettings() {
         </SwitchParam>
         <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
           <p className="paragraph w-38 text-foreground">Highlight correct notes</p>
+        </SwitchParam>
+        <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
+          <p className="paragraph w-38 text-foreground">Highlight missed notes</p>
         </SwitchParam>
       </div>
     </ParamsAccordion>
