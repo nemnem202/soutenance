@@ -1,5 +1,5 @@
-import { MediumPlaylistWrapper } from "@/components/playlists-widgets";
+import NewProjectForm from "@/components/new-project-form";
 
 export default function Page() {
-  return <div className="flex flex-col">oeoe</div>;
+  return <NewProjectForm />;
 }
