@@ -4,8 +4,7 @@ import { Label } from "../label";
 import { Input } from "../input";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "../input-group";
 import { Checkbox } from "../checkbox";
-import { CheckboxProps } from "@radix-ui/react-checkbox";
-import { LabelProps } from "@radix-ui/react-label";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../tooltip";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
   return <div className="flex gap-2 w-fit h-15 px-5 bg-card rounded-xl items-center select-none">{children}</div>;
@@ -85,33 +84,62 @@ export function SmallInput({
   icon,
   align = "inline-start",
   containerClassName,
+  tooltip,
   ...props
 }: {
   label: string;
   containerClassName?: string;
   icon?: ReactNode;
   align?: "inline-start" | "inline-end" | "block-start" | "block-end";
+  tooltip?: ReactNode;
 } & ComponentProps<"input">) {
   const id = crypto.randomUUID();
-  return (
-    <div className={`flex flex-col gap-2 p-1 ${containerClassName}`}>
-      <Label className="paragraph cursor-pointer" htmlFor={id}>
-        {label}
-      </Label>
-      <InputGroup className="w-full border-none !bg-popover h-full !rounded-xs">
-        <InputGroupInput
-          id={id}
-          {...props}
-          className={`paragraph-sm h-6 full !rounded-xs text-left! ${!icon && "pl-1"}`}
-        />
-        {icon && (
-          <InputGroupAddon align={align} className="pl-1">
-            {icon}
-          </InputGroupAddon>
-        )}
-      </InputGroup>
-    </div>
-  );
+  if (tooltip) {
+    return (
+      <Tooltip>
+        <TooltipTrigger>
+          <div className={`flex flex-col gap-2 p-1 ${containerClassName}`}>
+            <Label className="paragraph cursor-pointer !text-left" htmlFor={id}>
+              {label}
+            </Label>
+            <InputGroup className="w-full border-none !bg-popover h-full !rounded-xs">
+              <InputGroupInput
+                id={id}
+                {...props}
+                className={`paragraph-sm h-6 full !rounded-xs text-left! ${!icon && "pl-1"}`}
+              />
+              {icon && (
+                <InputGroupAddon align={align} className="pl-1">
+                  {icon}
+                </InputGroupAddon>
+              )}
+            </InputGroup>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>{tooltip}</TooltipContent>
+      </Tooltip>
+    );
+  } else {
+    return (
+      <div className={`flex flex-col gap-2 p-1 ${containerClassName}`}>
+        <Label className="paragraph cursor-pointer" htmlFor={id}>
+          {label}
+        </Label>
+        <InputGroup className="w-full border-none !bg-popover h-full !rounded-xs">
+          <InputGroupInput
+            id={id}
+            {...props}
+            className={`paragraph-sm h-6 full !rounded-xs text-left! ${!icon && "pl-1"}`}
+          />
+          {icon && (
+            <InputGroupAddon align={align} className="pl-1">
+              {icon}
+            </InputGroupAddon>
+          )}
+        </InputGroup>
+      </div>
+    );
+  }
 }
 
 export function SmallCheckboxGroup({

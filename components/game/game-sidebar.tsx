@@ -4,11 +4,9 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { Separator } from "../separator";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../accordion";
 import { ReactNode, useState } from "react";
-import { Switch } from "../switch";
 import { Button } from "../button";
 import SwitchParam from "../switch-param";
 import { Label } from "../label";
-import { Input } from "../input";
 
 export default function GameSidebar({ sidebarOpen }: { sidebarOpen: boolean }) {
   return (
@@ -28,11 +26,11 @@ export default function GameSidebar({ sidebarOpen }: { sidebarOpen: boolean }) {
           <Separator />
           <div className="flex-1 overflow-y-auto">
             <SidebarSection>
-              <BackingTrackSettings />
+              <GeneralSettings />
             </SidebarSection>
             <Separator />
             <SidebarSection>
-              <GeneralSettings />
+              <BackingTrackSettings />
             </SidebarSection>
             <Separator />
             <SidebarSection>
@@ -87,7 +85,7 @@ function ParamsAccordion({ children, title }: { children: ReactNode; title: Reac
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1">
         <AccordionTrigger>{title}</AccordionTrigger>
-        <AccordionContent>{children}</AccordionContent>
+        <AccordionContent className="pt-1">{children}</AccordionContent>
       </AccordionItem>
     </Accordion>
   );
@@ -122,14 +120,14 @@ function BackingTrackSettings() {
           <Label className="paragraph w-10" htmlFor="style-select">
             Style
           </Label>
-          <Select defaultValue="custom" disabled={!backingTackActive}>
+          <Select defaultValue="original" disabled={!backingTackActive}>
             <SelectTrigger className="w-full max-w-30" id="style-select">
               <SelectValue className="text-left" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Styles</SelectLabel>
-                <SelectItem value="custom">Custom</SelectItem>
+                <SelectItem value="original">Original</SelectItem>
                 <SelectItem value="swing">Bossa nova</SelectItem>
                 <SelectItem value="blues">Blues</SelectItem>
               </SelectGroup>
@@ -150,30 +148,41 @@ function GeneralSettings() {
         </SwitchParam>
       </div>
       <div className={`flex flex-col w-full py-2`}>
-        <div className="flex gap-3">
+        <div className="grid gap-3 grid-cols-3">
           <SmallInput
             label="Transpose"
             type="number"
             defaultValue={0}
+            containerClassName="w-full"
             icon={<p className="paragraph-sm text-muted-foreground">sem:</p>}
           />
           <SmallInput
             label="Practice"
             type="number"
             defaultValue={0}
+            containerClassName="w-full"
             icon={<p className="paragraph-sm text-muted-foreground">sem:</p>}
+            tooltip={<p className="paragraph-sm">Increase the global trampose at each loop.</p>}
           />
           <SmallInput
             label="Repeats"
             type="number"
             defaultValue={3}
+            containerClassName="w-full"
             icon={<p className="paragraph-sm text-muted-foreground">x</p>}
           />
         </div>
-        <div className="flex gap-3">
-          <SmallInput label="Bpm" type="number" defaultValue={0} containerClassName="flex-1" />
-          <SmallInput label="Bpm practice" type="number" defaultValue={0} containerClassName="flex-1" />
-          <div className="flex-1"></div>
+        <div className="grid gap-3 grid-cols-3">
+          <SmallInput label="Bpm" type="number" defaultValue={0} containerClassName="w-full" />
+          <SmallInput
+            label="Bpm practice"
+            type="number"
+            defaultValue={0}
+            containerClassName="w-full"
+            icon={<p className="paragraph-sm text-muted-foreground">+</p>}
+            tooltip={<p className="paragraph-sm ">Increase the Bpm at each loop.</p>}
+          />
+          {/* <div className=" w-full "></div> */}
         </div>
       </div>
     </ParamsAccordion>
@@ -203,7 +212,7 @@ function AppearanceSettings() {
 function MidiSettings() {
   return (
     <ParamsAccordion title={<h3 className="title-3">Midi</h3>}>
-      <div className="gap-2 flex flex-col pt-1">
+      <div className="gap-2 flex flex-col">
         <div className="w-full flex items-center">
           <Label className="paragraph w-25" htmlFor="style-select">
             Midi inputs

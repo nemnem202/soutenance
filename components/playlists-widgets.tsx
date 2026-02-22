@@ -1,7 +1,7 @@
 import { RefObject, useEffect } from "react";
 import { Badge } from "./badge";
 import { Button } from "./button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import usePlaylistCaroussel from "@/hooks/use-playlist-caroussel";
 
 export function SmallPlaylistWidget() {
@@ -38,6 +38,22 @@ export function MediumPlaylistWidget() {
               melody
             </Badge>
           </div>
+        </div>
+      </a>
+    </div>
+  );
+}
+
+function MediumAddNewProjectWidget() {
+  return (
+    <div className=" w-50 cursor-pointer hover:bg-popover p-2 rounded-md transition">
+      <a href="/new-project" className="flex flex-col rounded gap-2.5">
+        <div className="w-full aspect-square rounded overflow-hidden bg-card flex items-center justify-center">
+          <Plus size={100} />
+        </div>
+
+        <div className="flex-col flex w-full">
+          <h3 className="title-4">New Project</h3>
         </div>
       </a>
     </div>
@@ -150,9 +166,14 @@ export function MediumPlaylistWidgetCaroussel({ ...props }: MediumPlaylistWidget
   );
 }
 
-export function MediumPlaylistWrapper() {
+export function MediumPlaylistWrapper({ allowToAddANewProject }: { allowToAddANewProject?: boolean }) {
   return (
     <div className="flex  gap-x-auto gap-y-5 flex-wrap container">
+      {allowToAddANewProject && (
+        <div className="mr-6.5">
+          <MediumAddNewProjectWidget />
+        </div>
+      )}
       {Array.from({ length: 50 }).map((_, index) => (
         <div className="mr-6.5">
           <MediumPlaylistWidget />
