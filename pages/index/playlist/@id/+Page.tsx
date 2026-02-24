@@ -1,41 +1,55 @@
 import AccountPP from "@/components/account-pp";
+import { Badge } from "@/components/badge";
 import { Button } from "@/components/button";
 import { Checkbox } from "@/components/checkbox";
 import { Label } from "@/components/label";
 import Searchbar from "@/components/searchbar";
 import { Separator } from "@/components/separator";
+import { EXERCICES_PLACEHOLDER, PROJECTS_PLACEHOLDERS } from "@/placeholders/projects";
+import { Project, ProjectSchema } from "@/types/project";
 import { Heart } from "lucide-react";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
+import { usePageContext } from "vike-react/usePageContext";
 
 export default function Page() {
+  const { id } = usePageContext().routeParams;
+  const [project, setProject] = useState(PROJECTS_PLACEHOLDERS.find((e) => e.id === id));
+
+  if (!project) return null;
   return (
     <div className="flex flex-col ">
       <section>
-        <Banner />
+        <Banner project={project} />
       </section>
       <section>
-        <Content />
+        <Content project={project} />
       </section>
     </div>
   );
 }
 
-function Banner() {
+function Banner({ project }: { project: Project }) {
   return (
     <div className="flex w-full gap-8 items-center">
       <div className="w-75 rounded aspect-square overflow-hidden">
-        <img src="assets/playlist2.png" width={300} height={300} className="object-cover" />
+        <img
+          src={project.image.src}
+          alt={project.image.alt}
+          width={300}
+          height={300}
+          className="object-cover h-full w-full"
+        />
       </div>
 
       <div className="flex flex-col justify-center flex-1">
-        <h1 className="headline h-min">Brown Sugar</h1>
+        <h1 className="headline h-min">{project.title}</h1>
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-2">
             <AccountPP />
-            <Label className="title-4">D'Angelo</Label>
+            <Label className="title-4">{project.author}</Label>
           </div>
           <div className="flex gap-2">
-            <Label className="text-muted-foreground">50 exercices</Label>
+            <Label className="text-muted-foreground">{project.exercicesIds.length} exercices</Label>
             <Separator orientation="vertical" />
             <Label className="text-muted-foreground">medium</Label>
             <Separator orientation="vertical" />
@@ -47,18 +61,18 @@ function Banner() {
   );
 }
 
-function Content() {
+function Content({ project }: { project: Project }) {
   return (
     <div className="w-full">
       <div className="ml-auto max-w-116 my-9">
         <Searchbar placeholder="search the playlist" />
       </div>
-      <PlaylistItemsList />
+      <PlaylistItemsList project={project} />
     </div>
   );
 }
 
-function PlaylistItemsList() {
+function PlaylistItemsList({ project }: { project: Project }) {
   return (
     <div className="w-full">
       <div className="w-full flex justify-between px-4 py-2">
@@ -77,8 +91,8 @@ function PlaylistItemsList() {
       </div>
       <Separator orientation="horizontal" />
       <div className="w-full flex flex-col justify-between  py-0 mt-2">
-        {Array.from({ length: 40 }).map((_, index) => (
-          <PlaylistItem index={index} key={index} />
+        {project.exercicesIds.map((id, index) => (
+          <PlaylistItem index={index} key={index} project={project} id={id} />
         ))}
       </div>
     </div>
@@ -91,16 +105,39 @@ function PlaylistItemBox({ children }: { children: ReactNode }) {
 
 interface PLaylistItemProps {
   index: number;
+  project: Project;
+  id: string;
 }
 
 function PlaylistItem({ ...props }: PLaylistItemProps) {
+  const exercice = EXERCICES_PLACEHOLDER.find((e) => e.id === props.id);
+  if (!exercice) return null;
+
   return (
-    <a className=" flex justify-between items-center py-1 relative cursor-pointer hover:bg-popover pr-4" href="/game">
-      <div className="flex items-center">
-        <img className="w-15 h-15" width={60} height={60} src="assets/playlist2.png" />
-        <div className="flex flex-col pl-2 gap-1">
-          <Label className="title-4">Feel like makin' love</Label>
-          <Label className="paragraph-md text-muted-foreground">Erold Graner</Label>
+    <a
+      className=" flex justify-between items-center py-1 my-1 relative cursor-pointer hover:bg-popover pr-4"
+      href="/game"
+    >
+      <div className="flex items-center h-15">
+        <img className="w-15 h-15" width={60} height={60} src={props.project.image.src} alt={props.project.image.alt} />
+        <div className="flex h-fit gap-3">
+          <div className="flex flex-col pl-2 gap-1">
+            <Label className="title-4">{exercice.title}</Label>
+            <Label className="paragraph-md text-muted-foreground">{exercice.composer}</Label>
+          </div>
+          <div className="flex gap-1 h-full">
+            {exercice.hasChords && (
+              <Badge variant="outline" className="text-muted-foreground paragraph-xs h-min">
+                chords
+              </Badge>
+            )}
+
+            {exercice.haseMelody && (
+              <Badge variant="outline" className="text-muted-foreground paragraph-xs h-min">
+                melody
+              </Badge>
+            )}
+          </div>
         </div>
       </div>
       <div className="flex items-center">
@@ -110,7 +147,7 @@ function PlaylistItem({ ...props }: PLaylistItemProps) {
           </Button>
         </PlaylistItemBox>
         <PlaylistItemBox>
-          <Label className="paragraph-md text-muted-foreground">120</Label>
+          <Label className="paragraph-md text-muted-foreground">{exercice.config.bpm}</Label>
         </PlaylistItemBox>
         <PlaylistItemBox>
           <Label className="paragraph-md">

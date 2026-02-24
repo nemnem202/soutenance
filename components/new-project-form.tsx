@@ -24,7 +24,7 @@ export default function NewProjectForm() {
               <div className="w-full flex justify-center">
                 <div className="w-75 h-75 overflow-hidden">
                   <EditableImage
-                    alt="Project cover"
+                    alt="ProjectSchema cover"
                     src={field.value}
                     onImageChange={(source) => field.onChange(source)}
                   />

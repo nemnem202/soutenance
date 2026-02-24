@@ -10,6 +10,7 @@
     "shadcn": "npx shadcn@latest"
   },
   "dependencies": {
+    "@faker-js/faker": "^10.3.0",
     "@hookform/resolvers": "^5.2.2",
     "@photonjs/express": "^0.1.13",
     "@prisma/client": "^7.4.0",

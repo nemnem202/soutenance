@@ -14,7 +14,7 @@ pnpm create vike@latest --react --tailwindcss --shadcn-ui --express --prisma --e
 - [Photon](#photon)
 - [shadcn/ui](#shadcnui)
   - [Configuration](#configuration)
-  - [Add Components to Your Project](#add-components-to-your-project)
+  - [Add Components to Your ProjectSchema](#add-components-to-your-project)
 
 ## Vike
 
@@ -67,7 +67,7 @@ Base Configuration can be found in `components.json` file.
 > \[!NOTE]
 > changes to the `components.json` file **will not** be reflected in existing components. Only new components will be affected.
 
-### Add Components to Your Project
+### Add Components to Your ProjectSchema
 
 **Example:** add a component to your project.
 `pnpm shadcn add button`
@@ -76,4 +76,3 @@ use the `<Button />` component in your project:
 `import { Button } from "@/components/ui/button";`
 
 more [shadcn/ui components](https://ui.shadcn.com/docs/components/accordion)
-

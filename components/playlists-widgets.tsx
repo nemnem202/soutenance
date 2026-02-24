@@ -1,42 +1,44 @@
-import { RefObject, useEffect } from "react";
+import { RefObject, useEffect, useState } from "react";
 import { Badge } from "./badge";
 import { Button } from "./button";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import usePlaylistCaroussel from "@/hooks/use-playlist-caroussel";
+import { getRandomProject } from "@/placeholders/projects";
 
 export function SmallPlaylistWidget() {
+  const [project, setProject] = useState(getRandomProject());
   return (
-    <a className="h-12 w-full hover:bg-popover rounded flex gap-2 cursor-pointer transition" href="/playlist">
-      <img src="assets/playlist1.png" />
+    <a
+      className="h-12 w-full hover:bg-popover rounded flex gap-2 cursor-pointer transition"
+      href={`/playlist/${project.id}`}
+    >
+      <div className="h-12 w-12 aspect-square overflow-hidden">
+        <img src={project.image.src} alt={project.image.alt} className="object-cover h-full w-full" width={48} />
+      </div>
       <div className="flex flex-col">
-        <p className="title-4">2501 standarts</p>
-        <p className="paragraph-sm text-muted-foreground">par Naïm</p>
+        <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{project.title}</p>
+        <p className="paragraph-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
+          par {project.author}
+        </p>
       </div>
     </a>
   );
 }
 
 export function MediumPlaylistWidget() {
+  const [project, setProject] = useState(getRandomProject());
+
   return (
     <div className=" w-50 cursor-pointer hover:bg-popover p-2 rounded-md transition">
-      <a href="/playlist" className="flex flex-col rounded gap-2.5">
+      <a href={`/playlist/${project.id}`} className="flex flex-col rounded gap-2.5">
         <div className="w-full aspect-square rounded overflow-hidden">
-          <img src="assets/playlist2.png" />
+          <img src={project.image.src} alt={project.image.alt} className="w-full h-full object-cover" />
         </div>
 
         <div className="flex-col flex w-full">
-          <h3 className="title-4">Brown Sugar</h3>
+          <h3 className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{project.title}</h3>
           <div className="w-full justify-between paragraph-sm text-muted-foreground flex wrap">
-            <p>par Naïm</p>
-            <p>Jazz</p>
-          </div>
-          <div className="flex wrap gap-1">
-            <Badge variant="outline" className="text-muted-foreground paragraph-xs">
-              chords
-            </Badge>
-            <Badge variant="outline" className="text-muted-foreground paragraph-xs">
-              melody
-            </Badge>
+            <p className="whitespace-nowrap overflow-hidden text-ellipsis">par {project.author}</p>
           </div>
         </div>
       </a>
@@ -53,7 +55,7 @@ function MediumAddNewProjectWidget() {
         </div>
 
         <div className="flex-col flex w-full">
-          <h3 className="title-4">New Project</h3>
+          <h3 className="title-4">New ProjectSchema</h3>
         </div>
       </a>
     </div>
