@@ -30,3 +30,9 @@ export const projectSchema = z.object({
 
     .max(10, { error: "Too many tags, max 10." }),
 });
+
+export const loginSchema = z.object({
+  email: z.email({ error: "The email is required" }),
+  password: z.string({ error: "The password is required." }),
+  remember: z.boolean(),
+});

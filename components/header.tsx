@@ -1,5 +1,5 @@
-import AccountPP from "./account-pp";
 import Searchbar from "./searchbar";
+import UserAccountORLogin from "./user-account-menu-or-login-button";
 
 export default function Header() {
   return (
@@ -8,8 +8,7 @@ export default function Header() {
         <div className="w-full max-w-100">
           <Searchbar placeholder="Browse exercices" />
         </div>
-
-        <AccountPP />
+        <UserAccountORLogin />
       </div>
     </header>
   );
