@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>
->(({ className, ...props }, ref) => (
+>(({ className, color = "primary", ...props }, ref) => (
   <SliderPrimitive.Root
     ref={ref}
     className={cn(
@@ -18,10 +18,10 @@ const Slider = React.forwardRef<
     {...props}
   >
     <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-transparent">
-      <SliderPrimitive.Range className="absolute h-full bg-primary disabled:opacity-50" />
+      <SliderPrimitive.Range className={`absolute h-full  disabled:opacity-50 bg-${color}`} />
     </SliderPrimitive.Track>
     <SliderPrimitive.Thumb
-      className={`cursor-pointer block h-3 w-3 rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${props.disabled && "!cursor-default"}`}
+      className={`cursor-pointer block h-3 w-3 rounded-full border-2 border-${color} bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${props.disabled && "!cursor-default"}`}
     />
   </SliderPrimitive.Root>
 ));

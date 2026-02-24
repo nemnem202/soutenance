@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useId } from "react";
 import { Label } from "./label";
 import { Switch } from "./switch";
 
@@ -15,7 +15,7 @@ export default function SwitchParam({
   order?: "switch-label" | "label-switch";
   disabled?: boolean;
 }) {
-  const id = crypto.randomUUID();
+  const id = useId();
   return (
     <div className="w-min">
       <div

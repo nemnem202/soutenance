@@ -1,6 +1,6 @@
 import { projectSchema } from "@/schemas/frontend";
 import { Project } from "@/types/frontend/project";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -12,6 +12,12 @@ export function useNewProjectForm() {
     defaultValues: {
       config: {
         defaultBpm: 120,
+        activeTracks: {
+          piano: true,
+          guitar: true,
+          bass: true,
+          drums: true,
+        },
       },
     },
   });

@@ -1,10 +1,11 @@
-import { ButtonHTMLAttributes, ComponentProps, LabelHTMLAttributes, ReactNode, useState } from "react";
+import { ButtonHTMLAttributes, ComponentProps, LabelHTMLAttributes, ReactNode, useId, useState } from "react";
 import { Slider } from "../slider";
 import { Label } from "../label";
 import { Input } from "../input";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "../input-group";
 import { Checkbox } from "../checkbox";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../tooltip";
+import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
   return <div className="flex gap-2 w-fit h-15 px-5 bg-card rounded-xl items-center select-none">{children}</div>;
@@ -49,7 +50,7 @@ export function SidebarSlider({
   disabled?: boolean;
 }) {
   const [valueIsZero, setValueIsZero] = useState<boolean>(defaultValue === 0);
-  const id = crypto.randomUUID();
+  const id = useId();
   return (
     <div className={`flex items-center gap-2 `}>
       <Label
@@ -93,7 +94,7 @@ export function SmallInput({
   align?: "inline-start" | "inline-end" | "block-start" | "block-end";
   tooltip?: ReactNode;
 } & ComponentProps<"input">) {
-  const id = crypto.randomUUID();
+  const id = useId();
   if (tooltip) {
     return (
       <Tooltip>
@@ -148,10 +149,10 @@ export function SmallCheckboxGroup({
   labelProps,
 }: {
   label: string;
-  checkboxProps?: ComponentProps<"button">;
+  checkboxProps?: React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>;
   labelProps?: ComponentProps<"label">;
 }) {
-  const id = crypto.randomUUID();
+  const id = useId();
   return (
     <div className="flex gap-2">
       <Label htmlFor={id} className={"paragaph " + labelProps?.className} {...labelProps}>

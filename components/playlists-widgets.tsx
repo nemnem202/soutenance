@@ -175,7 +175,7 @@ export function MediumPlaylistWrapper({ allowToAddANewProject }: { allowToAddANe
         </div>
       )}
       {Array.from({ length: 50 }).map((_, index) => (
-        <div className="mr-6.5">
+        <div className="mr-6.5" key={index}>
           <MediumPlaylistWidget />
         </div>
       ))}
