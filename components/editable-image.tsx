@@ -8,7 +8,7 @@ import useEditImage from "@/hooks/use-edit-image";
 
 export interface EditableImagePops {
   onImageChange: (src: string) => void;
-  src: string;
+  src?: string;
   alt: string;
 }
 
@@ -58,7 +58,11 @@ export default function EditableImage(props: EditableImagePops) {
             >
               <Upload size={50} />
             </button>
-            <img className="size-full object-cover z-0" src={imageSource} alt={props.alt} />
+            <img
+              className="size-full object-cover z-0"
+              src={imageSource ?? "assets/images/placeholder.webp"}
+              alt={props.alt}
+            />
           </div>
         </DialogTrigger>
         <DialogContent className="flex flex-col gap-2 w-fit">

@@ -1,22 +1,12 @@
 import * as z from "zod";
 
-export const activeTracksSchema = z.object({
-  piano: z.boolean(),
-  guitar: z.boolean(),
-  bass: z.boolean(),
-  drums: z.boolean(),
-});
-
-export const projectConfigSchema = z.object({
-  defaultBpm: z
-    .number({ error: "The default bpm is required." })
-    .nonnegative({ error: "The default bpm cannot be negative" })
-    .min(10, { error: "The default bpm is too slow, minimum 10." })
-    .max(300, { error: "the default bpm is too fast, max 300." }),
-  activeTracks: activeTracksSchema,
+export const imageSchema = z.object({
+  src: z.string({ error: "The image must be provided." }),
+  alt: z.string({ error: "The image description must be provided." }),
 });
 
 export const projectSchema = z.object({
+  image: imageSchema,
   title: z
     .string({
       error: "The title is required.",
@@ -39,6 +29,4 @@ export const projectSchema = z.object({
     )
 
     .max(10, { error: "Too many tags, max 10." }),
-  midifileId: z.string({ error: "The midi file is missing." }),
-  config: projectConfigSchema,
 });

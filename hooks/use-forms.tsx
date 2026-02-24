@@ -10,14 +10,8 @@ export function useNewProjectForm() {
   const form = useForm<Project>({
     resolver: zodResolver(projectSchema) as Resolver<Project>,
     defaultValues: {
-      config: {
-        defaultBpm: 120,
-        activeTracks: {
-          piano: true,
-          guitar: true,
-          bass: true,
-          drums: true,
-        },
+      image: {
+        alt: "The cover of the project",
       },
     },
   });

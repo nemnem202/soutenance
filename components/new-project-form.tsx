@@ -3,12 +3,11 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "./field";
 import { Controller } from "react-hook-form";
 import { Input } from "./input";
 import { InputGroup, InputGroupAddon, InputGroupText, InputGroupTextarea } from "./input-group";
-import { Separator } from "./separator";
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { Badge } from "./badge";
-import { SmallCheckboxGroup } from "./game/game-assets";
 import EditableImage from "./editable-image";
+import { Button } from "./button";
 
 export interface NewProjectFormProps {}
 
@@ -17,9 +16,26 @@ export default function NewProjectForm() {
   return (
     <form id="form-rhf-post" onSubmit={form.handleSubmit(handleSubmit)} ref={formRef}>
       <FieldGroup>
-        <div className="w-75 h-75 overflow-hidden">
-          <EditableImage src="assets/playlist2.png" alt="the cover of the project" onImageChange={() => {}} />
-        </div>
+        <Controller
+          name="image.src"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid} className="gap-1">
+              <div className="w-full flex justify-center">
+                <div className="w-75 h-75 overflow-hidden">
+                  <EditableImage
+                    alt="Project cover"
+                    src={field.value}
+                    onImageChange={(source) => field.onChange(source)}
+                  />
+                </div>
+              </div>
+
+              {fieldState.error && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+
         <Controller
           name="title"
           control={form.control}
@@ -33,26 +49,6 @@ export default function NewProjectForm() {
                 id="form-rhf-post-title"
                 aria-invalid={fieldState.invalid}
                 placeholder="Enter the title"
-                autoComplete="off"
-                className="paragraph !text-left px-2"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-        <Controller
-          name="composer"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid} className="gap-1">
-              <FieldLabel htmlFor="form-rhf-post-composer" className="title-4">
-                Composer
-              </FieldLabel>
-              <Input
-                {...field}
-                id="form-rhf-post-composer"
-                aria-invalid={fieldState.invalid}
-                placeholder="Enter the composer full-name."
                 autoComplete="off"
                 className="paragraph !text-left px-2"
               />
@@ -88,27 +84,6 @@ export default function NewProjectForm() {
             </Field>
           )}
         />
-        <Separator />
-        <Controller
-          name="config.defaultBpm"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid} className="flex-row items-center">
-              <FieldLabel htmlFor="form-rhf-post-bpm" className="title-4 !w-fit whitespace-nowrap">
-                Default Bpm
-              </FieldLabel>
-              <Input
-                {...field}
-                id="form-rhf-post-bpm"
-                aria-invalid={fieldState.invalid}
-                type="number"
-                autoComplete="off"
-                className="paragraph px-2 !w-15 min-w-0 p-0 text-center"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
         <Controller
           name="tags"
           control={form.control}
@@ -122,48 +97,11 @@ export default function NewProjectForm() {
             </Field>
           )}
         />
-        <Controller
-          name="config.activeTracks"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid} className="gap-1">
-              <FieldLabel htmlFor="form-rhf-backing" className="title-4">
-                Default backing tracks
-              </FieldLabel>
-              <div className="w-full flex flex-wrap gap-5" id="form-rhf-backing">
-                <SmallCheckboxGroup
-                  label="Piano"
-                  checkboxProps={{
-                    defaultChecked: field.value.piano,
-                    onCheckedChange: (c: boolean) => form.setValue("config.activeTracks.piano", c),
-                  }}
-                />
-                <SmallCheckboxGroup
-                  label="Guitar"
-                  checkboxProps={{
-                    defaultChecked: field.value.guitar,
-                    onCheckedChange: (c: boolean) => form.setValue("config.activeTracks.guitar", c),
-                  }}
-                />
-                <SmallCheckboxGroup
-                  label="Bass"
-                  checkboxProps={{
-                    defaultChecked: field.value.bass,
-                    onCheckedChange: (c: boolean) => form.setValue("config.activeTracks.bass", c),
-                  }}
-                />
-                <SmallCheckboxGroup
-                  label="Drums"
-                  checkboxProps={{
-                    defaultChecked: field.value.drums,
-                    onCheckedChange: (c: boolean) => form.setValue("config.activeTracks.drums", c),
-                  }}
-                />
-              </div>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
+        <div className="w-full flex justify-end">
+          <Button className="w-fit title-4" type="submit">
+            Submit
+          </Button>
+        </div>
       </FieldGroup>
     </form>
   );

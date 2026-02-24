@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, WheelEvent } from "react";
 import AvatarEditor from "react-avatar-editor";
 
 export default function useEditImage(props: EditableImagePops) {
-  const [imageSource, setImageSource] = useState<string>(props.src);
+  const [imageSource, setImageSource] = useState<string | undefined>(props.src);
   const [hovered, setHovered] = useState(false);
   const [open, setOpen] = useState(false);
   const [avatarZoom, setAvatarZoom] = useState(1);
@@ -45,6 +45,7 @@ export default function useEditImage(props: EditableImagePops) {
   };
 
   useEffect(() => {
+    if (!imageSource) return;
     props.onImageChange(imageSource);
   }, [imageSource]);
 
