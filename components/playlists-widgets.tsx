@@ -3,7 +3,7 @@ import { Badge } from "./badge";
 import { Button } from "./button";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import usePlaylistCaroussel from "@/hooks/use-playlist-caroussel";
-import { getRandomProject } from "@/placeholders/projects";
+import { getRandomProject } from "@/pages/+data";
 
 export function SmallPlaylistWidget() {
   const [project, setProject] = useState(getRandomProject());
@@ -15,7 +15,7 @@ export function SmallPlaylistWidget() {
       <div className="h-12 w-12 aspect-square overflow-hidden">
         <img src={project.image.src} alt={project.image.alt} className="object-cover h-full w-full" width={48} />
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-1 flex-col min-w-0">
         <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{project.title}</p>
         <p className="paragraph-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
           par {project.author}

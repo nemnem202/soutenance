@@ -2,9 +2,9 @@ import { Pen, Upload, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "./button";
 import { Dialog, DialogContent, DialogTrigger } from "./dialog";
 import AvatarEditor from "react-avatar-editor";
-import { useEffect, useRef, useState, WheelEvent } from "react";
 import { Slider } from "./slider";
 import useEditImage from "@/hooks/use-edit-image";
+import placeHoldeImage1 from "../assets/images/placeholder.webp";
 
 export interface EditableImagePops {
   onImageChange: (src: string) => void;
@@ -58,11 +58,7 @@ export default function EditableImage(props: EditableImagePops) {
             >
               <Upload size={50} />
             </button>
-            <img
-              className="size-full object-cover z-0"
-              src={imageSource ?? "assets/images/placeholder.webp"}
-              alt={props.alt}
-            />
+            <img className="size-full object-cover z-0" src={imageSource ?? placeHoldeImage1} alt={props.alt} />
           </div>
         </DialogTrigger>
         <DialogContent className="flex flex-col gap-2 w-fit">

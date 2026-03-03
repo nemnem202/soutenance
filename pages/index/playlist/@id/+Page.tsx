@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/checkbox";
 import { Label } from "@/components/label";
 import Searchbar from "@/components/searchbar";
 import { Separator } from "@/components/separator";
-import { EXERCICES_PLACEHOLDER, PROJECTS_PLACEHOLDERS } from "@/placeholders/projects";
+import getPlaceholders from "@/pages/+data";
 import { Project, ProjectSchema } from "@/types/project";
 import { Heart } from "lucide-react";
 import { ReactNode, useState } from "react";
@@ -13,7 +13,7 @@ import { usePageContext } from "vike-react/usePageContext";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
-  const [project, setProject] = useState(PROJECTS_PLACEHOLDERS.find((e) => e.id === id));
+  const [project, setProject] = useState(getPlaceholders().PROJECTS_PLACEHOLDERS.find((e) => e.id === id));
 
   if (!project) return null;
   return (
@@ -110,7 +110,7 @@ interface PLaylistItemProps {
 }
 
 function PlaylistItem({ ...props }: PLaylistItemProps) {
-  const exercice = EXERCICES_PLACEHOLDER.find((e) => e.id === props.id);
+  const exercice = getPlaceholders().EXERCICES_PLACEHOLDER.find((e) => e.id === props.id);
   if (!exercice) return null;
 
   return (

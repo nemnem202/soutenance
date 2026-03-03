@@ -4,7 +4,7 @@
 
 @font-face {
   font-family: "ZingRust";
-  src: url("assets/fonts/Zing Rust Demo Base.woff") format("woff2");
+  src: url("../assets/fonts/Zing Rust Demo Base.woff") format("woff2");
   font-weight: normal;
   font-style: normal;
   font-display: optional;
