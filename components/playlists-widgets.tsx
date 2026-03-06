@@ -55,7 +55,7 @@ function MediumAddNewProjectWidget() {
         </div>
 
         <div className="flex-col flex w-full">
-          <h3 className="title-4">New ProjectSchema</h3>
+          <h3 className="title-4">New Project</h3>
         </div>
       </a>
     </div>

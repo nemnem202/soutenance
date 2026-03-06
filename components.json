@@ -1,19 +1,23 @@
 {
   "$schema": "https://ui.shadcn.com/schema.json",
   "style": "default",
+  "rsc": true,
+  "tsx": true,
   "tailwind": {
     "config": "tailwind.config.ts",
     "css": "stylesheets/tailwind.css",
     "baseColor": "gray",
     "cssVariables": true
   },
-  "rsc": true,
-  "tsx": true,
+  "iconLibrary": "lucide",
   "aliases": {
-    "utils": "@/lib/utils",
     "components": "@/components",
-    "hooks": "@/hooks",
+    "utils": "@/lib/utils",
+    "ui": "@/components",
     "lib": "@/lib",
-    "ui": "@/components"
+    "hooks": "@/hooks"
+  },
+  "registries": {
+    "@kokonutui": "https://kokonutui.com/r/{name}.json"
   }
 }
