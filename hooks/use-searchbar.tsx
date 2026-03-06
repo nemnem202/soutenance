@@ -51,6 +51,7 @@ export default function useSearchbar({ ...props }: SearchbarProps) {
   };
   const [searchbarValue, setSearchbarValue] = useState("");
   const [items, setItems] = useState<DropdownItem[]>(defineItemsFromString(""));
+  const [placeholder, setPlaceholder] = useState(props.placeholder);
 
   const handleInputValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();
@@ -61,5 +62,5 @@ export default function useSearchbar({ ...props }: SearchbarProps) {
     setSearchbarValue(value);
   };
 
-  return { items, handleInputValueChange, searchbarValue };
+  return { items, handleInputValueChange, searchbarValue, setSearchbarValue, placeholder, setPlaceholder };
 }

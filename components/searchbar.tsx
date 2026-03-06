@@ -8,10 +8,22 @@ export interface SearchbarProps {
 }
 
 export default function Searchbar({ ...props }: SearchbarProps) {
-  const { items, handleInputValueChange, searchbarValue } = useSearchbar(props);
+  const { items, handleInputValueChange, searchbarValue, setSearchbarValue, placeholder, setPlaceholder } =
+    useSearchbar(props);
 
   return (
-    <BasicDropdown items={items} label={"oeoe"} className="w-full">
+    <BasicDropdown
+      items={items}
+      label={"searchbar-dropdown"}
+      className="w-full"
+      onItemClick={(item) => {
+        setSearchbarValue(item.label);
+        navigate("/search/" + item.label);
+      }}
+      onFocusChange={(item) => {
+        setPlaceholder(item.label);
+      }}
+    >
       <InputGroup
         className="w-full h-full"
         onKeyDownCapture={(e) => {
@@ -24,10 +36,12 @@ export default function Searchbar({ ...props }: SearchbarProps) {
 
         <InputGroupInput
           id="input-group-url"
-          placeholder={props.placeholder}
+          placeholder={placeholder}
           className="!text-left"
           onChange={handleInputValueChange}
           autoComplete="off"
+          value={searchbarValue}
+          onBlur={() => setPlaceholder(props.placeholder)}
         />
       </InputGroup>
     </BasicDropdown>

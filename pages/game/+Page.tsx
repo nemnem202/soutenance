@@ -46,50 +46,6 @@ function Game({ ...props }: Gameprops) {
           <div className="w-full flex justify-center">
             <AnimatedTabs activeTab={activeTab} onChange={setActiveTab} tabs={tabs} variant="pill" className="my-5" />
           </div>
-
-          {/* <Tabs defaultValue="piano-roll" className="size-full flex flex-col gap-2">
-            <div className="w-full flex justify-center">
-              <TabsList className="rounded-full">
-                <TabsTrigger value="piano-roll" className="rounded-full rounded-e-sm select-none paragraph-md">
-                  piano roll
-                </TabsTrigger>
-                <TabsTrigger value="chords" className="rounded-sm select-none paragraph-md">
-                  chords
-                </TabsTrigger>
-                <UpcomingToolTip>
-                  <TabsTrigger value="sheet" className="rounded-sm select-none paragraph-md" disabled>
-                    sheet
-                  </TabsTrigger>
-                </UpcomingToolTip>
-                <UpcomingToolTip>
-                  <TabsTrigger value="guitar" className="rounded-full rounded-s-sm select-none paragraph-md" disabled>
-                    guitar
-                  </TabsTrigger>
-                </UpcomingToolTip>
-              </TabsList>
-            </div>
-
-            <TabsContent value="piano-roll" className="flex-1  size-full">
-              <Tab>
-                <></>
-              </Tab>
-            </TabsContent>
-            <TabsContent value="sheet" className="flex-1  size-full">
-              <Tab>
-                <></>
-              </Tab>
-            </TabsContent>
-            <TabsContent value="chords" className="flex-1  size-full">
-              <Tab>
-                <></>
-              </Tab>
-            </TabsContent>
-            <TabsContent value="guitar" className="flex-1  size-full">
-              <Tab>
-                <></>
-              </Tab>
-            </TabsContent>
-          </Tabs> */}
         </div>
         <ControlsSection>
           <IconButton onClick={props.openSidebar}>

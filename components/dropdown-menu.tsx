@@ -1,5 +1,6 @@
 "use client";
 
+import { faker } from "@faker-js/faker";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -16,12 +17,20 @@ export interface DropdownItem {
 export interface BasicDropdownProps {
   label: string;
   items: DropdownItem[];
-  onChange?: (item: DropdownItem) => void;
+  onItemClick?: (item: DropdownItem) => void;
+  onFocusChange?: (item: DropdownItem) => void;
   className?: string;
   children: ReactNode;
 }
 
-export default function BasicDropdown({ label, items, onChange, className = "", children }: BasicDropdownProps) {
+export default function BasicDropdown({
+  label,
+  items,
+  onItemClick,
+  onFocusChange,
+  className = "",
+  children,
+}: BasicDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<DropdownItem | null>(null);
   const [focusedIndex, setFocusedIndex] = useState(-1);
@@ -34,7 +43,7 @@ export default function BasicDropdown({ label, items, onChange, className = "", 
   const handleItemSelect = (item: DropdownItem) => {
     setSelectedItem(item);
     setIsOpen(false);
-    onChange?.(item);
+    onFocusChange?.(item);
   };
 
   const handleToggle = () => {
@@ -140,10 +149,22 @@ export default function BasicDropdown({ label, items, onChange, className = "", 
     setFocusedIndex(-1);
   }, []);
 
+  useEffect(() => {
+    if (focusedIndex >= 0) {
+      const focusedItem = items[focusedIndex];
+      onFocusChange?.(focusedItem);
+    }
+  }, [focusedIndex, items, onFocusChange]);
+
   const dropdownContent = (
     <AnimatePresence>
       {isOpen && (
-        <div ref={portalRef}>
+        <div
+          ref={portalRef}
+          onMouseLeave={() => {
+            setFocusedIndex(-1);
+          }}
+        >
           <motion.div
             animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, scaleY: 1 }}
             className="fixed z-50 origin-top rounded-lg border bg-background shadow-lg"
@@ -192,7 +213,10 @@ export default function BasicDropdown({ label, items, onChange, className = "", 
                     className={`flex min-h-[44px] w-full items-center px-4 py-2 text-left text-sm transition-colors cursor-pointer hover:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded text-muted-foreground ${
                       selectedItem?.id === item.id ? "font-medium text-brand" : ""
                     } ${index === focusedIndex ? "bg-muted" : ""}`}
-                    onClick={() => handleItemSelect(item)}
+                    onClick={() => {
+                      handleItemSelect(item);
+                      onItemClick?.(item);
+                    }}
                     onMouseEnter={() => setFocusedIndex(index)}
                     type="button"
                   >
