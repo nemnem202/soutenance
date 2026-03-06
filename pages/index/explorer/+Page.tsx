@@ -1,3 +1,9 @@
+import Headline from "@/components/headline";
+
 export default function Page() {
-  return <>explorer</>;
+  return (
+    <>
+      <Headline>Explore</Headline>
+    </>
+  );
 }
