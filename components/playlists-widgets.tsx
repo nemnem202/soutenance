@@ -47,7 +47,10 @@ export function MediumPlaylistWidget() {
         <div className="flex-col flex w-full">
           <h3 className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{project.title}</h3>
           <div className="w-full justify-between paragraph-sm text-muted-foreground flex wrap">
-            <p className="whitespace-nowrap overflow-hidden text-ellipsis">by {project.author}</p>
+            <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[80%]">by {project.author}</p>
+            <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[15%]">
+              {project.exercicesIds.length > 99 ? ">99" : project.exercicesIds.length}
+            </p>
           </div>
         </div>
       </a>
