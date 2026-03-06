@@ -32,7 +32,7 @@ export function MediumPlaylistWidget() {
     <div className=" w-50 cursor-pointer hover:bg-popover p-2 rounded-md transition">
       <a href={`/playlist/${project.id}`} className="flex flex-col rounded gap-2.5">
         <div className="w-full aspect-square rounded overflow-hidden">
-          <img src={project.image.src} alt={project.image.alt} className="w-full h-full object-cover" />
+          <img src={project.image.src} alt={project.image.alt} className="w-full h-full object-cover" width={185} />
         </div>
 
         <div className="flex-col flex w-full">
