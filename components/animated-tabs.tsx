@@ -88,8 +88,8 @@ export default function AnimatedTabs({
   const baseContainerStyles = cn(
     "relative inline-flex",
     variant === "underline" && "gap-1 border-border border-b",
-    variant === "pill" && "gap-1 rounded-full bg-muted p-1.5",
-    variant === "segment" && "gap-0 rounded-lg bg-muted p-1.5",
+    variant === "pill" && "gap-1 rounded-full bg-card p-1.5",
+    variant === "segment" && "gap-0 rounded-lg bg-card p-1.5",
   );
 
   const getTabStyles = (isActive: boolean, disabled?: boolean) =>

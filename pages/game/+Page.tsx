@@ -42,9 +42,14 @@ function Game({ ...props }: Gameprops) {
     <main className="flex-1 flex flex-col items-center pt-5">
       <h1 className="headline select-none">Brown Sugar</h1>
       <div className=" size-full px-20 py-5  flex flex-col gap-2">
-        <div className="flex-1">
+        <div className="flex-1 flex flex-col">
           <div className="w-full flex justify-center">
-            <AnimatedTabs activeTab={activeTab} onChange={setActiveTab} tabs={tabs} variant="pill" className="my-5" />
+            <AnimatedTabs activeTab={activeTab} onChange={setActiveTab} tabs={tabs} variant="pill" className="my-2" />
+          </div>
+          <div className=" flex-1">
+            <Tab>
+              <></>
+            </Tab>
           </div>
         </div>
         <ControlsSection>
