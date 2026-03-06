@@ -1,13 +1,23 @@
+import { Artist } from "@/types/artist";
 import { Exercice, Project } from "@/types/project";
 import { Faker, en } from "@faker-js/faker";
 
 const faker = new Faker({ locale: [en] });
 
+const generateArtist = (): Artist => ({
+  id: faker.string.uuid(),
+  firstName: faker.music.artist(),
+  lastName: Math.random() > 0.5 ? faker.person.lastName() : undefined,
+  picture: faker.image.avatar(),
+});
+
+const ARTISTS_PLACEHOLDER: Artist[] = Array.from({ length: 2000 }, () => generateArtist());
+
 const generateExercice = (): Exercice => ({
   id: faker.string.uuid(),
   title: faker.music.songName(),
   author: faker.person.firstName(),
-  composer: faker.music.artist(),
+  composer: faker.helpers.arrayElement(ARTISTS_PLACEHOLDER),
   config: {
     bpm: faker.number.int({ min: 60, max: 200 }),
   },
@@ -19,9 +29,7 @@ const generateExercice = (): Exercice => ({
 
 const generateProject = (exercices: Exercice[]): Project => {
   const nbExercices = faker.number.int({ min: 1, max: 5 });
-
   const selectedExercices = faker.helpers.arrayElements(exercices, nbExercices);
-
   return {
     id: faker.string.uuid(),
     author: faker.person.firstName(),
@@ -43,6 +51,11 @@ const PROJECTS_PLACEHOLDERS: Project[] = Array.from({ length: 200 }, () => gener
 export function getRandomProject(): Project {
   const randomIndex = Math.floor(Math.random() * PROJECTS_PLACEHOLDERS.length);
   return PROJECTS_PLACEHOLDERS[randomIndex];
+}
+
+export function getRandomArtist(): Artist {
+  const randomIndex = Math.floor(Math.random() * ARTISTS_PLACEHOLDER.length);
+  return ARTISTS_PLACEHOLDER[randomIndex];
 }
 
 export default function getPlaceholders() {

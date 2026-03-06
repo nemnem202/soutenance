@@ -1,5 +1,6 @@
 import { projectSchema } from "@/schemas/frontend";
 import z from "zod";
+import { Artist } from "./artist";
 
 export type ExerciceConfig = {
   bpm: number;
@@ -8,7 +9,7 @@ export type ExerciceConfig = {
 export type Exercice = {
   id: string;
   title: string;
-  composer: string;
+  composer: Artist;
   author: string;
   creation: Date;
   hasChords: boolean;

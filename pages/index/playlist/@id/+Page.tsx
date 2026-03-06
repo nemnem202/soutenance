@@ -123,7 +123,9 @@ function PlaylistItem({ ...props }: PLaylistItemProps) {
         <div className="flex h-fit gap-3">
           <div className="flex flex-col pl-2 gap-1">
             <Label className="title-4">{exercice.title}</Label>
-            <Label className="paragraph-md text-muted-foreground">{exercice.composer}</Label>
+            <Label className="paragraph-md text-muted-foreground">
+              {exercice.composer.firstName} {exercice.composer.lastName}
+            </Label>
           </div>
           <div className="flex gap-1 h-full">
             {exercice.hasChords && (

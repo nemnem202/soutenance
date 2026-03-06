@@ -1,12 +1,28 @@
 import Headline from "@/components/headline";
-import { MediumPlaylistWidgetCaroussel } from "@/components/playlists-widgets";
+import { MediumPlaylistWidget } from "@/components/playlists-widgets";
+import { MediumWidgetCaroussel } from "@/components/widget-carousel";
 export default function Page() {
   return (
     <>
       <Headline>Welcome back, Nem !</Headline>
-      <MediumPlaylistWidgetCaroussel title="Recently played" />
-      <MediumPlaylistWidgetCaroussel title="Popular exercices" />
-      <MediumPlaylistWidgetCaroussel title="Discover" />
+      <MediumWidgetCaroussel
+        title="Recently played"
+        widgets={Array.from({ length: 20 }).map(() => (
+          <MediumPlaylistWidget />
+        ))}
+      />
+      <MediumWidgetCaroussel
+        title="Popular exercices"
+        widgets={Array.from({ length: 20 }).map(() => (
+          <MediumPlaylistWidget />
+        ))}
+      />
+      <MediumWidgetCaroussel
+        title="Discover"
+        widgets={Array.from({ length: 20 }).map(() => (
+          <MediumPlaylistWidget />
+        ))}
+      />
     </>
   );
 }

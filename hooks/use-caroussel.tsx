@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 
-export default function usePlaylistCaroussel() {
+export default function useCaroussel() {
   const [isLastItemVisible, setIsLastItemVisible] = useState(false);
   const [itemIndex, setItemIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);

@@ -1,6 +1,7 @@
 import AnimatedTabs from "@/components/animated-tabs";
 import Headline from "@/components/headline";
-import { MediumPlaylistWidgetCaroussel } from "@/components/playlists-widgets";
+import { MediumPlaylistWidget } from "@/components/playlists-widgets";
+import { MediumWidgetCaroussel } from "@/components/widget-carousel";
 import { useState } from "react";
 
 const tabs = [
@@ -25,9 +26,24 @@ export default function Page() {
           variant="underline"
         />
         <div>
-          <MediumPlaylistWidgetCaroussel title="Recently played" />
-          <MediumPlaylistWidgetCaroussel title="Playlists" />
-          <MediumPlaylistWidgetCaroussel title="Albums" />
+          <MediumWidgetCaroussel
+            title="Recently played"
+            widgets={Array.from({ length: 20 }).map(() => (
+              <MediumPlaylistWidget />
+            ))}
+          />
+          <MediumWidgetCaroussel
+            title="Playlists"
+            widgets={Array.from({ length: 20 }).map(() => (
+              <MediumPlaylistWidget />
+            ))}
+          />
+          <MediumWidgetCaroussel
+            title="Albums"
+            widgets={Array.from({ length: 20 }).map(() => (
+              <MediumPlaylistWidget />
+            ))}
+          />
         </div>
       </div>
     </>
