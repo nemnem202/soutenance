@@ -13,7 +13,7 @@ import { usePageContext } from "vike-react/usePageContext";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
-  const [project, setProject] = useState(getPlaceholders().PROJECTS_PLACEHOLDERS.find((e) => e.id === id));
+  const [project] = useState(getPlaceholders().PROJECTS_PLACEHOLDERS.find((e) => e.id === id));
 
   if (!project) return null;
   return (
@@ -46,16 +46,22 @@ function Banner({ project }: { project: Project }) {
       <div className="flex flex-col justify-center flex-1">
         <h1 className="headline h-min">{project.title}</h1>
         <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-2">
-            {account && <AccountPP account={account} />}
-            <Label className="title-4">{project.author}</Label>
-          </div>
+          {account && (
+            <a
+              href={"/account/" + account.id}
+              className="flex items-center gap-2 hover:opacity-80 transition cursor-pointer"
+            >
+              <AccountPP account={account} />
+              <p className="title-4">{project.author}</p>
+            </a>
+          )}
+
           <div className="flex gap-2">
-            <Label className="text-muted-foreground">{project.exercicesIds.length} exercices</Label>
+            <p className="text-muted-foreground">{project.exercicesIds.length} exercices</p>
             <Separator orientation="vertical" />
-            <Label className="text-muted-foreground">medium</Label>
+            <p className="text-muted-foreground">medium</p>
             <Separator orientation="vertical" />
-            <Label className="text-muted-foreground">pop</Label>
+            <p className="text-muted-foreground">pop</p>
           </div>
         </div>
       </div>
@@ -78,13 +84,13 @@ function PlaylistItemsList({ project }: { project: Project }) {
   return (
     <div className="w-full">
       <div className="w-full flex justify-between px-4 py-2">
-        <Label className="paragramh-md text-muted-foreground">Exercice</Label>
+        <p className="paragramh-md text-muted-foreground">Exercice</p>
         <div className="flex items-center">
           <PlaylistItemBox>
-            <Label className="paragraph-md text-muted-foreground">Bpm</Label>
+            <p className="paragraph-md text-muted-foreground">Bpm</p>
           </PlaylistItemBox>
           <PlaylistItemBox>
-            <Label className="paragraph-md text-muted-foreground">Pop</Label>
+            <p className="paragraph-md text-muted-foreground">Pop</p>
           </PlaylistItemBox>
           <PlaylistItemBox>
             <Checkbox />
@@ -124,8 +130,8 @@ function PlaylistItem({ ...props }: PLaylistItemProps) {
         <img className="w-15 h-15" width={60} height={60} src={props.project.image.src} alt={props.project.image.alt} />
         <div className="flex h-fit gap-3">
           <div className="flex flex-col pl-2 gap-1">
-            <Label className="title-4">{exercice.title}</Label>
-            <Label className="paragraph-md text-muted-foreground">{exercice.author}</Label>
+            <p className="title-4">{exercice.title}</p>
+            <p className="paragraph-md text-muted-foreground">{exercice.author}</p>
           </div>
           <div className="flex gap-1 h-full">
             {exercice.hasChords && (
@@ -149,12 +155,12 @@ function PlaylistItem({ ...props }: PLaylistItemProps) {
           </Button>
         </PlaylistItemBox>
         <PlaylistItemBox>
-          <Label className="paragraph-md text-muted-foreground">{exercice.config.bpm}</Label>
+          <p className="paragraph-md text-muted-foreground">{exercice.config.bpm}</p>
         </PlaylistItemBox>
         <PlaylistItemBox>
-          <Label className="paragraph-md">
+          <p className="paragraph-md">
             |||<span className="text-muted-foreground">|||</span>
-          </Label>
+          </p>
         </PlaylistItemBox>
         <PlaylistItemBox>
           <Checkbox />

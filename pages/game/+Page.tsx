@@ -6,6 +6,7 @@ import GameSidebar from "@/components/game/game-sidebar";
 import { Input } from "@/components/input";
 import { Separator } from "@/components/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/tabs";
+import UpcomingToolTip from "@/components/upcoming-tooltip";
 import { TabsContent } from "@radix-ui/react-tabs";
 import { Maximize, Minimize, Play, Settings, Square } from "lucide-react";
 import { ReactNode, useState } from "react";
@@ -39,12 +40,19 @@ function Game({ ...props }: Gameprops) {
                 <TabsTrigger value="piano-roll" className="rounded-full rounded-e-sm select-none paragraph-md">
                   piano roll
                 </TabsTrigger>
-                <TabsTrigger value="sheet" className="rounded-sm select-none paragraph-md">
-                  sheet
+                <TabsTrigger value="chords" className="rounded-sm select-none paragraph-md">
+                  chords
                 </TabsTrigger>
-                <TabsTrigger value="guitar" className="rounded-full rounded-s-sm select-none paragraph-md">
-                  guitar
-                </TabsTrigger>
+                <UpcomingToolTip>
+                  <TabsTrigger value="sheet" className="rounded-sm select-none paragraph-md" disabled>
+                    sheet
+                  </TabsTrigger>
+                </UpcomingToolTip>
+                <UpcomingToolTip>
+                  <TabsTrigger value="guitar" className="rounded-full rounded-s-sm select-none paragraph-md" disabled>
+                    guitar
+                  </TabsTrigger>
+                </UpcomingToolTip>
               </TabsList>
             </div>
 
@@ -54,6 +62,11 @@ function Game({ ...props }: Gameprops) {
               </Tab>
             </TabsContent>
             <TabsContent value="sheet" className="flex-1  size-full">
+              <Tab>
+                <></>
+              </Tab>
+            </TabsContent>
+            <TabsContent value="chords" className="flex-1  size-full">
               <Tab>
                 <></>
               </Tab>

@@ -185,7 +185,7 @@ export default function BasicDropdown({ label, items, onChange, className = "", 
                           duration: 0.2,
                         }
                   }
-                  whileHover={shouldReduceMotion ? {} : { x: 2, width: "calc(100% - 5px)" }}
+                  // whileHover={shouldReduceMotion ? {} : { x: 2, width: "calc(100% - 5px)" }}
                 >
                   <button
                     aria-label={item.label}

@@ -6,6 +6,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "../input-group";
 import { Checkbox } from "../checkbox";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../tooltip";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
+import { Button, ButtonProps } from "../button";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
   return <div className="flex gap-2 w-fit h-15 px-5 bg-card rounded-xl items-center select-none">{children}</div>;
@@ -23,18 +24,21 @@ export function SidebarTabButton({
   text,
   isActive,
   onClick = () => {},
+  props = {},
 }: {
   text: string;
   isActive: boolean;
   onClick?: () => void;
+  props?: ButtonProps;
 }) {
   return (
-    <button
-      className={`title-3 h-12 flex items-center gap-2 hover:bg-popover cursor-pointer p-2 rounded ${isActive && "text-primary transition"}`}
+    <Button
+      className={`title-3 h-12 flex items-center !justify-start gap-2 hover:bg-popover cursor-pointer !p-2 rounded bg-transparent ${isActive && "text-primary transition"}`}
       onClick={onClick}
+      {...props}
     >
       {text}
-    </button>
+    </Button>
   );
 }
 
