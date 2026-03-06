@@ -1,8 +1,8 @@
-import { EditableImagePops } from "@/components/editable-image";
+import { EditableImageProps } from "@/components/editable-image";
 import { useEffect, useRef, useState, WheelEvent } from "react";
 import AvatarEditor from "react-avatar-editor";
 
-export default function useEditImage(props: EditableImagePops) {
+export default function useEditImage(props: EditableImageProps) {
   const [imageSource, setImageSource] = useState<string | undefined>(props.src);
   const [hovered, setHovered] = useState(false);
   const [open, setOpen] = useState(false);

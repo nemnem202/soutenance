@@ -1,5 +1,4 @@
-import { ReactNode, useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "./dialog";
+import { useState } from "react";
 import { Button } from "./button";
 import Logo from "./logo";
 import { Field, FieldError, FieldGroup, FieldLabel } from "./field";
@@ -23,28 +22,6 @@ export default function LoginButton() {
     </>
   );
 }
-
-// function LoginDialog({ children }: { children: ReactNode }) {
-//   return (
-//     <Dialog>
-//       <DialogTrigger asChild>{children}</DialogTrigger>
-//       <DialogContent className="flex flex-col items-center min-w-0 min-h-0">
-//         <Logo />
-//         <LoginForm />
-//         <div className="flex flex-col items-center w-full gap-3">
-//           <p className="paragraph-sm text-muted-foreground">Or login with</p>
-//           <GoogleLoginButton />
-//         </div>
-//         <p className="paragraph-md flex gap-2">
-//           Don't have an account ?
-//           <Button variant={"link"} className="text-primary p-0 h-min paragraph-md " onClick={(e) => e.preventDefault()}>
-//             register here
-//           </Button>
-//         </p>
-//       </DialogContent>
-//     </Dialog>
-//   );
-// }
 
 function LoginModalContent() {
   return (
