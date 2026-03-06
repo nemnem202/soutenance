@@ -51,7 +51,12 @@ export default function EditableImage(props: EditableImageProps) {
           <Upload size={50} />
         </button>
 
-        <img className="size-full object-cover z-0" src={imageSource ?? placeHoldeImage1} alt={props.alt} />
+        <img
+          className="size-full object-cover z-0"
+          src={imageSource ?? placeHoldeImage1}
+          alt={props.alt}
+          loading="lazy"
+        />
       </div>
 
       <Modal isOpen={open} onClose={() => setOpen(false)} size="md" title="Edit image">

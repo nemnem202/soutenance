@@ -38,6 +38,7 @@ function Banner({ project }: { project: Project }) {
           alt={project.image.alt}
           width={300}
           height={300}
+          loading="lazy"
           className="object-cover h-full w-full"
         />
       </div>

@@ -10,7 +10,13 @@ export function SmallPlaylistWidget() {
       href={`/playlist/${project.id}`}
     >
       <div className="h-12 w-12 aspect-square overflow-hidden">
-        <img src={project.image.src} alt={project.image.alt} className="object-cover h-full w-full" width={48} />
+        <img
+          src={project.image.src}
+          alt={project.image.alt}
+          className="object-cover h-full w-full"
+          width={48}
+          loading="lazy"
+        />
       </div>
       <div className="flex flex-1 flex-col min-w-0">
         <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{project.title}</p>
@@ -29,7 +35,13 @@ export function MediumPlaylistWidget() {
     <div className="w-55 cursor-pointer hover:opacity-80 rounded-md transition">
       <a href={`/playlist/${project.id}`} className="flex flex-col rounded gap-2.5">
         <div className="w-full aspect-square rounded overflow-hidden">
-          <img src={project.image.src} alt={project.image.alt} className="w-full h-full object-cover" width={185} />
+          <img
+            src={project.image.src}
+            alt={project.image.alt}
+            className="w-full h-full object-cover"
+            width={185}
+            loading="lazy"
+          />
         </div>
 
         <div className="flex-col flex w-full">

@@ -31,6 +31,7 @@ function Banner({ account }: { account: Account }) {
           alt={"An image of " + account.firstName + " " + account.lastName}
           width={300}
           height={300}
+          loading="lazy"
           className="object-cover h-full w-full"
         />
       </div>
