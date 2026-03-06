@@ -9,8 +9,8 @@ export type ExerciceConfig = {
 export type Exercice = {
   id: string;
   title: string;
-  composer: string;
-  author: Account;
+  author: string;
+  account: Account;
   creation: Date;
   hasChords: boolean;
   haseMelody: boolean;

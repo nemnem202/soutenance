@@ -15,7 +15,7 @@ export function SmallPlaylistWidget() {
       <div className="flex flex-1 flex-col min-w-0">
         <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{project.title}</p>
         <p className="paragraph-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
-          par {project.author}
+          by {project.author}
         </p>
       </div>
     </a>
@@ -35,7 +35,7 @@ export function MediumPlaylistWidget() {
         <div className="flex-col flex w-full">
           <h3 className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{project.title}</h3>
           <div className="w-full justify-between paragraph-sm text-muted-foreground flex wrap">
-            <p className="whitespace-nowrap overflow-hidden text-ellipsis">par {project.author}</p>
+            <p className="whitespace-nowrap overflow-hidden text-ellipsis">by {project.author}</p>
           </div>
         </div>
       </a>

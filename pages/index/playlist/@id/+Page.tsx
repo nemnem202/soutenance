@@ -29,6 +29,7 @@ export default function Page() {
 }
 
 function Banner({ project }: { project: Project }) {
+  const account = getPlaceholders().ACCOUNTS_PLACEHOLDER.find((account) => account.id === project.id);
   return (
     <div className="flex w-full gap-8 items-center">
       <div className="w-75 rounded aspect-square overflow-hidden">
@@ -45,7 +46,7 @@ function Banner({ project }: { project: Project }) {
         <h1 className="headline h-min">{project.title}</h1>
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-2">
-            <AccountPP />
+            {account && <AccountPP account={account} />}
             <Label className="title-4">{project.author}</Label>
           </div>
           <div className="flex gap-2">
@@ -123,9 +124,7 @@ function PlaylistItem({ ...props }: PLaylistItemProps) {
         <div className="flex h-fit gap-3">
           <div className="flex flex-col pl-2 gap-1">
             <Label className="title-4">{exercice.title}</Label>
-            <Label className="paragraph-md text-muted-foreground">
-              {exercice.composer.firstName} {exercice.composer.lastName}
-            </Label>
+            <Label className="paragraph-md text-muted-foreground">{exercice.author}</Label>
           </div>
           <div className="flex gap-1 h-full">
             {exercice.hasChords && (

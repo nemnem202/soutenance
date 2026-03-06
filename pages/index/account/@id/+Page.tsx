@@ -1,19 +1,13 @@
-import AccountPP from "@/components/account-pp";
-import { Badge } from "@/components/badge";
-import { Button } from "@/components/button";
-import { Checkbox } from "@/components/checkbox";
-import { Label } from "@/components/label";
+import { MediumPlaylistWrapper } from "@/components/playlists-widgets";
 import Searchbar from "@/components/searchbar";
-import { Separator } from "@/components/separator";
 import getPlaceholders from "@/pages/+data";
 import { Account } from "@/types/account";
-import { Heart } from "lucide-react";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import { usePageContext } from "vike-react/usePageContext";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
-  const [account] = useState(getPlaceholders().ARTISTS_PLACEHOLDER.find((e) => e.id === id));
+  const [account] = useState(getPlaceholders().ACCOUNTS_PLACEHOLDER.find((e) => e.id === id));
 
   if (!account) return null;
   return (
@@ -21,9 +15,9 @@ export default function Page() {
       <section>
         <Banner account={account} />
       </section>
-      {/* <section>
+      <section>
         <Content account={account} />
-      </section> */}
+      </section>
     </div>
   );
 }
@@ -50,20 +44,16 @@ function Banner({ account }: { account: Account }) {
   );
 }
 
-// function Content({ account }: { account: Account }) {
-//   const exercices = getPlaceholders().EXERCICES_PLACEHOLDER;
-//   return (
-//     <div className="w-full">
-//       <div className="ml-auto max-w-116 my-9">
-//         <Searchbar placeholder="search exercices of this account" />
-//       </div>
-//       <div className="flex  gap-x-auto gap-y-5 flex-wrap container">
-//         {exercices
-//           .filter((exercice) => exercice.composer === account)
-//           .map((exercice) => (
-//             <div>{exercice.title}</div>
-//           ))}
-//       </div>
-//     </div>
-//   );
-// }
+function Content({ account }: { account: Account }) {
+  const exercices = getPlaceholders().EXERCICES_PLACEHOLDER;
+  return (
+    <div className="w-full">
+      <div className="ml-auto max-w-116 my-9">
+        <Searchbar placeholder="search exercices of this account" />
+      </div>
+      <div className="flex  gap-x-auto gap-y-5 flex-wrap container">
+        <MediumPlaylistWrapper allowToAddANewProject={true} />
+      </div>
+    </div>
+  );
+}

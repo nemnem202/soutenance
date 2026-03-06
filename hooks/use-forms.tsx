@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginData } from "@/types/session";
+import { faker } from "@faker-js/faker";
 
 export function useNewProjectForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -14,6 +15,7 @@ export function useNewProjectForm() {
       image: {
         alt: "The cover of the project",
       },
+      accountId: faker.string.uuid(),
     },
   });
 

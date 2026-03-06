@@ -1,11 +1,13 @@
 import useSession from "@/hooks/use-session";
 import LoginButton from "./login-button";
-import AccountPPMenu from "./account-pp";
+import AccountPP from "./account-pp";
+import { faker } from "@faker-js/faker";
+import getPlaceholders from "@/pages/+data";
 
 export default function UserAccountORLogin() {
   const { session } = useSession();
 
   if (session) {
-    return <AccountPPMenu />;
+    return <AccountPP account={faker.helpers.arrayElement(getPlaceholders().ACCOUNTS_PLACEHOLDER)} />;
   } else return <LoginButton />;
 }

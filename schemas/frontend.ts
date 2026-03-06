@@ -23,6 +23,7 @@ export const projectSchema = z.object({
     )
     .max(10, { error: "Too many tags, max 10." }),
   exercicesIds: z.array(z.string()),
+  accountId: z.uuid(),
 });
 
 export const loginSchema = z.object({

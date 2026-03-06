@@ -11,13 +11,13 @@ const generateAccount = (): Account => ({
   picture: faker.image.avatar(),
 });
 
-const ARTISTS_PLACEHOLDER: Account[] = Array.from({ length: 20 }, () => generateAccount());
+const ACCOUNTS_PLACEHOLDER: Account[] = Array.from({ length: 20 }, () => generateAccount());
 
 const generateExercice = (): Exercice => ({
   id: faker.string.uuid(),
   title: faker.music.songName(),
-  author: faker.helpers.arrayElement(ARTISTS_PLACEHOLDER),
-  composer: faker.person.firstName(),
+  account: faker.helpers.arrayElement(ACCOUNTS_PLACEHOLDER),
+  author: faker.person.firstName(),
   config: {
     bpm: faker.number.int({ min: 60, max: 200 }),
   },
@@ -32,7 +32,8 @@ const generateProject = (exercices: Exercice[]): Project => {
   const selectedExercices = faker.helpers.arrayElements(exercices, nbExercices);
   return {
     id: faker.string.uuid(),
-    author: faker.person.firstName(),
+    author: faker.person.firstName() + faker.person.lastName(),
+    accountId: faker.helpers.arrayElement(ACCOUNTS_PLACEHOLDER).id,
     image: {
       src: faker.image.urlPicsumPhotos({ width: 400, height: 300 }),
       alt: faker.lorem.words(3),
@@ -54,10 +55,10 @@ export function getRandomProject(): Project {
 }
 
 export function getRandomAccount(): Account {
-  const randomIndex = Math.floor(Math.random() * ARTISTS_PLACEHOLDER.length);
-  return ARTISTS_PLACEHOLDER[randomIndex];
+  const randomIndex = Math.floor(Math.random() * ACCOUNTS_PLACEHOLDER.length);
+  return ACCOUNTS_PLACEHOLDER[randomIndex];
 }
 
 export default function getPlaceholders() {
-  return { EXERCICES_PLACEHOLDER, PROJECTS_PLACEHOLDERS, ARTISTS_PLACEHOLDER };
+  return { EXERCICES_PLACEHOLDER, PROJECTS_PLACEHOLDERS, ACCOUNTS_PLACEHOLDER };
 }
