@@ -1,6 +1,5 @@
 import { Pen, Upload, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "./button";
-import { Dialog, DialogContent, DialogTrigger } from "./dialog";
 import AvatarEditor from "react-avatar-editor";
 import { Slider } from "./slider";
 import useEditImage from "@/hooks/use-edit-image";
@@ -30,7 +29,14 @@ export default function EditableImage(props: EditableImageProps) {
           className={`absolute top-0 right-0 m-1 rounded-full z-2 ${!hovered && "hidden"}`}
           variant="ghost"
           size="icon"
-          onClick={() => setOpen(true)}
+          onClick={(e) => {
+            e.preventDefault();
+            if (imageSource) {
+              setOpen(true);
+            } else {
+              changeImage();
+            }
+          }}
         >
           <Pen />
         </Button>
