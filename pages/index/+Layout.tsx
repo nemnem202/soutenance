@@ -16,8 +16,8 @@ export default function Layout({ children }: { children: ReactNode }) {
 
 function MainPannel({ children }: { children: ReactNode }) {
   return (
-    <main className=" pt-20 pl-70 pb-10 container max-w-10xl mx-auto">
-      <div className="px-6 py-5">{children}</div>
+    <main className="pt-20 pl-70 pb-10 w-full min-h-screen flex flex-col container mx-auto">
+      <div className="px-6 py-5 flex-1 w-full flex flex-col">{children}</div>
     </main>
   );
 }
