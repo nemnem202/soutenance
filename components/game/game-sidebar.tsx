@@ -20,9 +20,10 @@ export default function GameSidebar({ sidebarOpen }: { sidebarOpen: boolean }) {
             <h2 className="headline !text-[2rem]">Settings</h2>
             <PresetSelect />
           </div>
-          <SidebarSection>
+          <div className="w-full p-4 pt-0">
             <TabBar />
-          </SidebarSection>
+          </div>
+
           <Separator />
           <div className="flex-1 overflow-y-auto">
             <SidebarSection>

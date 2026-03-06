@@ -13,9 +13,10 @@ export default function Sidebar() {
         <div className="h-20 p-4 flex items-center">
           <Logo />
         </div>
-        <SidebarSection>
+        <div className="w-full p-4 pt-0">
           <NavBar />
-        </SidebarSection>
+        </div>
+
         <Separator />
       </div>
       <div className="flex-1 overflow-y-auto ">
