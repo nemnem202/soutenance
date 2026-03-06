@@ -29,7 +29,7 @@ export default function Page() {
 }
 
 function Banner({ project }: { project: Project }) {
-  const account = getPlaceholders().ACCOUNTS_PLACEHOLDER.find((account) => account.id === project.id);
+  const account = getPlaceholders().ACCOUNTS_PLACEHOLDER.find((account) => account.id === project.accountId);
   return (
     <div className="flex w-full gap-8 items-center">
       <div className="w-75 rounded aspect-square overflow-hidden">

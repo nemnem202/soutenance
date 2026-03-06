@@ -52,7 +52,7 @@ function Content({ account }: { account: Account }) {
         <Searchbar placeholder="search exercices of this account" />
       </div>
       <div className="flex  gap-x-auto gap-y-5 flex-wrap container">
-        <MediumPlaylistWrapper allowToAddANewProject={true} />
+        <MediumPlaylistWrapper />
       </div>
     </div>
   );
