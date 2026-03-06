@@ -1,23 +1,23 @@
-import { Artist } from "@/types/artist";
+import { Account } from "@/types/account";
 import { Exercice, Project } from "@/types/project";
 import { Faker, en } from "@faker-js/faker";
 
 const faker = new Faker({ locale: [en] });
 
-const generateArtist = (): Artist => ({
+const generateAccount = (): Account => ({
   id: faker.string.uuid(),
   firstName: faker.music.artist(),
   lastName: Math.random() > 0.5 ? faker.person.lastName() : undefined,
   picture: faker.image.avatar(),
 });
 
-const ARTISTS_PLACEHOLDER: Artist[] = Array.from({ length: 2000 }, () => generateArtist());
+const ARTISTS_PLACEHOLDER: Account[] = Array.from({ length: 20 }, () => generateAccount());
 
 const generateExercice = (): Exercice => ({
   id: faker.string.uuid(),
   title: faker.music.songName(),
-  author: faker.person.firstName(),
-  composer: faker.helpers.arrayElement(ARTISTS_PLACEHOLDER),
+  author: faker.helpers.arrayElement(ARTISTS_PLACEHOLDER),
+  composer: faker.person.firstName(),
   config: {
     bpm: faker.number.int({ min: 60, max: 200 }),
   },
@@ -53,11 +53,11 @@ export function getRandomProject(): Project {
   return PROJECTS_PLACEHOLDERS[randomIndex];
 }
 
-export function getRandomArtist(): Artist {
+export function getRandomAccount(): Account {
   const randomIndex = Math.floor(Math.random() * ARTISTS_PLACEHOLDER.length);
   return ARTISTS_PLACEHOLDER[randomIndex];
 }
 
 export default function getPlaceholders() {
-  return { EXERCICES_PLACEHOLDER, PROJECTS_PLACEHOLDERS };
+  return { EXERCICES_PLACEHOLDER, PROJECTS_PLACEHOLDERS, ARTISTS_PLACEHOLDER };
 }

@@ -1,5 +1,5 @@
 import AnimatedTabs from "@/components/animated-tabs";
-import { MediumArtistWidget } from "@/components/artist-widgets";
+import { MediumAccountWidget } from "@/components/account-widgets";
 import Headline from "@/components/headline";
 import { MediumPlaylistWidget } from "@/components/playlists-widgets";
 import { MediumWidgetCaroussel } from "@/components/widget-carousel";
@@ -40,9 +40,9 @@ export default function Page() {
             ))}
           />
           <MediumWidgetCaroussel
-            title="Artists"
+            title="Accounts"
             widgets={Array.from({ length: 20 }).map(() => (
-              <MediumArtistWidget />
+              <MediumAccountWidget />
             ))}
           />
           <MediumWidgetCaroussel
