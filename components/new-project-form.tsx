@@ -42,7 +42,7 @@ export default function NewProjectForm() {
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid} className="gap-1">
               <FieldLabel htmlFor="form-rhf-post-title" className="title-4">
-                Titre
+                Title
               </FieldLabel>
               <Input
                 {...field}

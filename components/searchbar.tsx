@@ -7,7 +7,7 @@ interface SearchbarProps {
 
 export default function Searchbar({ ...props }: SearchbarProps) {
   return (
-    <InputGroup className="w-full border-none !bg-popover h-full">
+    <InputGroup className="w-full h-full">
       <InputGroupAddon align="inline-start" className="pl-3">
         <Search />
       </InputGroupAddon>

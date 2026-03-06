@@ -26,7 +26,7 @@ export function MediumPlaylistWidget() {
   const [project, setProject] = useState(getRandomProject());
 
   return (
-    <div className=" w-50 cursor-pointer hover:opacity-90 rounded-md transition">
+    <div className=" w-50 cursor-pointer hover:opacity-80 rounded-md transition">
       <a href={`/playlist/${project.id}`} className="flex flex-col rounded gap-2.5">
         <div className="w-full aspect-square rounded overflow-hidden">
           <img src={project.image.src} alt={project.image.alt} className="w-full h-full object-cover" width={185} />
@@ -45,7 +45,7 @@ export function MediumPlaylistWidget() {
 
 function MediumAddNewProjectWidget() {
   return (
-    <div className=" w-50 cursor-pointer hover:bg-popover p-2 rounded-md transition">
+    <div className=" w-50 cursor-pointer hover:opacity-80 rounded-md transition">
       <a href="/new-project" className="flex flex-col rounded gap-2.5">
         <div className="w-full aspect-square rounded overflow-hidden bg-card flex items-center justify-center">
           <Plus size={100} />
