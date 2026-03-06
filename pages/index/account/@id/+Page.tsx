@@ -2,12 +2,17 @@ import { MediumPlaylistWrapper } from "@/components/playlists-widgets";
 import Searchbar from "@/components/searchbar";
 import getPlaceholders from "@/pages/+data";
 import { Account } from "@/types/account";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePageContext } from "vike-react/usePageContext";
+import { navigate } from "vike/client/router";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
   const [account] = useState(getPlaceholders().ACCOUNTS_PLACEHOLDER.find((e) => e.id === id));
+
+  useEffect(() => {
+    if (!account) navigate("/404");
+  }, []);
 
   if (!account) return null;
   return (

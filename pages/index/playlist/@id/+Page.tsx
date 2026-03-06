@@ -2,18 +2,22 @@ import AccountPP from "@/components/account-pp";
 import { Badge } from "@/components/badge";
 import { Button } from "@/components/button";
 import { Checkbox } from "@/components/checkbox";
-import { Label } from "@/components/label";
 import Searchbar from "@/components/searchbar";
 import { Separator } from "@/components/separator";
 import getPlaceholders from "@/pages/+data";
 import { Project, ProjectSchema } from "@/types/project";
 import { Heart } from "lucide-react";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { usePageContext } from "vike-react/usePageContext";
+import { navigate } from "vike/client/router";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
   const [project] = useState(getPlaceholders().PROJECTS_PLACEHOLDERS.find((e) => e.id === id));
+
+  useEffect(() => {
+    if (!project) navigate("/404");
+  }, []);
 
   if (!project) return null;
   return (
