@@ -5,7 +5,9 @@ import { ReactNode } from "react";
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <SessionProvider>
-      <TooltipProvider>{children}</TooltipProvider>
+      <TooltipProvider>
+        <div className="flex flex-col">{children}</div>
+      </TooltipProvider>
     </SessionProvider>
   );
 }

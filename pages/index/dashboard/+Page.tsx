@@ -3,9 +3,9 @@ import { MediumPlaylistWrapper } from "@/components/playlists-widgets";
 
 export default function Page() {
   return (
-    <div className="flex flex-col">
+    <>
       <Headline>Your projects</Headline>
       <MediumPlaylistWrapper allowToAddANewProject={true} />
-    </div>
+    </>
   );
 }
