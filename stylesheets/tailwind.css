@@ -1,8 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./general.css";
-
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 @font-face {
   font-family: "ZingRust";
@@ -30,9 +29,9 @@
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
+  --card: #f9f9f9;
   --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
+  --popover: rgb(236, 236, 236);
   --popover-foreground: oklch(0.145 0 0);
 
   --primary-foreground: oklch(0.985 0 0);
