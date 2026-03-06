@@ -1,3 +1,4 @@
+import AnimatedTabs from "@/components/animated-tabs";
 import { Button } from "@/components/button";
 import { Field, FieldLabel } from "@/components/field";
 import Header from "@/components/game-header";
@@ -28,13 +29,25 @@ interface Gameprops {
   openSidebar: () => void;
 }
 
+const tabs = [
+  { id: "piano-roll", label: "piano-roll" },
+  { id: "chords", label: "chords" },
+  { id: "sheet", label: "sheet", disabled: true },
+  { id: "guitar", label: "guitar", disabled: true },
+];
+
 function Game({ ...props }: Gameprops) {
+  const [activeTab, setActiveTab] = useState("piano-roll");
   return (
     <main className="flex-1 flex flex-col items-center pt-5">
       <h1 className="headline select-none">Brown Sugar</h1>
       <div className=" size-full px-20 py-5  flex flex-col gap-2">
         <div className="flex-1">
-          <Tabs defaultValue="piano-roll" className="size-full flex flex-col gap-2">
+          <div className="w-full flex justify-center">
+            <AnimatedTabs activeTab={activeTab} onChange={setActiveTab} tabs={tabs} variant="pill" className="my-5" />
+          </div>
+
+          {/* <Tabs defaultValue="piano-roll" className="size-full flex flex-col gap-2">
             <div className="w-full flex justify-center">
               <TabsList className="rounded-full">
                 <TabsTrigger value="piano-roll" className="rounded-full rounded-e-sm select-none paragraph-md">
@@ -76,7 +89,7 @@ function Game({ ...props }: Gameprops) {
                 <></>
               </Tab>
             </TabsContent>
-          </Tabs>
+          </Tabs> */}
         </div>
         <ControlsSection>
           <IconButton onClick={props.openSidebar}>

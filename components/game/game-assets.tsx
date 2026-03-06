@@ -1,7 +1,6 @@
-import { ButtonHTMLAttributes, ComponentProps, LabelHTMLAttributes, ReactNode, useId, useState } from "react";
+import { ComponentProps, ReactNode, useId, useState } from "react";
 import { Slider } from "../slider";
 import { Label } from "../label";
-import { Input } from "../input";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "../input-group";
 import { Checkbox } from "../checkbox";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../tooltip";

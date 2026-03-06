@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { type ReactNode, useCallback, useId, useState } from "react";
 
 export interface AnimatedTabsProps {
-  tabs: { id: string; label: string; icon?: ReactNode }[];
+  tabs: { id: string; label: string; icon?: ReactNode; disabled?: boolean }[];
   activeTab?: string;
   defaultTab?: string;
   onChange?: (tabId: string) => void;
@@ -40,6 +40,8 @@ export default function AnimatedTabs({
 
   const handleTabChange = useCallback(
     (tabId: string) => {
+      const tab = tabs.find((t) => t.id === tabId);
+      if (tab?.disabled) return;
       if (!isControlled) {
         setInternalActiveTab(tabId);
       }
@@ -68,7 +70,12 @@ export default function AnimatedTabs({
         return;
       }
 
-      const newTab = tabs[newIndex];
+      let newTab = tabs[newIndex];
+
+      while (newTab?.disabled) {
+        newIndex = (newIndex + 1) % tabs.length;
+        newTab = tabs[newIndex];
+      }
       if (newTab) {
         handleTabChange(newTab.id);
         const tabElement = document.getElementById(`${layoutId}-tab-${newTab.id}`);
@@ -81,25 +88,38 @@ export default function AnimatedTabs({
   const baseContainerStyles = cn(
     "relative inline-flex",
     variant === "underline" && "gap-1 border-border border-b",
-    variant === "pill" && "gap-1 rounded-full bg-muted p-1",
-    variant === "segment" && "gap-0 rounded-lg bg-muted p-1",
+    variant === "pill" && "gap-1 rounded-full bg-muted p-1.5",
+    variant === "segment" && "gap-0 rounded-lg bg-muted p-1.5",
   );
 
-  const getTabStyles = (isActive: boolean) =>
+  const getTabStyles = (isActive: boolean, disabled?: boolean) =>
     cn(
-      "cursor-pointer relative z-10 flex items-center justify-center gap-2 px-4 py-2 font-medium text-sm transition-colors",
+      "relative z-10 flex items-center justify-center gap-2 px-4 py-2 font-medium text-sm transition-colors",
+      disabled ? "text-muted-foreground opacity-60" : "cursor-pointer",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
       variant === "underline" && [
         "rounded-t-md",
-        isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+        disabled
+          ? "text-muted-foreground"
+          : isActive
+            ? "text-foreground"
+            : "text-muted-foreground hover:text-foreground",
       ],
       variant === "pill" && [
         "rounded-full",
-        isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+        disabled
+          ? "text-muted-foreground"
+          : isActive
+            ? "text-foreground"
+            : "text-muted-foreground hover:text-foreground",
       ],
       variant === "segment" && [
         "flex-1 rounded-md",
-        isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+        disabled
+          ? "text-muted-foreground"
+          : isActive
+            ? "text-foreground"
+            : "text-muted-foreground hover:text-foreground",
       ],
     );
 
@@ -107,8 +127,8 @@ export default function AnimatedTabs({
     cn(
       "absolute",
       variant === "underline" && "right-0 -bottom-px left-0 h-0.5 bg-primary",
-      variant === "pill" && "inset-0 rounded-full border border-border bg-background shadow-sm",
-      variant === "segment" && "inset-0 rounded-md border border-border bg-background shadow-sm",
+      variant === "pill" && "inset-0 rounded-full bg-primary shadow-sm",
+      variant === "segment" && "inset-0 rounded-md border border-border bg-primary shadow-sm",
     );
 
   return (
@@ -119,13 +139,14 @@ export default function AnimatedTabs({
         return (
           <button
             aria-selected={isActive}
-            className={getTabStyles(isActive)}
+            className={getTabStyles(isActive, tab.disabled)}
             id={`${layoutId}-tab-${tab.id}`}
             key={tab.id}
-            onClick={() => handleTabChange(tab.id)}
+            disabled={tab.disabled}
+            onClick={() => !tab.disabled && handleTabChange(tab.id)}
             onKeyDown={(e) => handleKeyDown(e, index)}
             role="tab"
-            tabIndex={isActive ? 0 : -1}
+            tabIndex={tab.disabled ? -1 : isActive ? 0 : -1}
             type="button"
           >
             {isActive && (
