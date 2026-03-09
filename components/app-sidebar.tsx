@@ -5,6 +5,7 @@ import { SmallPlaylistWidget } from "./playlists-widgets";
 import { Button } from "./button";
 import Logo from "./logo";
 import Link from "./link";
+import { navigate } from "vike/client/router";
 
 export default function Sidebar() {
   return (
@@ -52,7 +53,7 @@ function Playlists() {
     <div className="w-full flex flex-col gap-5">
       <div className="w-full flex justify-between items-center">
         <h2 className="title-3">Playlists</h2>
-        <Button size={"icon"} variant={"ghost"} className="rounded-full">
+        <Button size={"icon"} variant={"ghost"} className="rounded-full" onClick={() => navigate("/new-playlist")}>
           <Plus />
         </Button>
       </div>
