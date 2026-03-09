@@ -165,7 +165,7 @@ export function SearchPlaylistItemsList({ playlist }: { playlist: Playlist }) {
   return (
     <div className="w-full">
       <div className="w-full flex justify-between px-4 py-2">
-        <p className="paragramh-md text-muted-foreground">Exercice</p>
+        <div></div>
         <div className="flex items-center">
           <PlaylistItemBox className="w-40 min-w-40 justify-start">
             <p className="paragraph-md text-muted-foreground">User</p>
@@ -197,7 +197,7 @@ export function SearchPlaylistItemsList({ playlist }: { playlist: Playlist }) {
 export function SearchExercicesList() {
   const playlist = getRandomPlaylist();
   return (
-    <div className="flex flex-col gap-6 mx-auto mb-6 container">
+    <div className="flex flex-col mx-auto mb-6 container">
       <WidgetTitle title="Exercices" />
       <SearchPlaylistItemsList playlist={playlist} />
     </div>

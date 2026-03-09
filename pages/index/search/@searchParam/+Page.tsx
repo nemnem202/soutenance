@@ -7,6 +7,7 @@ import { useState } from "react";
 
 const tabs = [
   { id: "all", label: "All" },
+  { id: "exercices", label: "Exercices" },
   { id: "playlists", label: "Playlists" },
   { id: "users", label: "Users" },
 ];
