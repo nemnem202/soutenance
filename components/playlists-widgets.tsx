@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Heart, Plus } from "lucide-react";
 import { getRandomPlaylist } from "@/pages/+data";
 import { Button } from "./button";
-import { LikeButton } from "./custom-buttons";
+import { LikeButton, PlusButton } from "./custom-buttons";
 
 export function SmallPlaylistWidget() {
   const [playlist, setPlaylist] = useState(getRandomPlaylist());
@@ -31,15 +31,19 @@ export function SmallPlaylistWidget() {
 }
 
 export function MediumPlaylistWidget() {
-  const [playlist, setPlaylist] = useState(getRandomPlaylist());
-  const [hover, setHover] = useState(false);
+  const [playlist] = useState(getRandomPlaylist());
 
   return (
-    <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-      <div className={`absolute top-2 right-2 z-1 opacity-0 ${hover && "opacity-100"} transition`}>
-        <LikeButton />
+    <div className="relative group w-55">
+      <div className="absolute top-0 left-0 px-2 pt-2 w-full z-10 flex justify-between  opacity-0 group-hover:opacity-100 transition pointer-events-none">
+        <div className="pointer-events-auto">
+          <PlusButton />
+        </div>
+        <div className="pointer-events-auto">
+          <LikeButton />
+        </div>
       </div>
-      <div className="w-55 cursor-pointer hover:opacity-80 rounded-md transition">
+      <div className="cursor-pointer rounded-md transition group-hover:opacity-80">
         <a href={`/playlist/${playlist.id}`} className="flex flex-col rounded gap-2.5">
           <div className="w-full aspect-square rounded overflow-hidden">
             <img
@@ -53,6 +57,7 @@ export function MediumPlaylistWidget() {
 
           <div className="flex-col flex w-full">
             <h3 className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{playlist.title}</h3>
+
             <div className="w-full justify-between paragraph-sm text-muted-foreground flex wrap">
               <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[80%]">by {playlist.author}</p>
               <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[15%]">
