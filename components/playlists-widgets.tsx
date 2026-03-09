@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Heart, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { getRandomPlaylist } from "@/pages/+data";
-import { Button } from "./button";
 import { LikeButton, PlusButton } from "./custom-buttons";
 
 export function SmallPlaylistWidget() {
@@ -35,7 +34,7 @@ export function MediumPlaylistWidget() {
 
   return (
     <div className="relative group w-55">
-      <div className="absolute top-0 left-0 px-2 pt-2 w-full z-10 flex justify-between  opacity-0 group-hover:opacity-100 transition pointer-events-none">
+      <div className="absolute top-0 left-0 px-2 pt-2 w-full z-1 flex justify-between  opacity-0 group-hover:opacity-100 transition pointer-events-none">
         <div className="pointer-events-auto">
           <PlusButton />
         </div>
