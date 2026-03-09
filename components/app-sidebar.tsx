@@ -10,7 +10,7 @@ import { PlusButton } from "./custom-buttons";
 
 export default function Sidebar() {
   return (
-    <div className="bg-card w-70 fixed z-2 h-screen left-0 top-0 flex flex-col border-e-[1px]">
+    <div className="bg-card w-70 fixed z-20 h-screen left-0 top-0 flex flex-col border-e-[1px]">
       <div className="w-full ">
         <div className="h-20 p-4 flex items-center">
           <Logo />
