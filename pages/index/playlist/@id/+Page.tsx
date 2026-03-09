@@ -2,7 +2,7 @@ import AccountPP from "@/components/account-pp";
 import { Badge } from "@/components/badge";
 import { Button } from "@/components/button";
 import { Checkbox } from "@/components/checkbox";
-import { LikeButton } from "@/components/custom-buttons";
+import { LikeButton, PlusButton } from "@/components/custom-buttons";
 import Searchbar from "@/components/searchbar";
 import { Separator } from "@/components/separator";
 import getPlaceholders from "@/pages/+data";
@@ -36,7 +36,11 @@ export default function Page() {
 function Banner({ playlist }: { playlist: Playlist }) {
   const account = getPlaceholders().ACCOUNTS_PLACEHOLDER.find((account) => account.id === playlist.accountId);
   return (
-    <div className="flex w-full gap-8 items-center">
+    <div className="flex w-full gap-8 items-center relative">
+      <div className="absolute right-2 top-2 z-1">
+        <PlusButton />
+        <LikeButton />
+      </div>
       <div className="w-75 rounded aspect-square overflow-hidden">
         <img
           src={playlist.image.src}
