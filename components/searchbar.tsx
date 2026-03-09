@@ -3,6 +3,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "./input-group";
 import { Search } from "lucide-react";
 import useSearchbar from "@/hooks/use-searchbar";
 import { navigate } from "vike/client/router";
+import { useState } from "react";
 export interface SearchbarProps {
   placeholder: string;
 }
@@ -10,7 +11,7 @@ export interface SearchbarProps {
 export default function Searchbar({ ...props }: SearchbarProps) {
   const { items, handleInputValueChange, searchbarValue, setSearchbarValue, placeholder, setPlaceholder } =
     useSearchbar(props);
-
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <BasicDropdown
       items={items}
@@ -21,8 +22,11 @@ export default function Searchbar({ ...props }: SearchbarProps) {
         navigate("/search/" + item.label);
       }}
       onFocusChange={(item) => {
+        if (!item) return setPlaceholder(props.placeholder);
         setPlaceholder(item.label);
       }}
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
     >
       <InputGroup
         className="w-full h-full"
@@ -38,7 +42,11 @@ export default function Searchbar({ ...props }: SearchbarProps) {
           id="input-group-url"
           placeholder={placeholder}
           className="!text-left"
-          onChange={handleInputValueChange}
+          onChange={(e) => {
+            handleInputValueChange(e);
+            setPlaceholder(props.placeholder);
+            setIsOpen(true);
+          }}
           autoComplete="off"
           value={searchbarValue}
           onBlur={() => setPlaceholder(props.placeholder)}

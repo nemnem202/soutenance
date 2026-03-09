@@ -4,8 +4,8 @@ import { MediumPlaylistWrapper } from "@/components/playlists-widgets";
 export default function Page() {
   return (
     <>
-      <Headline>Your projects</Headline>
-      <MediumPlaylistWrapper allowToAddANewProject={true} />
+      <Headline>Your playlists</Headline>
+      <MediumPlaylistWrapper allowToAddANewPlaylist={true} />
     </>
   );
 }

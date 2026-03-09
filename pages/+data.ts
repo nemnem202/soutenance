@@ -1,5 +1,5 @@
 import { Account } from "@/types/account";
-import { Exercice, Project } from "@/types/project";
+import { Exercice, Playlist } from "@/types/playlist";
 import { Faker, en } from "@faker-js/faker";
 
 const faker = new Faker({ locale: [en] });
@@ -27,7 +27,7 @@ const generateExercice = (): Exercice => ({
   midiFileId: faker.string.uuid(),
 });
 
-const generateProject = (exercices: Exercice[]): Project => {
+const generatePlaylist = (exercices: Exercice[]): Playlist => {
   const nbExercices = faker.number.int({ min: 1, max: 5 });
   const selectedExercices = faker.helpers.arrayElements(exercices, nbExercices);
   return {
@@ -47,9 +47,9 @@ const generateProject = (exercices: Exercice[]): Project => {
 
 const EXERCICES_PLACEHOLDER: Exercice[] = Array.from({ length: 2000 }, () => generateExercice());
 
-const PROJECTS_PLACEHOLDERS: Project[] = Array.from({ length: 200 }, () => generateProject(EXERCICES_PLACEHOLDER));
+const PROJECTS_PLACEHOLDERS: Playlist[] = Array.from({ length: 200 }, () => generatePlaylist(EXERCICES_PLACEHOLDER));
 
-export function getRandomProject(): Project {
+export function getRandomPlaylist(): Playlist {
   const randomIndex = Math.floor(Math.random() * PROJECTS_PLACEHOLDERS.length);
   return PROJECTS_PLACEHOLDERS[randomIndex];
 }

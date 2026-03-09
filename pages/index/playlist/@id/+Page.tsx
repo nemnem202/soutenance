@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/checkbox";
 import Searchbar from "@/components/searchbar";
 import { Separator } from "@/components/separator";
 import getPlaceholders from "@/pages/+data";
-import { Project, ProjectSchema } from "@/types/project";
+import { Playlist, PlaylistSchema } from "@/types/playlist";
 import { Heart } from "lucide-react";
 import { ReactNode, useEffect, useState } from "react";
 import { usePageContext } from "vike-react/usePageContext";
@@ -13,33 +13,33 @@ import { navigate } from "vike/client/router";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
-  const [project] = useState(getPlaceholders().PROJECTS_PLACEHOLDERS.find((e) => e.id === id));
+  const [playlist] = useState(getPlaceholders().PROJECTS_PLACEHOLDERS.find((e) => e.id === id));
 
   useEffect(() => {
-    if (!project) navigate("/404");
+    if (!playlist) navigate("/404");
   }, []);
 
-  if (!project) return null;
+  if (!playlist) return null;
   return (
     <div className="flex flex-col ">
       <section>
-        <Banner project={project} />
+        <Banner playlist={playlist} />
       </section>
       <section>
-        <Content project={project} />
+        <Content playlist={playlist} />
       </section>
     </div>
   );
 }
 
-function Banner({ project }: { project: Project }) {
-  const account = getPlaceholders().ACCOUNTS_PLACEHOLDER.find((account) => account.id === project.accountId);
+function Banner({ playlist }: { playlist: Playlist }) {
+  const account = getPlaceholders().ACCOUNTS_PLACEHOLDER.find((account) => account.id === playlist.accountId);
   return (
     <div className="flex w-full gap-8 items-center">
       <div className="w-75 rounded aspect-square overflow-hidden">
         <img
-          src={project.image.src}
-          alt={project.image.alt}
+          src={playlist.image.src}
+          alt={playlist.image.alt}
           width={300}
           height={300}
           loading="lazy"
@@ -48,7 +48,7 @@ function Banner({ project }: { project: Project }) {
       </div>
 
       <div className="flex flex-col justify-center flex-1">
-        <h1 className="headline h-min">{project.title}</h1>
+        <h1 className="headline h-min">{playlist.title}</h1>
         <div className="flex flex-col gap-3">
           {account && (
             <a
@@ -56,12 +56,12 @@ function Banner({ project }: { project: Project }) {
               className="flex items-center gap-2 hover:opacity-80 transition cursor-pointer"
             >
               <AccountPP account={account} />
-              <p className="title-4">{project.author}</p>
+              <p className="title-4">{playlist.author}</p>
             </a>
           )}
 
           <div className="flex gap-2">
-            <p className="text-muted-foreground">{project.exercicesIds.length} exercices</p>
+            <p className="text-muted-foreground">{playlist.exercicesIds.length} exercices</p>
             <Separator orientation="vertical" />
             <p className="text-muted-foreground">medium</p>
             <Separator orientation="vertical" />
@@ -73,18 +73,18 @@ function Banner({ project }: { project: Project }) {
   );
 }
 
-function Content({ project }: { project: Project }) {
+function Content({ playlist }: { playlist: Playlist }) {
   return (
     <div className="w-full">
       <div className="ml-auto max-w-116 my-9">
         <Searchbar placeholder="search the playlist" />
       </div>
-      <PlaylistItemsList project={project} />
+      <PlaylistItemsList playlist={playlist} />
     </div>
   );
 }
 
-function PlaylistItemsList({ project }: { project: Project }) {
+function PlaylistItemsList({ playlist }: { playlist: Playlist }) {
   return (
     <div className="w-full">
       <div className="w-full flex justify-between px-4 py-2">
@@ -103,8 +103,8 @@ function PlaylistItemsList({ project }: { project: Project }) {
       </div>
       <Separator orientation="horizontal" />
       <div className="w-full flex flex-col justify-between  py-0 mt-2">
-        {project.exercicesIds.map((id, index) => (
-          <PlaylistItem index={index} key={index} project={project} id={id} />
+        {playlist.exercicesIds.map((id, index) => (
+          <PlaylistItem index={index} key={index} playlist={playlist} id={id} />
         ))}
       </div>
     </div>
@@ -117,7 +117,7 @@ function PlaylistItemBox({ children }: { children: ReactNode }) {
 
 interface PLaylistItemProps {
   index: number;
-  project: Project;
+  playlist: Playlist;
   id: string;
 }
 
@@ -131,7 +131,13 @@ function PlaylistItem({ ...props }: PLaylistItemProps) {
       href="/game"
     >
       <div className="flex items-center h-15">
-        <img className="w-15 h-15" width={60} height={60} src={props.project.image.src} alt={props.project.image.alt} />
+        <img
+          className="w-15 h-15"
+          width={60}
+          height={60}
+          src={props.playlist.image.src}
+          alt={props.playlist.image.alt}
+        />
         <div className="flex h-fit gap-3">
           <div className="flex flex-col pl-2 gap-1">
             <p className="title-4">{exercice.title}</p>

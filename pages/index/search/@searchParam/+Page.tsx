@@ -5,7 +5,6 @@ const tabs = [
   { id: "all", label: "All" },
   { id: "playlists", label: "Playlists" },
   { id: "authors", label: "Authors" },
-  { id: "albums", label: "Albums" },
 ];
 
 export default function Page() {

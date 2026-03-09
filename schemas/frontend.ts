@@ -5,7 +5,7 @@ export const imageSchema = z.object({
   alt: z.string({ error: "The image description must be provided." }),
 });
 
-export const projectSchema = z.object({
+export const playlistSchema = z.object({
   image: imageSchema,
   title: z
     .string({

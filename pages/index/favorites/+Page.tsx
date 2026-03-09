@@ -10,7 +10,6 @@ const tabs = [
   { id: "liked", label: "Liked" },
   { id: "playlists", label: "Playlists" },
   { id: "authors", label: "Authors" },
-  { id: "albums", label: "Albums" },
 ];
 
 export default function Page() {
@@ -34,19 +33,13 @@ export default function Page() {
             ))}
           />
           <MediumWidgetCaroussel
-            title="Playlists"
-            widgets={Array.from({ length: 20 }).map(() => (
-              <MediumPlaylistWidget />
-            ))}
-          />
-          <MediumWidgetCaroussel
             title="Accounts"
             widgets={Array.from({ length: 20 }).map(() => (
               <MediumAccountWidget />
             ))}
           />
           <MediumWidgetCaroussel
-            title="Albums"
+            title="Playlists"
             widgets={Array.from({ length: 20 }).map(() => (
               <MediumPlaylistWidget />
             ))}

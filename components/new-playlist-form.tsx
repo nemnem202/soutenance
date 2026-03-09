@@ -1,4 +1,4 @@
-import { useNewProjectForm } from "@/hooks/use-forms";
+import { useNewPlaylistForm } from "@/hooks/use-forms";
 import { Field, FieldError, FieldGroup, FieldLabel } from "./field";
 import { Controller } from "react-hook-form";
 import { Input } from "./input";
@@ -9,10 +9,10 @@ import { Badge } from "./badge";
 import EditableImage from "./editable-image";
 import { Button } from "./button";
 
-export interface NewProjectFormProps {}
+export interface NewPlaylistFormProps {}
 
-export default function NewProjectForm() {
-  const { form, formRef, handleSubmit } = useNewProjectForm();
+export default function NewPlaylistForm() {
+  const { form, formRef, handleSubmit } = useNewPlaylistForm();
   return (
     <form id="form-rhf-post" onSubmit={form.handleSubmit(handleSubmit)} ref={formRef}>
       <FieldGroup>
@@ -24,7 +24,7 @@ export default function NewProjectForm() {
               <div className="w-full flex justify-center">
                 <div className="w-75 h-75 overflow-hidden">
                   <EditableImage
-                    alt="ProjectSchema cover"
+                    alt="playlist cover"
                     src={field.value}
                     onImageChange={(source) => field.onChange(source)}
                   />

@@ -1,5 +1,5 @@
-import NewProjectForm from "@/components/new-project-form";
+import NewPlaylistForm from "@/components/new-playlist-form";
 
 export default function Page() {
-  return <NewProjectForm />;
+  return <NewPlaylistForm />;
 }

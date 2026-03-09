@@ -1,8 +1,7 @@
 "use client";
 
-import { faker } from "@faker-js/faker";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 const ROTATION_ANGLE_OPEN = 180;
@@ -18,9 +17,12 @@ export interface BasicDropdownProps {
   label: string;
   items: DropdownItem[];
   onItemClick?: (item: DropdownItem) => void;
-  onFocusChange?: (item: DropdownItem) => void;
+  onFocusChange?: (item: DropdownItem | null) => void;
   className?: string;
   children: ReactNode;
+  closeOnClickOutside?: boolean;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  isOpen: boolean;
 }
 
 export default function BasicDropdown({
@@ -30,8 +32,10 @@ export default function BasicDropdown({
   onFocusChange,
   className = "",
   children,
+  closeOnClickOutside = true,
+  isOpen,
+  setIsOpen,
 }: BasicDropdownProps) {
-  const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<DropdownItem | null>(null);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -40,7 +44,7 @@ export default function BasicDropdown({
   const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
   const shouldReduceMotion = useReducedMotion();
 
-  const handleItemSelect = (item: DropdownItem) => {
+  const handleItemSelect = (item: DropdownItem | null) => {
     setSelectedItem(item);
     setIsOpen(false);
     onFocusChange?.(item);
@@ -85,6 +89,7 @@ export default function BasicDropdown({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      if (!closeOnClickOutside) return;
       const target = event.target as Node;
       if (
         isOpen &&
@@ -163,6 +168,7 @@ export default function BasicDropdown({
           ref={portalRef}
           onMouseLeave={() => {
             setFocusedIndex(-1);
+            handleItemSelect(null);
           }}
         >
           <motion.div

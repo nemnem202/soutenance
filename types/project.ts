@@ -1,4 +1,4 @@
-import { projectSchema } from "@/schemas/frontend";
+import { playlistSchema } from "@/schemas/frontend";
 import z from "zod";
 import { Account } from "./account";
 
@@ -18,6 +18,6 @@ export type Exercice = {
   midiFileId: string;
 };
 
-export type ProjectSchema = z.infer<typeof projectSchema>;
+export type PlaylistSchema = z.infer<typeof playlistSchema>;
 
-export type Project = ProjectSchema & { id: string; author: string };
+export type Playlist = PlaylistSchema & { id: string; author: string };

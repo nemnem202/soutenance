@@ -1,25 +1,25 @@
-import { loginSchema, projectSchema } from "@/schemas/frontend";
-import { ProjectSchema } from "@/types/project";
+import { loginSchema, playlistSchema } from "@/schemas/frontend";
+import { PlaylistSchema } from "@/types/playlist";
 import { useEffect, useRef } from "react";
 import { Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginData } from "@/types/session";
 import { faker } from "@faker-js/faker";
 
-export function useNewProjectForm() {
+export function useNewPlaylistForm() {
   const formRef = useRef<HTMLFormElement>(null);
 
-  const form = useForm<ProjectSchema>({
-    resolver: zodResolver(projectSchema) as Resolver<ProjectSchema>,
+  const form = useForm<PlaylistSchema>({
+    resolver: zodResolver(playlistSchema) as Resolver<PlaylistSchema>,
     defaultValues: {
       image: {
-        alt: "The cover of the project",
+        alt: "The cover of the playlist",
       },
       accountId: faker.string.uuid(),
     },
   });
 
-  const handleSubmit = (form: ProjectSchema) => {
+  const handleSubmit = (form: PlaylistSchema) => {
     console.log(form);
   };
 
