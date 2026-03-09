@@ -3,7 +3,7 @@ import { Badge } from "@/components/badge";
 import { Button } from "@/components/button";
 import { Checkbox } from "@/components/checkbox";
 import { LikeButton, PlusButton } from "@/components/custom-buttons";
-import { PlaylistItemsList } from "@/components/playlist-widgets";
+import { PlaylistItemsList } from "@/components/playlist-items";
 import Searchbar from "@/components/searchbar";
 import { Separator } from "@/components/separator";
 import getPlaceholders from "@/pages/+data";

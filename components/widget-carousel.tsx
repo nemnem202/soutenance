@@ -90,10 +90,10 @@ export function MediumWidgetCaroussel({ ...props }: MediumWidgetCarousselProps) 
   );
 }
 
-export function WidgetTitle({ ...props }: MediumWidgetCarousselProps) {
+export function WidgetTitle({ title }: { title: string }) {
   return (
     <div className="flex items-center gap-x-5">
-      <h2 className="title-2">{props.title}</h2>
+      <h2 className="title-2">{title}</h2>
       <Button variant="outline" size="sm" className="py-0" asChild>
         <a href="/see-all" className="paragraph-md !h-min py-1">
           see all

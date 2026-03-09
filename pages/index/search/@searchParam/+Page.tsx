@@ -1,7 +1,8 @@
 import { MediumAccountWidget } from "@/components/account-widgets";
 import AnimatedTabs from "@/components/animated-tabs";
+import { PlaylistItemsList, SearchExercicesList } from "@/components/playlist-items";
 import { MediumPlaylistWidget } from "@/components/playlists-widgets";
-import { MediumWidgetCaroussel } from "@/components/widget-carousel";
+import { MediumWidgetCaroussel, WidgetTitle } from "@/components/widget-carousel";
 import { useState } from "react";
 
 const tabs = [
@@ -22,6 +23,7 @@ export default function Page() {
         variant="underline"
         className="my-5"
       />
+      <SearchExercicesList />
       <MediumWidgetCaroussel
         title="Users"
         widgets={Array.from({ length: 20 }).map(() => (
