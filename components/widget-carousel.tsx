@@ -2,6 +2,7 @@ import useCaroussel from "@/hooks/use-caroussel";
 import { ReactNode, RefObject, useEffect } from "react";
 import { Button } from "./button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeftButton, ChevrontRightButton } from "./custom-buttons";
 
 interface MediumWidgetGroupProps {
   widgets: ReactNode[];
@@ -78,25 +79,11 @@ export function MediumWidgetCaroussel({ ...props }: MediumWidgetCarousselProps) 
           </Button>
         </div>
         <div className="flex">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full"
-            disabled={itemIndex <= 0}
-            onClick={() => scrollToIndex(Math.max(0, itemIndex - 1))}
-          >
-            <ChevronLeft className={itemIndex === 0 ? "text-muted-foreground" : ""} />
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full"
+          <ChevronLeftButton disabled={itemIndex <= 0} onClick={() => scrollToIndex(Math.max(0, itemIndex - 1))} />
+          <ChevrontRightButton
             disabled={isLastItemVisible}
             onClick={() => scrollToIndex(Math.min(widgetsRef.current.length - 1, itemIndex + 1))}
-          >
-            <ChevronRight className={isLastItemVisible ? "text-muted-foreground" : ""} />
-          </Button>
+          />
         </div>
       </div>
       <MediumWidgetGroup
