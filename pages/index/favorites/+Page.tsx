@@ -9,7 +9,7 @@ const tabs = [
   { id: "overview", label: "Overview" },
   { id: "liked", label: "Liked" },
   { id: "playlists", label: "Playlists" },
-  { id: "authors", label: "Authors" },
+  { id: "users", label: "Users" },
 ];
 
 export default function Page() {

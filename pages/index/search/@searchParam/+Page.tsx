@@ -4,7 +4,7 @@ import { useState } from "react";
 const tabs = [
   { id: "all", label: "All" },
   { id: "playlists", label: "Playlists" },
-  { id: "authors", label: "Authors" },
+  { id: "users", label: "Users" },
 ];
 
 export default function Page() {
