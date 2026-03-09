@@ -164,7 +164,7 @@ export function SearchPlaylistItem({ ...props }: PLaylistItemProps) {
 export function SearchPlaylistItemsList({ playlist }: { playlist: Playlist }) {
   return (
     <div className="w-full">
-      <div className="w-full flex justify-between px-4 py-2">
+      <div className="w-full flex justify-between pr-4 py-2">
         <div></div>
         <div className="flex items-center">
           <PlaylistItemBox className="w-40 min-w-40 justify-start">
