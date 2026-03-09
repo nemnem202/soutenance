@@ -2,10 +2,11 @@ import AccountPP from "@/components/account-pp";
 import { Badge } from "@/components/badge";
 import { Button } from "@/components/button";
 import { Checkbox } from "@/components/checkbox";
+import { LikeButton } from "@/components/custom-buttons";
 import Searchbar from "@/components/searchbar";
 import { Separator } from "@/components/separator";
 import getPlaceholders from "@/pages/+data";
-import { Playlist, PlaylistSchema } from "@/types/playlist";
+import { Playlist } from "@/types/project";
 import { Heart } from "lucide-react";
 import { ReactNode, useEffect, useState } from "react";
 import { usePageContext } from "vike-react/usePageContext";
@@ -160,9 +161,7 @@ function PlaylistItem({ ...props }: PLaylistItemProps) {
       </div>
       <div className="flex items-center">
         <PlaylistItemBox>
-          <Button size={"icon"} variant={"ghost"} className="rounded-full">
-            <Heart className="stroke-muted-foreground" />
-          </Button>
+          <LikeButton />
         </PlaylistItemBox>
         <PlaylistItemBox>
           <p className="paragraph-md text-muted-foreground">{exercice.config.bpm}</p>
