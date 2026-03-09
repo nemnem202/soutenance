@@ -1,4 +1,7 @@
+import { MediumAccountWidget } from "@/components/account-widgets";
 import AnimatedTabs from "@/components/animated-tabs";
+import { MediumPlaylistWidget } from "@/components/playlists-widgets";
+import { MediumWidgetCaroussel } from "@/components/widget-carousel";
 import { useState } from "react";
 
 const tabs = [
@@ -19,8 +22,18 @@ export default function Page() {
         variant="underline"
         className="my-5"
       />
-
-      <div></div>
+      <MediumWidgetCaroussel
+        title="Users"
+        widgets={Array.from({ length: 20 }).map(() => (
+          <MediumAccountWidget />
+        ))}
+      />
+      <MediumWidgetCaroussel
+        title="Playlists"
+        widgets={Array.from({ length: 20 }).map(() => (
+          <MediumPlaylistWidget />
+        ))}
+      />
     </div>
   );
 }
