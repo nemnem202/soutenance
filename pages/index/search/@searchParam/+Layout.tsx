@@ -1,4 +1,5 @@
 import AnimatedTabs from "@/components/animated-tabs";
+import useSearchNavigation from "@/hooks/use-search-navigation";
 import { ReactNode, useEffect, useState } from "react";
 import { usePageContext } from "vike-react/usePageContext";
 import { navigate } from "vike/client/router";
@@ -11,16 +12,7 @@ const tabs = [
 ];
 
 export default function Layout({ children }: { children: ReactNode }) {
-  const { routeParams, urlPathname } = usePageContext();
-  const [activeTab, setActiveTab] = useState(urlPathname.split("/")[3] ?? "");
-  const handleNav = (to: string) => {
-    setActiveTab(to);
-    navigate("/search/" + routeParams.searchParam + "/" + to);
-  };
-
-  useEffect(() => {
-    setActiveTab(urlPathname.split("/")[3] ?? "");
-  }, [urlPathname]);
+  const { activeTab, handleNav } = useSearchNavigation();
   return (
     <div className="flex flex-col gap-8 z-0 relative">
       <AnimatedTabs
