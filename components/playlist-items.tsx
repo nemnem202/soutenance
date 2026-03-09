@@ -194,11 +194,11 @@ export function SearchPlaylistItemsList({ playlist }: { playlist: Playlist }) {
   );
 }
 
-export function SearchExercicesList() {
+export function SearchExercicesList({ seeAllUrl = "#" }: { seeAllUrl?: string }) {
   const playlist = getRandomPlaylist();
   return (
     <div className="flex flex-col mx-auto mb-6 container">
-      <WidgetTitle title="Exercices" />
+      <WidgetTitle title="Exercices" seeAllUrl={seeAllUrl} />
       <SearchPlaylistItemsList playlist={playlist} />
     </div>
   );

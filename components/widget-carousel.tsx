@@ -53,9 +53,10 @@ export function MediumWidgetGroup(props: MediumWidgetGroupProps) {
 export interface MediumWidgetCarousselProps {
   title: string;
   widgets: ReactNode[];
+  seeAllUrl?: string;
 }
 
-export function MediumWidgetCaroussel({ ...props }: MediumWidgetCarousselProps) {
+export function MediumWidgetCaroussel({ title, widgets, seeAllUrl = "/see-all" }: MediumWidgetCarousselProps) {
   const {
     isLastItemVisible,
     itemIndex,
@@ -69,7 +70,7 @@ export function MediumWidgetCaroussel({ ...props }: MediumWidgetCarousselProps) 
   return (
     <section className="flex flex-col gap-6 mx-auto mb-6 container">
       <div className="flex w-full justify-between items-center">
-        <WidgetTitle {...props} />
+        <WidgetTitle title={title} seeAllUrl={seeAllUrl} />
         <div className="flex">
           <ChevronLeftButton disabled={itemIndex <= 0} onClick={() => scrollToIndex(Math.max(0, itemIndex - 1))} />
           <ChevrontRightButton
@@ -79,7 +80,7 @@ export function MediumWidgetCaroussel({ ...props }: MediumWidgetCarousselProps) 
         </div>
       </div>
       <MediumWidgetGroup
-        widgets={props.widgets}
+        widgets={widgets}
         containerRef={containerRef}
         widgetsRef={widgetsRef}
         handleScroll={handleScroll}
@@ -90,12 +91,12 @@ export function MediumWidgetCaroussel({ ...props }: MediumWidgetCarousselProps) 
   );
 }
 
-export function WidgetTitle({ title }: { title: string }) {
+export function WidgetTitle({ title, seeAllUrl = "/see-all" }: { title: string; seeAllUrl?: string }) {
   return (
     <div className="flex items-center gap-x-5">
       <h2 className="title-2">{title}</h2>
       <Button variant="outline" size="sm" className="py-0" asChild>
-        <a href="/see-all" className="paragraph-md !h-min py-1">
+        <a href={seeAllUrl} className="paragraph-md !h-min py-1">
           see all
         </a>
       </Button>
