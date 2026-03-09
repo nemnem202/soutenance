@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Heart, Plus } from "lucide-react";
 import { getRandomPlaylist } from "@/pages/+data";
+import { Button } from "./button";
+import { LikeButton } from "./custom-buttons";
 
 export function SmallPlaylistWidget() {
   const [playlist, setPlaylist] = useState(getRandomPlaylist());
@@ -30,30 +32,36 @@ export function SmallPlaylistWidget() {
 
 export function MediumPlaylistWidget() {
   const [playlist, setPlaylist] = useState(getRandomPlaylist());
+  const [hover, setHover] = useState(false);
 
   return (
-    <div className="w-55 cursor-pointer hover:opacity-80 rounded-md transition">
-      <a href={`/playlist/${playlist.id}`} className="flex flex-col rounded gap-2.5">
-        <div className="w-full aspect-square rounded overflow-hidden">
-          <img
-            src={playlist.image.src}
-            alt={playlist.image.alt}
-            className="w-full h-full object-cover"
-            width={185}
-            loading="lazy"
-          />
-        </div>
-
-        <div className="flex-col flex w-full">
-          <h3 className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{playlist.title}</h3>
-          <div className="w-full justify-between paragraph-sm text-muted-foreground flex wrap">
-            <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[80%]">by {playlist.author}</p>
-            <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[15%]">
-              {playlist.exercicesIds.length > 99 ? ">99" : playlist.exercicesIds.length}
-            </p>
+    <div className="relative" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+      <div className={`absolute top-2 right-2 z-1 opacity-0 ${hover && "opacity-100"} transition`}>
+        <LikeButton />
+      </div>
+      <div className="w-55 cursor-pointer hover:opacity-80 rounded-md transition">
+        <a href={`/playlist/${playlist.id}`} className="flex flex-col rounded gap-2.5">
+          <div className="w-full aspect-square rounded overflow-hidden">
+            <img
+              src={playlist.image.src}
+              alt={playlist.image.alt}
+              className="w-full h-full object-cover"
+              width={185}
+              loading="lazy"
+            />
           </div>
-        </div>
-      </a>
+
+          <div className="flex-col flex w-full">
+            <h3 className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{playlist.title}</h3>
+            <div className="w-full justify-between paragraph-sm text-muted-foreground flex wrap">
+              <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[80%]">by {playlist.author}</p>
+              <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[15%]">
+                {playlist.exercicesIds.length > 99 ? ">99" : playlist.exercicesIds.length}
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
     </div>
   );
 }
