@@ -1,8 +1,6 @@
 import AnimatedTabs from "@/components/animated-tabs";
 import useSearchNavigation from "@/hooks/use-search-navigation";
-import { ReactNode, useEffect, useState } from "react";
-import { usePageContext } from "vike-react/usePageContext";
-import { navigate } from "vike/client/router";
+import { ReactNode } from "react";
 
 const tabs = [
   { id: "", label: "All" },
