@@ -1,9 +1,9 @@
 import { Heart } from "lucide-react";
-import { Button } from "./button";
+import { Button, ButtonProps } from "./button";
 
-export function LikeButton() {
+export function LikeButton({ ...props }: ButtonProps) {
   return (
-    <Button variant={"ghost"} className="rounded-full" size={"icon"}>
+    <Button variant={"ghost"} size={"icon"} {...props} className={"rounded-full " + props.className}>
       <Heart />
     </Button>
   );
