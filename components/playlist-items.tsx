@@ -2,11 +2,14 @@ import { Exercice, Playlist } from "@/types/project";
 import { Checkbox } from "./checkbox";
 import { Separator } from "./separator";
 import { ReactNode, useState } from "react";
-import getPlaceholders, { getRandomPlaylist } from "@/pages/+data";
+import { useData } from "vike-react/useData";
+
 import { Badge } from "./badge";
 import { LikeButton } from "./custom-buttons";
 import { WidgetTitle } from "./widget-carousel";
 import { useLanguage } from "@/hooks/use-language";
+import { Data } from "@/pages/+data";
+import { getRandomPlaylist } from "@/lib/utils";
 
 export function PlaylistItemsList({ playlist }: { playlist: Playlist }) {
   const { instance } = useLanguage();
@@ -48,7 +51,7 @@ export interface PLaylistItemProps {
 
 export function PlaylistItem({ ...props }: PLaylistItemProps) {
   const { instance } = useLanguage();
-  const exercice = getPlaceholders().EXERCICES_PLACEHOLDER.find((e) => e.id === props.id);
+  const exercice = useData<Data>().exercices.find((e) => e.id === props.id);
   if (!exercice) return null;
 
   return (
@@ -105,7 +108,7 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
 }
 
 export function SearchPlaylistItem({ ...props }: PLaylistItemProps) {
-  const exercice = getPlaceholders().EXERCICES_PLACEHOLDER.find((e) => e.id === props.id);
+  const exercice = useData<Data>().exercices.find((e) => e.id === props.id);
   if (!exercice) return null;
 
   return (

@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import { getRandomPlaylist } from "@/pages/+data";
 import { LikeButton, PlusButton } from "./custom-buttons";
 import { useLanguage } from "@/hooks/use-language";
+import { useData } from "vike-react/useData";
+import { Data } from "@/pages/+data";
+import { getRandomPlaylist } from "@/lib/utils";
 
 export function SmallPlaylistWidget() {
-  const [playlist, setPlaylist] = useState(getRandomPlaylist());
+  const playlist = getRandomPlaylist();
   const { instance } = useLanguage();
   return (
     <a
@@ -32,7 +34,7 @@ export function SmallPlaylistWidget() {
 }
 
 export function MediumPlaylistWidget() {
-  const [playlist] = useState(getRandomPlaylist());
+  const playlist = getRandomPlaylist();
   const { instance } = useLanguage();
   return (
     <div className="relative group w-55">

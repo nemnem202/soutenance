@@ -1,9 +1,11 @@
-import { getRandomAccount } from "@/pages/+data";
 import { useState } from "react";
 import { LikeButton } from "./custom-buttons";
+import { useData } from "vike-react/useData";
+import { Data } from "@/pages/+data";
+import { getRandomAccount } from "@/lib/utils";
 
 export function MediumAccountWidget() {
-  const [account] = useState(getRandomAccount());
+  const account = getRandomAccount();
   return (
     <div className="w-55 cursor-pointer group">
       <a href={`/account/${account.id}`} className="flex flex-col gap-2.5 items-center">

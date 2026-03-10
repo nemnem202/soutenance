@@ -7,16 +7,17 @@ import { PlaylistItemsList } from "@/components/playlist-items";
 import Searchbar from "@/components/searchbar";
 import { Separator } from "@/components/separator";
 import { useLanguage } from "@/hooks/use-language";
-import getPlaceholders from "@/pages/+data";
+import { Data } from "@/pages/+data";
 import { Playlist } from "@/types/project";
 import { Heart } from "lucide-react";
 import { ReactNode, useEffect, useState } from "react";
+import { useData } from "vike-react/useData";
 import { usePageContext } from "vike-react/usePageContext";
 import { navigate } from "vike/client/router";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
-  const [playlist] = useState(getPlaceholders().PROJECTS_PLACEHOLDERS.find((e) => e.id === id));
+  const [playlist] = useState(useData<Data>().playlists.find((e) => e.id === id));
 
   useEffect(() => {
     if (!playlist) navigate("/404");
@@ -37,7 +38,7 @@ export default function Page() {
 
 function Banner({ playlist }: { playlist: Playlist }) {
   const { instance } = useLanguage();
-  const account = getPlaceholders().ACCOUNTS_PLACEHOLDER.find((account) => account.id === playlist.accountId);
+  const account = useData<Data>().accounts.find((account) => account.id === playlist.accountId);
   return (
     <div className="flex w-full gap-8 items-center relative">
       <div className="absolute right-2 top-2 z-1">
