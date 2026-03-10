@@ -2,10 +2,10 @@ import LanguageEnum from "@/i18n/languages";
 
 type FullItem = Record<LanguageEnum, string>;
 
-export type LanguageItem = Partial<FullItem>;
+export type AvailableLanguages = LanguageKey[];
 
 export type LanguageKey = keyof typeof LanguageEnum;
 
-export type AvailableLanguages = LanguageKey[];
+export type LanguageItem<L extends readonly LanguageKey[]> = Partial<Record<L[number], string>>;
 
-export type LanguagePack = Record<string, LanguageItem>;
+export type LanguagePack<L extends readonly LanguageKey[]> = Record<string, LanguageItem<L>>;

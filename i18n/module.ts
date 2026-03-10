@@ -1,16 +1,16 @@
 import { AvailableLanguages, LanguageItem, LanguageKey, LanguagePack } from "@/types/i18n";
 import flags from "./flags";
 import LanguageEnum from "./languages";
-export default class I18nModule {
-  private _currentLanguage: LanguageEnum = LanguageEnum.french;
-  private _languagePack: LanguagePack = {};
+export default class I18nModule<L extends readonly LanguageKey[]> {
+  private _currentLanguage: L[number] = LanguageEnum.french;
+  private _languagePack: LanguagePack<L> = {};
   private _undefinedValuePlaceholder: string = "Undefined";
   private _availableLanguages: LanguageEnum[] = [];
 
   constructor(
     currentLanguage?: LanguageKey,
     availableLanguages?: AvailableLanguages,
-    languagePack?: LanguagePack,
+    languagePack?: LanguagePack<L>,
     undefinedValuePlaceholder?: string,
   ) {
     if (currentLanguage !== undefined) {
@@ -28,7 +28,7 @@ export default class I18nModule {
   }
 
   public getItem(withName: string): string {
-    const itemPack: LanguageItem | undefined = this._languagePack[withName];
+    const itemPack: LanguageItem<L> = this._languagePack[withName];
 
     if (!itemPack) return "No item with this name is defined";
 
