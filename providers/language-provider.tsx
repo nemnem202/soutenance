@@ -1,34 +1,15 @@
-import LanguageEnum from "@/i18n/languages";
+import { availableLanguages } from "@/config/language-pack";
+import { useLanguageProvider } from "@/hooks/use-language";
 import I18nModule from "@/i18n/module";
-import React, { createContext, useMemo, useState } from "react";
-
-const DEFAULT_MODULE = new I18nModule();
+import React, { createContext } from "react";
 
 export const LanguagesContext = createContext<{
   instance: I18nModule;
-  setLanguage: (language: LanguageEnum) => void;
+  setLanguage: (language: (typeof availableLanguages)[number]) => void;
 } | null>(null);
 
-const useLanguagesState = ({ module }: { module?: I18nModule }) => {
-  const [currentLanguage, setCurrentLanguage] = useState<LanguageEnum>(
-    module?.getCurrentLanguage() ?? DEFAULT_MODULE.getCurrentLanguage(),
-  );
-
-  const instance = useMemo(() => {
-    const m = module ?? DEFAULT_MODULE;
-    m.setCurrentLanguage(currentLanguage);
-    return m;
-  }, [module, currentLanguage]);
-
-  const setLanguage = (language: LanguageEnum) => {
-    setCurrentLanguage(language);
-  };
-
-  return { instance, setLanguage };
-};
-
 const LanguagesProvider = ({ children, module }: { children: React.ReactNode; module?: I18nModule }) => {
-  return <LanguagesContext.Provider value={useLanguagesState({ module })}>{children}</LanguagesContext.Provider>;
+  return <LanguagesContext.Provider value={useLanguageProvider({ module })}>{children}</LanguagesContext.Provider>;
 };
 
 export default LanguagesProvider;

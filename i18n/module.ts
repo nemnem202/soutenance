@@ -1,29 +1,21 @@
-import { LanguageKey, LanguagePack } from "@/types/i18n";
+import { languagePack, availableLanguages } from "@/config/language-pack";
+import { Language, LanguagePackKeys } from "@/types/i18n";
 
-export default class I18nModule<L extends readonly LanguageKey[]> {
-  private _currentLanguage: L[number];
-  private _languagePack: LanguagePack<L>;
-  private _availableLanguages: L;
+export default class I18nModule {
+  private _currentLanguage: Language;
   private _undefinedValuePlaceholder: string;
 
-  constructor(
-    availableLanguages: L,
-    languagePack: LanguagePack<L>,
-    defaultLanguage: L[number],
-    undefinedValuePlaceholder = "Undefined",
-  ) {
-    this._availableLanguages = availableLanguages;
-    this._languagePack = languagePack;
+  constructor(defaultLanguage: Language, undefinedValuePlaceholder = "Undefined") {
     this._currentLanguage = defaultLanguage;
     this._undefinedValuePlaceholder = undefinedValuePlaceholder;
   }
 
-  public setCurrentLanguage(language: L[number]) {
+  public setCurrentLanguage(language: Language) {
     this._currentLanguage = language;
   }
 
-  public getItem(withName: string): string {
-    const itemPack = this._languagePack[withName];
+  public getItem(key: LanguagePackKeys): string {
+    const itemPack = languagePack[key];
 
     if (!itemPack) return "No item with this name is defined";
 
