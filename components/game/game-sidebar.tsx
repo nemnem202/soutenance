@@ -109,10 +109,10 @@ function BackingTrackSettings() {
     <ParamsAccordion title={<h3 className="title-3">{instance.getItem("backing_track")}</h3>}>
       <div className="flex gap-4 w-full">
         <SwitchParam checked={backingTackActive} order="label-switch" setChecked={setBackingTrackActive}>
-          <p className="paragraph w-10 text-foreground">{instance.getItem("active")}</p>
+          <p className="paragraph  text-foreground">{instance.getItem("active")}</p>
         </SwitchParam>
         <SwitchParam checked={true} setChecked={() => {}} disabled={!backingTackActive} order="label-switch">
-          <p className="paragraph w-12">{instance.getItem("melody")}</p>
+          <p className="paragraph">{instance.getItem("melody")}</p>
         </SwitchParam>
       </div>
       <div className={`flex flex-col w-full gap-2 py-2 ${!backingTackActive && "text-muted-foreground"}`}>
