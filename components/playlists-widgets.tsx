@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import { getRandomPlaylist } from "@/pages/+data";
 import { LikeButton, PlusButton } from "./custom-buttons";
+import { useLanguage } from "@/hooks/use-language";
+import { useData } from "vike-react/useData";
+import { Data } from "@/pages/+data";
+import { getRandomPlaylist } from "@/lib/utils";
 
 export function SmallPlaylistWidget() {
-  const [playlist, setPlaylist] = useState(getRandomPlaylist());
+  const playlist = getRandomPlaylist();
+  const { instance } = useLanguage();
   return (
     <a
       className="h-12 w-full hover:bg-popover rounded flex gap-2 cursor-pointer transition"
@@ -22,7 +26,7 @@ export function SmallPlaylistWidget() {
       <div className="flex flex-1 flex-col min-w-0">
         <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{playlist.title}</p>
         <p className="paragraph-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
-          by {playlist.author}
+          {instance.getItem("by")} {playlist.author}
         </p>
       </div>
     </a>
@@ -30,8 +34,8 @@ export function SmallPlaylistWidget() {
 }
 
 export function MediumPlaylistWidget() {
-  const [playlist] = useState(getRandomPlaylist());
-
+  const playlist = getRandomPlaylist();
+  const { instance } = useLanguage();
   return (
     <div className="relative group w-55">
       <div className="absolute top-0 left-0 px-2 pt-2 w-full z-1 flex justify-between  opacity-0 group-hover:opacity-100 transition pointer-events-none">
@@ -58,7 +62,9 @@ export function MediumPlaylistWidget() {
             <h3 className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{playlist.title}</h3>
 
             <div className="w-full justify-between paragraph-sm text-muted-foreground flex wrap">
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[80%]">by {playlist.author}</p>
+              <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[80%]">
+                {instance.getItem("by")} {playlist.author}
+              </p>
               <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[15%]">
                 {playlist.exercicesIds.length > 99 ? ">99" : playlist.exercicesIds.length}
               </p>
@@ -71,6 +77,7 @@ export function MediumPlaylistWidget() {
 }
 
 function MediumAddNewPlaylistWidget() {
+  const { instance } = useLanguage();
   return (
     <div className="w-55 cursor-pointer hover:opacity-80 rounded-md transition">
       <a href="/new-playlist" className="flex flex-col rounded gap-2.5">
@@ -79,7 +86,7 @@ function MediumAddNewPlaylistWidget() {
         </div>
 
         <div className="flex-col flex w-full">
-          <h3 className="title-4">New Playlist</h3>
+          <h3 className="title-4">{instance.getItem("new_playlist")}</h3>
         </div>
       </a>
     </div>

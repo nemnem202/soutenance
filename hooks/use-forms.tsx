@@ -1,10 +1,10 @@
 import { loginSchema, playlistSchema } from "@/schemas/frontend";
-import { PlaylistSchema } from "@/types/playlist";
 import { useEffect, useRef } from "react";
 import { Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginData } from "@/types/session";
 import { faker } from "@faker-js/faker";
+import { PlaylistSchema } from "@/types/project";
 
 export function useNewPlaylistForm() {
   const formRef = useRef<HTMLFormElement>(null);

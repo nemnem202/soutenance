@@ -17,12 +17,21 @@ import { Button } from "./button";
 import { Brush, LanguagesIcon, LogOutIcon, SettingsIcon, UserIcon } from "lucide-react";
 import { navigate } from "vike/client/router";
 import { useTheme } from "@/hooks/use-theme";
+import { useLanguage } from "@/hooks/use-language";
+import { availableLanguages } from "@/config/language-pack";
+import flags from "@/i18n/flags";
+import { Language } from "@/types/i18n";
 
 export default function AccountMenu() {
   const { session, setSession } = useSession();
   const { currentTheme, setDark, setLight } = useTheme();
+  const { instance, setLanguage } = useLanguage();
   if (!session) return null;
 
+  const handleLanguageChange = (lang: Language) => {
+    localStorage.setItem("preferred-language", lang);
+    setLanguage(lang);
+  };
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -33,17 +42,17 @@ export default function AccountMenu() {
       <DropdownMenuContent>
         <DropdownMenuItem onClick={() => navigate("/account/" + session.userId)}>
           <UserIcon />
-          Profile
+          {instance.getItem("profile")}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => navigate("/settings")}>
           <SettingsIcon />
-          Settings
+          {instance.getItem("settings")}
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-border" />
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <Brush />
-            Theme
+            {instance.getItem("theme")}
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
@@ -53,7 +62,7 @@ export default function AccountMenu() {
                   if (e) setDark();
                 }}
               >
-                Dark
+                {instance.getItem("dark")}
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
                 checked={currentTheme === "light"}
@@ -61,7 +70,7 @@ export default function AccountMenu() {
                   if (e) setLight();
                 }}
               >
-                Light
+                {instance.getItem("light")}
               </DropdownMenuCheckboxItem>
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
@@ -69,13 +78,22 @@ export default function AccountMenu() {
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <LanguagesIcon />
-            Language
+            {instance.getItem("language")}
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
-            <DropdownMenuSubContent>
-              <DropdownMenuCheckboxItem checked>English</DropdownMenuCheckboxItem>
-              {["French", "Chinese", "Deutch", "Italian"].map((lang) => (
-                <DropdownMenuCheckboxItem>{lang}</DropdownMenuCheckboxItem>
+            <DropdownMenuSubContent className="min-w-0">
+              {availableLanguages.map((lang) => (
+                <DropdownMenuCheckboxItem
+                  checked={lang === instance.getCurrentLanguage()}
+                  onClick={() => handleLanguageChange(lang)}
+                  className="flex items-center justify-between gap-2"
+                >
+                  {lang.charAt(0).toUpperCase() + lang.slice(1)}
+                  <img
+                    style={{ width: "20px" }}
+                    src={`https://purecatamphetamine.github.io/country-flag-icons/3x2/${flags[lang]}.svg`}
+                  />
+                </DropdownMenuCheckboxItem>
               ))}
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
@@ -89,7 +107,7 @@ export default function AccountMenu() {
           }}
         >
           <LogOutIcon />
-          Log out
+          {instance.getItem("log_out")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

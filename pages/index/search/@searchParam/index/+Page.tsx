@@ -2,15 +2,17 @@ import { MediumAccountWidget } from "@/components/account-widgets";
 import { SearchExercicesList } from "@/components/playlist-items";
 import { MediumPlaylistWidget } from "@/components/playlists-widgets";
 import { MediumWidgetCaroussel } from "@/components/widget-carousel";
+import { useLanguage } from "@/hooks/use-language";
 import { usePageContext } from "vike-react/usePageContext";
 
 export default function Page() {
   const { routeParams } = usePageContext();
+  const { instance } = useLanguage();
   return (
     <>
       <SearchExercicesList seeAllUrl={`/search/${routeParams.searchParam}/exercices`} />
       <MediumWidgetCaroussel
-        title="Users"
+        title={instance.getItem("users")}
         seeAllUrl={`/search/${routeParams.searchParam}/users`}
         widgets={Array.from({ length: 20 }).map(() => (
           <MediumAccountWidget />

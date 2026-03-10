@@ -1,5 +1,5 @@
 import { SearchPlaylistItemsList } from "@/components/playlist-items";
-import { getRandomPlaylist } from "@/pages/+data";
+import { getRandomPlaylist } from "@/lib/utils";
 
 export default function Page() {
   const playlist = getRandomPlaylist();

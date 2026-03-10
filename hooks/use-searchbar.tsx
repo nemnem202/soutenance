@@ -1,7 +1,7 @@
 import { SearchbarProps } from "@/components/searchbar";
 import { faker } from "@faker-js/faker";
 import { History, Search } from "lucide-react";
-import { ChangeEvent, JSX, useState } from "react";
+import { ChangeEvent, JSX, useEffect, useState } from "react";
 
 interface DatasetItem {
   content: string;
@@ -52,6 +52,10 @@ export default function useSearchbar({ ...props }: SearchbarProps) {
   const [searchbarValue, setSearchbarValue] = useState("");
   const [items, setItems] = useState<DropdownItem[]>(defineItemsFromString(""));
   const [placeholder, setPlaceholder] = useState(props.placeholder);
+
+  useEffect(() => {
+    setPlaceholder(props.placeholder);
+  }, [props.placeholder]);
 
   const handleInputValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();

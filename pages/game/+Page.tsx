@@ -8,6 +8,7 @@ import { Input } from "@/components/input";
 import { Separator } from "@/components/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/tabs";
 import UpcomingToolTip from "@/components/upcoming-tooltip";
+import { useLanguage } from "@/hooks/use-language";
 import { TabsContent } from "@radix-ui/react-tabs";
 import { Maximize, Minimize, Play, Settings, Square } from "lucide-react";
 import { ReactNode, useState } from "react";
@@ -29,15 +30,18 @@ interface Gameprops {
   openSidebar: () => void;
 }
 
-const tabs = [
-  { id: "piano-roll", label: "piano-roll" },
-  { id: "chords", label: "chords" },
-  { id: "sheet", label: "sheet", disabled: true },
-  { id: "guitar", label: "guitar", disabled: true },
-];
-
 function Game({ ...props }: Gameprops) {
+  const { instance } = useLanguage();
+
+  const tabs = [
+    { id: "piano-roll", label: instance.getItem("piano_roll") },
+    { id: "chords", label: instance.getItem("chords") },
+    { id: "sheet", label: instance.getItem("sheet"), disabled: true },
+    { id: "guitar", label: instance.getItem("guitar"), disabled: true },
+  ];
+
   const [activeTab, setActiveTab] = useState("piano-roll");
+
   return (
     <main className="flex-1 flex flex-col items-center pt-5">
       <h1 className="headline select-none">Brown Sugar</h1>
@@ -66,7 +70,7 @@ function Game({ ...props }: Gameprops) {
           <Field className="flex flex-row items-center justify-center !w-min">
             <Input id="bpm" type="number" defaultValue={"120"} className="!w-15 min-w-0 p-0 text-center" />
             <FieldLabel htmlFor="bpm" className="!w-min text-muted-foreground paragraph-small">
-              bpm
+              {instance.getItem("bpm").toLowerCase()}
             </FieldLabel>
           </Field>
         </ControlsSection>

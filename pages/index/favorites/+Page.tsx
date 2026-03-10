@@ -4,19 +4,21 @@ import Headline from "@/components/headline";
 import { MediumPlaylistWidget } from "@/components/playlists-widgets";
 import { MediumWidgetCaroussel } from "@/components/widget-carousel";
 import { useState } from "react";
-
-const tabs = [
-  { id: "overview", label: "Overview" },
-  { id: "liked", label: "Liked" },
-  { id: "playlists", label: "Playlists" },
-  { id: "users", label: "Users" },
-];
+import { useLanguage } from "@/hooks/use-language";
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState("overview");
+  const { instance } = useLanguage();
+  const tabs = [
+    { id: "overview", label: instance.getItem("overview") },
+    { id: "liked", label: instance.getItem("liked") },
+    { id: "playlists", label: instance.getItem("playlists") },
+    { id: "users", label: instance.getItem("users") },
+  ];
+
   return (
     <>
-      <Headline>Favorites</Headline>
+      <Headline>{instance.getItem("favoritesPageTitle")}</Headline>
       <div className="flex flex-col gap-8 z-0 relative">
         <AnimatedTabs
           activeTab={activeTab}
@@ -27,19 +29,19 @@ export default function Page() {
         />
         <div>
           <MediumWidgetCaroussel
-            title="Recently played"
+            title={instance.getItem("recentlyPlayed")}
             widgets={Array.from({ length: 20 }).map(() => (
               <MediumPlaylistWidget />
             ))}
           />
           <MediumWidgetCaroussel
-            title="Accounts"
+            title={instance.getItem("accounts")}
             widgets={Array.from({ length: 20 }).map(() => (
               <MediumAccountWidget />
             ))}
           />
           <MediumWidgetCaroussel
-            title="Playlists"
+            title={instance.getItem("playlists")}
             widgets={Array.from({ length: 20 }).map(() => (
               <MediumPlaylistWidget />
             ))}

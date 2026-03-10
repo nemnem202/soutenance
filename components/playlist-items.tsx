@@ -2,22 +2,27 @@ import { Exercice, Playlist } from "@/types/project";
 import { Checkbox } from "./checkbox";
 import { Separator } from "./separator";
 import { ReactNode, useState } from "react";
-import getPlaceholders, { getRandomPlaylist } from "@/pages/+data";
+import { useData } from "vike-react/useData";
+
 import { Badge } from "./badge";
 import { LikeButton } from "./custom-buttons";
 import { WidgetTitle } from "./widget-carousel";
+import { useLanguage } from "@/hooks/use-language";
+import { Data } from "@/pages/+data";
+import { getRandomPlaylist } from "@/lib/utils";
 
 export function PlaylistItemsList({ playlist }: { playlist: Playlist }) {
+  const { instance } = useLanguage();
   return (
     <div className="w-full">
       <div className="w-full flex justify-between px-4 py-2">
-        <p className="paragramh-md text-muted-foreground">Exercice</p>
+        <p className="paragramh-md text-muted-foreground">{instance.getItem("exercice")}</p>
         <div className="flex items-center">
           <PlaylistItemBox>
-            <p className="paragraph-md text-muted-foreground">Bpm</p>
+            <p className="paragraph-md text-muted-foreground">{instance.getItem("bpm")}</p>
           </PlaylistItemBox>
           <PlaylistItemBox>
-            <p className="paragraph-md text-muted-foreground">Pop</p>
+            <p className="paragraph-md text-muted-foreground">{instance.getItem("pop")}</p>
           </PlaylistItemBox>
           <PlaylistItemBox>
             <Checkbox />
@@ -45,7 +50,8 @@ export interface PLaylistItemProps {
 }
 
 export function PlaylistItem({ ...props }: PLaylistItemProps) {
-  const exercice = getPlaceholders().EXERCICES_PLACEHOLDER.find((e) => e.id === props.id);
+  const { instance } = useLanguage();
+  const exercice = useData<Data>().exercices.find((e) => e.id === props.id);
   if (!exercice) return null;
 
   return (
@@ -69,13 +75,13 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
           <div className="flex gap-1 h-full">
             {exercice.hasChords && (
               <Badge variant="outline" className="text-muted-foreground paragraph-xs h-min">
-                chords
+                {instance.getItem("chords")}
               </Badge>
             )}
 
             {exercice.haseMelody && (
               <Badge variant="outline" className="text-muted-foreground paragraph-xs h-min">
-                melody
+                {instance.getItem("melody").toLowerCase()}
               </Badge>
             )}
           </div>
@@ -102,7 +108,7 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
 }
 
 export function SearchPlaylistItem({ ...props }: PLaylistItemProps) {
-  const exercice = getPlaceholders().EXERCICES_PLACEHOLDER.find((e) => e.id === props.id);
+  const exercice = useData<Data>().exercices.find((e) => e.id === props.id);
   if (!exercice) return null;
 
   return (
@@ -162,22 +168,23 @@ export function SearchPlaylistItem({ ...props }: PLaylistItemProps) {
 }
 
 export function SearchPlaylistItemsList({ playlist }: { playlist: Playlist }) {
+  const { instance } = useLanguage();
   return (
     <div className="w-full">
       <div className="w-full flex justify-between pr-4 py-2">
         <div></div>
         <div className="flex items-center">
           <PlaylistItemBox className="w-40 min-w-40 justify-start">
-            <p className="paragraph-md text-muted-foreground">User</p>
+            <p className="paragraph-md text-muted-foreground">{instance.getItem("user")}</p>
           </PlaylistItemBox>
           <PlaylistItemBox>
             <></>
           </PlaylistItemBox>
           <PlaylistItemBox>
-            <p className="paragraph-md text-muted-foreground">Bpm</p>
+            <p className="paragraph-md text-muted-foreground">{instance.getItem("bpm")}</p>
           </PlaylistItemBox>
           <PlaylistItemBox>
-            <p className="paragraph-md text-muted-foreground">Pop</p>
+            <p className="paragraph-md text-muted-foreground">{instance.getItem("pop")}</p>
           </PlaylistItemBox>
           <PlaylistItemBox>
             <Checkbox />
