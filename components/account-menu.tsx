@@ -76,12 +76,12 @@ export default function AccountMenu() {
             {instance.getItem("language")}
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
-            <DropdownMenuSubContent>
+            <DropdownMenuSubContent className="min-w-0">
               {availableLanguages.map((lang) => (
                 <DropdownMenuCheckboxItem
                   checked={lang === instance.getCurrentLanguage()}
                   onClick={() => setLanguage(lang)}
-                  className="w-full flex itemx-center justify-between gap-2"
+                  className="flex items-center justify-between gap-2"
                 >
                   {lang.charAt(0).toUpperCase() + lang.slice(1)}
                   <img
