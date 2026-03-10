@@ -33,7 +33,7 @@ export default function AccountMenu() {
           <UserIcon />
           Profile
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate("/settings")}>
           <SettingsIcon />
           Settings
         </DropdownMenuItem>
