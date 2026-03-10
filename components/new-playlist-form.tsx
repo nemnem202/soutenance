@@ -8,11 +8,13 @@ import { X } from "lucide-react";
 import { Badge } from "./badge";
 import EditableImage from "./editable-image";
 import { Button } from "./button";
+import { useLanguage } from "@/hooks/use-language";
 
 export interface NewPlaylistFormProps {}
 
 export default function NewPlaylistForm() {
   const { form, formRef, handleSubmit } = useNewPlaylistForm();
+  const { instance } = useLanguage();
   return (
     <form id="form-rhf-post" onSubmit={form.handleSubmit(handleSubmit)} ref={formRef}>
       <FieldGroup>
@@ -42,13 +44,13 @@ export default function NewPlaylistForm() {
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid} className="gap-1">
               <FieldLabel htmlFor="form-rhf-post-title" className="title-4">
-                Title
+                {instance.getItem("title")}
               </FieldLabel>
               <Input
                 {...field}
                 id="form-rhf-post-title"
                 aria-invalid={fieldState.invalid}
-                placeholder="Enter the title"
+                placeholder={instance.getItem("enter_the_title")}
                 autoComplete="off"
                 className="paragraph !text-left px-2"
               />
@@ -62,13 +64,13 @@ export default function NewPlaylistForm() {
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid} className="gap-1">
               <FieldLabel htmlFor="form-rhf-post-content" className="title-4">
-                Description (optionnal)
+                {instance.getItem("description")} {instance.getItem("optional")}
               </FieldLabel>
               <InputGroup className="">
                 <InputGroupTextarea
                   {...field}
                   id="form-rhf-post-content"
-                  placeholder="Enter your description..."
+                  placeholder={instance.getItem("enter_your_description")}
                   rows={6}
                   className="min-h-24 resize-none focus:border-none focus-visible:ring-offset-0 paragraph"
                   aria-invalid={fieldState.invalid}
@@ -90,7 +92,7 @@ export default function NewPlaylistForm() {
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid} className="gap-1">
               <FieldLabel htmlFor="form-rhf-tags" className="title-4">
-                Tags (max 10)
+                {instance.getItem("tags")} (10 {instance.getItem("max")})
               </FieldLabel>
               <TagsInput defaultValue={field.value} onChange={(tags) => form.setValue("tags", tags)} />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -99,7 +101,7 @@ export default function NewPlaylistForm() {
         />
         <div className="w-full flex justify-end">
           <Button className="w-fit title-4" type="submit">
-            Submit
+            {instance.getItem("submit")}
           </Button>
         </div>
       </FieldGroup>

@@ -17,10 +17,12 @@ import { Button } from "./button";
 import { Brush, LanguagesIcon, LogOutIcon, SettingsIcon, UserIcon } from "lucide-react";
 import { navigate } from "vike/client/router";
 import { useTheme } from "@/hooks/use-theme";
+import { useLanguage } from "@/hooks/use-language";
 
 export default function AccountMenu() {
   const { session, setSession } = useSession();
   const { currentTheme, setDark, setLight } = useTheme();
+  const { instance } = useLanguage();
   if (!session) return null;
 
   return (
@@ -33,17 +35,17 @@ export default function AccountMenu() {
       <DropdownMenuContent>
         <DropdownMenuItem onClick={() => navigate("/account/" + session.userId)}>
           <UserIcon />
-          Profile
+          {instance.getItem("profile")}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => navigate("/settings")}>
           <SettingsIcon />
-          Settings
+          {instance.getItem("settings")}
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-border" />
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <Brush />
-            Theme
+            {instance.getItem("theme")}
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
@@ -53,7 +55,7 @@ export default function AccountMenu() {
                   if (e) setDark();
                 }}
               >
-                Dark
+                {instance.getItem("dark")}
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
                 checked={currentTheme === "light"}
@@ -61,7 +63,7 @@ export default function AccountMenu() {
                   if (e) setLight();
                 }}
               >
-                Light
+                {instance.getItem("light")}
               </DropdownMenuCheckboxItem>
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
@@ -69,7 +71,7 @@ export default function AccountMenu() {
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <LanguagesIcon />
-            Language
+            {instance.getItem("language")}
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
@@ -89,7 +91,7 @@ export default function AccountMenu() {
           }}
         >
           <LogOutIcon />
-          Log out
+          {instance.getItem("log_out")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

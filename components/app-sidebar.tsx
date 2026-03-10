@@ -7,6 +7,7 @@ import Logo from "./logo";
 import Link from "./link";
 import { navigate } from "vike/client/router";
 import { PlusButton } from "./custom-buttons";
+import { useLanguage } from "@/hooks/use-language";
 
 export default function Sidebar() {
   return (
@@ -39,21 +40,23 @@ export function SidebarSection({ children }: { children: ReactNode }) {
 }
 
 function NavBar() {
+  const { instance } = useLanguage();
   return (
     <nav className="flex flex-col w-full">
-      <Link href="/" text="Homepage" icon={<House />} />
-      <Link href="/explorer" text="Explore" icon={<Compass />} />
-      <Link href="/favorites" text="Favorites" icon={<Heart />} />
-      <Link href="/dashboard" text="Dashboard" icon={<LayoutDashboard />} />
+      <Link href="/" text={instance.getItem("homepage")} icon={<House />} />
+      <Link href="/explorer" text={instance.getItem("explorePageTitle")} icon={<Compass />} />
+      <Link href="/favorites" text={instance.getItem("favoritesPageTitle")} icon={<Heart />} />
+      <Link href="/dashboard" text={instance.getItem("dashboard")} icon={<LayoutDashboard />} />
     </nav>
   );
 }
 
 function Playlists() {
+  const { instance } = useLanguage();
   return (
     <div className="w-full flex flex-col gap-5">
       <div className="w-full flex justify-between items-center">
-        <h2 className="title-3">Playlists</h2>
+        <h2 className="title-3">{instance.getItem("playlists")}</h2>
         <PlusButton onClick={() => navigate("/new-playlist")} />
       </div>
       <div className="flex flex-col w-full gap-2">
@@ -69,10 +72,11 @@ function Playlists() {
 }
 
 function Recents() {
+  const { instance } = useLanguage();
   return (
     <div className="w-full flex flex-col gap-5">
       <div className="w-full flex justify-between">
-        <h2 className="title-3">Recents</h2>
+        <h2 className="title-3">{instance.getItem("recents")}</h2>
       </div>
       <div className="flex flex-col w-full gap-2">
         <SmallPlaylistWidget />

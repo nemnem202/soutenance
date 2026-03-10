@@ -2,6 +2,7 @@ import useCaroussel from "@/hooks/use-caroussel";
 import { ReactNode, RefObject, useEffect } from "react";
 import { Button } from "./button";
 import { ChevronLeftButton, ChevrontRightButton } from "./custom-buttons";
+import { useLanguage } from "@/hooks/use-language";
 
 interface MediumWidgetGroupProps {
   widgets: ReactNode[];
@@ -92,12 +93,13 @@ export function MediumWidgetCaroussel({ title, widgets, seeAllUrl = "/see-all" }
 }
 
 export function WidgetTitle({ title, seeAllUrl = "/see-all" }: { title: string; seeAllUrl?: string }) {
+  const { instance } = useLanguage();
   return (
     <div className="flex items-center gap-x-5">
       <h2 className="title-2">{title}</h2>
       <Button variant="outline" size="sm" className="py-0" asChild>
         <a href={seeAllUrl} className="paragraph-md !h-min py-1">
-          see all
+          {instance.getItem("seeAll")}
         </a>
       </Button>
     </div>

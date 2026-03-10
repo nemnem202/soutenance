@@ -1,3 +1,6 @@
+import { useLanguage } from "@/hooks/use-language";
+
 export default function Page() {
-  return <div>settings</div>;
+  const { instance } = useLanguage();
+  return <div>{instance.getItem("settings")}</div>;
 }

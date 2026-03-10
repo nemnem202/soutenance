@@ -103,7 +103,7 @@ export function SmallInput({
       <Tooltip>
         <TooltipTrigger>
           <div className={`flex flex-col gap-2 p-1 ${containerClassName}`}>
-            <Label className="paragraph cursor-pointer !text-left" htmlFor={id}>
+            <Label className="paragraph-sm cursor-pointer !text-left" htmlFor={id}>
               {label}
             </Label>
             <InputGroup className="w-full border-none !bg-popover h-full !rounded-xs">
@@ -126,7 +126,7 @@ export function SmallInput({
   } else {
     return (
       <div className={`flex flex-col gap-2 p-1 ${containerClassName}`}>
-        <Label className="paragraph cursor-pointer" htmlFor={id}>
+        <Label className="paragraph-sm cursor-pointer" htmlFor={id}>
           {label}
         </Label>
         <InputGroup className="w-full border-none !bg-popover h-full !rounded-xs">

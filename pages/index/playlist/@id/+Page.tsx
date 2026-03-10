@@ -6,6 +6,7 @@ import { LikeButton, PlusButton } from "@/components/custom-buttons";
 import { PlaylistItemsList } from "@/components/playlist-items";
 import Searchbar from "@/components/searchbar";
 import { Separator } from "@/components/separator";
+import { useLanguage } from "@/hooks/use-language";
 import getPlaceholders from "@/pages/+data";
 import { Playlist } from "@/types/project";
 import { Heart } from "lucide-react";
@@ -35,6 +36,7 @@ export default function Page() {
 }
 
 function Banner({ playlist }: { playlist: Playlist }) {
+  const { instance } = useLanguage();
   const account = getPlaceholders().ACCOUNTS_PLACEHOLDER.find((account) => account.id === playlist.accountId);
   return (
     <div className="flex w-full gap-8 items-center relative">
@@ -67,11 +69,13 @@ function Banner({ playlist }: { playlist: Playlist }) {
           )}
 
           <div className="flex gap-2">
-            <p className="text-muted-foreground">{playlist.exercicesIds.length} exercices</p>
+            <p className="text-muted-foreground">
+              {playlist.exercicesIds.length} {instance.getItem("exercices").toLowerCase()}
+            </p>
             <Separator orientation="vertical" />
-            <p className="text-muted-foreground">medium</p>
+            <p className="text-muted-foreground">{instance.getItem("medium")}</p>
             <Separator orientation="vertical" />
-            <p className="text-muted-foreground">pop</p>
+            <p className="text-muted-foreground">{instance.getItem("pop").toLowerCase()}</p>
           </div>
         </div>
       </div>
@@ -80,10 +84,11 @@ function Banner({ playlist }: { playlist: Playlist }) {
 }
 
 function Content({ playlist }: { playlist: Playlist }) {
+  const { instance } = useLanguage();
   return (
     <div className="w-full">
       <div className="ml-auto max-w-116 my-9">
-        <Searchbar placeholder="search the playlist" />
+        <Searchbar placeholder={instance.getItem("search_in_playlist")} />
       </div>
       <PlaylistItemsList playlist={playlist} />
     </div>

@@ -6,6 +6,7 @@ import useEditImage from "@/hooks/use-edit-image";
 import placeHoldeImage1 from "../assets/images/placeholder.webp";
 import { Dispatch, RefObject, SetStateAction } from "react";
 import Modal from "./modal";
+import { useLanguage } from "@/hooks/use-language";
 
 export interface EditableImageProps {
   onImageChange: (src: string) => void;
@@ -81,6 +82,8 @@ function EditImageModalContent(props: EditableImageModalProps) {
     imageSource,
   } = props;
 
+  const { instance } = useLanguage();
+
   return (
     <div className="flex flex-col gap-2 w-fit">
       <div className="overflow-hidden rounded-md w-fit" onWheel={handleWheel}>
@@ -131,7 +134,7 @@ function EditImageModalContent(props: EditableImageModalProps) {
           <Upload />
         </Button>
         <Button className="title-3 w-fit" onClick={handleEditorEditsSave}>
-          Save
+          {instance.getItem("save")}
         </Button>
       </div>
     </div>
