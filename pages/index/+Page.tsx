@@ -11,32 +11,32 @@ export default function Page() {
     <>
       {session ? (
         <Headline>
-          {instance.getItem("")} {session.username}
+          {instance.getItem("homepageSessionTitle")} {session.username}
         </Headline>
       ) : (
-        <Headline>Welcome on music sandbox</Headline>
+        <Headline>{instance.getItem("homepageDefaultTitle")}</Headline>
       )}
       <MediumWidgetCaroussel
-        title="Recently played"
+        title={instance.getItem("recentlyPlayed")}
         widgets={Array.from({ length: 20 }).map(() => (
           <MediumPlaylistWidget />
         ))}
       />
       <MediumWidgetCaroussel
-        title="More of them"
+        title={instance.getItem("moreOfThem")}
         widgets={Array.from({ length: 20 }).map(() => (
           <MediumAccountWidget />
         ))}
       />
       <MediumWidgetCaroussel
-        title="Popular exercices"
+        title={instance.getItem("popularExercices")}
         widgets={Array.from({ length: 20 }).map(() => (
           <MediumPlaylistWidget />
         ))}
       />
 
       <MediumWidgetCaroussel
-        title="Discover"
+        title={instance.getItem("discover")}
         widgets={Array.from({ length: 20 }).map(() => (
           <MediumPlaylistWidget />
         ))}

@@ -1,8 +1,8 @@
-import { LanguagePack } from "@/types/i18n";
-
 export const availableLanguages = ["french", "english", "spanish", "german", "chinese_simplified"] as const;
 
-const pagesLP: LanguagePack<typeof availableLanguages> = {
+//  LanguagePack<typeof availableLanguages>
+
+export const languagePack = {
   homepageDefaultTitle: {
     french: "Bienvenue sur MusicSandbox !",
   },
@@ -18,9 +18,6 @@ const pagesLP: LanguagePack<typeof availableLanguages> = {
   dashboardPageTitle: {
     french: "Vos playlists",
   },
-};
-
-const sectionsLP: LanguagePack<typeof availableLanguages> = {
   recentlyPlayed: {
     french: "Joués récemment",
   },
@@ -51,9 +48,6 @@ const sectionsLP: LanguagePack<typeof availableLanguages> = {
   midi: {
     french: "Midi",
   },
-};
-
-const componentsLP: LanguagePack<typeof availableLanguages> = {
   seeAll: {
     french: "voir tout",
   },
@@ -102,9 +96,6 @@ const componentsLP: LanguagePack<typeof availableLanguages> = {
   search_in_playlist: {
     french: "Chercher dans la playlist",
   },
-};
-
-const gameLP: LanguagePack<typeof availableLanguages> = {
   piano_roll: {
     french: "piano",
   },
@@ -183,11 +174,4 @@ const gameLP: LanguagePack<typeof availableLanguages> = {
   highlight_missed_notes: {
     french: "Souligner les manquements",
   },
-};
-
-export const languagePack: LanguagePack<typeof availableLanguages> = {
-  ...pagesLP,
-  ...sectionsLP,
-  ...componentsLP,
-  ...gameLP,
 } as const;
