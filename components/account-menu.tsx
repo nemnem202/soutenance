@@ -15,9 +15,10 @@ import {
 
 import { Button } from "./button";
 import { Brush, LanguagesIcon, LogOutIcon, SettingsIcon, UserIcon } from "lucide-react";
+import { navigate } from "vike/client/router";
 
 export default function AccountMenu() {
-  const { session } = useSession();
+  const { session, setSession } = useSession();
   if (!session) return null;
 
   return (
@@ -28,7 +29,7 @@ export default function AccountMenu() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate("/account/" + session.userId)}>
           <UserIcon />
           Profile
         </DropdownMenuItem>
@@ -39,8 +40,8 @@ export default function AccountMenu() {
         <DropdownMenuSeparator className="bg-border" />
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
-            Theme
             <Brush />
+            Theme
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
@@ -64,7 +65,13 @@ export default function AccountMenu() {
           </DropdownMenuPortal>
         </DropdownMenuSub>
         <DropdownMenuSeparator className="bg-border" />
-        <DropdownMenuItem variant="destructive">
+        <DropdownMenuItem
+          variant="destructive"
+          onClick={() => {
+            setSession(null);
+            navigate("/");
+          }}
+        >
           <LogOutIcon />
           Log out
         </DropdownMenuItem>

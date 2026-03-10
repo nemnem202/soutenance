@@ -1,11 +1,14 @@
+import { getRandomAccount } from "@/pages/+data";
+import { Account } from "@/types/account";
 import { Session } from "@/types/session";
-import { faker } from "@faker-js/faker";
 import { createContext, Dispatch, ReactNode, SetStateAction, useState } from "react";
 
+const PLACEHOLDER_ACCOUNT: Account = getRandomAccount();
+
 const PLACEHOLDER_SESSION: Session = {
-  profilePictureSource: faker.image.avatar(),
-  userId: faker.string.uuid(),
-  username: faker.person.firstName(),
+  profilePictureSource: PLACEHOLDER_ACCOUNT.picture,
+  userId: PLACEHOLDER_ACCOUNT.id,
+  username: PLACEHOLDER_ACCOUNT.firstName,
 };
 
 export interface SessionData {
