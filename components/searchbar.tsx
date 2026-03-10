@@ -1,4 +1,4 @@
-import BasicDropdown from "./dropdown-menu";
+import BasicDropdown from "./animated-dropdown-menu";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./input-group";
 import { Search } from "lucide-react";
 import useSearchbar from "@/hooks/use-searchbar";

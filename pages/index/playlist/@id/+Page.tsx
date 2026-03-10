@@ -61,7 +61,7 @@ function Banner({ playlist }: { playlist: Playlist }) {
               href={"/account/" + account.id}
               className="flex items-center gap-2 hover:opacity-80 transition cursor-pointer"
             >
-              <AccountPP account={account} />
+              <AccountPP image={account.picture} />
               <p className="title-4">{playlist.author}</p>
             </a>
           )}
