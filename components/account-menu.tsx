@@ -16,9 +16,11 @@ import {
 import { Button } from "./button";
 import { Brush, LanguagesIcon, LogOutIcon, SettingsIcon, UserIcon } from "lucide-react";
 import { navigate } from "vike/client/router";
+import { useTheme } from "@/hooks/use-theme";
 
 export default function AccountMenu() {
   const { session, setSession } = useSession();
+  const { currentTheme, setDark, setLight } = useTheme();
   if (!session) return null;
 
   return (
@@ -45,8 +47,22 @@ export default function AccountMenu() {
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
-              <DropdownMenuCheckboxItem checked>Dark</DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem>Light</DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={currentTheme === "dark"}
+                onCheckedChange={(e) => {
+                  if (e) setDark();
+                }}
+              >
+                Dark
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={currentTheme === "light"}
+                onCheckedChange={(e) => {
+                  if (e) setLight();
+                }}
+              >
+                Light
+              </DropdownMenuCheckboxItem>
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
         </DropdownMenuSub>
