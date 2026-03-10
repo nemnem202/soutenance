@@ -19,6 +19,7 @@ import { navigate } from "vike/client/router";
 import { useTheme } from "@/hooks/use-theme";
 import { useLanguage } from "@/hooks/use-language";
 import { availableLanguages } from "@/config/language-pack";
+import flags from "@/i18n/flags";
 
 export default function AccountMenu() {
   const { session, setSession } = useSession();
@@ -80,8 +81,13 @@ export default function AccountMenu() {
                 <DropdownMenuCheckboxItem
                   checked={lang === instance.getCurrentLanguage()}
                   onClick={() => setLanguage(lang)}
+                  className="w-full flex itemx-center justify-between gap-2"
                 >
-                  {lang}
+                  {lang.charAt(0).toUpperCase() + lang.slice(1)}
+                  <img
+                    style={{ width: "20px" }}
+                    src={`https://purecatamphetamine.github.io/country-flag-icons/3x2/${flags[lang]}.svg`}
+                  />
                 </DropdownMenuCheckboxItem>
               ))}
             </DropdownMenuSubContent>
