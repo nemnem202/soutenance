@@ -3,7 +3,7 @@ import I18nModule from "@/i18n/module";
 import { LanguagesContext } from "@/providers/language-provider";
 import { useContext, useMemo, useState } from "react";
 
-const DEFAULT_MODULE = new I18nModule("french");
+const DEFAULT_MODULE = new I18nModule("spanish");
 
 export function useLanguageProvider({ module }: { module?: I18nModule }) {
   const [currentLanguage, setCurrentLanguage] = useState<(typeof availableLanguages)[number]>(

@@ -18,11 +18,12 @@ import { Brush, LanguagesIcon, LogOutIcon, SettingsIcon, UserIcon } from "lucide
 import { navigate } from "vike/client/router";
 import { useTheme } from "@/hooks/use-theme";
 import { useLanguage } from "@/hooks/use-language";
+import { availableLanguages } from "@/config/language-pack";
 
 export default function AccountMenu() {
   const { session, setSession } = useSession();
   const { currentTheme, setDark, setLight } = useTheme();
-  const { instance } = useLanguage();
+  const { instance, setLanguage } = useLanguage();
   if (!session) return null;
 
   return (
@@ -75,9 +76,13 @@ export default function AccountMenu() {
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
-              <DropdownMenuCheckboxItem checked>English</DropdownMenuCheckboxItem>
-              {["French", "Chinese", "Deutch", "Italian"].map((lang) => (
-                <DropdownMenuCheckboxItem>{lang}</DropdownMenuCheckboxItem>
+              {availableLanguages.map((lang) => (
+                <DropdownMenuCheckboxItem
+                  checked={lang === instance.getCurrentLanguage()}
+                  onClick={() => setLanguage(lang)}
+                >
+                  {lang}
+                </DropdownMenuCheckboxItem>
               ))}
             </DropdownMenuSubContent>
           </DropdownMenuPortal>

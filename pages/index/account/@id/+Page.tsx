@@ -1,5 +1,6 @@
 import { MediumPlaylistWrapper } from "@/components/playlists-widgets";
 import Searchbar from "@/components/searchbar";
+import { useLanguage } from "@/hooks/use-language";
 import getPlaceholders from "@/pages/+data";
 import { Account } from "@/types/account";
 import { useEffect, useState } from "react";
@@ -52,10 +53,11 @@ function Banner({ account }: { account: Account }) {
 
 function Content({ account }: { account: Account }) {
   const exercices = getPlaceholders().EXERCICES_PLACEHOLDER;
+  const { instance } = useLanguage();
   return (
     <div className="w-full">
       <div className="ml-auto max-w-116 my-9">
-        <Searchbar placeholder="search exercices of this account" />
+        <Searchbar placeholder={instance.getItem("search_in_playlist")} />
       </div>
       <div className="flex  gap-x-auto gap-y-5 flex-wrap container">
         <MediumPlaylistWrapper />
