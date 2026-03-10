@@ -20,6 +20,7 @@ import { useTheme } from "@/hooks/use-theme";
 import { useLanguage } from "@/hooks/use-language";
 import { availableLanguages } from "@/config/language-pack";
 import flags from "@/i18n/flags";
+import { Language } from "@/types/i18n";
 
 export default function AccountMenu() {
   const { session, setSession } = useSession();
@@ -27,6 +28,10 @@ export default function AccountMenu() {
   const { instance, setLanguage } = useLanguage();
   if (!session) return null;
 
+  const handleLanguageChange = (lang: Language) => {
+    localStorage.setItem("preferred-language", lang);
+    setLanguage(lang);
+  };
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -80,7 +85,7 @@ export default function AccountMenu() {
               {availableLanguages.map((lang) => (
                 <DropdownMenuCheckboxItem
                   checked={lang === instance.getCurrentLanguage()}
-                  onClick={() => setLanguage(lang)}
+                  onClick={() => handleLanguageChange(lang)}
                   className="flex items-center justify-between gap-2"
                 >
                   {lang.charAt(0).toUpperCase() + lang.slice(1)}

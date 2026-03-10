@@ -2,12 +2,13 @@ import { availableLanguages, languagePack } from "@/config/language-pack";
 import I18nModule from "@/i18n/module";
 import { Data } from "@/pages/+data";
 import { LanguagesContext } from "@/providers/language-provider";
-import { useContext, useMemo, useState } from "react";
+import { Language } from "@/types/i18n";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useData } from "vike-react/useData";
 
 export function useLanguageProvider({ module }: { module?: I18nModule }) {
-  const { preferredLanguage } = useData<Data>();
-  const DEFAULT_MODULE = new I18nModule(preferredLanguage ?? "en");
+  const preferredLanguage = useData<Data>().preferredLanguage ?? "en";
+  const DEFAULT_MODULE = new I18nModule(preferredLanguage as Language);
 
   const [currentLanguage, setCurrentLanguage] = useState<(typeof availableLanguages)[number]>(
     module?.getCurrentLanguage() ?? DEFAULT_MODULE.getCurrentLanguage(),
@@ -22,6 +23,12 @@ export function useLanguageProvider({ module }: { module?: I18nModule }) {
   const setLanguage = (language: (typeof availableLanguages)[number]) => {
     setCurrentLanguage(language);
   };
+
+  useEffect(() => {
+    const preferredLanguage = localStorage.getItem("preferred-language");
+    if (preferredLanguage && availableLanguages.includes(preferredLanguage as Language))
+      setLanguage(preferredLanguage as Language);
+  }, []);
 
   return { instance, setLanguage };
 }
