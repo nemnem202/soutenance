@@ -1,11 +1,14 @@
 import { availableLanguages, languagePack } from "@/config/language-pack";
 import I18nModule from "@/i18n/module";
+import { Data } from "@/pages/+data";
 import { LanguagesContext } from "@/providers/language-provider";
 import { useContext, useMemo, useState } from "react";
-
-const DEFAULT_MODULE = new I18nModule("spanish");
+import { useData } from "vike-react/useData";
 
 export function useLanguageProvider({ module }: { module?: I18nModule }) {
+  const { preferredLanguage } = useData<Data>();
+  const DEFAULT_MODULE = new I18nModule(preferredLanguage ?? "en");
+
   const [currentLanguage, setCurrentLanguage] = useState<(typeof availableLanguages)[number]>(
     module?.getCurrentLanguage() ?? DEFAULT_MODULE.getCurrentLanguage(),
   );
