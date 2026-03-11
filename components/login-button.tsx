@@ -9,17 +9,18 @@ import { Checkbox } from "./checkbox";
 import GoogleLoginButton from "./google-login-button";
 import Modal from "./modal";
 import EditableImage from "./editable-image";
-import Link from "./link";
+import { useLanguage } from "@/hooks/use-language";
 
 export default function LoginButton() {
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"login" | "register">("login");
+  const { instance } = useLanguage();
   return (
     <>
       <Button variant={"link"} className="title-3 text-primary" onClick={() => setIsOpen(true)}>
-        Login
+        {instance.getItem("login")}
       </Button>
-      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} size="md" title="Example Modal">
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} size="md" title="Login Modal">
         {mode === "login" ? <LoginModalContent setMode={setMode} /> : <RegisterModalContent setMode={setMode} />}
       </Modal>
     </>
@@ -27,16 +28,17 @@ export default function LoginButton() {
 }
 
 function LoginModalContent({ setMode }: { setMode: Dispatch<SetStateAction<"login" | "register">> }) {
+  const { instance } = useLanguage();
   return (
     <div className="flex flex-col items-center min-w-0 min-h-0 gap-4">
       <Logo />
       <LoginForm />
       <div className="flex flex-col items-center w-full gap-3">
-        <p className="paragraph-sm text-muted-foreground">Or login with</p>
+        <p className="paragraph-sm text-muted-foreground">{instance.getItem("or_login_with")}</p>
         <GoogleLoginButton />
       </div>
       <p className="paragraph-md flex gap-2">
-        Don't have an account ?
+        {instance.getItem("dont_have_an_account")}
         <Button
           variant={"link"}
           className="text-primary p-0 h-min paragraph-md "
@@ -45,7 +47,7 @@ function LoginModalContent({ setMode }: { setMode: Dispatch<SetStateAction<"logi
             setMode("register");
           }}
         >
-          register here
+          {instance.getItem("register_here")}
         </Button>
       </p>
     </div>
@@ -54,6 +56,7 @@ function LoginModalContent({ setMode }: { setMode: Dispatch<SetStateAction<"logi
 
 function LoginForm() {
   const { form, formRef, handleSubmit } = useLoginForm();
+  const { instance } = useLanguage();
   return (
     <form
       id="form-rhf-login"
@@ -61,7 +64,7 @@ function LoginForm() {
       ref={formRef}
       className="w-full flex flex-col items-center justify-between gap-4"
     >
-      <h2 className="title-2 text-primary">Login to your accout</h2>
+      <h2 className="title-2 text-primary">{instance.getItem("login_to_your_account")}</h2>
       <FieldGroup className="gap-3">
         <Controller
           name="email"
@@ -72,7 +75,7 @@ function LoginForm() {
                 {...field}
                 id="form-rhf-login-email"
                 aria-invalid={fieldState.invalid}
-                placeholder="Email"
+                placeholder={instance.getItem("email")}
                 type="email"
                 autoComplete="off"
                 className="paragraph !text-left px-2"
@@ -90,7 +93,7 @@ function LoginForm() {
                 {...field}
                 id="form-rhf-login-password"
                 aria-invalid={fieldState.invalid}
-                placeholder="Password"
+                placeholder={instance.getItem("password")}
                 type="password"
                 autoComplete="off"
                 className="paragraph !text-left px-2"
@@ -111,35 +114,36 @@ function LoginForm() {
                     defaultChecked={field.value}
                     onCheckedChange={(c) => form.setValue("remember", typeof c === "boolean" ? c : false)}
                   />
-                  <FieldLabel htmlFor="form-rhf-remember">remember me</FieldLabel>
+                  <FieldLabel htmlFor="form-rhf-remember">{instance.getItem("remember_me")}</FieldLabel>
                 </div>
                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
           <Button variant={"link"} className="text-primary p-0 h-min" onClick={(e) => e.preventDefault()}>
-            forgot password ?
+            {instance.getItem("forgot_password")}
           </Button>
         </div>
       </FieldGroup>
       <Button className="title-3 w-full" type="submit">
-        Login
+        {instance.getItem("login")}
       </Button>
     </form>
   );
 }
 
 function RegisterModalContent({ setMode }: { setMode: Dispatch<SetStateAction<"login" | "register">> }) {
+  const { instance } = useLanguage();
   return (
     <div className="flex flex-col items-center min-w-0 min-h-0 gap-4">
       <Logo />
       <RegisterForm />
       <div className="flex flex-col items-center w-full gap-3">
-        <p className="paragraph-sm text-muted-foreground">Or login with</p>
+        <p className="paragraph-sm text-muted-foreground">{instance.getItem("or_login_with")}</p>
         <GoogleLoginButton />
       </div>
       <p className="paragraph-md flex gap-2">
-        Already have an account ?
+        {instance.getItem("already_have_an_account")}
         <Button
           variant={"link"}
           className="text-primary p-0 h-min paragraph-md "
@@ -148,7 +152,7 @@ function RegisterModalContent({ setMode }: { setMode: Dispatch<SetStateAction<"l
             setMode("login");
           }}
         >
-          login here
+          {instance.getItem("login_here")}
         </Button>
       </p>
     </div>
@@ -157,6 +161,7 @@ function RegisterModalContent({ setMode }: { setMode: Dispatch<SetStateAction<"l
 
 function RegisterForm() {
   const { form, formRef, handleSubmit } = useRegisterForm();
+  const { instance } = useLanguage();
   return (
     <form
       id="form-rhf-register"
@@ -164,7 +169,7 @@ function RegisterForm() {
       ref={formRef}
       className="w-full flex flex-col items-center justify-between gap-4"
     >
-      <h2 className="title-2 text-primary">Create your account</h2>
+      <h2 className="title-2 text-primary">{instance.getItem("create_your_account")}</h2>
       <FieldGroup className="gap-3 mb-3">
         <Controller
           name="image.src"
@@ -195,7 +200,7 @@ function RegisterForm() {
                 {...field}
                 id="form-rhf-register-username"
                 aria-invalid={fieldState.invalid}
-                placeholder="Username"
+                placeholder={instance.getItem("username")}
                 type="text"
                 autoComplete="off"
                 className="paragraph !text-left px-2"
@@ -213,7 +218,7 @@ function RegisterForm() {
                 {...field}
                 id="form-rhf-register-email"
                 aria-invalid={fieldState.invalid}
-                placeholder="Email"
+                placeholder={instance.getItem("email")}
                 type="email"
                 autoComplete="off"
                 className="paragraph !text-left px-2"
@@ -232,7 +237,7 @@ function RegisterForm() {
                   {...field}
                   id="form-rhf-register-password"
                   aria-invalid={fieldState.invalid}
-                  placeholder="Password"
+                  placeholder={instance.getItem("password")}
                   type="password"
                   autoComplete="off"
                   className="paragraph !text-left px-2"
@@ -250,7 +255,7 @@ function RegisterForm() {
                   {...field}
                   id="form-rhf-register-password"
                   aria-invalid={fieldState.invalid}
-                  placeholder="Confirm Password"
+                  placeholder={instance.getItem("confirm_password")}
                   type="password"
                   autoComplete="off"
                   className="paragraph !text-left px-2"
@@ -272,11 +277,11 @@ function RegisterForm() {
                     defaultChecked={field.value}
                     onCheckedChange={(c) => form.setValue("agree_terms_of_service", typeof c === "boolean" ? c : false)}
                   />
-                  <FieldLabel htmlFor="form-rhf-remember" className=" paragraph-sm">
+                  <FieldLabel htmlFor="form-rhf-remember" className=" paragraph-md max-w-70">
                     <span>
-                      By checking this, i agree all statements in{" "}
+                      {instance.getItem("by_checking_this")}{" "}
                       <a href="/therms-of-service" className="text-primary p-0 h-min hover:underline">
-                        therms of service
+                        {instance.getItem("therms_of_service")} {/* TODO */}
                       </a>
                     </span>
                   </FieldLabel>
@@ -288,7 +293,7 @@ function RegisterForm() {
         </div>
       </FieldGroup>
       <Button className="title-3 w-full" type="submit">
-        Register
+        {instance.getItem("register")}
       </Button>
     </form>
   );
