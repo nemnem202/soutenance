@@ -1,29 +1,31 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Button } from "./button";
 import Logo from "./logo";
 import { Field, FieldError, FieldGroup, FieldLabel } from "./field";
 import { Controller } from "react-hook-form";
 import { Input } from "./input";
-import { useLoginForm } from "@/hooks/use-forms";
+import { useLoginForm, useRegisterForm } from "@/hooks/use-forms";
 import { Checkbox } from "./checkbox";
 import GoogleLoginButton from "./google-login-button";
 import Modal from "./modal";
+import EditableImage from "./editable-image";
 
 export default function LoginButton() {
   const [isOpen, setIsOpen] = useState(false);
+  const [mode, setMode] = useState<"login" | "register">("login");
   return (
     <>
       <Button variant={"link"} className="title-3 text-primary" onClick={() => setIsOpen(true)}>
         Login
       </Button>
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} size="md" title="Example Modal">
-        <LoginModalContent />
+        {mode === "login" ? <LoginModalContent setMode={setMode} /> : <RegisterModalContent setMode={setMode} />}
       </Modal>
     </>
   );
 }
 
-function LoginModalContent() {
+function LoginModalContent({ setMode }: { setMode: Dispatch<SetStateAction<"login" | "register">> }) {
   return (
     <div className="flex flex-col items-center min-w-0 min-h-0 gap-4">
       <Logo />
@@ -34,7 +36,14 @@ function LoginModalContent() {
       </div>
       <p className="paragraph-md flex gap-2">
         Don't have an account ?
-        <Button variant={"link"} className="text-primary p-0 h-min paragraph-md " onClick={(e) => e.preventDefault()}>
+        <Button
+          variant={"link"}
+          className="text-primary p-0 h-min paragraph-md "
+          onClick={(e) => {
+            e.preventDefault();
+            setMode("register");
+          }}
+        >
           register here
         </Button>
       </p>
@@ -114,6 +123,165 @@ function LoginForm() {
       </FieldGroup>
       <Button className="title-3 w-full" type="submit">
         Login
+      </Button>
+    </form>
+  );
+}
+
+function RegisterModalContent({ setMode }: { setMode: Dispatch<SetStateAction<"login" | "register">> }) {
+  return (
+    <div className="flex flex-col items-center min-w-0 min-h-0 gap-4">
+      <Logo />
+      <RegisterForm />
+      <div className="flex flex-col items-center w-full gap-3">
+        <p className="paragraph-sm text-muted-foreground">Or login with</p>
+        <GoogleLoginButton />
+      </div>
+      <p className="paragraph-md flex gap-2">
+        Already have an account ?
+        <Button
+          variant={"link"}
+          className="text-primary p-0 h-min paragraph-md "
+          onClick={(e) => {
+            e.preventDefault();
+            setMode("login");
+          }}
+        >
+          login here
+        </Button>
+      </p>
+    </div>
+  );
+}
+
+function RegisterForm() {
+  const { form, formRef, handleSubmit } = useRegisterForm();
+  return (
+    <form
+      id="form-rhf-register"
+      onSubmit={form.handleSubmit(handleSubmit)}
+      ref={formRef}
+      className="w-full flex flex-col items-center justify-between gap-4"
+    >
+      <h2 className="title-2 text-primary">Create your account</h2>
+      <FieldGroup className="gap-3">
+        <Controller
+          name="image.src"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid} className="gap-1">
+              <div className="w-full flex justify-center">
+                <div className="w-50 h-50 overflow-hidden">
+                  <EditableImage
+                    alt="playlist cover"
+                    src={field.value}
+                    onImageChange={(source) => field.onChange(source)}
+                  />
+                </div>
+              </div>
+
+              {fieldState.error && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        <Controller
+          name="username"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid} className="gap-1">
+              <Input
+                {...field}
+                id="form-rhf-register-username"
+                aria-invalid={fieldState.invalid}
+                placeholder="Username"
+                type="text"
+                autoComplete="off"
+                className="paragraph !text-left px-2"
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        <Controller
+          name="email"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid} className="gap-1">
+              <Input
+                {...field}
+                id="form-rhf-register-email"
+                aria-invalid={fieldState.invalid}
+                placeholder="Email"
+                type="email"
+                autoComplete="off"
+                className="paragraph !text-left px-2"
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        <div className="flex gap-2">
+          <Controller
+            name="password"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="gap-1">
+                <Input
+                  {...field}
+                  id="form-rhf-register-password"
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Password"
+                  type="password"
+                  autoComplete="off"
+                  className="paragraph !text-left px-2"
+                />
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
+            )}
+          />
+          <Controller
+            name="password-confirm"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="gap-1">
+                <Input
+                  {...field}
+                  id="form-rhf-register-password"
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Confirm Password"
+                  type="password"
+                  autoComplete="off"
+                  className="paragraph !text-left px-2"
+                />
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
+            )}
+          />
+        </div>
+        <div className="flex justify-between items-center">
+          <Controller
+            name="therms-of-service"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="gap-1">
+                <div className="flex gap-2">
+                  <Checkbox
+                    id="form-rhf-remember"
+                    defaultChecked={field.value}
+                    onCheckedChange={(c) => form.setValue("remember", typeof c === "boolean" ? c : false)}
+                  />
+                  <FieldLabel htmlFor="form-rhf-remember">
+                    By checking this, i agree all statements in Therms of service
+                  </FieldLabel>
+                </div>
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
+            )}
+          />
+        </div>
+      </FieldGroup>
+      <Button className="title-3 w-full" type="submit">
+        Register
       </Button>
     </form>
   );

@@ -42,3 +42,20 @@ export function useLoginForm() {
 
   return { formRef, form, handleSubmit };
 }
+
+export function useRegisterForm() {
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const form = useForm<LoginData>({
+    resolver: zodResolver(loginSchema) as Resolver<LoginData>,
+    defaultValues: {
+      remember: true,
+    },
+  });
+
+  const handleSubmit = (form: LoginData) => {
+    console.log(form);
+  };
+
+  return { formRef, form, handleSubmit };
+}
