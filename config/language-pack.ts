@@ -2,11 +2,11 @@ export const availableLanguages = ["fr", "en", "es", "de", "zh"] as const;
 
 export const languagePack = {
   homepageDefaultTitle: {
-    fr: "Bienvenue sur MusicSandbox !",
-    en: "Welcome to MusicSandbox!",
-    es: "¡Bienvenido a MusicSandbox!",
-    de: "Willkommen bei MusicSandbox!",
-    zh: "欢迎来到 MusicSandbox！",
+    fr: "Bienvenue sur Music Sandbox !",
+    en: "Welcome to Music Sandbox!",
+    es: "¡Bienvenido a Music Sandbox!",
+    de: "Willkommen bei Music Sandbox!",
+    zh: "欢迎来到 Music Sandbox！",
   },
   homepageSessionTitle: {
     fr: "Bon retour parmi nous",
