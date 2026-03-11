@@ -1,4 +1,4 @@
-import { loginSchema } from "@/schemas/frontend";
+import { loginSchema, registerSchema } from "@/schemas/frontend";
 import z from "zod";
 
 export type Session = {
@@ -8,3 +8,5 @@ export type Session = {
 };
 
 export type LoginData = z.infer<typeof loginSchema>;
+
+export type RegisterData = z.infer<typeof registerSchema>;

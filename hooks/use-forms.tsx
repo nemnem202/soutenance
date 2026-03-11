@@ -1,8 +1,8 @@
-import { loginSchema, playlistSchema } from "@/schemas/frontend";
+import { loginSchema, playlistSchema, registerSchema } from "@/schemas/frontend";
 import { useEffect, useRef } from "react";
 import { Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginData } from "@/types/session";
+import { LoginData, RegisterData } from "@/types/session";
 import { faker } from "@faker-js/faker";
 import { PlaylistSchema } from "@/types/project";
 
@@ -46,8 +46,8 @@ export function useLoginForm() {
 export function useRegisterForm() {
   const formRef = useRef<HTMLFormElement>(null);
 
-  const form = useForm<LoginData>({
-    resolver: zodResolver(loginSchema) as Resolver<LoginData>,
+  const form = useForm<RegisterData>({
+    resolver: zodResolver(registerSchema) as Resolver<RegisterData>,
     defaultValues: {
       remember: true,
     },

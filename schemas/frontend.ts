@@ -31,3 +31,18 @@ export const loginSchema = z.object({
   password: z.string({ error: "The password is required." }),
   remember: z.boolean(),
 });
+
+export const registerSchema = z
+  .object({
+    image: imageSchema,
+    email: z.email({ message: "The email is required" }),
+    password: z.string({ message: "The password is required." }),
+    password_confirm: z.string({ message: "Please confirm your password." }),
+    agree_terms_of_service: z.literal(true, {
+      error: "You must agree with the terms of service",
+    }),
+  })
+  .refine((data) => data.password === data.password_confirm, {
+    message: "Passwords do not match",
+    path: ["password_confirm"],
+  });
