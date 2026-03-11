@@ -11,11 +11,12 @@ import { useLanguage } from "@/hooks/use-language";
 export interface EditableImageProps {
   onImageChange: (src: string) => void;
   src?: string;
+  canBeEdited?: boolean;
   alt: string;
 }
 
-export default function EditableImage(props: EditableImageProps) {
-  const editImage = useEditImage(props);
+export default function EditableImage({ onImageChange, src, alt, canBeEdited = true }: EditableImageProps) {
+  const editImage = useEditImage({ onImageChange, src, alt });
 
   const { hovered, setHovered, imageSource, changeImage, open, setOpen, inputRef, handleImageChange } = editImage;
 
@@ -26,21 +27,23 @@ export default function EditableImage(props: EditableImageProps) {
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
-        <Button
-          className={`absolute top-0 right-0 m-1 rounded-full z-2 ${!hovered && "hidden"}`}
-          variant="ghost"
-          size="icon"
-          onClick={(e) => {
-            e.preventDefault();
-            if (imageSource) {
-              setOpen(true);
-            } else {
-              changeImage();
-            }
-          }}
-        >
-          <Pen />
-        </Button>
+        {canBeEdited && (
+          <Button
+            className={`absolute top-0 right-0 m-1 rounded-full z-2 ${!hovered && "hidden"}`}
+            variant="ghost"
+            size="icon"
+            onClick={(e) => {
+              e.preventDefault();
+              if (imageSource) {
+                setOpen(true);
+              } else {
+                changeImage();
+              }
+            }}
+          >
+            <Pen />
+          </Button>
+        )}
 
         <button
           className={`cursor-pointer absolute inset-0 bg-popover transition opacity-40 z-1 flex items-center justify-center ${!hovered && "!opacity-0"}`}
@@ -52,12 +55,7 @@ export default function EditableImage(props: EditableImageProps) {
           <Upload size={50} />
         </button>
 
-        <img
-          className="size-full object-cover z-0"
-          src={imageSource ?? placeHoldeImage1}
-          alt={props.alt}
-          loading="lazy"
-        />
+        <img className="size-full object-cover z-0" src={imageSource ?? placeHoldeImage1} alt={alt} loading="lazy" />
       </div>
 
       <Modal isOpen={open} onClose={() => setOpen(false)} size="md" title="Edit image">
@@ -128,6 +126,7 @@ function EditImageModalContent(props: EditableImageModalProps) {
           variant={"outline"}
           onClick={(e) => {
             e.preventDefault();
+            e.stopPropagation();
             changeImage();
           }}
         >
