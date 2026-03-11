@@ -49,11 +49,14 @@ export function useRegisterForm() {
   const form = useForm<RegisterData>({
     resolver: zodResolver(registerSchema) as Resolver<RegisterData>,
     defaultValues: {
-      remember: true,
+      image: {
+        alt: "The profile picture of the user",
+      },
+      agree_terms_of_service: false,
     },
   });
 
-  const handleSubmit = (form: LoginData) => {
+  const handleSubmit = (form: RegisterData) => {
     console.log(form);
   };
 

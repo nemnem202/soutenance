@@ -240,7 +240,7 @@ function RegisterForm() {
             )}
           />
           <Controller
-            name="password-confirm"
+            name="password_confirm"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid} className="gap-1">
@@ -260,7 +260,7 @@ function RegisterForm() {
         </div>
         <div className="flex justify-between items-center">
           <Controller
-            name="therms-of-service"
+            name="agree_terms_of_service"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid} className="gap-1">
@@ -268,7 +268,7 @@ function RegisterForm() {
                   <Checkbox
                     id="form-rhf-remember"
                     defaultChecked={field.value}
-                    onCheckedChange={(c) => form.setValue("remember", typeof c === "boolean" ? c : false)}
+                    onCheckedChange={(c) => form.setValue("agree_terms_of_service", typeof c === "boolean" ? c : false)}
                   />
                   <FieldLabel htmlFor="form-rhf-remember">
                     By checking this, i agree all statements in Therms of service
