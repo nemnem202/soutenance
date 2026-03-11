@@ -9,6 +9,7 @@ import { Checkbox } from "./checkbox";
 import GoogleLoginButton from "./google-login-button";
 import Modal from "./modal";
 import EditableImage from "./editable-image";
+import Link from "./link";
 
 export default function LoginButton() {
   const [isOpen, setIsOpen] = useState(false);
@@ -164,7 +165,7 @@ function RegisterForm() {
       className="w-full flex flex-col items-center justify-between gap-4"
     >
       <h2 className="title-2 text-primary">Create your account</h2>
-      <FieldGroup className="gap-3">
+      <FieldGroup className="gap-3 mb-3">
         <Controller
           name="image.src"
           control={form.control}
@@ -176,6 +177,7 @@ function RegisterForm() {
                     alt="playlist cover"
                     src={field.value}
                     onImageChange={(source) => field.onChange(source)}
+                    canBeEdited={false}
                   />
                 </div>
               </div>
@@ -270,8 +272,13 @@ function RegisterForm() {
                     defaultChecked={field.value}
                     onCheckedChange={(c) => form.setValue("agree_terms_of_service", typeof c === "boolean" ? c : false)}
                   />
-                  <FieldLabel htmlFor="form-rhf-remember">
-                    By checking this, i agree all statements in Therms of service
+                  <FieldLabel htmlFor="form-rhf-remember" className=" paragraph-sm">
+                    <span>
+                      By checking this, i agree all statements in{" "}
+                      <a href="/therms-of-service" className="text-primary p-0 h-min hover:underline">
+                        therms of service
+                      </a>
+                    </span>
                   </FieldLabel>
                 </div>
                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
