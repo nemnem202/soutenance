@@ -673,4 +673,11 @@ export const languagePack = {
     de: "Registrieren",
     zh: "注册",
   },
+  search: {
+    fr: "Rechercher",
+    en: "Search",
+    es: "Buscar",
+    de: "Suchen",
+    zh: "搜索",
+  },
 } as const;
