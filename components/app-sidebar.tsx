@@ -47,9 +47,12 @@ function NavBar() {
     <nav className="flex flex-col w-full">
       <Link href="/" text={instance.getItem("homepage")} icon={<House />} />
       <Link href="/explorer" text={instance.getItem("explorePageTitle")} icon={<Compass />} />
-      <Link href="/favorites" text={instance.getItem("favoritesPageTitle")} icon={<Heart />} />
+
       {session && (
-        <Link href={`/account/${session.userId}`} text={instance.getItem("dashboard")} icon={<LayoutDashboard />} />
+        <>
+          <Link href="/favorites" text={instance.getItem("favoritesPageTitle")} icon={<Heart />} />
+          <Link href={`/account/${session.userId}`} text={instance.getItem("dashboard")} icon={<LayoutDashboard />} />
+        </>
       )}
     </nav>
   );
