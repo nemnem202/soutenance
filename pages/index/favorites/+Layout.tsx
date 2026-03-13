@@ -1,10 +1,16 @@
 import AnimatedTabs from "@/components/animated-tabs";
 import Headline from "@/components/headline";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import { useLanguage } from "@/hooks/use-language";
 import useFavoritesNavigation from "@/hooks/use-favorites-navigation";
+import MobileHeader from "@/components/mobile/header";
+import SizeAdapter from "@/components/size-adapter";
 
 export default function Layout({ children }: { children: ReactNode }) {
+  return <SizeAdapter sm={<Mobile />} md={<Desktop>{children}</Desktop>} />;
+}
+
+function Desktop({ children }: { children: ReactNode }) {
   const { activeTab, handleNav } = useFavoritesNavigation();
   const { instance } = useLanguage();
   const tabs = [
@@ -27,6 +33,15 @@ export default function Layout({ children }: { children: ReactNode }) {
         />
         {children}
       </div>
+    </>
+  );
+}
+
+function Mobile() {
+  const { instance } = useLanguage();
+  return (
+    <>
+      <MobileHeader title={instance.getItem("favoritesPageTitle")} />
     </>
   );
 }

@@ -8,10 +8,10 @@ import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
 
 export default function Page() {
-  return <SizeAdapter sm={<MobileHomePage />} md={<DesktopHomePage />} />;
+  return <SizeAdapter sm={<Mobile />} md={<Desktop />} />;
 }
 
-function DesktopHomePage() {
+function Desktop() {
   const { session } = useSession();
   const { instance } = useLanguage();
   return (
@@ -52,7 +52,7 @@ function DesktopHomePage() {
   );
 }
 
-function MobileHomePage() {
+function Mobile() {
   const { instance } = useLanguage();
   return (
     <>

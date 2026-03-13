@@ -680,4 +680,32 @@ export const languagePack = {
     de: "Suchen",
     zh: "搜索",
   },
+  page_not_found: {
+    fr: "Page Non Trouvée",
+    en: "Page Not Found",
+    es: "Página No Encontrada",
+    de: "Seite Nicht Gefunden",
+    zh: "页面未找到",
+  },
+  this_page_cound_not_be_found: {
+    fr: "Cette page n'a pas pu être trouvée :/",
+    en: "This page could not be found :/",
+    es: "No se pudo encontrar esta página :/",
+    de: "Diese Seite konnte nicht gefunden werden :/",
+    zh: "找不到此页面 :/",
+  },
+  internal_error: {
+    fr: "Erreur Interne",
+    en: "Internal Error",
+    es: "Error Interno",
+    de: "Interner Fehler",
+    zh: "内部错误",
+  },
+  something_went_wrong: {
+    fr: "Quelque chose s'est mal passé.",
+    en: "Something went wrong.",
+    es: "Algo salió mal.",
+    de: "Etwas ist schief gelaufen.",
+    zh: "出错了。",
+  },
 } as const;
