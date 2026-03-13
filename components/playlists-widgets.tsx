@@ -95,7 +95,7 @@ function MediumAddNewPlaylistWidget() {
 
 export function MediumPlaylistWrapper({ allowToAddANewPlaylist }: { allowToAddANewPlaylist?: boolean }) {
   return (
-    <div className="flex justify-between gap-4 gap-y-5 flex-wrap container">
+    <div className="flex justify-between md:gap-4 gap-y-5 flex-wrap container">
       {allowToAddANewPlaylist && (
         <div
         //  className="mr-6.5"

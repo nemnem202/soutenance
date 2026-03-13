@@ -32,7 +32,7 @@ export function MediumAccountWidget() {
 
 export function MediumAccountWrapper() {
   return (
-    <div className="flex justify-between gap-4 gap-y-5 flex-wrap container">
+    <div className="flex justify-between md:gap-4 gap-y-5 flex-wrap container">
       {Array.from({ length: 50 }).map((_, index) => (
         <div
           //  className="mr-6.5"
