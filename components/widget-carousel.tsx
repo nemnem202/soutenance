@@ -117,7 +117,7 @@ export function WidgetTitle({
   const isMobile = useScreen() == "sm";
   return (
     <div className="flex w-full justify-between items-center">
-      <div className="flex items-center gap-w-5 w-full">
+      <div className="flex items-center gap-x-5 w-full">
         <h2 className="title-2">{title}</h2>
         {!isMobile && (
           <Button variant="outline" size="sm" className="py-0" asChild>
