@@ -32,8 +32,8 @@ export default function Page() {
 
 function Banner({ account }: { account: Account }) {
   return (
-    <div className="flex w-full gap-8 items-center">
-      <div className="w-75 rounded-full aspect-square overflow-hidden">
+    <div className="flex w-full md:flex-row flex-col gap-8 items-center">
+      <div className="w-50 md:w-75 rounded-full aspect-square overflow-hidden">
         <img
           src={account.picture}
           alt={"An image of " + account.firstName + " " + account.lastName}
@@ -60,7 +60,7 @@ function Content() {
   return (
     <div className="w-full">
       <div className="ml-auto max-w-116 my-9">
-        <Searchbar placeholder={instance.getItem("search_in_playlist")} />
+        <Searchbar placeholder={instance.getItem("search")} />
       </div>
       <div className="flex  gap-x-auto gap-y-5 flex-wrap container">
         <MediumPlaylistWrapper allowToAddANewPlaylist={id === session?.userId} />

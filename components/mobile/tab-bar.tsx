@@ -11,7 +11,7 @@ export default function TabBar() {
       <Link href="/" icon={<House className="w-full h-full" />} />
       <Link href="/explorer" icon={<Compass className="w-full h-full" />} />
       <Link href="/favorites" icon={<Heart className="w-full h-full" />} />
-      {session && <Link href={`/account/${session.userId}`} icon={<LayoutDashboard />} />}
+      {session && <Link href={`/account/${session.userId}`} icon={<LayoutDashboard className="w-full h-full" />} />}
     </nav>
   );
 }
