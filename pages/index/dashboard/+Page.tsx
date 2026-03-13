@@ -23,6 +23,7 @@ function Mobile() {
   return (
     <>
       <MobileHeader title={instance.getItem("dashboard")} />
+      <MediumPlaylistWrapper allowToAddANewPlaylist={true} />
     </>
   );
 }
