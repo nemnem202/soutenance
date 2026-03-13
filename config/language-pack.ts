@@ -191,11 +191,11 @@ export const languagePack = {
     zh: "用户",
   },
   bpm: {
-    fr: "BPM",
-    en: "BPM",
-    es: "BPM",
-    de: "BPM",
-    zh: "BPM",
+    fr: "Bpm",
+    en: "Bpm",
+    es: "Bpm",
+    de: "Bpm",
+    zh: "Bpm",
   },
   pop: {
     fr: "Pop.", // popularité

@@ -5,9 +5,6 @@ import { useLanguage } from "@/hooks/use-language";
 import useFavoritesNavigation from "@/hooks/use-favorites-navigation";
 import MobileHeader from "@/components/mobile/header";
 import SizeAdapter from "@/components/size-adapter";
-import { MediumWidgetCaroussel } from "@/components/widget-carousel";
-import { MediumPlaylistWidget } from "@/components/playlists-widgets";
-import { MediumAccountWidget } from "@/components/account-widgets";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return <SizeAdapter sm={<Mobile>{children}</Mobile>} md={<Desktop>{children}</Desktop>} />;

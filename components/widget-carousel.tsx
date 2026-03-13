@@ -6,6 +6,7 @@ import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
 import { navigate } from "vike/client/router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import SizeAdapter from "./size-adapter";
 
 interface MediumWidgetGroupProps {
   widgets: ReactNode[];
@@ -74,28 +75,17 @@ export function MediumWidgetCaroussel({ title, widgets, seeAllUrl = "/see-all" }
     setIsLastItemVisible,
   } = useCaroussel();
 
-  const isMobile = useScreen() === "sm";
-
   return (
     <section className="flex flex-col md:gap-6 gap-1 mx-auto mb-6 container">
-      <div className="flex w-full justify-between items-center">
-        <WidgetTitle title={title} seeAllUrl={seeAllUrl} />
-        {isMobile ? (
-          <>
-            <a href={seeAllUrl}>
-              <ChevronRight />
-            </a>
-          </>
-        ) : (
-          <div className="flex">
-            <ChevronLeftButton disabled={itemIndex <= 0} onClick={() => scrollToIndex(Math.max(0, itemIndex - 1))} />
-            <ChevrontRightButton
-              disabled={isLastItemVisible}
-              onClick={() => scrollToIndex(Math.min(widgetsRef.current.length - 1, itemIndex + 1))}
-            />
-          </div>
-        )}
-      </div>
+      <WidgetTitle
+        title={title}
+        seeAllUrl={seeAllUrl}
+        isLastItemVisible={isLastItemVisible}
+        itemIndex={itemIndex}
+        scrollToIndex={scrollToIndex}
+        widgetsRef={widgetsRef}
+      />
+
       <MediumWidgetGroup
         widgets={widgets}
         containerRef={containerRef}
@@ -108,19 +98,56 @@ export function MediumWidgetCaroussel({ title, widgets, seeAllUrl = "/see-all" }
   );
 }
 
-export function WidgetTitle({ title, seeAllUrl = "/see-all" }: { title: string; seeAllUrl?: string }) {
+export function WidgetTitle({
+  title,
+  seeAllUrl = "/see-all",
+  itemIndex,
+  isLastItemVisible,
+  scrollToIndex,
+  widgetsRef,
+}: {
+  title: string;
+  seeAllUrl?: string;
+  itemIndex?: number;
+  isLastItemVisible?: boolean;
+  scrollToIndex?: (index: number) => void;
+  widgetsRef?: RefObject<(HTMLDivElement | null)[]>;
+}) {
   const { instance } = useLanguage();
   const isMobile = useScreen() == "sm";
   return (
-    <div className="flex items-center gap-x-5">
-      <h2 className="title-2">{title}</h2>
-      {!isMobile && (
-        <Button variant="outline" size="sm" className="py-0" asChild>
-          <a href={seeAllUrl} className="paragraph-md !h-min py-1">
-            {instance.getItem("seeAll")}
+    <div className="flex w-full justify-between items-center">
+      <div className="flex items-center gap-w-5 w-full">
+        <h2 className="title-2">{title}</h2>
+        {!isMobile && (
+          <Button variant="outline" size="sm" className="py-0" asChild>
+            <a href={seeAllUrl} className="paragraph-md !h-min py-1">
+              {instance.getItem("seeAll")}
+            </a>
+          </Button>
+        )}
+      </div>
+      <SizeAdapter
+        sm={
+          <a href={seeAllUrl}>
+            <ChevronRight />
           </a>
-        </Button>
-      )}
+        }
+        md={
+          itemIndex !== undefined &&
+          isLastItemVisible !== undefined &&
+          scrollToIndex &&
+          widgetsRef && (
+            <div className="flex">
+              <ChevronLeftButton disabled={itemIndex <= 0} onClick={() => scrollToIndex(Math.max(0, itemIndex - 1))} />
+              <ChevrontRightButton
+                disabled={isLastItemVisible}
+                onClick={() => scrollToIndex(Math.min(widgetsRef.current.length - 1, itemIndex + 1))}
+              />
+            </div>
+          )
+        }
+      />
     </div>
   );
 }
