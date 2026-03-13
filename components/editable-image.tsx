@@ -7,6 +7,7 @@ import placeHoldeImage1 from "../assets/images/placeholder.webp";
 import { Dispatch, RefObject, SetStateAction } from "react";
 import Modal from "./modal";
 import { useLanguage } from "@/hooks/use-language";
+import useScreen from "@/hooks/use-screen";
 
 export interface EditableImageProps {
   onImageChange: (src: string) => void;
@@ -81,21 +82,21 @@ function EditImageModalContent(props: EditableImageModalProps) {
   } = props;
 
   const { instance } = useLanguage();
-
+  const isMobile = useScreen() === "sm";
   return (
-    <div className="flex flex-col gap-2 w-fit">
+    <div className="flex flex-col gap-2 w-fit items-center">
       <div className="overflow-hidden rounded-md w-fit" onWheel={handleWheel}>
         <AvatarEditor
           image={imageSource}
           borderRadius={0}
           border={0}
           scale={avatarZoom}
-          width={400}
-          height={400}
+          width={isMobile ? 250 : 400}
+          height={isMobile ? 250 : 400}
           ref={avatarEditorRef}
         />
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 w-full">
         <Button
           className="rounded-full w-10 h-10 !aspect-square border-none"
           variant={"outline"}

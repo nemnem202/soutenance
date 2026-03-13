@@ -7,7 +7,7 @@ import { getRandomAccount } from "@/lib/utils";
 export function MediumAccountWidget() {
   const account = getRandomAccount();
   return (
-    <div className="w-55 cursor-pointer group">
+    <div className="relative group w-full cursor-pointer">
       <a href={`/account/${account.id}`} className="flex flex-col gap-2.5 items-center">
         <div className="w-full aspect-square rounded-full overflow-hidden relative flex items-end justify-center">
           <LikeButton className={`opacity-0 z-1 group-hover:opacity-100`} />
@@ -32,14 +32,9 @@ export function MediumAccountWidget() {
 
 export function MediumAccountWrapper() {
   return (
-    <div className="flex justify-between gap-4 gap-y-5 flex-wrap container">
+    <div className="grid gap-y-5 md:gap-y-4 gap-2 container grid-cols-[repeat(auto-fit,minmax(30vw,1fr))] md:grid-cols-[repeat(auto-fit,minmax(15vw,1fr))]">
       {Array.from({ length: 50 }).map((_, index) => (
-        <div
-          //  className="mr-6.5"
-          key={index}
-        >
-          <MediumAccountWidget />
-        </div>
+        <MediumAccountWidget key={index} />
       ))}
     </div>
   );

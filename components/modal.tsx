@@ -125,7 +125,7 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
               animate={shouldReduceMotion ? {} : { scale: 1, y: 0, opacity: 1 }}
               aria-labelledby={titleId}
               aria-modal="true"
-              className={`${modalSizes[size]} relative mx-auto w-full rounded-xl border bg-card p-4 shadow-xl sm:p-6`}
+              className={`${modalSizes[size]} relative mx-auto w-fit md:w-full rounded-xl border bg-card p-4 shadow-xl sm:p-6`}
               exit={
                 shouldReduceMotion
                   ? { opacity: 0, transition: { duration: 0 } }

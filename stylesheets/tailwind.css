@@ -133,47 +133,44 @@
 
 @layer utilities {
   .headline {
-    font-size: 3rem;
+    @apply text-3xl md:text-5xl;
     font-family: var(--headline-font);
   }
 
   .title-1 {
-    font-size: 2rem;
+    @apply text-[2rem] font-bold;
     font-family: var(--title-font);
-    font-weight: bold;
   }
 
   .title-2 {
-    font-size: 1.25rem;
+    @apply text-[1.25rem] font-bold;
     font-family: var(--title-font);
-    font-weight: bold;
   }
 
   .title-3 {
-    font-size: 1.115rem;
+    @apply text-[1.115rem] font-bold;
     font-family: var(--title-font);
-    font-weight: bold;
   }
 
   .title-4 {
-    font-size: 1rem;
+    @apply text-[0.885rem];
     font-family: var(--title-font);
   }
 
-  .paragraph-md,
-  .paragraph {
+  .paragraph,
+  .paragraph-md {
+    @apply text-[0.885rem];
     font-family: var(--general-font);
-    font-size: 0.885rem;
   }
 
   .paragraph-sm {
+    @apply text-[0.75rem];
     font-family: var(--general-font);
-    font-size: 0.75rem;
   }
 
   .paragraph-xs {
+    @apply text-[0.615rem];
     font-family: var(--general-font);
-    font-size: 0.615rem;
   }
 }
 

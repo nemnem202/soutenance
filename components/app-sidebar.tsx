@@ -8,10 +8,11 @@ import Link from "./link";
 import { navigate } from "vike/client/router";
 import { PlusButton } from "./custom-buttons";
 import { useLanguage } from "@/hooks/use-language";
+import useSession from "@/hooks/use-session";
 
 export default function Sidebar() {
   return (
-    <div className="bg-card w-70 fixed z-20 h-screen left-0 top-0 flex flex-col border-e-[1px]">
+    <div className="bg-card lg:w-70 md:w-60 fixed z-20 h-screen left-0 top-0 flex flex-col border-e-[1px]">
       <div className="w-full ">
         <div className="h-20 p-4 flex items-center">
           <Logo />
@@ -41,12 +42,15 @@ export function SidebarSection({ children }: { children: ReactNode }) {
 
 function NavBar() {
   const { instance } = useLanguage();
+  const { session } = useSession();
   return (
     <nav className="flex flex-col w-full">
       <Link href="/" text={instance.getItem("homepage")} icon={<House />} />
       <Link href="/explorer" text={instance.getItem("explorePageTitle")} icon={<Compass />} />
       <Link href="/favorites" text={instance.getItem("favoritesPageTitle")} icon={<Heart />} />
-      <Link href="/dashboard" text={instance.getItem("dashboard")} icon={<LayoutDashboard />} />
+      {session && (
+        <Link href={`/account/${session.userId}`} text={instance.getItem("dashboard")} icon={<LayoutDashboard />} />
+      )}
     </nav>
   );
 }
