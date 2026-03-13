@@ -138,33 +138,33 @@
   }
 
   .title-1 {
-    @apply text-3xl font-bold;
+    @apply text-[2rem] font-bold;
     font-family: var(--title-font);
   }
 
   .title-2 {
-    @apply text-xl font-bold;
+    @apply text-[1.25rem] font-bold;
     font-family: var(--title-font);
   }
 
   .title-3 {
-    @apply text-lg font-bold;
+    @apply text-[1.115rem] font-bold;
     font-family: var(--title-font);
   }
 
   .title-4 {
-    @apply text-sm md:text-xl;
+    @apply text-[0.885rem];
     font-family: var(--title-font);
   }
 
   .paragraph,
   .paragraph-md {
-    @apply text-sm;
+    @apply text-[0.885rem];
     font-family: var(--general-font);
   }
 
   .paragraph-sm {
-    @apply text-xs;
+    @apply text-[0.75rem];
     font-family: var(--general-font);
   }
 
