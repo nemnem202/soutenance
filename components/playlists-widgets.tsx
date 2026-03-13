@@ -95,7 +95,7 @@ function MediumAddNewPlaylistWidget() {
 
 export function MediumPlaylistWrapper({ allowToAddANewPlaylist }: { allowToAddANewPlaylist?: boolean }) {
   return (
-    <div className="grid gap-y-5 md:gap-y-4 gap-2 container grid-cols-[repeat(auto-fit,minmax(30vw,1fr))] md:grid-cols-[repeat(auto-fit,minmax(15vw,1fr))]">
+    <div className="grid gap-y-5 md:gap-y-4 gap-2 container grid-cols-[repeat(auto-fit,minmax(30vw,1fr))] md:grid-cols-[repeat(auto-fit,minmax(10rem,1fr))]">
       {allowToAddANewPlaylist && <MediumAddNewPlaylistWidget />}
       {Array.from({ length: 50 }).map((_, index) => (
         <MediumPlaylistWidget key={index} />
