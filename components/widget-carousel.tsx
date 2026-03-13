@@ -5,6 +5,7 @@ import { ChevronLeftButton, ChevrontRightButton } from "./custom-buttons";
 import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
 import { navigate } from "vike/client/router";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface MediumWidgetGroupProps {
   widgets: ReactNode[];
@@ -81,7 +82,9 @@ export function MediumWidgetCaroussel({ title, widgets, seeAllUrl = "/see-all" }
         <WidgetTitle title={title} seeAllUrl={seeAllUrl} />
         {isMobile ? (
           <>
-            <ChevrontRightButton onClick={() => navigate(seeAllUrl)} />
+            <a href={seeAllUrl}>
+              <ChevronRight />
+            </a>
           </>
         ) : (
           <div className="flex">

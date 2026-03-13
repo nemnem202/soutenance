@@ -25,6 +25,9 @@ function Mobile() {
   return (
     <>
       <MobileHeader title={instance.getItem("explorePageTitle")} />
+      <div className="flex-1 flex justify-center items-center">
+        <p className="title-4 text-muted-foreground">upcoming</p>
+      </div>
     </>
   );
 }

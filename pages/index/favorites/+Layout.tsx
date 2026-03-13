@@ -5,9 +5,12 @@ import { useLanguage } from "@/hooks/use-language";
 import useFavoritesNavigation from "@/hooks/use-favorites-navigation";
 import MobileHeader from "@/components/mobile/header";
 import SizeAdapter from "@/components/size-adapter";
+import { MediumWidgetCaroussel } from "@/components/widget-carousel";
+import { MediumPlaylistWidget } from "@/components/playlists-widgets";
+import { MediumAccountWidget } from "@/components/account-widgets";
 
 export default function Layout({ children }: { children: ReactNode }) {
-  return <SizeAdapter sm={<Mobile />} md={<Desktop>{children}</Desktop>} />;
+  return <SizeAdapter sm={<Mobile>{children}</Mobile>} md={<Desktop>{children}</Desktop>} />;
 }
 
 function Desktop({ children }: { children: ReactNode }) {
@@ -37,11 +40,12 @@ function Desktop({ children }: { children: ReactNode }) {
   );
 }
 
-function Mobile() {
+function Mobile({ children }: { children: ReactNode }) {
   const { instance } = useLanguage();
   return (
     <>
       <MobileHeader title={instance.getItem("favoritesPageTitle")} />
+      {children}
     </>
   );
 }
