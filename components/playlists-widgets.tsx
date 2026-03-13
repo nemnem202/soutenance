@@ -37,7 +37,7 @@ export function MediumPlaylistWidget() {
   const playlist = getRandomPlaylist();
   const { instance } = useLanguage();
   return (
-    <div className="relative group w-30 md:w-55">
+    <div className="relative group w-full">
       <div className="absolute top-0 left-0 px-2 pt-2 w-full z-1 flex justify-between  opacity-0 group-hover:opacity-100 transition pointer-events-none">
         <div className="pointer-events-auto">
           <PlusButton />
@@ -79,7 +79,7 @@ export function MediumPlaylistWidget() {
 function MediumAddNewPlaylistWidget() {
   const { instance } = useLanguage();
   return (
-    <div className="w-30 md:w-55 cursor-pointer hover:opacity-80 rounded-md transition">
+    <div className="w-full cursor-pointer hover:opacity-80 rounded-md transition">
       <a href="/new-playlist" className="flex flex-col rounded gap-2.5">
         <div className="w-full aspect-square rounded overflow-hidden bg-card flex items-center justify-center">
           <Plus size={100} />
@@ -95,21 +95,10 @@ function MediumAddNewPlaylistWidget() {
 
 export function MediumPlaylistWrapper({ allowToAddANewPlaylist }: { allowToAddANewPlaylist?: boolean }) {
   return (
-    <div className="flex justify-between md:gap-4 gap-y-5 flex-wrap container">
-      {allowToAddANewPlaylist && (
-        <div
-        //  className="mr-6.5"
-        >
-          <MediumAddNewPlaylistWidget />
-        </div>
-      )}
+    <div className="grid gap-y-5 md:gap-y-4 gap-2 container grid-cols-[repeat(auto-fit,minmax(30vw,1fr))] md:grid-cols-[repeat(auto-fit,minmax(15vw,1fr))]">
+      {allowToAddANewPlaylist && <MediumAddNewPlaylistWidget />}
       {Array.from({ length: 50 }).map((_, index) => (
-        <div
-          //  className="mr-6.5"
-          key={index}
-        >
-          <MediumPlaylistWidget />
-        </div>
+        <MediumPlaylistWidget key={index} />
       ))}
     </div>
   );

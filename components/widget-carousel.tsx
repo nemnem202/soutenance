@@ -48,7 +48,7 @@ export function MediumWidgetGroup(props: MediumWidgetGroupProps) {
           ref={(el) => {
             widgetsRef.current[index] = el;
           }}
-          className={`widget-${index} shrink-0 snap-start`}
+          className={`widget-${index} shrink-0 snap-start md:w-55 w-30 aspect-square`}
         >
           {widget}
         </div>
