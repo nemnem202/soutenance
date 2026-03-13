@@ -133,7 +133,7 @@
 
 @layer utilities {
   .headline {
-    font-size: 3rem;
+    @apply text-3xl md:text-5xl;
     font-family: var(--headline-font);
   }
 
