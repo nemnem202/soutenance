@@ -5,9 +5,9 @@ import AccountPP from "../account-pp";
 import useSession from "@/hooks/use-session";
 
 export default function TabBar() {
-  const { session, setSession } = useSession();
+  const { session } = useSession();
   return (
-    <nav className="fixed bottom-0 h-20 w-full bg-card border-t flex justify-evenly items-center">
+    <nav className="h-20 bg-card border-t flex justify-evenly items-center">
       <Link href="/" icon={<House className="w-full h-full" />} />
       <Link href="/explorer" icon={<Compass className="w-full h-full" />} />
       <Link href="/favorites" icon={<Heart className="w-full h-full" />} />
