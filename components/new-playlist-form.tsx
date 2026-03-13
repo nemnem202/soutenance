@@ -17,7 +17,7 @@ export default function NewPlaylistForm() {
   const { instance } = useLanguage();
   return (
     <form id="form-rhf-post" onSubmit={form.handleSubmit(handleSubmit)} ref={formRef}>
-      <FieldGroup className="flex flex-row">
+      <FieldGroup className="flex md:flex-row flex-col items-center">
         <Controller
           name="image.src"
           control={form.control}
@@ -100,7 +100,7 @@ export default function NewPlaylistForm() {
             )}
           />
           <div className="w-full flex justify-end">
-            <Button className="w-fit title-4" type="submit">
+            <Button className="w-full md:w-fit title-4" type="submit">
               {instance.getItem("submit")}
             </Button>
           </div>

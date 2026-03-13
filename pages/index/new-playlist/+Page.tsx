@@ -23,6 +23,7 @@ function Mobile() {
   return (
     <>
       <MobileHeader title={instance.getItem("new_playlist")} />
+      <NewPlaylistForm />
     </>
   );
 }
