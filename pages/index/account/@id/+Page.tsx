@@ -1,3 +1,4 @@
+import ArrowElipsisTopMenu from "@/components/mobile/arrow-elipsis-top-menu";
 import { MediumPlaylistWrapper } from "@/components/playlists-widgets";
 import Searchbar from "@/components/searchbar";
 import { useLanguage } from "@/hooks/use-language";
@@ -19,7 +20,8 @@ export default function Page() {
 
   if (!account) return null;
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col">
+      <ArrowElipsisTopMenu />
       <section>
         <Banner account={account} />
       </section>

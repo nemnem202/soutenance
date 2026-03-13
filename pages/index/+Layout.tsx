@@ -23,8 +23,8 @@ function DesktopLayout({ children }: { children: ReactNode }) {
 
 function MainPannel({ children }: { children: ReactNode }) {
   return (
-    <main className="pt-20 pl-70 pb-10 w-full min-h-screen flex flex-col container mx-auto">
-      <div className="px-6 py-5 flex-1 w-full flex flex-col">{children}</div>
+    <main className="pt-20 lg:pl-70 md:pl-60 pl-0 pb-10 w-screen min-h-screen flex flex-col">
+      <div className="px-6 py-5 flex-1 w-full flex flex-col min-w-0 md:min-w-150 mx-auto max-w-300">{children}</div>
     </main>
   );
 }

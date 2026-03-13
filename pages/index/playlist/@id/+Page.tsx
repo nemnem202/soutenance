@@ -3,6 +3,7 @@ import { Badge } from "@/components/badge";
 import { Button } from "@/components/button";
 import { Checkbox } from "@/components/checkbox";
 import { LikeButton, PlusButton } from "@/components/custom-buttons";
+import ArrowElipsisTopMenu from "@/components/mobile/arrow-elipsis-top-menu";
 import { PlaylistItemsList } from "@/components/playlist-items";
 import Searchbar from "@/components/searchbar";
 import { Separator } from "@/components/separator";
@@ -41,7 +42,7 @@ function Banner({ playlist }: { playlist: Playlist }) {
   const { instance } = useLanguage();
   const account = useData<Data>().accounts.find((account) => account.id === playlist.accountId);
   return (
-    <div className="flex md:flex-row flex-col w-full gap-8 items-center relative">
+    <div className="flex md:flex-row gap-0 md:gap-8 flex-col w-full items-center relative">
       <SizeAdapter
         md={
           <div className="absolute right-2 top-2 z-1">
@@ -49,18 +50,10 @@ function Banner({ playlist }: { playlist: Playlist }) {
             <LikeButton />
           </div>
         }
-        sm={
-          <div className="absolute w-full p-2 flex justify-between z-1">
-            <button onClick={() => window.history.back()}>
-              <ArrowLeft />
-            </button>
-
-            <EllipsisVertical />
-          </div>
-        }
+        sm={<ArrowElipsisTopMenu />}
       />
 
-      <div className="w-50 md:w-75 mt-10 md:m-0 rounded aspect-square overflow-hidden">
+      <div className="w-50 md:w-75 md:m-0 rounded aspect-square overflow-hidden mb-8 mt-2">
         <img
           src={playlist.image.src}
           alt={playlist.image.alt}
