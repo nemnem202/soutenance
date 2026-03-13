@@ -10,6 +10,7 @@ import { WidgetTitle } from "./widget-carousel";
 import { useLanguage } from "@/hooks/use-language";
 import { Data } from "@/pages/+data";
 import { getRandomPlaylist } from "@/lib/utils";
+import SizeAdapter from "./size-adapter";
 
 export function PlaylistItemsList({ playlist }: { playlist: Playlist }) {
   const { instance } = useLanguage();
@@ -21,9 +22,13 @@ export function PlaylistItemsList({ playlist }: { playlist: Playlist }) {
           <PlaylistItemBox>
             <p className="paragraph-md text-muted-foreground">{instance.getItem("bpm")}</p>
           </PlaylistItemBox>
-          <PlaylistItemBox>
-            <p className="paragraph-md text-muted-foreground">{instance.getItem("pop")}</p>
-          </PlaylistItemBox>
+          <SizeAdapter
+            md={
+              <PlaylistItemBox>
+                <p className="paragraph-md text-muted-foreground">{instance.getItem("pop")}</p>
+              </PlaylistItemBox>
+            }
+          />
           <PlaylistItemBox>
             <Checkbox />
           </PlaylistItemBox>
@@ -40,7 +45,7 @@ export function PlaylistItemsList({ playlist }: { playlist: Playlist }) {
 }
 
 export function PlaylistItemBox({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`min-w-12.5 flex justify-end ${className}`}>{children}</div>;
+  return <div className={`md:min-w-12.5 min-w-8 flex justify-end ${className}`}>{children}</div>;
 }
 
 export interface PLaylistItemProps {
@@ -67,24 +72,30 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
           src={props.playlist.image.src}
           alt={props.playlist.image.alt}
         />
-        <div className="flex h-fit gap-3">
-          <div className="flex flex-col pl-2 gap-1">
-            <p className="title-4">{exercice.title}</p>
+
+        <div className="flex flex-1 min-w-0 h-fit gap-3">
+          <div className="flex flex-1 flex-col min-w-0 pl-2 gap-1">
+            <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{exercice.title}</p>
             <p className="paragraph-md text-muted-foreground">{exercice.author}</p>
           </div>
-          <div className="flex gap-1 h-full">
-            {exercice.hasChords && (
-              <Badge variant="outline" className="text-muted-foreground paragraph-xs h-min">
-                {instance.getItem("chords")}
-              </Badge>
-            )}
 
-            {exercice.haseMelody && (
-              <Badge variant="outline" className="text-muted-foreground paragraph-xs h-min">
-                {instance.getItem("melody").toLowerCase()}
-              </Badge>
-            )}
-          </div>
+          <SizeAdapter
+            md={
+              <div className="flex gap-1 h-full">
+                {exercice.hasChords && (
+                  <Badge variant="outline" className="text-muted-foreground paragraph-xs h-min">
+                    {instance.getItem("chords")}
+                  </Badge>
+                )}
+
+                {exercice.haseMelody && (
+                  <Badge variant="outline" className="text-muted-foreground paragraph-xs h-min">
+                    {instance.getItem("melody").toLowerCase()}
+                  </Badge>
+                )}
+              </div>
+            }
+          />
         </div>
       </div>
       <div className="flex items-center">
@@ -94,11 +105,15 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
         <PlaylistItemBox>
           <p className="paragraph-md text-muted-foreground">{exercice.config.bpm}</p>
         </PlaylistItemBox>
-        <PlaylistItemBox>
-          <p className="paragraph-md">
-            |||<span className="text-muted-foreground">|||</span>
-          </p>
-        </PlaylistItemBox>
+        <SizeAdapter
+          md={
+            <PlaylistItemBox>
+              <p className="paragraph-md">
+                |||<span className="text-muted-foreground">|||</span>
+              </p>
+            </PlaylistItemBox>
+          }
+        />
         <PlaylistItemBox>
           <Checkbox />
         </PlaylistItemBox>
