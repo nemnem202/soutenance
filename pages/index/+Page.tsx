@@ -57,6 +57,31 @@ function Mobile() {
   return (
     <>
       <MobileHeader title={instance.getItem("homepage")} />
+      <MediumWidgetCaroussel
+        title={instance.getItem("recentlyPlayed")}
+        widgets={Array.from({ length: 20 }).map(() => (
+          <MediumPlaylistWidget />
+        ))}
+      />
+      <MediumWidgetCaroussel
+        title={instance.getItem("moreOfThem")}
+        widgets={Array.from({ length: 20 }).map(() => (
+          <MediumAccountWidget />
+        ))}
+      />
+      <MediumWidgetCaroussel
+        title={instance.getItem("popularExercices")}
+        widgets={Array.from({ length: 20 }).map(() => (
+          <MediumPlaylistWidget />
+        ))}
+      />
+
+      <MediumWidgetCaroussel
+        title={instance.getItem("discover")}
+        widgets={Array.from({ length: 20 }).map(() => (
+          <MediumPlaylistWidget />
+        ))}
+      />
     </>
   );
 }

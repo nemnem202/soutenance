@@ -37,7 +37,7 @@ export function MediumPlaylistWidget() {
   const playlist = getRandomPlaylist();
   const { instance } = useLanguage();
   return (
-    <div className="relative group w-55">
+    <div className="relative group w-30 md:w-55">
       <div className="absolute top-0 left-0 px-2 pt-2 w-full z-1 flex justify-between  opacity-0 group-hover:opacity-100 transition pointer-events-none">
         <div className="pointer-events-auto">
           <PlusButton />
@@ -79,7 +79,7 @@ export function MediumPlaylistWidget() {
 function MediumAddNewPlaylistWidget() {
   const { instance } = useLanguage();
   return (
-    <div className="w-55 cursor-pointer hover:opacity-80 rounded-md transition">
+    <div className="w-30 md:w-55 cursor-pointer hover:opacity-80 rounded-md transition">
       <a href="/new-playlist" className="flex flex-col rounded gap-2.5">
         <div className="w-full aspect-square rounded overflow-hidden bg-card flex items-center justify-center">
           <Plus size={100} />

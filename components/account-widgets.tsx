@@ -7,7 +7,7 @@ import { getRandomAccount } from "@/lib/utils";
 export function MediumAccountWidget() {
   const account = getRandomAccount();
   return (
-    <div className="w-55 cursor-pointer group">
+    <div className="w-30 md:w-55 cursor-pointer group">
       <a href={`/account/${account.id}`} className="flex flex-col gap-2.5 items-center">
         <div className="w-full aspect-square rounded-full overflow-hidden relative flex items-end justify-center">
           <LikeButton className={`opacity-0 z-1 group-hover:opacity-100`} />

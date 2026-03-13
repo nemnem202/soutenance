@@ -32,7 +32,7 @@ function MainPannel({ children }: { children: ReactNode }) {
 function MobileLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex flex-col h-screen w-screen">
-      <main className="flex-1 overflow-auto">{children}</main>
+      <main className="flex-1 overflow-auto p-4 no-scrollbar">{children}</main>
       <TabBar />
     </div>
   );
