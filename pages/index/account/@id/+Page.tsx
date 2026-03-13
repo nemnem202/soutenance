@@ -1,6 +1,7 @@
 import { MediumPlaylistWrapper } from "@/components/playlists-widgets";
 import Searchbar from "@/components/searchbar";
 import { useLanguage } from "@/hooks/use-language";
+import useSession from "@/hooks/use-session";
 import { Data } from "@/pages/+data";
 import { Account } from "@/types/account";
 import { useEffect, useState } from "react";
@@ -53,6 +54,8 @@ function Banner({ account }: { account: Account }) {
 }
 
 function Content() {
+  const { id } = usePageContext().routeParams;
+  const { session } = useSession();
   const { instance } = useLanguage();
   return (
     <div className="w-full">
@@ -60,7 +63,7 @@ function Content() {
         <Searchbar placeholder={instance.getItem("search_in_playlist")} />
       </div>
       <div className="flex  gap-x-auto gap-y-5 flex-wrap container">
-        <MediumPlaylistWrapper />
+        <MediumPlaylistWrapper allowToAddANewPlaylist={id === session?.userId} />
       </div>
     </div>
   );
