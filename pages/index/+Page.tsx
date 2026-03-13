@@ -1,10 +1,17 @@
 import { MediumAccountWidget } from "@/components/account-widgets";
 import Headline from "@/components/headline";
+import MobileHeader from "@/components/mobile/header";
 import { MediumPlaylistWidget } from "@/components/playlists-widgets";
+import SizeAdapter from "@/components/size-adapter";
 import { MediumWidgetCaroussel } from "@/components/widget-carousel";
 import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
+
 export default function Page() {
+  return <SizeAdapter sm={<MobileHomePage />} md={<DesktopHomePage />} />;
+}
+
+function DesktopHomePage() {
   const { session } = useSession();
   const { instance } = useLanguage();
   return (
@@ -41,6 +48,15 @@ export default function Page() {
           <MediumPlaylistWidget />
         ))}
       />
+    </>
+  );
+}
+
+function MobileHomePage() {
+  const { instance } = useLanguage();
+  return (
+    <>
+      <MobileHeader title={instance.getItem("homepage")} />
     </>
   );
 }
