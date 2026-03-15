@@ -2,14 +2,14 @@ import { CHORDS_DICTIONNARY } from "@/config/chords-dictionnary";
 import { CarouselChord, ChordHarmony, Notes } from "@/types/midi";
 import { faker } from "@faker-js/faker";
 import useCarousel from "embla-carousel-react";
-import { Button } from "../button";
 import { chordToString } from "@/lib/utils";
 import { useCallback, useEffect, useRef } from "react";
-import { EmblaCarouselType, EmblaEventListType, EmblaEventType } from "embla-carousel";
+import { EmblaCarouselType } from "embla-carousel";
+import { motion, useSpring } from "motion/react";
 
 const HARMONIES = Object.keys(CHORDS_DICTIONNARY) as ChordHarmony[];
-const TWEEN_FACTOR_BASE = 0.52;
-export const CHORDS_PLACEHOLDER: CarouselChord[] = Array.from({ length: 10 }, (_, index) => {
+const TWEEN_FACTOR_BASE = 0.4;
+export const CHORDS_PLACEHOLDER: CarouselChord[] = Array.from({ length: 20 }, (_, index) => {
   const root = faker.helpers.arrayElement(Notes);
   const harm = faker.helpers.arrayElement(HARMONIES);
 
@@ -31,7 +31,11 @@ export default function ChordCarousel() {
   const [carouselRef, api] = useCarousel({ loop: true, align: "center" });
   const tweenFactor = useRef(0);
   const tweenNodes = useRef<HTMLElement[]>([]);
-
+  const springWidth = useSpring(240, {
+    stiffness: 300,
+    damping: 18,
+    mass: 0.4,
+  });
   const setTweenNodes = useCallback((emblaApi: EmblaCarouselType): void => {
     tweenNodes.current = emblaApi.slideNodes().map((slideNode) => {
       return slideNode.querySelector(".embla__slide__number") as HTMLElement;
@@ -45,13 +49,10 @@ export default function ChordCarousel() {
   const tweenScale = useCallback((emblaApi: EmblaCarouselType) => {
     const engine = emblaApi.internalEngine();
     const scrollProgress = emblaApi.scrollProgress();
-    const slidesInView = emblaApi.slidesInView();
 
     emblaApi.scrollSnapList().forEach((scrollSnap, snapIndex) => {
-      // snapIndex correspond directement à l'index du slide dans Embla
       let diffToTarget = scrollSnap - scrollProgress;
 
-      // Correction pour le loop
       if (engine.options.loop) {
         engine.slideLooper.loopPoints.forEach((loopItem) => {
           const target = loopItem.target();
@@ -64,12 +65,24 @@ export default function ChordCarousel() {
       }
 
       const tweenValue = 1 - Math.abs(diffToTarget * tweenFactor.current);
-      const scale = numberWithinRange(tweenValue, 0, 1).toString();
+      const scale = numberWithinRange(tweenValue, 0, 1);
 
       const tweenNode = tweenNodes.current[snapIndex];
-      if (tweenNode) tweenNode.style.transform = `scale(${scale})`;
+      if (tweenNode) {
+        console.log(100 * scale);
+        tweenNode.style.transform = `scale(${scale})`;
+        tweenNode.style.opacity = `${100 * scale}%`;
+      }
+
+      if (scale >= 0.95 && tweenNode) {
+        const innerWidth = tweenNode.getBoundingClientRect().width;
+        if (innerWidth) {
+          springWidth.set(innerWidth);
+        }
+      }
     });
   }, []);
+
   useEffect(() => {
     if (!api) return;
 
@@ -86,17 +99,23 @@ export default function ChordCarousel() {
   }, [api, tweenScale]);
 
   return (
-    <div className="embla">
-      <div className="embla__viewport" ref={carouselRef}>
-        <div className="embla__container">
-          {CHORDS_PLACEHOLDER.map((chord, index) => (
-            <div className="embla__slide" key={index}>
-              <div className="embla__slide__number">
-                <span>{chordToString(chord)}</span>
+    <div className="relative">
+      <div className="embla relative z-10">
+        <div className="embla__viewport" ref={carouselRef}>
+          <div className="embla__container">
+            {CHORDS_PLACEHOLDER.map((chord, index) => (
+              <div className="embla__slide" key={index}>
+                <div className="embla__slide__number px-2">
+                  <span className="whitespace-nowrap">{chordToString(chord)}</span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+      </div>
+
+      <div className="absolute inset-0 flex justify-center items-center z-0">
+        <motion.div className="bg-primary rounded-lg h-full" style={{ width: springWidth }} />
       </div>
     </div>
   );
