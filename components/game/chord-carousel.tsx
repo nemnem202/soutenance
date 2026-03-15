@@ -34,7 +34,7 @@ export default function ChordCarousel() {
   const springWidth = useSpring(240, {
     stiffness: 300,
     damping: 18,
-    mass: 0.4,
+    mass: 0.1,
   });
   const setTweenNodes = useCallback((emblaApi: EmblaCarouselType): void => {
     tweenNodes.current = emblaApi.slideNodes().map((slideNode) => {
@@ -99,23 +99,25 @@ export default function ChordCarousel() {
   }, [api, tweenScale]);
 
   return (
-    <div className="relative">
-      <div className="embla relative z-10">
-        <div className="embla__viewport" ref={carouselRef}>
-          <div className="embla__container">
-            {CHORDS_PLACEHOLDER.map((chord, index) => (
-              <div className="embla__slide" key={index}>
-                <div className="embla__slide__number px-2">
-                  <span className="whitespace-nowrap">{chordToString(chord)}</span>
+    <div className="h-full w-full flex items-center">
+      <div className="relative w-full">
+        <div className="embla relative z-10">
+          <div className="embla__viewport" ref={carouselRef}>
+            <div className="embla__container">
+              {CHORDS_PLACEHOLDER.map((chord, index) => (
+                <div className="embla__slide" key={index}>
+                  <div className="embla__slide__number">
+                    <span className="whitespace-nowrap">{chordToString(chord)}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="absolute inset-0 flex justify-center items-center z-0">
-        <motion.div className="bg-primary rounded-lg h-full" style={{ width: springWidth }} />
+        <div className="absolute inset-0 flex justify-center items-center z-0">
+          <motion.div className="border rounded-full bg-background h-full" style={{ width: springWidth }} />
+        </div>
       </div>
     </div>
   );
