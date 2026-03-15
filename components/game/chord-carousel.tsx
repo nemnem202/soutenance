@@ -100,6 +100,21 @@ export default function ChordCarousel() {
       .on("slideFocus", tweenScale);
   }, [api, tweenScale]);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft") {
+        api?.scrollPrev();
+      } else if (event.key === "ArrowRight") {
+        api?.scrollNext();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [api]);
+
   return (
     <div className="h-full w-full flex flex-col justify-between">
       <div></div>
