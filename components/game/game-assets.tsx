@@ -6,6 +6,7 @@ import { Checkbox } from "../checkbox";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../tooltip";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Button, ButtonProps } from "../button";
+import { Maximize, Minimize } from "lucide-react";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
   return <div className="flex gap-2 w-fit h-15 px-5 bg-card rounded-xl items-center select-none">{children}</div>;
@@ -164,4 +165,54 @@ export function SmallCheckboxGroup({
       <Checkbox id={id} {...checkboxProps} />
     </div>
   );
+}
+
+export function FullScreenButton({
+  hover,
+  fullScreen,
+  setFullScreen,
+}: {
+  hover: boolean;
+  fullScreen: boolean;
+  setFullScreen: (full: boolean) => void;
+}) {
+  return (
+    <div className={`absolute m-2 top-0 right-0 transition ${hover ? "opacity-100" : "opacity-0"}`}>
+      <Button variant={"ghost"} onClick={() => setFullScreen(!fullScreen)}>
+        {fullScreen ? (
+          <Minimize className=" stroke-muted-foreground !hover:stroke-foreground" />
+        ) : (
+          <Maximize className=" stroke-muted-foreground !hover:stroke-foreground" />
+        )}
+      </Button>
+    </div>
+  );
+}
+
+export function Tab({ children }: { children: ReactNode }) {
+  const [hover, setHover] = useState(false);
+  const [fullScreen, setFullScreen] = useState(false);
+  if (!fullScreen) {
+    return (
+      <div
+        className="size-full bg-card rounded-md relative"
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+      >
+        <FullScreenButton hover={hover} fullScreen={fullScreen} setFullScreen={setFullScreen} />
+        {children}
+      </div>
+    );
+  } else {
+    return (
+      <div
+        className="inset-0 absolute top-0 left-0 z-100 bg-background"
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+      >
+        <FullScreenButton hover={hover} fullScreen={fullScreen} setFullScreen={setFullScreen} />
+        {children}
+      </div>
+    );
+  }
 }
