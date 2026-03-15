@@ -21,5 +21,5 @@ export const CHORDS_PLACEHOLDER: CarouselChord[] = Array.from({ length: 10 }, (_
 });
 
 export default function ChordCarousel() {
-  return <>{CHORDS_PLACEHOLDER[0]}</>;
+  return <div className="size-full flex items-center justify-center">qsdqd</div>;
 }

@@ -1,17 +1,11 @@
 import AnimatedTabs from "@/components/animated-tabs";
-import { Button } from "@/components/button";
-import { Field, FieldLabel } from "@/components/field";
 import Header from "@/components/game-header";
-import { ControlsSection, IconButton } from "@/components/game/game-assets";
+import ChordCarousel from "@/components/game/chord-carousel";
+import { Tab } from "@/components/game/game-assets";
+import GameControlsSection from "@/components/game/game-controls-section";
 import GameSidebar from "@/components/game/game-sidebar";
-import { Input } from "@/components/input";
-import { Separator } from "@/components/separator";
-import { Tabs, TabsList, TabsTrigger } from "@/components/tabs";
-import UpcomingToolTip from "@/components/upcoming-tooltip";
 import { useLanguage } from "@/hooks/use-language";
-import { TabsContent } from "@radix-ui/react-tabs";
-import { Maximize, Minimize, Play, Settings, Square } from "lucide-react";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 
 export default function Page() {
   const [sidebarOpen, setOpen] = useState(false);
@@ -26,7 +20,7 @@ export default function Page() {
   );
 }
 
-interface Gameprops {
+export interface Gameprops {
   openSidebar: () => void;
 }
 
@@ -52,79 +46,12 @@ function Game({ ...props }: Gameprops) {
           </div>
           <div className=" flex-1">
             <Tab>
-              <></>
+              <ChordCarousel />
             </Tab>
           </div>
         </div>
-        <ControlsSection>
-          <IconButton onClick={props.openSidebar}>
-            <Settings className="hover:stroke-primary  transition" />
-          </IconButton>
-          <IconButton>
-            <Play className="hover:stroke-primary hover:fill-primary fill-foreground transition" />
-          </IconButton>
-          <IconButton>
-            <Square className="hover:stroke-primary hover:fill-primary fill-foreground transition" />
-          </IconButton>
-          <Separator orientation="vertical" className="!h-6" />
-          <Field className="flex flex-row items-center justify-center !w-min">
-            <Input id="bpm" type="number" defaultValue={"120"} className="!w-15 min-w-0 p-0 text-center" />
-            <FieldLabel htmlFor="bpm" className="!w-min text-muted-foreground paragraph-small">
-              {instance.getItem("bpm").toLowerCase()}
-            </FieldLabel>
-          </Field>
-        </ControlsSection>
+        <GameControlsSection {...props} />
       </div>
     </main>
   );
-}
-
-function FullScreenButton({
-  hover,
-  fullScreen,
-  setFullScreen,
-}: {
-  hover: boolean;
-  fullScreen: boolean;
-  setFullScreen: (full: boolean) => void;
-}) {
-  return (
-    <div className={`absolute m-2 top-0 right-0 transition ${hover ? "opacity-100" : "opacity-0"}`}>
-      <Button variant={"ghost"} onClick={() => setFullScreen(!fullScreen)}>
-        {fullScreen ? (
-          <Minimize className=" stroke-muted-foreground !hover:stroke-foreground" />
-        ) : (
-          <Maximize className=" stroke-muted-foreground !hover:stroke-foreground" />
-        )}
-      </Button>
-    </div>
-  );
-}
-
-function Tab({ children }: { children: ReactNode }) {
-  const [hover, setHover] = useState(false);
-  const [fullScreen, setFullScreen] = useState(false);
-  if (!fullScreen) {
-    return (
-      <div
-        className="size-full bg-card rounded-md relative"
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-      >
-        <FullScreenButton hover={hover} fullScreen={fullScreen} setFullScreen={setFullScreen} />
-        {children}
-      </div>
-    );
-  } else {
-    return (
-      <div
-        className="inset-0 absolute top-0 left-0 z-100 bg-background"
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-      >
-        <FullScreenButton hover={hover} fullScreen={fullScreen} setFullScreen={setFullScreen} />
-        {children}
-      </div>
-    );
-  }
 }
