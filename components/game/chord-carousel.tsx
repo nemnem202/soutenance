@@ -104,13 +104,16 @@ export default function ChordCarousel() {
     <div className="h-full w-full flex flex-col justify-between">
       <div></div>
       <div className="relative w-full pointer-events-none">
-        <div className="embla relative z-10">
-          <div className="embla__viewport" ref={carouselRef}>
-            <div className="embla__container">
+        <div className="relative z-10 w-full mx-auto [--slide-height:19rem] [--slide-spacing:1rem] [--slide-size:100%] [--slide-spacing-sm:1.6rem] [--slide-size-sm:50%] [--slide-spacing-lg:2rem]">
+          <div className="overflow-hidden" ref={carouselRef}>
+            <div className="flex touch-pan-y gap-8">
               {CHORDS_PLACEHOLDER.map((chord, index) => (
-                <div className="embla__slide" key={index}>
-                  <div className="embla__slide__number">
-                    <span className="whitespace-nowrap">{chordToString(chord)}</span>
+                <div className="flex-none min-w-0 font-mono text-[5rem]" key={index}>
+                  <div
+                    className="embla__slide__number rounded-[1.8rem] text-[6rem] font-semibold flex items-center justify-center h-fit select-none px-[3rem] min-w-[5ch] max-w-[20ch]"
+                    style={{ opacity: 0, transform: "scale(0)" }}
+                  >
+                    <span className="whitespace-nowrap ">{chordToString(chord)}</span>
                   </div>
                 </div>
               ))}
