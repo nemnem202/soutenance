@@ -2,6 +2,7 @@ import { availableLanguages } from "@/config/language-pack";
 import { Data } from "@/pages/+data";
 import { Account } from "@/types/account";
 import { Language } from "@/types/i18n";
+import { Chord } from "@/types/midi";
 import { Exercice, Playlist } from "@/types/project";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -37,3 +38,5 @@ export const getPreferredLanguage = (header: string | null): Language => {
 
   return availableLanguages[0];
 };
+
+export const chordToString = (chord: Chord) => chord.root + " " + chord.harm;

@@ -2,6 +2,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./general.css";
+@import "./embla-carousel.css";
 
 @font-face {
   font-family: "ZingRust";
