@@ -6,6 +6,8 @@ import { chordToString } from "@/lib/utils";
 import { useCallback, useEffect, useRef } from "react";
 import { EmblaCarouselType } from "embla-carousel";
 import { motion, useSpring } from "motion/react";
+import { Button } from "../button";
+import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
 const HARMONIES = Object.keys(CHORDS_DICTIONNARY) as ChordHarmony[];
 const TWEEN_FACTOR_BASE = 0.4;
@@ -99,8 +101,9 @@ export default function ChordCarousel() {
   }, [api, tweenScale]);
 
   return (
-    <div className="h-full w-full flex items-center">
-      <div className="relative w-full">
+    <div className="h-full w-full flex flex-col justify-between">
+      <div></div>
+      <div className="relative w-full pointer-events-none">
         <div className="embla relative z-10">
           <div className="embla__viewport" ref={carouselRef}>
             <div className="embla__container">
@@ -118,6 +121,14 @@ export default function ChordCarousel() {
         <div className="absolute inset-0 flex justify-center items-center z-0">
           <motion.div className="border rounded-full bg-background h-full" style={{ width: springWidth }} />
         </div>
+      </div>
+      <div className="w-full h-20 flex justify-end items-end gap-2 p-2">
+        <Button variant={"outline"} className="rounded-full" size={"icon"} onClick={() => api?.scrollPrev()}>
+          <ChevronLeft />
+        </Button>
+        <Button variant={"outline"} className="rounded-full" size={"icon"} onClick={() => api?.scrollNext()}>
+          <ChevronRight />
+        </Button>
       </div>
     </div>
   );
