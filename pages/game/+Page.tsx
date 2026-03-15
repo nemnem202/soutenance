@@ -24,17 +24,20 @@ export interface Gameprops {
   openSidebar: () => void;
 }
 
+const tabsIds = ["piano-roll", "chords", "sheet", "guitar"] as const;
+type TabID = (typeof tabsIds)[number];
+
 function Game({ ...props }: Gameprops) {
   const { instance } = useLanguage();
 
-  const tabs = [
+  const tabs: { id: TabID; label: string; disabled?: boolean }[] = [
     { id: "piano-roll", label: instance.getItem("piano_roll") },
     { id: "chords", label: instance.getItem("chords") },
     { id: "sheet", label: instance.getItem("sheet"), disabled: true },
     { id: "guitar", label: instance.getItem("guitar"), disabled: true },
   ];
 
-  const [activeTab, setActiveTab] = useState("piano-roll");
+  const [activeTab, setActiveTab] = useState<TabID>("piano-roll");
 
   return (
     <main className="flex-1 flex flex-col items-center pt-5 w-screen">
@@ -42,12 +45,16 @@ function Game({ ...props }: Gameprops) {
       <div className=" size-full px-20 py-5  flex flex-col gap-2">
         <div className="flex-1 flex flex-col">
           <div className="w-full flex justify-center">
-            <AnimatedTabs activeTab={activeTab} onChange={setActiveTab} tabs={tabs} variant="pill" className="my-2" />
+            <AnimatedTabs
+              activeTab={activeTab}
+              onChange={(v) => setActiveTab(v as any)}
+              tabs={tabs}
+              variant="pill"
+              className="my-2"
+            />
           </div>
           <div className="flex-1">
-            <Tab>
-              <ChordCarousel />
-            </Tab>
+            <Tab>{activeTab === "chords" && <ChordCarousel />}</Tab>
           </div>
         </div>
         <GameControlsSection {...props} />
