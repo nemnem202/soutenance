@@ -1,3 +1,4 @@
+import { CHORDS_PLACEHOLDER } from "@/hooks/use-chord-carousel";
 import useScreen from "@/hooks/use-screen";
 import { faker } from "@faker-js/faker";
 import { AutoTextSize } from "auto-text-size";
@@ -54,11 +55,12 @@ function MeasureComment() {
 }
 
 function ChordCellGroup() {
+  const chords = faker.helpers.arrayElements(CHORDS_PLACEHOLDER, 2);
   return (
     <div className="flex gap-1 w-full grid grid-cols-4">
-      <ChordNameCell text="Db 7sus4b9b13" />
+      <ChordNameCell text={chords[0].root + " " + chords[0].harm.symbolLabel} />
       <ChordNameCell text="%" />
-      <ChordNameCell text="C maj7" />
+      <ChordNameCell text={chords[1].root + " " + chords[1].harm.symbolLabel} />
       <ChordNameCell text="%" />
     </div>
   );

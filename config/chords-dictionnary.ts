@@ -1,4 +1,6 @@
-export const CHORDS_DICTIONNARY = {
+import { Note, ChordDictionnary, ChordIntervals, ChordLabel, ChordHarmony } from "@/types/midi";
+
+const CHORDS_DICTIONNARY_RAW: Record<string, [number[], string[]?]> = {
   "4": [[0, 4, 10, 15], ["quartal"]],
   "5": [[0, 7]],
   M: [
@@ -200,4 +202,55 @@ export const CHORDS_DICTIONNARY = {
   "+add#9": [[0, 4, 8, 15]],
   madd4: [[0, 3, 4, 7]],
   madd9: [[0, 3, 7, 14]],
-} as const;
+};
+
+const getSymbolicLabel = (key: string): string => {
+  if (key === "M") return "";
+
+  if (key === "m") return "−";
+
+  let label = key;
+
+  const map: Record<string, string> = {
+    mMaj7: "−Δ7",
+    m7b5: "ø7",
+    Maj7: "Δ7",
+    M7: "Δ7",
+    M9: "Δ9",
+    M13: "Δ13",
+    o7: "°7",
+    o: "°",
+    m7: "−7",
+    m9: "−9",
+    m11: "−11",
+    m13: "−13",
+    m: "−",
+    M: "Δ",
+  };
+
+  Object.keys(map)
+    .sort((a, b) => b.length - a.length)
+    .forEach((k) => {
+      if (label.startsWith(k)) {
+        label = map[k] + label.slice(k.length);
+      }
+    });
+
+  return label.replace(/#/g, "♯").replace(/b/g, "♭").replace(/add/g, "²");
+};
+
+export const CHORDS_DICTIONNARY: ChordDictionnary = Object.entries(CHORDS_DICTIONNARY_RAW).reduce(
+  (acc, [key, value]) => {
+    const intervals = value[0] as ChordIntervals;
+    const labels = (value[1] as ChordLabel[]) || [];
+
+    acc[key] = {
+      intervals,
+      labels,
+      symbolLabel: getSymbolicLabel(key),
+    };
+
+    return acc;
+  },
+  {} as ChordDictionnary,
+);

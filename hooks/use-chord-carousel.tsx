@@ -6,11 +6,11 @@ import { EmblaCarouselType } from "embla-carousel";
 import { useSpring } from "motion/react";
 import { useCallback, useEffect, useRef } from "react";
 
-const HARMONIES = Object.keys(CHORDS_DICTIONNARY) as ChordHarmony[];
 const TWEEN_FACTOR_BASE = 0.4;
-const CHORDS_PLACEHOLDER: CarouselChord[] = Array.from({ length: 20 }, (_, index) => {
+export const CHORDS_PLACEHOLDER: CarouselChord[] = Array.from({ length: 20 }, (_, index) => {
   const root = faker.helpers.arrayElement(Notes);
-  const harm = faker.helpers.arrayElement(HARMONIES);
+  const randomHarm = faker.helpers.arrayElement(Object.entries(CHORDS_DICTIONNARY));
+  const harm: ChordHarmony = randomHarm[1];
 
   const tickStart = index * 480;
   const tickEnd = tickStart + faker.number.int({ min: 240, max: 960 });

@@ -1,28 +1,29 @@
-import { CHORDS_DICTIONNARY } from "@/config/chords-dictionnary";
-
 export const Notes = [
   "C",
-  "C#",
-  "Db",
+  "C♯",
+  "D♭",
   "D",
-  "D#",
-  "Eb",
+  "D♯",
+  "E♭",
   "E",
   "F",
-  "F#",
-  "Gb",
+  "F♯",
+  "G♭",
   "G",
-  "G#",
-  "Ab",
+  "G♯",
+  "A♭",
   "A",
-  "A#",
-  "Bb",
+  "A♯",
+  "B♭",
   "B",
 ] as const;
 
 export type Note = (typeof Notes)[number];
 
-export type ChordHarmony = keyof typeof CHORDS_DICTIONNARY;
+export type ChordIntervals = number[];
+export type ChordLabel = string;
+export type ChordHarmony = { intervals: ChordIntervals; labels: ChordLabel[]; symbolLabel: ChordLabel };
+export type ChordDictionnary = Record<string, ChordHarmony>;
 
 export interface Chord {
   root: Note;
