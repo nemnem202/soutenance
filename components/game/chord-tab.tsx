@@ -40,7 +40,7 @@ export default function ChordTab() {
             <Grid3X3 />
           </button>
         </div>
-        <div>
+        <div className="flex gap-2">
           <Button variant={"outline"} className="rounded-full" size={"icon"} onClick={handleClickPrev}>
             <ChevronLeft />
           </Button>
