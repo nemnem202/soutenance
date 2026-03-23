@@ -26,7 +26,7 @@ const CHORDS_PLACEHOLDER: CarouselChord[] = Array.from({ length: 20 }, (_, index
 
 const numberWithinRange = (number: number, min: number, max: number): number => Math.min(Math.max(number, min), max);
 
-export default function useChordCarousel({ carouselRef, api }: ChordCarouselProps) {
+export default function useChordCarousel({ carouselRef, api, axis }: ChordCarouselProps) {
   const chords = CHORDS_PLACEHOLDER;
   const tweenFactor = useRef(0);
   const tweenNodes = useRef<HTMLElement[]>([]);
@@ -68,7 +68,6 @@ export default function useChordCarousel({ carouselRef, api }: ChordCarouselProp
 
       const tweenNode = tweenNodes.current[snapIndex];
       if (tweenNode) {
-        console.log(100 * scale);
         tweenNode.style.transform = `scale(${scale})`;
         tweenNode.style.opacity = `${100 * scale}%`;
       }
@@ -99,18 +98,18 @@ export default function useChordCarousel({ carouselRef, api }: ChordCarouselProp
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowLeft") {
-        api?.scrollPrev();
-      } else if (event.key === "ArrowRight") {
-        api?.scrollNext();
+      if (axis === "y") {
+        if (event.key === "ArrowUp") api?.scrollPrev();
+        else if (event.key === "ArrowDown") api?.scrollNext();
+      } else {
+        if (event.key === "ArrowLeft") api?.scrollPrev();
+        else if (event.key === "ArrowRight") api?.scrollNext();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [api]);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [api, axis]);
 
   return { chords, springWidth };
 }

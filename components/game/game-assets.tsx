@@ -195,7 +195,7 @@ export function Tab({ children }: { children: ReactNode }) {
   if (!fullScreen) {
     return (
       <div
-        className="size-full bg-card rounded-md relative"
+        className="size-full md:bg-card md:rounded-md relative overflow-hidden"
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
       >

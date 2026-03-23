@@ -5,10 +5,13 @@ import { ChevronLeft, ChevronRight, Columns3, Grid3X3 } from "lucide-react";
 import { Separator } from "../separator";
 import { Button } from "../button";
 import useCarousel from "embla-carousel-react";
+import useScreen from "@/hooks/use-screen";
 
 export default function ChordTab() {
+  const screen = useScreen();
   const [display, setDisplay] = useState<"grid" | "carousel">("grid");
-  const [carouselRef, api] = useCarousel({ loop: true, align: "center" });
+  const axis = screen === "sm" ? "y" : "x";
+  const [carouselRef, api] = useCarousel({ loop: true, align: "center", axis });
   const handleClickNext = () => {
     if (display === "carousel") {
       api?.scrollNext();
@@ -23,7 +26,11 @@ export default function ChordTab() {
   };
   return (
     <div className="h-full w-full flex flex-col justify-between">
-      {display === "grid" ? <ChordGrid /> : <ChordCarousel api={api} carouselRef={carouselRef} />}
+      {display === "grid" ? (
+        <ChordGrid />
+      ) : (
+        <ChordCarousel key={axis} api={api} carouselRef={carouselRef} axis={axis} />
+      )}
       <div className="w-full h-20 flex justify-between items-end gap-2 p-2">
         <div className="border rounded-md flex  h-10 overflow-hidden">
           <button
