@@ -1,13 +1,14 @@
 import { CHORDS_DICTIONNARY } from "@/config/chords-dictionnary";
 import { CarouselChord, ChordHarmony, Notes } from "@/types/midi";
 import { faker } from "@faker-js/faker";
-import useCarousel from "embla-carousel-react";
+import useCarousel, { EmblaViewportRefType } from "embla-carousel-react";
 import { chordToString } from "@/lib/utils";
 import { useCallback, useEffect, useRef } from "react";
 import { EmblaCarouselType } from "embla-carousel";
 import { motion, useSpring } from "motion/react";
 import { Button } from "../button";
-import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Columns3, Grid3X3 } from "lucide-react";
+import { Separator } from "../separator";
 
 const HARMONIES = Object.keys(CHORDS_DICTIONNARY) as ChordHarmony[];
 const TWEEN_FACTOR_BASE = 0.4;
@@ -29,8 +30,13 @@ export const CHORDS_PLACEHOLDER: CarouselChord[] = Array.from({ length: 20 }, (_
 
 const numberWithinRange = (number: number, min: number, max: number): number => Math.min(Math.max(number, min), max);
 
-export default function ChordCarousel() {
-  const [carouselRef, api] = useCarousel({ loop: true, align: "center" });
+export default function ChordCarousel({
+  carouselRef,
+  api,
+}: {
+  carouselRef: EmblaViewportRefType;
+  api: EmblaCarouselType | undefined;
+}) {
   const tweenFactor = useRef(0);
   const tweenNodes = useRef<HTMLElement[]>([]);
   const springWidth = useSpring(240, {
@@ -116,7 +122,7 @@ export default function ChordCarousel() {
   }, [api]);
 
   return (
-    <div className="h-full w-full flex flex-col justify-between">
+    <>
       <div></div>
       <div className="relative w-full pointer-events-none">
         <div className="relative z-10 w-full mx-auto [--slide-height:19rem] [--slide-spacing:1rem] [--slide-size:100%] [--slide-spacing-sm:1.6rem] [--slide-size-sm:50%] [--slide-spacing-lg:2rem]">
@@ -140,14 +146,6 @@ export default function ChordCarousel() {
           <motion.div className="border rounded-full bg-background h-full" style={{ width: springWidth }} />
         </div>
       </div>
-      <div className="w-full h-20 flex justify-end items-end gap-2 p-2">
-        <Button variant={"outline"} className="rounded-full" size={"icon"} onClick={() => api?.scrollPrev()}>
-          <ChevronLeft />
-        </Button>
-        <Button variant={"outline"} className="rounded-full" size={"icon"} onClick={() => api?.scrollNext()}>
-          <ChevronRight />
-        </Button>
-      </div>
-    </div>
+    </>
   );
 }

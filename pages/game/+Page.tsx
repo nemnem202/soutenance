@@ -1,6 +1,7 @@
 import AnimatedTabs from "@/components/animated-tabs";
 import Header from "@/components/game-header";
 import ChordCarousel from "@/components/game/chord-carousel";
+import ChordTab from "@/components/game/chord-tab";
 import { Tab } from "@/components/game/game-assets";
 import GameControlsSection from "@/components/game/game-controls-section";
 import GameSidebar from "@/components/game/game-sidebar";
@@ -37,7 +38,7 @@ function Game({ ...props }: Gameprops) {
     { id: "guitar", label: instance.getItem("guitar"), disabled: true },
   ];
 
-  const [activeTab, setActiveTab] = useState<TabID>("piano-roll");
+  const [activeTab, setActiveTab] = useState<TabID>("chords");
 
   return (
     <main className="flex-1 flex flex-col items-center pt-5 w-screen">
@@ -54,7 +55,7 @@ function Game({ ...props }: Gameprops) {
             />
           </div>
           <div className="flex-1">
-            <Tab>{activeTab === "chords" && <ChordCarousel />}</Tab>
+            <Tab>{activeTab === "chords" && <ChordTab />}</Tab>
           </div>
         </div>
         <GameControlsSection {...props} />
