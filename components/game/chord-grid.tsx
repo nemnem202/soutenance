@@ -3,7 +3,7 @@ import { AutoTextSize } from "auto-text-size";
 export default function ChordGrid() {
   return (
     <div className="size-full">
-      <div className="w-full grid grid-cols-4 items-center  items-center p-5">
+      <div className="w-full grid grid-cols-4 items-center  items-center p-5 gap-1 ">
         <MeasureBlock />
         <MeasureBlock />
         <MeasureBlock />
@@ -58,7 +58,7 @@ function MeasureComment() {
 
 function ChordCellGroup() {
   return (
-    <div className="flex gap-1 w-full pr-2 grid grid-cols-4">
+    <div className="flex gap-1 w-full grid grid-cols-4">
       <ChordNameCell text="Db maj7 alt4" />
       <ChordNameCell text="%" />
       <ChordNameCell text="C maj7" />
