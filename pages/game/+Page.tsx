@@ -6,23 +6,27 @@ import { Tab } from "@/components/game/game-assets";
 import GameControlsSection from "@/components/game/game-controls-section";
 import GameSidebar from "@/components/game/game-sidebar";
 import { useLanguage } from "@/hooks/use-language";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Page() {
   const [sidebarOpen, setOpen] = useState(false);
+
+  useEffect(() => {
+    console.log("open ?", sidebarOpen);
+  }, [sidebarOpen]);
   return (
-    <div className="flex col w-screen h-screen">
+    <div className="flex flex-row w-screen h-screen overflow-hidden">
       <GameSidebar sidebarOpen={sidebarOpen} />
-      <div className="flex-1 h-screen flex flex-col" onClickCapture={() => setOpen(false)}>
+      <div className="flex-1 min-w-0 h-screen flex flex-col overflow-auto">
         <Header />
-        <Game openSidebar={() => setOpen((prev) => !prev)} />
+        <Game toggleSidebar={() => setOpen((prev) => !prev)} />
       </div>
     </div>
   );
 }
 
 export interface Gameprops {
-  openSidebar: () => void;
+  toggleSidebar: () => void;
 }
 
 const tabsIds = ["piano-roll", "chords", "sheet", "guitar"] as const;
@@ -38,12 +42,12 @@ function Game({ ...props }: Gameprops) {
     { id: "guitar", label: instance.getItem("guitar"), disabled: true },
   ];
 
-  const [activeTab, setActiveTab] = useState<TabID>("chords");
+  const [activeTab, setActiveTab] = useState<TabID>("piano-roll");
 
   return (
-    <main className="flex-1 flex flex-col items-center pt-5 w-screen">
+    <main className="flex-1 min-w-0  flex flex-col items-center pt-5 max-w-screen">
       <h1 className="headline select-none">Brown Sugar</h1>
-      <div className=" size-full px-20 py-5  flex flex-col gap-2">
+      <div className=" size-full px-20 py-5  flex flex-col gap-2 min-w-0">
         <div className="flex-1 flex flex-col">
           <div className="w-full flex justify-center">
             <AnimatedTabs
@@ -54,9 +58,7 @@ function Game({ ...props }: Gameprops) {
               className="my-2"
             />
           </div>
-          <div className="flex-1">
-            <Tab>{activeTab === "chords" && <ChordTab />}</Tab>
-          </div>
+          <Tab>{activeTab === "chords" && <ChordTab />}</Tab>
         </div>
         <GameControlsSection {...props} />
       </div>

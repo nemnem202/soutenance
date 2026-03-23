@@ -10,7 +10,7 @@ export default function GameControlsSection({ ...props }: Gameprops) {
   const { instance } = useLanguage();
   return (
     <ControlsSection>
-      <IconButton onClick={props.openSidebar}>
+      <IconButton onClick={props.toggleSidebar}>
         <Settings className="hover:stroke-primary  transition" />
       </IconButton>
       <IconButton>

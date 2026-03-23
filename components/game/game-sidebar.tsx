@@ -14,7 +14,7 @@ export default function GameSidebar({ sidebarOpen }: { sidebarOpen: boolean }) {
   const { instance } = useLanguage();
   return (
     <div
-      className={`bg-card h-screen overflow-x-hidden transition-all duration-100 ease-in-out ${sidebarOpen && "border-r"} `}
+      className={`bg-card h-screen overflow-x-hidden transition-all shrink-0 duration-100 ease-in-out ${sidebarOpen && "border-r"} `}
       style={{ width: sidebarOpen ? "350px" : "0px" }}
     >
       <div className="w-[350px] h-full">
