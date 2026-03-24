@@ -3,7 +3,6 @@ import { chordToString } from "@/lib/utils";
 import { EmblaCarouselType } from "embla-carousel";
 import { motion } from "motion/react";
 import useChordCarousel from "@/hooks/use-chord-carousel";
-import { size } from "zod";
 
 export interface ChordCarouselProps {
   carouselRef: EmblaViewportRefType;

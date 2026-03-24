@@ -46,20 +46,26 @@ function Game({ ...props }: Gameprops) {
   return (
     <main className="flex-1 min-w-0  flex flex-col items-center pt-5 max-w-screen">
       <h1 className="headline select-none">Brown Sugar</h1>
-      <div className=" size-full md:px-10 py-5  flex flex-col gap-2 min-w-0">
+      <div className=" size-full lg:px-10 px-2 py-5  flex flex-col gap-2 min-w-0">
         <div className="flex-1 flex flex-col">
-          <div className="w-full flex justify-center">
-            <AnimatedTabs
-              activeTab={activeTab}
-              onChange={(v) => setActiveTab(v as any)}
-              tabs={tabs}
-              variant="pill"
-              className="my-2"
-            />
+          <div className="w-full flex  gap-2 justify-between">
+            <div className="col-1 flex flex-1  items-center">
+              <GameControlsSection {...props} />
+            </div>
+
+            <div className="col-2 flex flex-1 justify-center hidden sm:block">
+              <AnimatedTabs
+                activeTab={activeTab}
+                onChange={(v) => setActiveTab(v as any)}
+                tabs={tabs}
+                variant="pill"
+                className="my-2"
+              />
+            </div>
+            <div className="md:flex-1"></div>
           </div>
           <Tab>{activeTab === "chords" && <ChordTab />}</Tab>
         </div>
-        <GameControlsSection {...props} />
       </div>
     </main>
   );

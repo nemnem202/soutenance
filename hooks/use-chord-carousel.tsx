@@ -1,33 +1,15 @@
 import { ChordCarouselProps } from "@/components/game/chord-carousel";
-import { CHORDS_DICTIONNARY } from "@/config/chords-dictionnary";
-import { CarouselChord, ChordHarmony, Notes } from "@/types/midi";
-import { faker } from "@faker-js/faker";
+import { Data } from "@/pages/+data";
 import { EmblaCarouselType } from "embla-carousel";
 import { useSpring } from "motion/react";
 import { useCallback, useEffect, useRef } from "react";
+import { useData } from "vike-react/useData";
 
 const TWEEN_FACTOR_BASE = 0.4;
-export const CHORDS_PLACEHOLDER: CarouselChord[] = Array.from({ length: 20 }, (_, index) => {
-  const root = faker.helpers.arrayElement(Notes);
-  const randomHarm = faker.helpers.arrayElement(Object.entries(CHORDS_DICTIONNARY));
-  const harm: ChordHarmony = randomHarm[1];
-
-  const tickStart = index * 480;
-  const tickEnd = tickStart + faker.number.int({ min: 240, max: 960 });
-
-  return {
-    index,
-    root,
-    harm,
-    tickStart,
-    tickEnd,
-  };
-});
-
 const numberWithinRange = (number: number, min: number, max: number): number => Math.min(Math.max(number, min), max);
 
 export default function useChordCarousel({ carouselRef, api, axis }: ChordCarouselProps) {
-  const chords = CHORDS_PLACEHOLDER;
+  const chords = useData<Data>().chordsPlaceholders;
   const tweenFactor = useRef(0);
   const tweenNodes = useRef<HTMLElement[]>([]);
   const springWidth = useSpring(240, {

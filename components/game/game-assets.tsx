@@ -9,7 +9,7 @@ import { Button, ButtonProps } from "../button";
 import { Maximize, Minimize } from "lucide-react";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
-  return <div className="flex gap-2 w-fit h-15 px-5 bg-card rounded-xl items-center select-none">{children}</div>;
+  return <div className="flex gap-2 w-fit h-12 px-5 bg-card rounded-md items-center select-none">{children}</div>;
 }
 
 export function IconButton({ children, onClick = () => {} }: { children: ReactNode; onClick?: () => any }) {

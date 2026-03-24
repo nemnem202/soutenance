@@ -16,6 +16,7 @@ export const Notes = [
   "A♯",
   "B♭",
   "B",
+  "%",
 ] as const;
 
 export type Note = (typeof Notes)[number];
@@ -23,11 +24,11 @@ export type Note = (typeof Notes)[number];
 export type ChordIntervals = number[];
 export type ChordLabel = string;
 export type ChordHarmony = { intervals: ChordIntervals; labels: ChordLabel[]; symbolLabel: ChordLabel };
-export type ChordDictionnary = Record<string, ChordHarmony>;
+export type ChordDictionnary = Record<string, ChordHarmony | null>;
 
 export interface Chord {
   root: Note;
-  harm: ChordHarmony;
+  harm: ChordHarmony | null;
   tickStart: number;
   tickEnd: number;
 }

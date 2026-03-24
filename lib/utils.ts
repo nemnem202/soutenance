@@ -39,4 +39,4 @@ export const getPreferredLanguage = (header: string | null): Language => {
   return availableLanguages[0];
 };
 
-export const chordToString = (chord: Chord) => chord.root + " " + chord.harm;
+export const chordToString = (chord: Chord) => chord.root + " " + chord.harm.symbolLabel;
