@@ -6,6 +6,7 @@ import { Separator } from "../separator";
 import { Button } from "../button";
 import useCarousel from "embla-carousel-react";
 import useScreen from "@/hooks/use-screen";
+import { MobileGameControlSection } from "./game-controls-section";
 
 export default function ChordTab() {
   const screen = useScreen();
@@ -31,8 +32,8 @@ export default function ChordTab() {
       ) : (
         <ChordCarousel key={axis} api={api} carouselRef={carouselRef} axis={axis} />
       )}
-      <div className="w-full h-20 flex justify-between items-end gap-2 p-2">
-        <div className="border rounded-md flex  h-10 overflow-hidden">
+      <div className="w-full h-20 flex justify-between items-end gap-2 p-2 hidden md:flex">
+        <div className="border rounded-md flex items-center h-10 overflow-hidden ">
           <button
             onClick={() => setDisplay("carousel")}
             className={`cursor-pointer w-full h-full flex justify-center items-center px-2 ${display === "carousel" ? "bg-popover" : "text-muted-foreground"}`}
@@ -47,7 +48,7 @@ export default function ChordTab() {
             <Grid3X3 />
           </button>
         </div>
-        <div className=" gap-2 hidden md:flex">
+        <div className=" gap-2 ">
           <Button variant={"outline"} className="rounded-full" size={"icon"} onClick={handleClickPrev}>
             <ChevronLeft />
           </Button>

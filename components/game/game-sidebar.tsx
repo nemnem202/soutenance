@@ -31,9 +31,11 @@ export default function GameSidebar({
             <h2 className="headline !text-[2rem] hidden md:block">{instance.getItem("settings")}</h2>
             <PresetSelect />
 
-            <button onClick={() => setOpen(false)} className="cursor-pointer">
-              <X />
-            </button>
+            <div className="md:hidden">
+              <button onClick={() => setOpen(false)} className="cursor-pointer">
+                <X />
+              </button>
+            </div>
           </div>
 
           <div className="w-full p-4 pt-0">
