@@ -1,24 +1,38 @@
 import AnimatedTabs from "@/components/animated-tabs";
-import Header from "@/components/game-header";
+import { Button } from "@/components/button";
+import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/drawer";
 import ChordTab from "@/components/game/chord-tab";
 import { Tab } from "@/components/game/game-assets";
 import DesktopGameControlsSection, { MobileGameControlSection } from "@/components/game/game-controls-section";
 import GameSidebar from "@/components/game/game-sidebar";
 import { useLanguage } from "@/hooks/use-language";
-import { useEffect, useState } from "react";
+import useScreen from "@/hooks/use-screen";
+import { useState } from "react";
 
 export default function Page() {
   const [sidebarOpen, setOpen] = useState(false);
-
-  useEffect(() => {
-    console.log("open ?", sidebarOpen);
-  }, [sidebarOpen]);
+  const size = useScreen();
   return (
     <div className="flex flex-row w-screen h-screen overflow-hidden">
       <GameSidebar sidebarOpen={sidebarOpen} setOpen={setOpen} />
       <div className="flex-1 min-w-0 h-screen flex flex-col overflow-auto">
-        {/* <Header /> */}
-        <Game toggleSidebar={() => setOpen((prev) => !prev)} />
+        {size === "sm" ? (
+          <Drawer modal={false}>
+            <DrawerTrigger asChild>
+              <div>
+                <Game toggleSidebar={() => setOpen((prev) => !prev)} />
+              </div>
+            </DrawerTrigger>
+            <DrawerContent className="rounded-none border-t border-l-0 border-r-0 border-b-0">
+              <DrawerTitle className="hidden">Game controls</DrawerTitle>
+              <div className="mx-auto w-full max-w-sm h-fit py-10 pt-0">
+                <MobileGameControlSection />
+              </div>
+            </DrawerContent>
+          </Drawer>
+        ) : (
+          <Game toggleSidebar={() => setOpen((prev) => !prev)} />
+        )}
       </div>
     </div>
   );
