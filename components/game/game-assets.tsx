@@ -38,6 +38,7 @@ export function SidebarTabButton({
       {...props}
     >
       {text}
+      {props.disabled && <span className="paragraph-sm text-muted-foreground ml-5">upcoming</span>}
     </Button>
   );
 }
