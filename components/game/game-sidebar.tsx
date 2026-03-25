@@ -7,7 +7,6 @@ import { ReactNode, useState } from "react";
 import { Button } from "../button";
 import SwitchParam from "../switch-param";
 import { Label } from "../label";
-import UpcomingToolTip from "../upcoming-tooltip";
 import { useLanguage } from "@/hooks/use-language";
 
 export default function GameSidebar({ sidebarOpen }: { sidebarOpen: boolean }) {
@@ -81,12 +80,8 @@ function TabBar() {
     <nav className="flex flex-col w-full">
       <SidebarTabButton text={instance.getItem("piano_roll")} isActive={true} />
       <SidebarTabButton text={instance.getItem("chords")} isActive={false} />
-      <UpcomingToolTip>
-        <SidebarTabButton text={instance.getItem("sheet")} isActive={false} props={{ disabled: true }} />
-      </UpcomingToolTip>
-      <UpcomingToolTip>
-        <SidebarTabButton text={instance.getItem("guitar")} isActive={false} props={{ disabled: true }} />
-      </UpcomingToolTip>
+      <SidebarTabButton text={instance.getItem("sheet")} isActive={false} props={{ disabled: true }} />
+      <SidebarTabButton text={instance.getItem("guitar")} isActive={false} props={{ disabled: true }} />
     </nav>
   );
 }

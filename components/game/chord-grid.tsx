@@ -2,7 +2,6 @@ import useScreen from "@/hooks/use-screen";
 import { Data } from "@/pages/+data";
 import { CarouselChord, Note } from "@/types/midi";
 import { faker } from "@faker-js/faker";
-import { useMemo } from "react";
 import { useData } from "vike-react/useData";
 
 export default function ChordGrid() {
@@ -45,7 +44,7 @@ function MeasureBlock() {
 
 function ChordCellGroup() {
   const screen = useScreen();
-  const chordsPlaceholder = useMemo(() => useData<Data>().chordsPlaceholders, []);
+  const chordsPlaceholder = useData<Data>().chordsPlaceholders;
   const chords: (CarouselChord | undefined)[] = Array(4).fill(undefined);
 
   const count = faker.number.int({ min: 0, max: 4 });
@@ -67,9 +66,7 @@ function ChordCellGroup() {
     );
   return (
     <div className="flex w-full">
-      {chords.map((chord, i) => (
-        <ChordNameCell key={i} root={chord && chord.root} harm={chord?.harm?.symbolLabel} />
-      ))}
+      {chords.map((chord, i) => chord && <ChordNameCell key={i} root={chord.root} harm={chord?.harm?.symbolLabel} />)}
     </div>
   );
 }
@@ -80,7 +77,7 @@ function ChordNameCell({ root, harm }: { root: Note | undefined; harm?: string }
       <div className=" rounded-md h-full w-full flex items-center ">
         <p className="whitespace-nowrap font-mono semibold text-xl flex lg:gap-1">
           <span>{root}</span>
-          <span className="text-muted-foreground  paragraph-sm max-w[50%]">{harm}</span>
+          {harm && <span className="text-muted-foreground  paragraph-sm max-w[50%]">{harm}</span>}
         </p>
       </div>
     </div>

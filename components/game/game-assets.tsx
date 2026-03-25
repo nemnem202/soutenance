@@ -33,7 +33,7 @@ export function SidebarTabButton({
 }) {
   return (
     <Button
-      className={`title-3 h-12 flex items-center !justify-start gap-2 hover:bg-popover cursor-pointer !p-2 rounded bg-transparent ${isActive && "text-primary transition"}`}
+      className={`bg-transparent title-3 h-12 text-foreground flex items-center justify-start text-left hover:bg-popover p-2 rounded ${isActive && "text-primary fill-primary transition"}`}
       onClick={onClick}
       {...props}
     >
