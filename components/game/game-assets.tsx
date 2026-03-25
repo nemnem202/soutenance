@@ -33,12 +33,12 @@ export function SidebarTabButton({
 }) {
   return (
     <Button
-      className={`bg-transparent title-3 h-12 text-foreground flex items-center justify-start text-left hover:bg-popover p-2 rounded ${isActive && "text-primary fill-primary transition"}`}
+      className={`bg-transparent text-[0.885rem] font-bold md:text-[1.115rem] h-8 md:h-12 text-foreground flex items-center justify-start text-left hover:bg-popover p-2 rounded ${isActive && "text-primary fill-primary transition"}`}
       onClick={onClick}
       {...props}
     >
       {text}
-      {props.disabled && <span className="paragraph-sm text-muted-foreground ml-5">upcoming</span>}
+      {props.disabled && <span className="paragraph-sm text-muted-foreground ml-5 hidden md:block">upcoming</span>}
     </Button>
   );
 }

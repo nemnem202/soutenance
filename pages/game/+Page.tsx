@@ -15,9 +15,9 @@ export default function Page() {
   }, [sidebarOpen]);
   return (
     <div className="flex flex-row w-screen h-screen overflow-hidden">
-      <GameSidebar sidebarOpen={sidebarOpen} />
+      <GameSidebar sidebarOpen={sidebarOpen} setOpen={setOpen} />
       <div className="flex-1 min-w-0 h-screen flex flex-col overflow-auto">
-        <Header />
+        {/* <Header /> */}
         <Game toggleSidebar={() => setOpen((prev) => !prev)} />
       </div>
     </div>
