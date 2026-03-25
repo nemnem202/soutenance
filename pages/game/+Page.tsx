@@ -53,7 +53,7 @@ function Game({ ...props }: Gameprops) {
               <GameControlsSection {...props} />
             </div>
 
-            <div className="col-2 flex flex-1 justify-center hidden sm:block">
+            <div className="col-2 flex-1 justify-center hidden sm:flex">
               <AnimatedTabs
                 activeTab={activeTab}
                 onChange={(v) => setActiveTab(v as any)}

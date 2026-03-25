@@ -8,6 +8,7 @@ import { Button } from "../button";
 import SwitchParam from "../switch-param";
 import { Label } from "../label";
 import { useLanguage } from "@/hooks/use-language";
+import UpcomingToolTip from "../upcoming-tooltip";
 
 export default function GameSidebar({ sidebarOpen }: { sidebarOpen: boolean }) {
   const { instance } = useLanguage();
