@@ -33,10 +33,10 @@ export default function DesktopGameControlsSection({ ...props }: Gameprops) {
   );
 }
 
-export function MobileGameControlSection() {
+export function MobileGameControlSection({ ...props }: Gameprops) {
   return (
     <div className=" flex w-full justify-evenly">
-      <IconButton onClick={() => {}}>
+      <IconButton onClick={() => props.toggleSidebar()}>
         <Settings className="hover:stroke-primary  transition h-8 w-8" />
       </IconButton>
       <IconButton>

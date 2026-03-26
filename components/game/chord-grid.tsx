@@ -6,7 +6,7 @@ import { useData } from "vike-react/useData";
 
 export default function ChordGrid() {
   return (
-    <div className="size-full p-2 md:p-5 flex flex-col gap-5">
+    <div className="size-full p-0 md:p-4 flex flex-col gap-5">
       <Section label="A" />
       <Section label="B" />
     </div>

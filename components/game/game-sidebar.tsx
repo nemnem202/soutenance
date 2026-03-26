@@ -22,7 +22,7 @@ export default function GameSidebar({
   const size = useScreen();
   return (
     <div
-      className={`fixed z-10 md:static w-screen bg-card h-screen overflow-x-hidden transition-all shrink-0 duration-100 ease-in-out ${sidebarOpen && "border-r"} `}
+      className={`fixed z-51 md:static w-screen bg-card h-screen overflow-x-hidden transition-all shrink-0 duration-100 ease-in-out ${sidebarOpen && "border-r"} `}
       style={{ width: sidebarOpen ? (size === "sm" ? "100vw" : "350px") : "0px" }}
     >
       <div className="w-full h-full">
@@ -77,7 +77,7 @@ function PresetSelect() {
       <SelectTrigger className="w-full max-w-40">
         <SelectValue className="text-left" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="z-52">
         <SelectGroup>
           <SelectLabel>{instance.getItem("presets")}</SelectLabel>
           <SelectItem value="default">{instance.getItem("default")}</SelectItem>

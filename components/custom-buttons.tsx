@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Heart, Plus } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Heart, Plus } from "lucide-react";
 import { Button, ButtonProps } from "./button";
 
 export function LikeButton({ ...props }: ButtonProps) {
@@ -30,5 +30,13 @@ export function ChevrontRightButton({ ...props }: ButtonProps) {
     <Button variant={"ghost"} size={"icon"} {...props} className={"rounded-full " + props.className}>
       <ChevronRight />
     </Button>
+  );
+}
+
+export function HistoryBackButton() {
+  return (
+    <button onClick={() => window.history.back()} className="cursor-pointer">
+      <ArrowLeft />
+    </button>
   );
 }

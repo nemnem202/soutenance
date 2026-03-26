@@ -3,12 +3,11 @@ import "@/stylesheets/general.css";
 import { ReactNode } from "react";
 import Sidebar from "@/components/app-sidebar";
 import Header from "@/components/header";
-import useScreen from "@/hooks/use-screen";
 import TabBar from "@/components/mobile/tab-bar";
+import SizeAdapter from "@/components/size-adapter";
 
 export default function Layout({ children }: { children: ReactNode }) {
-  const size = useScreen();
-  return size === "sm" ? <MobileLayout>{children}</MobileLayout> : <DesktopLayout>{children}</DesktopLayout>;
+  return <SizeAdapter sm={<MobileLayout>{children}</MobileLayout>} md={<DesktopLayout>{children}</DesktopLayout>} />;
 }
 
 function DesktopLayout({ children }: { children: ReactNode }) {
