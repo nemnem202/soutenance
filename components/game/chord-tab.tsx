@@ -35,14 +35,14 @@ export default function ChordTab() {
         <div className="border rounded-md flex items-center h-10 overflow-hidden ">
           <button
             onClick={() => setDisplay("carousel")}
-            className={`cursor-pointer w-full h-full flex justify-center items-center px-2 ${display === "carousel" ? "bg-popover" : "text-muted-foreground"}`}
+            className={`cursor-pointer w-full h-full flex justify-center items-center px-2 ${display === "grid" && "text-muted-foreground bg-popover"}`}
           >
             <Columns3 />
           </button>
           <Separator orientation="vertical" />
           <button
             onClick={() => setDisplay("grid")}
-            className={`cursor-pointer w-full h-full flex justify-center items-center px-2 ${display === "grid" ? "bg-popover" : "text-muted-foreground"}`}
+            className={`cursor-pointer w-full h-full flex justify-center items-center px-2 ${display === "carousel" && "text-muted-foreground bg-popover"}`}
           >
             <Grid3X3 />
           </button>
