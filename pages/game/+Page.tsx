@@ -2,6 +2,7 @@ import AnimatedTabs from "@/components/animated-tabs";
 import { Button } from "@/components/button";
 import { HistoryBackButton } from "@/components/custom-buttons";
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/drawer";
+import Header from "@/components/game-header";
 import ChordTab from "@/components/game/chord-tab";
 import { Tab } from "@/components/game/game-assets";
 import DesktopGameControlsSection, { MobileGameControlSection } from "@/components/game/game-controls-section";
@@ -27,6 +28,7 @@ export default function Page() {
                   <div className="absolute m-2 top-0 left-0">
                     <HistoryBackButton />
                   </div>
+
                   <Game toggleSidebar={() => setOpen((prev) => !prev)} />
                 </div>
               </DrawerTrigger>
@@ -38,7 +40,12 @@ export default function Page() {
               </DrawerContent>
             </Drawer>
           }
-          md={<Game toggleSidebar={() => setOpen((prev) => !prev)} />}
+          md={
+            <>
+              <Header />
+              <Game toggleSidebar={() => setOpen((prev) => !prev)} />
+            </>
+          }
         />
       </div>
     </div>
