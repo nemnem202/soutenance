@@ -9,6 +9,7 @@ import { navigate } from "vike/client/router";
 import { PlusButton } from "./custom-buttons";
 import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
+import NewPlaylistModal from "./new-playlist-modal";
 
 export default function Sidebar() {
   return (
@@ -64,7 +65,9 @@ function Playlists() {
     <div className="w-full flex flex-col gap-5">
       <div className="w-full flex justify-between items-center">
         <h2 className="title-3">{instance.getItem("playlists")}</h2>
-        <PlusButton onClick={() => navigate("/new-playlist")} />
+        <NewPlaylistModal>
+          <PlusButton />
+        </NewPlaylistModal>
       </div>
       <div className="flex flex-col w-full gap-2">
         <SmallPlaylistWidget />

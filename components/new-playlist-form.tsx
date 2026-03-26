@@ -12,12 +12,12 @@ import { useLanguage } from "@/hooks/use-language";
 
 export interface NewPlaylistFormProps {}
 
-export default function NewPlaylistForm() {
+export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
   const { form, formRef, handleSubmit } = useNewPlaylistForm();
   const { instance } = useLanguage();
   return (
     <form id="form-rhf-post" onSubmit={form.handleSubmit(handleSubmit)} ref={formRef}>
-      <FieldGroup className="flex md:flex-row flex-col items-center">
+      <FieldGroup className={`flex  items-center  flex-col ${axe === "x" && "md:flex-row"}`}>
         <Controller
           name="image.src"
           control={form.control}

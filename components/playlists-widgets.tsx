@@ -3,6 +3,7 @@ import { LikeButton, PlusButton } from "./custom-buttons";
 import { useLanguage } from "@/hooks/use-language";
 import { getRandomPlaylist } from "@/lib/utils";
 import AddToPlaylistButton from "./add-to-playlist-menu";
+import NewPlaylistModal from "./new-playlist-modal";
 
 export function SmallPlaylistWidget() {
   const playlist = getRandomPlaylist();
@@ -34,19 +35,18 @@ export function SmallPlaylistWidget() {
 export function SmallAddNewPlaylistWidget() {
   const { instance } = useLanguage();
   return (
-    <button
-      className=" w-full hover:bg-popover rounded flex gap-2 cursor-pointer transition p-1.5 text-primary"
-      // href={`/playlist/${playlist.id}`}
-    >
-      <div className="h-12 w-12 aspect-square overflow-hidden bg-popover flex items-center justify-center">
-        <Plus />
+    <NewPlaylistModal>
+      <div className=" w-full hover:bg-popover rounded flex gap-2 cursor-pointer transition p-1.5 text-primary">
+        <div className="h-12 w-12 aspect-square overflow-hidden bg-popover flex items-center justify-center">
+          <Plus />
+        </div>
+        <div className="flex flex-1 flex-col min-w-0 justify-center">
+          <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis w-min ">
+            {instance.getItem("new_playlist")}
+          </p>
+        </div>
       </div>
-      <div className="flex flex-1 flex-col min-w-0 justify-center">
-        <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis w-min ">
-          {instance.getItem("new_playlist")}
-        </p>
-      </div>
-    </button>
+    </NewPlaylistModal>
   );
 }
 

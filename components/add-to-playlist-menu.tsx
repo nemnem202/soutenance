@@ -32,7 +32,7 @@ export default function AddToPlaylistButton() {
         <DropdownMenuGroup className="p-3">
           <Searchbar placeholder={instance.getItem("search")} />
         </DropdownMenuGroup>
-        <DropdownMenuGroup className="p-3 overflow-y-auto  max-h-80 flex flex-col">
+        <DropdownMenuGroup className="p-3 pt-0 overflow-y-auto  max-h-80 flex flex-col">
           <SmallAddNewPlaylistWidget />
           {playlistsSubarray.map((_, index) => (
             <DropdownMenuItem className="p-0" key={index}>
