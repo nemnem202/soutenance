@@ -68,6 +68,9 @@ importers:
       '@universal-middleware/core':
         specifier: ^0.4.16
         version: 0.4.16(@types/express@5.0.6)(hono@4.11.4)(srvx@0.9.8)
+      auto-text-size:
+        specifier: ^0.2.3
+        version: 0.2.3(react@19.2.4)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -113,6 +116,9 @@ importers:
       usehooks-ts:
         specifier: ^3.1.1
         version: 3.1.1(react@19.2.4)
+      vaul:
+        specifier: ^1.1.2
+        version: 1.1.2(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       vike:
         specifier: ^0.4.253
         version: 0.4.253(react-streaming@0.4.15(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(vite@7.3.1(@types/node@25.2.3)(jiti@2.6.1)(lightningcss@1.30.2))
@@ -1775,6 +1781,11 @@ packages:
   async-sema@3.1.1:
     resolution: {integrity: sha512-tLRNUXati5MFePdAk8dw7Qt7DpxPB60ofAgn8WRhW6a2rcimZnYBP9oxHiv0OHy+Wz7kPMG+t4LGdt31+4EmGg==}
 
+  auto-text-size@0.2.3:
+    resolution: {integrity: sha512-OycpKD8n5jxnNaOiAJoNr3BkBsxRzHHhFQk15rgsOYq+O9lsMSPLbVN7ZibxjTwT7bl6Y5jawOtZJxRWaoxdcQ==}
+    peerDependencies:
+      react: '*'
+
   autoprefixer@10.4.24:
     resolution: {integrity: sha512-uHZg7N9ULTVbutaIsDRoUkoS8/h3bdsmVJYZ5l3wv8Cp/6UIIoRDm90hZ+BwxUj/hGBEzLxdHNSKuFpn8WOyZw==}
     engines: {node: ^10 || ^12 || >=14}
@@ -3431,6 +3442,12 @@ packages:
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
+
+  vaul@1.1.2:
+    resolution: {integrity: sha512-ZFkClGpWyI2WUQjdLJ/BaGuV6AVQiJ3uELGk3OYtP+B6yCO7Cmn9vPFXVJkRaGkOJu3m8bQMgtyzNHixULceQA==}
+    peerDependencies:
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc
 
   vike-photon@0.1.24:
     resolution: {integrity: sha512-zaF/WvNq0JwNvCbQR6eDuf7pgpNwWu5+ZhLJx2Qr1/ndPZrya9PuO2Me7Q9CFvWvig3zvegZ47ny79zyir+sAw==}
@@ -5181,6 +5198,10 @@ snapshots:
   async-function@1.0.0: {}
 
   async-sema@3.1.1: {}
+
+  auto-text-size@0.2.3(react@19.2.4):
+    dependencies:
+      react: 19.2.4
 
   autoprefixer@10.4.24(postcss@8.5.6):
     dependencies:
@@ -7019,6 +7040,15 @@ snapshots:
       typescript: 5.9.3
 
   vary@1.1.2: {}
+
+  vaul@1.1.2(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+    dependencies:
+      '@radix-ui/react-dialog': 1.1.15(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
 
   vike-photon@0.1.24(@photonjs/core@0.1.21(@types/express@5.0.6)(hono@4.11.4)(srvx@0.9.8)(vite@7.3.1(@types/node@25.2.3)(jiti@2.6.1)(lightningcss@1.30.2)))(@photonjs/runtime@0.1.16(@types/express@5.0.6)(hono@4.11.4)(rollup@4.57.1)(vite@7.3.1(@types/node@25.2.3)(jiti@2.6.1)(lightningcss@1.30.2)))(@types/express@5.0.6)(hono@4.11.4)(rollup@4.57.1)(srvx@0.9.8)(vike@0.4.253(react-streaming@0.4.15(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(vite@7.3.1(@types/node@25.2.3)(jiti@2.6.1)(lightningcss@1.30.2)))(vite@7.3.1(@types/node@25.2.3)(jiti@2.6.1)(lightningcss@1.30.2)):
     dependencies:

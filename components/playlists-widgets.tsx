@@ -2,13 +2,14 @@ import { Plus } from "lucide-react";
 import { LikeButton, PlusButton } from "./custom-buttons";
 import { useLanguage } from "@/hooks/use-language";
 import { getRandomPlaylist } from "@/lib/utils";
+import AddToPlaylistButton from "./add-to-playlist-menu";
 
 export function SmallPlaylistWidget() {
   const playlist = getRandomPlaylist();
   const { instance } = useLanguage();
   return (
     <a
-      className="h-12 w-full hover:bg-popover rounded flex gap-2 cursor-pointer transition"
+      className=" w-full hover:bg-popover rounded flex gap-2 cursor-pointer transition p-1.5"
       href={`/playlist/${playlist.id}`}
     >
       <div className="h-12 w-12 aspect-square overflow-hidden">
@@ -30,6 +31,25 @@ export function SmallPlaylistWidget() {
   );
 }
 
+export function SmallAddNewPlaylistWidget() {
+  const { instance } = useLanguage();
+  return (
+    <button
+      className=" w-full hover:bg-popover rounded flex gap-2 cursor-pointer transition p-1.5 text-primary"
+      // href={`/playlist/${playlist.id}`}
+    >
+      <div className="h-12 w-12 aspect-square overflow-hidden bg-popover flex items-center justify-center">
+        <Plus />
+      </div>
+      <div className="flex flex-1 flex-col min-w-0 justify-center">
+        <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis w-min ">
+          {instance.getItem("new_playlist")}
+        </p>
+      </div>
+    </button>
+  );
+}
+
 export function MediumPlaylistWidget() {
   const playlist = getRandomPlaylist();
   const { instance } = useLanguage();
@@ -37,7 +57,7 @@ export function MediumPlaylistWidget() {
     <div className="relative group w-full">
       <div className="absolute top-0 left-0 px-2 pt-2 w-full z-1 flex justify-between  opacity-0 group-hover:opacity-100 transition pointer-events-none hidden md:flex">
         <div className="pointer-events-auto">
-          <PlusButton />
+          <AddToPlaylistButton />
         </div>
         <div className="pointer-events-auto ">
           <LikeButton />

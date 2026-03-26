@@ -708,4 +708,11 @@ export const languagePack = {
     de: "Etwas ist schief gelaufen.",
     zh: "出错了。",
   },
+  add_to_playlist: {
+    fr: "Ajouter à la playlist",
+    en: "Add to playlist",
+    es: "Añadir a la lista de reproducción",
+    de: "Zur Playlist hinzufügen",
+    zh: "添加到播放列表",
+  },
 } as const;
