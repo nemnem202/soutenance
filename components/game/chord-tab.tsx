@@ -6,7 +6,6 @@ import { Separator } from "../separator";
 import { Button } from "../button";
 import useCarousel from "embla-carousel-react";
 import useScreen from "@/hooks/use-screen";
-import { MobileGameControlSection } from "./game-controls-section";
 
 export default function ChordTab() {
   const screen = useScreen();
@@ -48,7 +47,7 @@ export default function ChordTab() {
             <Grid3X3 />
           </button>
         </div>
-        <div className=" gap-2 ">
+        <div className="flex gap-2 ">
           <Button variant={"outline"} className="rounded-full" size={"icon"} onClick={handleClickPrev}>
             <ChevronLeft />
           </Button>

@@ -1,9 +1,6 @@
-import { useState } from "react";
 import { Plus } from "lucide-react";
 import { LikeButton, PlusButton } from "./custom-buttons";
 import { useLanguage } from "@/hooks/use-language";
-import { useData } from "vike-react/useData";
-import { Data } from "@/pages/+data";
 import { getRandomPlaylist } from "@/lib/utils";
 
 export function SmallPlaylistWidget() {
@@ -38,11 +35,11 @@ export function MediumPlaylistWidget() {
   const { instance } = useLanguage();
   return (
     <div className="relative group w-full">
-      <div className="absolute top-0 left-0 px-2 pt-2 w-full z-1 flex justify-between  opacity-0 group-hover:opacity-100 transition pointer-events-none">
+      <div className="absolute top-0 left-0 px-2 pt-2 w-full z-1 flex justify-between  opacity-0 group-hover:opacity-100 transition pointer-events-none hidden md:static">
         <div className="pointer-events-auto">
           <PlusButton />
         </div>
-        <div className="pointer-events-auto">
+        <div className="pointer-events-auto ">
           <LikeButton />
         </div>
       </div>

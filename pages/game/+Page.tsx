@@ -7,6 +7,8 @@ import ChordTab from "@/components/game/chord-tab";
 import { Tab } from "@/components/game/game-assets";
 import DesktopGameControlsSection, { MobileGameControlSection } from "@/components/game/game-controls-section";
 import GameSidebar from "@/components/game/game-sidebar";
+import Headline from "@/components/headline";
+import MobileHeaderNavContainer from "@/components/mobile-header-nav-container";
 import SizeAdapter from "@/components/size-adapter";
 import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
@@ -24,11 +26,7 @@ export default function Page() {
           sm={
             <Drawer modal={false}>
               <DrawerTrigger asChild>
-                <div className="relative">
-                  <div className="absolute m-2 top-0 left-0">
-                    <HistoryBackButton />
-                  </div>
-
+                <div>
                   <Game toggleSidebar={() => setOpen((prev) => !prev)} />
                 </div>
               </DrawerTrigger>
@@ -73,7 +71,17 @@ function Game({ ...props }: Gameprops) {
 
   return (
     <main className="flex-1 min-w-0  flex flex-col items-center p-4 max-w-screen">
-      <h1 className="headline select-none">Brown Sugar</h1>
+      <SizeAdapter
+        sm={
+          <MobileHeaderNavContainer>
+            <HistoryBackButton />
+
+            <Headline>Brown Sugar</Headline>
+            <div></div>
+          </MobileHeaderNavContainer>
+        }
+        md={<Headline>Brown Sugar</Headline>}
+      />
       <div className="size-full lg:px-10 py-5  flex flex-col gap-2 min-w-0">
         <div className="flex-1 flex flex-col">
           <div className="w-full flex  gap-2 justify-between">
