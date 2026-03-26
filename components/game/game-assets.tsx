@@ -7,9 +7,11 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../tooltip";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Button, ButtonProps } from "../button";
 import { Maximize, Minimize } from "lucide-react";
+import useScreen from "@/hooks/use-screen";
+import { MobileGameControlSection } from "./game-controls-section";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
-  return <div className="flex gap-2 w-fit h-15 px-5 bg-card rounded-xl items-center select-none">{children}</div>;
+  return <div className="flex gap-2 w-fit h-12 px-5 bg-card rounded-md items-center select-none">{children}</div>;
 }
 
 export function IconButton({ children, onClick = () => {} }: { children: ReactNode; onClick?: () => any }) {
@@ -33,11 +35,12 @@ export function SidebarTabButton({
 }) {
   return (
     <Button
-      className={`title-3 h-12 flex items-center !justify-start gap-2 hover:bg-popover cursor-pointer !p-2 rounded bg-transparent ${isActive && "text-primary transition"}`}
+      className={`bg-transparent text-[0.885rem] font-bold md:text-[1.115rem] h-8 md:h-12 text-foreground flex items-center justify-start text-left hover:bg-popover p-2 rounded ${isActive && "text-primary fill-primary transition"}`}
       onClick={onClick}
       {...props}
     >
       {text}
+      {props.disabled && <span className="paragraph-sm text-muted-foreground ml-5 hidden md:block">upcoming</span>}
     </Button>
   );
 }
@@ -192,14 +195,17 @@ export function FullScreenButton({
 export function Tab({ children }: { children: ReactNode }) {
   const [hover, setHover] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
+
   if (!fullScreen) {
     return (
       <div
-        className="size-full bg-card rounded-md relative"
+        className="size-full md:bg-card md:rounded-md relative overflow-hidden"
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
       >
-        <FullScreenButton hover={hover} fullScreen={fullScreen} setFullScreen={setFullScreen} />
+        <div className="hidden md:block">
+          <FullScreenButton hover={hover} fullScreen={fullScreen} setFullScreen={setFullScreen} />
+        </div>
         {children}
       </div>
     );

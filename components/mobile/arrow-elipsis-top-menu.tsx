@@ -1,13 +1,12 @@
 import { ArrowLeft, EllipsisVertical } from "lucide-react";
+import { HistoryBackButton } from "../custom-buttons";
+import MobileHeaderNavContainer from "../mobile-header-nav-container";
 
 export default function ArrowElipsisTopMenu() {
   return (
-    <div className="w-full p-2 pb-0 flex justify-between">
-      <button onClick={() => window.history.back()}>
-        <ArrowLeft />
-      </button>
-
+    <MobileHeaderNavContainer>
+      <HistoryBackButton />
       <EllipsisVertical />
-    </div>
+    </MobileHeaderNavContainer>
   );
 }

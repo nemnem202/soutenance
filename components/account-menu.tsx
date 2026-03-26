@@ -14,7 +14,7 @@ import {
 } from "./dropdown-menu";
 
 import { Button } from "./button";
-import { Brush, LanguagesIcon, LogOutIcon, SettingsIcon, UserIcon } from "lucide-react";
+import { Brush, LanguagesIcon, LogOutIcon, Settings2, SettingsIcon, UserIcon } from "lucide-react";
 import { navigate } from "vike/client/router";
 import { useTheme } from "@/hooks/use-theme";
 import { useLanguage } from "@/hooks/use-language";
@@ -45,7 +45,7 @@ export default function AccountMenu() {
           {instance.getItem("profile")}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => navigate("/settings")}>
-          <SettingsIcon />
+          <Settings2 />
           {instance.getItem("settings")}
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-border" />

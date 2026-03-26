@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { motion, useReducedMotion } from "motion/react";
 import { type ReactNode, useCallback, useId, useState } from "react";
+import UpcomingToolTip from "./upcoming-tooltip";
 
 export interface AnimatedTabsProps {
   tabs: { id: string; label: string; icon?: ReactNode; disabled?: boolean }[];
@@ -88,7 +89,7 @@ export default function AnimatedTabs({
   const baseContainerStyles = cn(
     "relative inline-flex",
     variant === "underline" && "gap-1 border-border border-b",
-    variant === "pill" && "gap-1 rounded-full bg-card p-1.5",
+    variant === "pill" && "gap-1 rounded-md bg-card p-1.5",
     variant === "segment" && "gap-0 rounded-lg bg-card p-1.5",
   );
 
@@ -106,7 +107,7 @@ export default function AnimatedTabs({
             : "text-muted-foreground hover:text-foreground",
       ],
       variant === "pill" && [
-        "rounded-full",
+        "rounded-md",
         disabled
           ? "text-muted-foreground"
           : isActive
@@ -127,7 +128,7 @@ export default function AnimatedTabs({
     cn(
       "absolute",
       variant === "underline" && "right-0 -bottom-px left-0 h-0.5 bg-primary",
-      variant === "pill" && "inset-0 rounded-full bg-primary shadow-sm",
+      variant === "pill" && "inset-0 rounded-sm bg-primary shadow-sm",
       variant === "segment" && "inset-0 rounded-md border border-border bg-primary shadow-sm",
     );
 
@@ -159,7 +160,13 @@ export default function AnimatedTabs({
               />
             )}
             {tab.icon && <span className="relative z-10">{tab.icon}</span>}
-            <span className="relative z-10">{tab.label}</span>
+            {tab.disabled ? (
+              <UpcomingToolTip>
+                <span className="relative z-10">{tab.label}</span>
+              </UpcomingToolTip>
+            ) : (
+              <span className="relative z-10">{tab.label}</span>
+            )}
           </button>
         );
       })}

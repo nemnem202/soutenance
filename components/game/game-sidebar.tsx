@@ -7,22 +7,37 @@ import { ReactNode, useState } from "react";
 import { Button } from "../button";
 import SwitchParam from "../switch-param";
 import { Label } from "../label";
-import UpcomingToolTip from "../upcoming-tooltip";
 import { useLanguage } from "@/hooks/use-language";
+import useScreen from "@/hooks/use-screen";
+import { X } from "lucide-react";
 
-export default function GameSidebar({ sidebarOpen }: { sidebarOpen: boolean }) {
+export default function GameSidebar({
+  sidebarOpen,
+  setOpen,
+}: {
+  sidebarOpen: boolean;
+  setOpen: (open: boolean) => void;
+}) {
   const { instance } = useLanguage();
+  const size = useScreen();
   return (
     <div
-      className={`bg-card h-screen overflow-x-hidden transition-all duration-100 ease-in-out ${sidebarOpen && "border-r"} `}
-      style={{ width: sidebarOpen ? "350px" : "0px" }}
+      className={`fixed z-51 md:static w-screen bg-card h-screen overflow-x-hidden transition-all shrink-0 duration-100 ease-in-out ${sidebarOpen && "border-r"} `}
+      style={{ width: sidebarOpen ? (size === "sm" ? "100vw" : "350px") : "0px" }}
     >
-      <div className="w-[350px] h-full">
-        <div className="w-full h-full flex flex-col">
+      <div className="w-full h-full">
+        <div className="w-fullflex flex-col">
           <div className="h-20 p-4 flex items-center justify-between w-full">
-            <h2 className="headline !text-[2rem]">{instance.getItem("settings")}</h2>
+            <h2 className="headline !text-[2rem] hidden md:block">{instance.getItem("settings")}</h2>
             <PresetSelect />
+
+            <div className="md:hidden">
+              <button onClick={() => setOpen(false)} className="cursor-pointer">
+                <X />
+              </button>
+            </div>
           </div>
+
           <div className="w-full p-4 pt-0">
             <TabBar />
           </div>
@@ -46,7 +61,7 @@ export default function GameSidebar({ sidebarOpen }: { sidebarOpen: boolean }) {
             </SidebarSection>
             <Separator />
             <div className="p-4">
-              <Button className="title-2 w-full">{instance.getItem("save_settings")}</Button>
+              <Button className="title-2 md:w-full">{instance.getItem("save_settings")}</Button>
             </div>
           </div>
         </div>
@@ -62,7 +77,7 @@ function PresetSelect() {
       <SelectTrigger className="w-full max-w-40">
         <SelectValue className="text-left" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="z-52">
         <SelectGroup>
           <SelectLabel>{instance.getItem("presets")}</SelectLabel>
           <SelectItem value="default">{instance.getItem("default")}</SelectItem>
@@ -78,15 +93,11 @@ function PresetSelect() {
 function TabBar() {
   const { instance } = useLanguage();
   return (
-    <nav className="flex flex-col w-full">
+    <nav className="flex flex-wrap md:flex-col  w-full">
       <SidebarTabButton text={instance.getItem("piano_roll")} isActive={true} />
       <SidebarTabButton text={instance.getItem("chords")} isActive={false} />
-      <UpcomingToolTip>
-        <SidebarTabButton text={instance.getItem("sheet")} isActive={false} props={{ disabled: true }} />
-      </UpcomingToolTip>
-      <UpcomingToolTip>
-        <SidebarTabButton text={instance.getItem("guitar")} isActive={false} props={{ disabled: true }} />
-      </UpcomingToolTip>
+      <SidebarTabButton text={instance.getItem("sheet")} isActive={false} props={{ disabled: true }} />
+      <SidebarTabButton text={instance.getItem("guitar")} isActive={false} props={{ disabled: true }} />
     </nav>
   );
 }

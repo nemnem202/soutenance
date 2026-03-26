@@ -4,6 +4,9 @@ import { Account } from "@/types/account";
 import { Exercice, Playlist } from "@/types/project";
 import { PageContextServer } from "vike/types";
 import { UAParser } from "ua-parser-js";
+import { ChordHarmony, Notes } from "@/types/midi";
+import { faker } from "@faker-js/faker";
+import { CHORDS_DICTIONNARY } from "@/config/chords-dictionnary";
 
 function getScreen(pageContext: PageContextServer): ScreenSizeType {
   const ua = pageContext.headers ? (pageContext.headers["user-agent"] ?? "") : "";
@@ -18,6 +21,27 @@ function getScreen(pageContext: PageContextServer): ScreenSizeType {
   }
 }
 
+const generatePlaceholders = () =>
+  Array.from({ length: 20 }, (_, index) => {
+    const root = faker.helpers.arrayElement(Notes);
+    let harm: ChordHarmony | null = null;
+    if (root !== "%") {
+      const randomHarm = faker.helpers.arrayElement(Object.entries(CHORDS_DICTIONNARY));
+      harm = randomHarm[1];
+    }
+
+    const tickStart = index * 480;
+    const tickEnd = tickStart + faker.number.int({ min: 240, max: 960 });
+
+    return {
+      index,
+      root,
+      harm,
+      tickStart,
+      tickEnd,
+    };
+  });
+
 export async function data(pageContext: PageContextServer) {
   try {
     const acceptLanguage = pageContext.headers["accept-language"];
@@ -29,10 +53,10 @@ export async function data(pageContext: PageContextServer) {
       exercices: Exercice[];
       playlists: Playlist[];
     };
-    return { accounts, exercices, playlists, preferredLanguage, screen };
+    return { accounts, exercices, playlists, preferredLanguage, screen, chordsPlaceholders: generatePlaceholders() };
   } catch (err) {
     console.error(err);
-    return { accounts: [], exercices: [], playlists: [] };
+    return { accounts: [], exercices: [], playlists: [], chordsPlaceholders: generatePlaceholders() };
   }
 }
 
