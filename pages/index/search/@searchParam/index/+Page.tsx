@@ -1,7 +1,7 @@
-import { MediumAccountWidget } from "@/components/account-widgets";
-import { SearchExercisesList } from "@/components/playlist-items";
-import { MediumPlaylistWidget } from "@/components/playlists-widgets";
-import { MediumWidgetCarousel } from "@/components/widget-carousel";
+import { MediumAccountWidget } from "@/components/features/auth/account-widgets";
+import { SearchExercisesList } from "@/components/features/playlist/playlist-items";
+import { MediumPlaylistWidget } from "@/components/features/playlist/playlists-widgets";
+import { MediumWidgetCarousel } from "@/components/organisms/widget-carousel";
 import { useLanguage } from "@/hooks/use-language";
 import { usePageContext } from "vike-react/usePageContext";
 

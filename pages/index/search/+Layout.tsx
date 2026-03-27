@@ -1,8 +1,6 @@
-import AnimatedTabs from "@/components/animated-tabs";
-import FavoritesSearchbarSpace from "@/components/favorites-searchbar-space";
-import MobileHeader from "@/components/mobile/header";
-import Searchbar from "@/components/searchbar";
-import SizeAdapter from "@/components/size-adapter";
+import AnimatedTabs from "@/components/organisms/animated-tabs";
+import Searchbar from "@/components/organisms/searchbar";
+import SizeAdapter from "@/components/molecules/size-adapter";
 import { useLanguage } from "@/hooks/use-language";
 import useSearchNavigation from "@/hooks/use-search-navigation";
 import { ReactNode } from "react";

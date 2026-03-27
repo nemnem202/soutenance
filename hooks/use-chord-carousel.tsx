@@ -1,4 +1,4 @@
-import { ChordCarouselProps } from "@/components/game/chord-carousel";
+import { ChordCarouselProps } from "@/components/features/game/chord-carousel";
 import { Data } from "@/pages/+data";
 import { EmblaCarouselType } from "embla-carousel";
 import { useSpring } from "motion/react";

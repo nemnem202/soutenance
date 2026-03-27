@@ -1,4 +1,4 @@
-import { EditableImageProps } from "@/components/editable-image";
+import { EditableImageProps } from "@/components/organisms/editable-image";
 import { useEffect, useRef, useState, WheelEvent } from "react";
 import AvatarEditor from "react-avatar-editor";
 

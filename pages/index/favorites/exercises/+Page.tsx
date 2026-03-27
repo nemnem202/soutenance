@@ -1,5 +1,5 @@
-import FavoritesSearchbarSpace from "@/components/favorites-searchbar-space";
-import { PlaylistItemsList } from "@/components/playlist-items";
+import FavoritesSearchbarSpace from "@/components/features/layout/favorites-searchbar-space";
+import { PlaylistItemsList } from "@/components/features/playlist/playlist-items";
 import { useLanguage } from "@/hooks/use-language";
 import { getRandomPlaylist } from "@/lib/utils";
 

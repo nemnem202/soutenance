@@ -1,7 +1,7 @@
-import Headline from "@/components/headline";
-import MobileHeader from "@/components/mobile/header";
-import NewPlaylistForm from "@/components/new-playlist-form";
-import SizeAdapter from "@/components/size-adapter";
+import Headline from "@/components/ui/headline";
+import MobileHeader from "@/components/features/layout/mobile-header";
+import NewPlaylistForm from "@/components/features/playlist/new-playlist-form";
+import SizeAdapter from "@/components/molecules/size-adapter";
 import { useLanguage } from "@/hooks/use-language";
 
 export default function Page() {

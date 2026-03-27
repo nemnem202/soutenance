@@ -1,10 +1,10 @@
 import "@/stylesheets/tailwind.css";
 import "@/stylesheets/general.css";
 import { ReactNode } from "react";
-import Sidebar from "@/components/app-sidebar";
-import Header from "@/components/header";
-import TabBar from "@/components/mobile/tab-bar";
-import SizeAdapter from "@/components/size-adapter";
+import Sidebar from "@/components/features/layout/app-sidebar";
+import Header from "@/components/features/layout/header";
+import TabBar from "@/components/features/layout/tab-bar";
+import SizeAdapter from "@/components/molecules/size-adapter";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return <SizeAdapter sm={<MobileLayout>{children}</MobileLayout>} md={<DesktopLayout>{children}</DesktopLayout>} />;
@@ -23,7 +23,7 @@ function DesktopLayout({ children }: { children: ReactNode }) {
 function MainPannel({ children }: { children: ReactNode }) {
   return (
     <main className="pt-20 lg:pl-70 md:pl-60 pl-0 pb-10 w-screen min-h-screen flex flex-col">
-      <div className="px-6 py-5 flex-1 w-full flex flex-col min-w-0 md:min-w-150 mx-auto max-w-300">{children}</div>
+      <div className="px-6 py-5 flex-1 w-full flex flex-col min-w-0 mx-auto max-w-300">{children}</div>
     </main>
   );
 }

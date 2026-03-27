@@ -1,4 +1,4 @@
-import { TooltipProvider } from "@/components/tooltip";
+import { TooltipProvider } from "@/components/molecules/tooltip";
 import LanguagesProvider from "@/providers/language-provider";
 import ScreenSizeProvider from "@/providers/screen-size-provider";
 import SessionProvider from "@/providers/session-provider";

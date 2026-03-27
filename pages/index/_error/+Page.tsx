@@ -1,6 +1,6 @@
-import Headline from "@/components/headline";
-import MobileHeader from "@/components/mobile/header";
-import SizeAdapter from "@/components/size-adapter";
+import Headline from "@/components/ui/headline";
+import MobileHeader from "@/components/features/layout/mobile-header";
+import SizeAdapter from "@/components/molecules/size-adapter";
 import { useLanguage } from "@/hooks/use-language";
 import { usePageContext } from "vike-react/usePageContext";
 

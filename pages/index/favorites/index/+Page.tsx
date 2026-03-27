@@ -1,7 +1,7 @@
-import { MediumAccountWidget } from "@/components/account-widgets";
-import { MediumPlaylistWidget } from "@/components/playlists-widgets";
-import SizeAdapter from "@/components/size-adapter";
-import { MediumWidgetCarousel } from "@/components/widget-carousel";
+import { MediumAccountWidget } from "@/components/features/auth/account-widgets";
+import { MediumPlaylistWidget } from "@/components/features/playlist/playlists-widgets";
+import SizeAdapter from "@/components/molecules/size-adapter";
+import { MediumWidgetCarousel } from "@/components/organisms/widget-carousel";
 import { useLanguage } from "@/hooks/use-language";
 
 export default function Page() {

@@ -1,5 +1,5 @@
-import MobileHeader from "@/components/mobile/header";
-import SizeAdapter from "@/components/size-adapter";
+import MobileHeader from "@/components/features/layout/mobile-header";
+import SizeAdapter from "@/components/molecules/size-adapter";
 import { useLanguage } from "@/hooks/use-language";
 
 export default function Page() {
