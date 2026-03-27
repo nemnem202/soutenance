@@ -1,6 +1,12 @@
 import { playlistSchema } from "@/schemas/frontend";
 import z from "zod";
-import { Account } from "./account";
+
+export type Account = {
+  id: string;
+  firstName: string;
+  lastName?: string;
+  picture: string;
+};
 
 export type ExerciseConfig = {
   bpm: number;

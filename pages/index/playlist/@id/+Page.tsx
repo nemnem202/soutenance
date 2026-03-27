@@ -10,7 +10,7 @@ import { Separator } from "@/components/separator";
 import SizeAdapter from "@/components/size-adapter";
 import { useLanguage } from "@/hooks/use-language";
 import { Data } from "@/pages/+data";
-import { Playlist } from "@/types/project";
+import { Playlist } from "@/types/entities";
 import { useEffect, useState } from "react";
 import { useData } from "vike-react/useData";
 import { usePageContext } from "vike-react/usePageContext";

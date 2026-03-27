@@ -1,12 +1,11 @@
 import { getPreferredLanguage } from "@/lib/utils";
 import { ScreenSizeType } from "@/providers/screen-size-provider";
-import { Account } from "@/types/account";
-import { Exercise, Playlist } from "@/types/project";
 import { PageContextServer } from "vike/types";
 import { UAParser } from "ua-parser-js";
 import { ChordHarmony, Notes } from "@/types/music";
 import { faker } from "@faker-js/faker";
 import { CHORDS_DICTIONNARY } from "@/config/chords-dictionary";
+import { Account, Exercise, Playlist } from "@/types/entities";
 
 function getScreen(pageContext: PageContextServer): ScreenSizeType {
   const ua = pageContext.headers ? (pageContext.headers["user-agent"] ?? "") : "";

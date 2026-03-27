@@ -1,7 +1,6 @@
-import { Exercise, Playlist } from "@/types/project";
 import { Checkbox } from "./checkbox";
 import { Separator } from "./separator";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import { useData } from "vike-react/useData";
 
 import { Badge } from "./badge";
@@ -11,6 +10,7 @@ import { useLanguage } from "@/hooks/use-language";
 import { Data } from "@/pages/+data";
 import { getRandomPlaylist } from "@/lib/utils";
 import SizeAdapter from "./size-adapter";
+import { Playlist } from "@/types/entities";
 
 export function PlaylistItemsList({ playlist }: { playlist: Playlist }) {
   const { instance } = useLanguage();

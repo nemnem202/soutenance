@@ -4,7 +4,7 @@ import { Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginData, RegisterData } from "@/types/session";
 import { faker } from "@faker-js/faker";
-import { PlaylistSchema } from "@/types/project";
+import { PlaylistSchema } from "@/types/entities";
 
 export function useNewPlaylistForm() {
   const formRef = useRef<HTMLFormElement>(null);

@@ -1,5 +1,4 @@
-import { Account } from "@/types/account";
-import { Exercise, Playlist } from "@/types/project";
+import { Account, Exercise, Playlist } from "@/types/entities";
 import { Faker, en } from "@faker-js/faker";
 
 const faker = new Faker({ locale: [en] });
