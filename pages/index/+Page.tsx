@@ -3,7 +3,7 @@ import Headline from "@/components/headline";
 import MobileHeader from "@/components/mobile/header";
 import { MediumPlaylistWidget } from "@/components/playlists-widgets";
 import SizeAdapter from "@/components/size-adapter";
-import { MediumWidgetCaroussel } from "@/components/widget-carousel";
+import { MediumWidgetCarousel } from "@/components/widget-carousel";
 import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
 
@@ -23,26 +23,26 @@ function Desktop() {
       ) : (
         <Headline>{instance.getItem("homepageDefaultTitle")}</Headline>
       )}
-      <MediumWidgetCaroussel
+      <MediumWidgetCarousel
         title={instance.getItem("recentlyPlayed")}
         widgets={Array.from({ length: 20 }).map(() => (
           <MediumPlaylistWidget />
         ))}
       />
-      <MediumWidgetCaroussel
+      <MediumWidgetCarousel
         title={instance.getItem("moreOfThem")}
         widgets={Array.from({ length: 20 }).map(() => (
           <MediumAccountWidget />
         ))}
       />
-      <MediumWidgetCaroussel
+      <MediumWidgetCarousel
         title={instance.getItem("popularExercises")}
         widgets={Array.from({ length: 20 }).map(() => (
           <MediumPlaylistWidget />
         ))}
       />
 
-      <MediumWidgetCaroussel
+      <MediumWidgetCarousel
         title={instance.getItem("discover")}
         widgets={Array.from({ length: 20 }).map(() => (
           <MediumPlaylistWidget />
@@ -57,26 +57,26 @@ function Mobile() {
   return (
     <>
       <MobileHeader title={instance.getItem("homepage")} />
-      <MediumWidgetCaroussel
+      <MediumWidgetCarousel
         title={instance.getItem("recentlyPlayed")}
         widgets={Array.from({ length: 20 }).map(() => (
           <MediumPlaylistWidget />
         ))}
       />
-      <MediumWidgetCaroussel
+      <MediumWidgetCarousel
         title={instance.getItem("moreOfThem")}
         widgets={Array.from({ length: 20 }).map(() => (
           <MediumAccountWidget />
         ))}
       />
-      <MediumWidgetCaroussel
+      <MediumWidgetCarousel
         title={instance.getItem("popularExercises")}
         widgets={Array.from({ length: 20 }).map(() => (
           <MediumPlaylistWidget />
         ))}
       />
 
-      <MediumWidgetCaroussel
+      <MediumWidgetCarousel
         title={instance.getItem("discover")}
         widgets={Array.from({ length: 20 }).map(() => (
           <MediumPlaylistWidget />

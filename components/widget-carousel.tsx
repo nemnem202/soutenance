@@ -1,4 +1,4 @@
-import useCaroussel from "@/hooks/use-caroussel";
+import useCarousel from "@/hooks/use-carousel";
 import { ReactNode, RefObject, useEffect } from "react";
 import { Button } from "./button";
 import { ChevronLeftButton, ChevrontRightButton } from "./custom-buttons";
@@ -57,13 +57,13 @@ export function MediumWidgetGroup(props: MediumWidgetGroupProps) {
   );
 }
 
-export interface MediumWidgetCarousselProps {
+export interface MediumWidgetCarouselProps {
   title: string;
   widgets: ReactNode[];
   seeAllUrl?: string;
 }
 
-export function MediumWidgetCaroussel({ title, widgets, seeAllUrl = "/see-all" }: MediumWidgetCarousselProps) {
+export function MediumWidgetCarousel({ title, widgets, seeAllUrl = "/see-all" }: MediumWidgetCarouselProps) {
   const {
     isLastItemVisible,
     itemIndex,
@@ -73,7 +73,7 @@ export function MediumWidgetCaroussel({ title, widgets, seeAllUrl = "/see-all" }
     handleScroll,
     handleScrollEnd,
     setIsLastItemVisible,
-  } = useCaroussel();
+  } = useCarousel();
 
   return (
     <section className="flex flex-col md:gap-6 gap-1 mx-auto mb-6 container">
