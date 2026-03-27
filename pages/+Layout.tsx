@@ -9,9 +9,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     <ScreenSizeProvider>
       <LanguagesProvider>
         <SessionProvider>
-          <TooltipProvider>
-            <div className="flex flex-col">{children}</div>
-          </TooltipProvider>
+          <TooltipProvider>{children}</TooltipProvider>
         </SessionProvider>
       </LanguagesProvider>
     </ScreenSizeProvider>
