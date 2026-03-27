@@ -1,6 +1,6 @@
 import useScreen from "@/hooks/use-screen";
 import { Data } from "@/pages/+data";
-import { CarouselChord, Note } from "@/types/midi";
+import { CarouselChord, Note } from "@/types/music";
 import { faker } from "@faker-js/faker";
 import { useData } from "vike-react/useData";
 

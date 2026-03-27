@@ -1,4 +1,4 @@
-import { Note, ChordDictionnary, ChordIntervals, ChordLabel, ChordHarmony } from "@/types/midi";
+import { Note, ChordDictionary, ChordIntervals, ChordLabel, ChordHarmony } from "@/types/music";
 
 const CHORDS_DICTIONNARY_RAW: Record<string, [number[], string[]?]> = {
   "4": [[0, 4, 10, 15], ["quartal"]],
@@ -239,7 +239,7 @@ const getSymbolicLabel = (key: string): string => {
   return label.replace(/#/g, "♯").replace(/b/g, "♭").replace(/add/g, "²");
 };
 
-export const CHORDS_DICTIONNARY: ChordDictionnary = Object.entries(CHORDS_DICTIONNARY_RAW).reduce(
+export const CHORDS_DICTIONNARY: ChordDictionary = Object.entries(CHORDS_DICTIONNARY_RAW).reduce(
   (acc, [key, value]) => {
     const intervals = value[0] as ChordIntervals;
     const labels = (value[1] as ChordLabel[]) || [];
@@ -252,5 +252,5 @@ export const CHORDS_DICTIONNARY: ChordDictionnary = Object.entries(CHORDS_DICTIO
 
     return acc;
   },
-  {} as ChordDictionnary,
+  {} as ChordDictionary,
 );

@@ -45,6 +45,7 @@ function generatePlaylist(exercices: Exercice[], accounts: Account[]): Playlist 
     tags: Array.from({ length: faker.number.int({ min: 1, max: 5 }) }, () => faker.hacker.noun()),
     exercicesIds: selected.map((e) => e.id),
     description: faker.lorem.sentences(faker.number.int({ min: 1, max: 3 })),
+    visibility: "public",
   };
 }
 

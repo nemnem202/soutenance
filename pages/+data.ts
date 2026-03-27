@@ -4,9 +4,9 @@ import { Account } from "@/types/account";
 import { Exercice, Playlist } from "@/types/project";
 import { PageContextServer } from "vike/types";
 import { UAParser } from "ua-parser-js";
-import { ChordHarmony, Notes } from "@/types/midi";
+import { ChordHarmony, Notes } from "@/types/music";
 import { faker } from "@faker-js/faker";
-import { CHORDS_DICTIONNARY } from "@/config/chords-dictionnary";
+import { CHORDS_DICTIONNARY } from "@/config/chords-dictionary";
 
 function getScreen(pageContext: PageContextServer): ScreenSizeType {
   const ua = pageContext.headers ? (pageContext.headers["user-agent"] ?? "") : "";
