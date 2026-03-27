@@ -1,6 +1,5 @@
 import FavoritesSearchbarSpace from "@/components/favorites-searchbar-space";
 import { PlaylistItemsList } from "@/components/playlist-items";
-import Searchbar from "@/components/searchbar";
 import { useLanguage } from "@/hooks/use-language";
 import { getRandomPlaylist } from "@/lib/utils";
 
