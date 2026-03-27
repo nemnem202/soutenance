@@ -24,7 +24,7 @@ function generateExercise(accounts: Account[]): Exercise {
     },
     creation: faker.date.anytime(),
     hasChords: faker.datatype.boolean(),
-    haseMelody: faker.datatype.boolean(),
+    hasMelody: faker.datatype.boolean(),
     midiFileId: faker.string.uuid(),
   };
 }

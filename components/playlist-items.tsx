@@ -88,7 +88,7 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
                   </Badge>
                 )}
 
-                {exercise.haseMelody && (
+                {exercise.hasMelody && (
                   <Badge variant="outline" className="text-muted-foreground paragraph-xs h-min">
                     {instance.getItem("melody").toLowerCase()}
                   </Badge>
@@ -155,7 +155,7 @@ export function SearchPlaylistItem({ ...props }: PLaylistItemProps) {
                   </Badge>
                 )}
 
-                {exercise.haseMelody && (
+                {exercise.hasMelody && (
                   <Badge variant="outline" className="text-muted-foreground paragraph-xs h-min">
                     {instance.getItem("melody").toLowerCase()}
                   </Badge>

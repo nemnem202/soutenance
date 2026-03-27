@@ -13,7 +13,7 @@ export type Exercise = {
   account: Account;
   creation: Date;
   hasChords: boolean;
-  haseMelody: boolean;
+  hasMelody: boolean;
   config: ExerciseConfig;
   midiFileId: string;
 };
