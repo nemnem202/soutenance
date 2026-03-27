@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { Separator } from "../../ui/separator";
 import { Compass, Heart, House, LayoutDashboard } from "lucide-react";
 import { SmallPlaylistWidget } from "../playlist/playlists-widgets";
@@ -59,11 +59,12 @@ function NavBar() {
 
 function Playlists() {
   const { instance } = useLanguage();
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="w-full flex flex-col gap-5">
       <div className="w-full flex justify-between items-center">
         <h2 className="title-3">{instance.getItem("playlists")}</h2>
-        <NewPlaylistModal>
+        <NewPlaylistModal isOpen={isOpen} setIsOpen={setIsOpen}>
           <PlusButton />
         </NewPlaylistModal>
       </div>
