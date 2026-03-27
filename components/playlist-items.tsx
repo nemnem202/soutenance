@@ -1,4 +1,4 @@
-import { Exercice, Playlist } from "@/types/project";
+import { Exercise, Playlist } from "@/types/project";
 import { Checkbox } from "./checkbox";
 import { Separator } from "./separator";
 import { ReactNode, useState } from "react";
@@ -17,7 +17,7 @@ export function PlaylistItemsList({ playlist }: { playlist: Playlist }) {
   return (
     <div className="w-full">
       <div className="w-full flex justify-between px-4 py-2">
-        <p className="paragramh-md text-muted-foreground">{instance.getItem("exercice")}</p>
+        <p className="paragramh-md text-muted-foreground">{instance.getItem("exercise")}</p>
         <div className="flex items-center">
           <PlaylistItemBox>
             <p className="paragraph-md text-muted-foreground">{instance.getItem("bpm")}</p>
@@ -36,7 +36,7 @@ export function PlaylistItemsList({ playlist }: { playlist: Playlist }) {
       </div>
       <Separator orientation="horizontal" />
       <div className="w-full flex flex-col justify-between  py-0 mt-2">
-        {playlist.exercicesIds.map((id, index) => (
+        {playlist.exercisesIds.map((id, index) => (
           <PlaylistItem index={index} key={index} playlist={playlist} id={id} />
         ))}
       </div>
@@ -56,8 +56,8 @@ export interface PLaylistItemProps {
 
 export function PlaylistItem({ ...props }: PLaylistItemProps) {
   const { instance } = useLanguage();
-  const exercice = useData<Data>().exercices.find((e) => e.id === props.id);
-  if (!exercice) return null;
+  const exercise = useData<Data>().exercises.find((e) => e.id === props.id);
+  if (!exercise) return null;
 
   return (
     <a
@@ -75,20 +75,20 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
 
         <div className="flex flex-1 min-w-0 h-fit gap-3">
           <div className="flex flex-1 flex-col min-w-0 pl-2 gap-1">
-            <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{exercice.title}</p>
-            <p className="paragraph-md text-muted-foreground">{exercice.author}</p>
+            <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{exercise.title}</p>
+            <p className="paragraph-md text-muted-foreground">{exercise.author}</p>
           </div>
 
           <SizeAdapter
             md={
               <div className="flex gap-1 h-full">
-                {exercice.hasChords && (
+                {exercise.hasChords && (
                   <Badge variant="outline" className="text-muted-foreground paragraph-xs h-min">
                     {instance.getItem("chords")}
                   </Badge>
                 )}
 
-                {exercice.haseMelody && (
+                {exercise.haseMelody && (
                   <Badge variant="outline" className="text-muted-foreground paragraph-xs h-min">
                     {instance.getItem("melody").toLowerCase()}
                   </Badge>
@@ -103,7 +103,7 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
           <LikeButton />
         </PlaylistItemBox>
         <PlaylistItemBox>
-          <p className="paragraph-md text-muted-foreground">{exercice.config.bpm}</p>
+          <p className="paragraph-md text-muted-foreground">{exercise.config.bpm}</p>
         </PlaylistItemBox>
         <SizeAdapter
           md={
@@ -124,8 +124,8 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
 
 export function SearchPlaylistItem({ ...props }: PLaylistItemProps) {
   const { instance } = useLanguage();
-  const exercice = useData<Data>().exercices.find((e) => e.id === props.id);
-  if (!exercice) return null;
+  const exercise = useData<Data>().exercises.find((e) => e.id === props.id);
+  if (!exercise) return null;
 
   return (
     <a
@@ -142,20 +142,20 @@ export function SearchPlaylistItem({ ...props }: PLaylistItemProps) {
         />
         <div className="flex flex-1 min-w-0 h-fit gap-3">
           <div className="flex flex-1 flex-col min-w-0 pl-2 gap-1">
-            <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{exercice.title}</p>
-            <p className="paragraph-md text-muted-foreground">{exercice.author}</p>
+            <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{exercise.title}</p>
+            <p className="paragraph-md text-muted-foreground">{exercise.author}</p>
           </div>
 
           <SizeAdapter
             md={
               <div className="flex gap-1 h-full">
-                {exercice.hasChords && (
+                {exercise.hasChords && (
                   <Badge variant="outline" className="text-muted-foreground paragraph-xs h-min">
                     {instance.getItem("chords")}
                   </Badge>
                 )}
 
-                {exercice.haseMelody && (
+                {exercise.haseMelody && (
                   <Badge variant="outline" className="text-muted-foreground paragraph-xs h-min">
                     {instance.getItem("melody").toLowerCase()}
                   </Badge>
@@ -170,7 +170,7 @@ export function SearchPlaylistItem({ ...props }: PLaylistItemProps) {
         <SizeAdapter
           md={
             <PlaylistItemBox className="w-40 min-w-40 justify-start">
-              <p className="paragraph-md text-muted-foreground">{exercice.account.firstName}</p>
+              <p className="paragraph-md text-muted-foreground">{exercise.account.firstName}</p>
             </PlaylistItemBox>
           }
         />
@@ -180,7 +180,7 @@ export function SearchPlaylistItem({ ...props }: PLaylistItemProps) {
         </PlaylistItemBox>
 
         <PlaylistItemBox>
-          <p className="paragraph-md text-muted-foreground">{exercice.config.bpm}</p>
+          <p className="paragraph-md text-muted-foreground">{exercise.config.bpm}</p>
         </PlaylistItemBox>
 
         <SizeAdapter
@@ -244,7 +244,7 @@ export function SearchPlaylistItemsList({ playlist }: { playlist: Playlist }) {
       <Separator orientation="horizontal" />
 
       <div className="w-full flex flex-col justify-between py-0 mt-2">
-        {playlist.exercicesIds.map((id, index) => (
+        {playlist.exercisesIds.map((id, index) => (
           <SearchPlaylistItem index={index} key={index} playlist={playlist} id={id} />
         ))}
       </div>
@@ -252,11 +252,11 @@ export function SearchPlaylistItemsList({ playlist }: { playlist: Playlist }) {
   );
 }
 
-export function SearchExercicesList({ seeAllUrl = "#" }: { seeAllUrl?: string }) {
+export function SearchExercisesList({ seeAllUrl = "#" }: { seeAllUrl?: string }) {
   const playlist = getRandomPlaylist();
   return (
     <div className="flex flex-col mx-auto mb-6 container">
-      <WidgetTitle title="Exercices" seeAllUrl={seeAllUrl} />
+      <WidgetTitle title="Exercises" seeAllUrl={seeAllUrl} />
       <SearchPlaylistItemsList playlist={playlist} />
     </div>
   );

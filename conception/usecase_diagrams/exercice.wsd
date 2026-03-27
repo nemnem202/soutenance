@@ -1,17 +1,17 @@
-@startuml GestionExercice
-title Diagramme de Use Case - Gestion d'un exercice
+@startuml GestionExercise
+title Diagramme de Use Case - Gestion d'un exercise
 left to right direction
 
 actor "Utilisateur Connecté" as user
 
-rectangle "Gestion de l'exercice" {
+rectangle "Gestion de l'exercise" {
         ' --- Cas d'utilisation principaux ---
-        package "Paramètrage de l'exercice" {
-        usecase "Modifier un exercice" as UC01_ModifierExercice
+        package "Paramètrage de l'exercise" {
+        usecase "Modifier un exercise" as UC01_ModifierExercise
         usecase "Afficher/Gérer les modules" as UC02_GererModules
-        usecase "Modifier le nom de l'exercice" as UC03_ModifierNom
-        usecase "Modifier la visibilité de l'exercice" as UC04_ModifierVisibilite
-        usecase "Modifier les crédits de l'exercice" as UC05_ModifierCredits
+        usecase "Modifier le nom de l'exercise" as UC03_ModifierNom
+        usecase "Modifier la visibilité de l'exercise" as UC04_ModifierVisibilite
+        usecase "Modifier les crédits de l'exercise" as UC05_ModifierCredits
 
     }
 
@@ -66,12 +66,12 @@ rectangle "Gestion de l'exercice" {
 }
 
 ' --- Relations principales ---
-user -- UC01_ModifierExercice
+user -- UC01_ModifierExercise
 
-UC01_ModifierExercice .--> UC03_ModifierNom : <<include..
-UC01_ModifierExercice .--> UC04_ModifierVisibilite : <<include..
-UC01_ModifierExercice .--> UC05_ModifierCredits : <<include..
-UC01_ModifierExercice .--> UC02_GererModules: <<include..
+UC01_ModifierExercise .--> UC03_ModifierNom : <<include..
+UC01_ModifierExercise .--> UC04_ModifierVisibilite : <<include..
+UC01_ModifierExercise .--> UC05_ModifierCredits : <<include..
+UC01_ModifierExercise .--> UC02_GererModules: <<include..
 
 ' --- Relations pour le module Partition ---
 UC02_GererModules .--> UC06_ModifierModulePartition : <<include..

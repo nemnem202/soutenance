@@ -36,7 +36,7 @@ function Desktop() {
         ))}
       />
       <MediumWidgetCaroussel
-        title={instance.getItem("popularExercices")}
+        title={instance.getItem("popularExercises")}
         widgets={Array.from({ length: 20 }).map(() => (
           <MediumPlaylistWidget />
         ))}
@@ -70,7 +70,7 @@ function Mobile() {
         ))}
       />
       <MediumWidgetCaroussel
-        title={instance.getItem("popularExercices")}
+        title={instance.getItem("popularExercises")}
         widgets={Array.from({ length: 20 }).map(() => (
           <MediumPlaylistWidget />
         ))}

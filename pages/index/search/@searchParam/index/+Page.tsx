@@ -1,5 +1,5 @@
 import { MediumAccountWidget } from "@/components/account-widgets";
-import { SearchExercicesList } from "@/components/playlist-items";
+import { SearchExercisesList } from "@/components/playlist-items";
 import { MediumPlaylistWidget } from "@/components/playlists-widgets";
 import { MediumWidgetCaroussel } from "@/components/widget-carousel";
 import { useLanguage } from "@/hooks/use-language";
@@ -10,7 +10,7 @@ export default function Page() {
   const { instance } = useLanguage();
   return (
     <>
-      <SearchExercicesList seeAllUrl={`/search/${routeParams.searchParam}/exercices`} />
+      <SearchExercisesList seeAllUrl={`/search/${routeParams.searchParam}/exercises`} />
       <MediumWidgetCaroussel
         title={instance.getItem("users")}
         seeAllUrl={`/search/${routeParams.searchParam}/users`}

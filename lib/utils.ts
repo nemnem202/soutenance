@@ -3,7 +3,7 @@ import { Data } from "@/pages/+data";
 import { Account } from "@/types/account";
 import { Language } from "@/types/i18n";
 import { Chord } from "@/types/music";
-import { Exercice, Playlist } from "@/types/project";
+import { Exercise, Playlist } from "@/types/project";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { useData } from "vike-react/useData";

@@ -15,7 +15,7 @@ function Desktop({ children }: { children: ReactNode }) {
   const { instance } = useLanguage();
   const tabs = [
     { id: "", label: instance.getItem("overview") },
-    { id: "exercices", label: instance.getItem("exercices") },
+    { id: "exercises", label: instance.getItem("exercises") },
     { id: "playlists", label: instance.getItem("playlists") },
     { id: "users", label: instance.getItem("users") },
   ];

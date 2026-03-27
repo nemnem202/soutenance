@@ -80,7 +80,7 @@ function Banner({ playlist }: { playlist: Playlist }) {
             md={
               <div className="flex gap-2">
                 <p className="text-muted-foreground">
-                  {playlist.exercicesIds.length} {instance.getItem("exercices").toLowerCase()}
+                  {playlist.exercisesIds.length} {instance.getItem("exercises").toLowerCase()}
                 </p>
                 <Separator orientation="vertical" />
                 <p className="text-muted-foreground">{instance.getItem("medium")}</p>

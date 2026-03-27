@@ -83,7 +83,7 @@ export function MediumPlaylistWidget() {
                 {instance.getItem("by")} {playlist.author}
               </p>
               <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[15%]">
-                {playlist.exercicesIds.length > 99 ? ">99" : playlist.exercicesIds.length}
+                {playlist.exercisesIds.length > 99 ? ">99" : playlist.exercisesIds.length}
               </p>
             </div>
           </div>

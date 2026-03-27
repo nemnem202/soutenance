@@ -39,7 +39,7 @@ function Mobile() {
   return (
     <>
       <MediumWidgetCaroussel
-        seeAllUrl="favorites/exercices"
+        seeAllUrl="favorites/exercises"
         title={instance.getItem("recentlyPlayed")}
         widgets={Array.from({ length: 20 }).map(() => (
           <MediumPlaylistWidget />

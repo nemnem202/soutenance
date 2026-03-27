@@ -2,11 +2,11 @@ import { playlistSchema } from "@/schemas/frontend";
 import z from "zod";
 import { Account } from "./account";
 
-export type ExerciceConfig = {
+export type ExerciseConfig = {
   bpm: number;
 };
 
-export type Exercice = {
+export type Exercise = {
   id: string;
   title: string;
   author: string;
@@ -14,7 +14,7 @@ export type Exercice = {
   creation: Date;
   hasChords: boolean;
   haseMelody: boolean;
-  config: ExerciceConfig;
+  config: ExerciseConfig;
   midiFileId: string;
 };
 

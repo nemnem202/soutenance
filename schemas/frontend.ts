@@ -22,7 +22,7 @@ export const playlistSchema = z.object({
         .max(50, "One of the tags is too long, max 50 caracters."),
     )
     .max(10, { error: "Too many tags, max 10." }),
-  exercicesIds: z.array(z.string()),
+  exercisesIds: z.array(z.string()),
   accountId: z.uuid(),
   visibility: z.enum(["public", "private"]),
 });
