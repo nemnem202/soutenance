@@ -69,19 +69,17 @@ export default function EditableImage({ onImageChange, src, alt, canBeEdited = t
 type EditableImageModalProps = ReturnType<typeof useEditImage>;
 
 function EditImageModalContent(props: EditableImageModalProps) {
-  const {
-    avatarEditorRef,
-    avatarZoom,
-    setAvatarZoom,
-    changeImage,
-    handleEditorEditsSave,
-    handleImageChange,
-    handleWheel,
-    imageSource,
-  } = props;
+  const { avatarEditorRef, avatarZoom, setAvatarZoom, changeImage, handleEditorEditsSave, handleWheel, imageSource } =
+    props;
 
   const { instance } = useLanguage();
   const isMobile = useScreen() === "sm";
+
+  const handleSave = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleEditorEditsSave();
+  };
   return (
     <div className="flex flex-col gap-2 w-fit items-center">
       <div className="overflow-hidden rounded-md w-fit" onWheel={handleWheel}>
@@ -100,7 +98,11 @@ function EditImageModalContent(props: EditableImageModalProps) {
           className="rounded-full w-10 h-10 !aspect-square border-none"
           variant={"outline"}
           size={"icon"}
-          onClick={() => setAvatarZoom((prev) => Math.max(1, (prev /= 1.1)))}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setAvatarZoom((prev) => Math.max(1, (prev /= 1.1)));
+          }}
         >
           <ZoomOut />
         </Button>
@@ -132,7 +134,7 @@ function EditImageModalContent(props: EditableImageModalProps) {
         >
           <Upload />
         </Button>
-        <Button className="title-3 w-fit" onClick={handleEditorEditsSave}>
+        <Button className="title-3 w-fit" onClick={handleSave}>
           {instance.getItem("save")}
         </Button>
       </div>

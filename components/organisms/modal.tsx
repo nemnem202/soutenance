@@ -26,10 +26,10 @@ export const useModalContainer = () => React.useContext(ModalContext);
 
 export default function Modal({ isOpen, onClose, title, children, size = "md" }: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
-  const modalRef = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
+  const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previousActiveElementRef = useRef<HTMLElement | null>(null);
-  useOnClickOutside(modalRef, () => onClose());
+  // useOnClickOutside(modalRef, () => onClose());
   const [mounted, setMounted] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
@@ -39,21 +39,18 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
     setMounted(true);
   }, []);
 
-  // Focus management: Save previous focus and restore on close
   useEffect(() => {
     if (isOpen) {
       previousActiveElementRef.current = document.activeElement as HTMLElement;
-      // Focus the close button or first focusable element when modal opens
+
       setTimeout(() => {
         closeButtonRef.current?.focus();
       }, 100);
     } else if (previousActiveElementRef.current) {
-      // Restore focus when modal closes
       previousActiveElementRef.current.focus();
     }
   }, [isOpen]);
 
-  // Close on Escape key press and focus trap
   useEffect(() => {
     if (!isOpen) {
       return;
@@ -65,7 +62,6 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
         return;
       }
 
-      // Focus trap: keep focus within modal
       if (e.key === "Tab" && modalRef.current) {
         const focusableElements = Array.from(
           modalRef.current.querySelectorAll<HTMLElement>(
@@ -76,13 +72,11 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
         const lastElement = focusableElements.at(-1);
 
         if (e.shiftKey) {
-          // Shift + Tab
           if (document.activeElement === firstElement) {
             e.preventDefault();
             lastElement?.focus();
           }
         } else if (document.activeElement === lastElement) {
-          // Tab
           e.preventDefault();
           firstElement?.focus();
         }
@@ -93,8 +87,12 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Note: Body scroll locking is handled by the overlay and modal positioning
-  // No need to manually set body overflow as it can conflict with other components
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Empeche React de propager l'event aux composants parents
+    if (e.target === overlayRef.current) {
+      onClose();
+    }
+  };
 
   const modalContent = (
     <AnimatePresence>
@@ -102,32 +100,24 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
         <>
           {/* Backdrop */}
           <motion.div
-            animate={{ opacity: 1 }}
+            ref={overlayRef}
+            onClick={handleBackdropClick}
             className="fixed inset-0 z-[80] bg-background/70 backdrop-blur-sm"
             exit={{ opacity: 0 }}
-            initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
-            onClick={(e) => {
-              if (e.target === overlayRef.current) {
-                onClose();
-              }
-            }}
-            ref={overlayRef}
-            transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
           />
 
           {/* Modal */}
-          <motion.div
-            animate={{ opacity: 1 }}
-            className="fixed inset-0 z-[90] flex items-center justify-center overflow-y-auto px-4 py-6 sm:p-0"
-            exit={{ opacity: 0 }}
-            initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
-            transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
-          >
+          <div className="fixed inset-0 z-[90] flex items-center justify-center pointer-events-none">
             <motion.div
-              animate={shouldReduceMotion ? {} : { scale: 1, y: 0, opacity: 1 }}
+              onClick={(e) => e.stopPropagation()}
               aria-labelledby={titleId}
               aria-modal="true"
-              className={`${modalSizes[size]} relative mx-auto w-fit md:w-full rounded-xl border bg-card p-4 shadow-xl sm:p-6`}
+              className={`${modalSizes[size]} relative mx-auto w-fit md:w-full rounded-xl border bg-card p-4 shadow-xl sm:p-6 pointer-events-auto`}
+              ref={modalRef}
+              role="dialog"
+              animate={shouldReduceMotion ? {} : { scale: 1, y: 0, opacity: 1 }}
               exit={
                 shouldReduceMotion
                   ? { opacity: 0, transition: { duration: 0 } }
@@ -139,8 +129,6 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
                     }
               }
               initial={shouldReduceMotion ? { opacity: 1 } : { scale: 0.95, y: 10, opacity: 0 }}
-              ref={modalRef}
-              role="dialog"
               transition={
                 shouldReduceMotion
                   ? { duration: 0 }
@@ -156,7 +144,7 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
                 <div className="relative">{children}</div>
               </ModalContext.Provider>
             </motion.div>
-          </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>
