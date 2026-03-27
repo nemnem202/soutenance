@@ -1,12 +1,12 @@
-import { useState } from "react";
-import ChordCarousel from "./chord-carousel";
-import ChordGrid from "./chord-grid";
 import { ChevronLeft, ChevronRight, Columns3, Grid3X3 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-
 import useCarousel from "embla-carousel-react";
 import useScreen from "@/hooks/use-screen";
+import { useState } from "react";
+
+import ChordCarousel from "./chord-carousel";
+import ChordGrid from "./chord-grid";
 
 export default function ChordTab() {
   const screen = useScreen();

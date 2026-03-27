@@ -1,16 +1,15 @@
-import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
-import { ReactNode } from "react";
-import { useData } from "vike-react/useData";
-
-import { Badge } from "@/components/ui/badge";
-import { LikeButton } from "@/components/ui/custom-buttons";
 import { WidgetTitle } from "@/components/organisms/widget-carousel";
-import { useLanguage } from "@/hooks/use-language";
-import { Data } from "@/pages/+data";
-import { getRandomPlaylist } from "@/lib/utils";
 import SizeAdapter from "@/components/molecules/size-adapter";
+import { LikeButton } from "@/components/ui/custom-buttons";
+import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useLanguage } from "@/hooks/use-language";
+import { getRandomPlaylist } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { useData } from "vike-react/useData";
 import { Playlist } from "@/types/entities";
+import { Data } from "@/pages/+data";
+import { ReactNode } from "react";
 
 export function PlaylistItemsList({ playlist }: { playlist: Playlist }) {
   const { instance } = useLanguage();

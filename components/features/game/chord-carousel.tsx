@@ -1,8 +1,8 @@
 import { EmblaViewportRefType } from "embla-carousel-react";
-import { chordToString } from "@/lib/utils";
-import { EmblaCarouselType } from "embla-carousel";
-import { motion } from "motion/react";
 import useChordCarousel from "@/hooks/use-chord-carousel";
+import { EmblaCarouselType } from "embla-carousel";
+import { chordToString } from "@/lib/utils";
+import { motion } from "motion/react";
 
 export interface ChordCarouselProps {
   carouselRef: EmblaViewportRefType;

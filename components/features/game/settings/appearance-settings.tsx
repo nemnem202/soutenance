@@ -1,7 +1,8 @@
 import SwitchParam from "@/components/molecules/switch-param";
 import { useLanguage } from "@/hooks/use-language";
-import { ParamsAccordion } from "../game-sidebar";
+
 import { SmallCheckboxGroup } from "../game-assets";
+import { ParamsAccordion } from "../game-sidebar";
 
 export default function AppearanceSettings() {
   const { instance } = useLanguage();

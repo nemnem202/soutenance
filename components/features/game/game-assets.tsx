@@ -1,12 +1,12 @@
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/molecules/input-group";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/molecules/tooltip";
 import { ComponentProps, ReactNode, useId, useState } from "react";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Button, ButtonProps } from "@/components/ui/button";
-import { Maximize, Minimize } from "lucide-react";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/molecules/tooltip";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/molecules/input-group";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Maximize, Minimize } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import { Label } from "@/components/ui/label";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
   return <div className="flex gap-2 w-fit h-12 px-5 bg-card rounded-md items-center select-none">{children}</div>;
