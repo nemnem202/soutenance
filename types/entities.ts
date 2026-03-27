@@ -1,4 +1,4 @@
-import { playlistSchema } from "@/schemas/frontend";
+import { playlistSchema } from "@/schemas/entities.schema";
 import z from "zod";
 
 export type Account = {
