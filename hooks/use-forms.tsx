@@ -16,6 +16,7 @@ export function useNewPlaylistForm() {
         alt: "The cover of the playlist",
       },
       accountId: faker.string.uuid(),
+      visibility: "public",
     },
   });
 

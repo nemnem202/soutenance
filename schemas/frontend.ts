@@ -24,6 +24,7 @@ export const playlistSchema = z.object({
     .max(10, { error: "Too many tags, max 10." }),
   exercicesIds: z.array(z.string()),
   accountId: z.uuid(),
+  visibility: z.enum(["public", "private"]),
 });
 
 export const loginSchema = z.object({

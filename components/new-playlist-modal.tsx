@@ -2,6 +2,7 @@ import { ReactNode, useState } from "react";
 import Modal from "./modal";
 import NewPlaylistForm from "./new-playlist-form";
 import { useLanguage } from "@/hooks/use-language";
+import { TooltipProvider } from "./tooltip";
 
 export default function NewPlaylistModal({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,8 +13,10 @@ export default function NewPlaylistModal({ children }: { children: ReactNode }) 
         {children}
       </button>
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <h2 className="headline text-center p-4">{instance.getItem("new_playlist")}</h2>
-        <NewPlaylistForm axe="y" />
+        <TooltipProvider>
+          <h2 className="headline text-center p-4">{instance.getItem("new_playlist")}</h2>
+          <NewPlaylistForm axe="y" />
+        </TooltipProvider>
       </Modal>
     </>
   );

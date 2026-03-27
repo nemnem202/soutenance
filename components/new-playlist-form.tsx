@@ -9,12 +9,18 @@ import { Badge } from "./badge";
 import EditableImage from "./editable-image";
 import { Button } from "./button";
 import { useLanguage } from "@/hooks/use-language";
+import { SmallCheckboxGroup } from "./game/game-assets";
+import { Checkbox } from "./checkbox";
+import { Switch } from "./switch";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
+import { useModalContainer } from "./modal";
 
 export interface NewPlaylistFormProps {}
 
 export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
   const { form, formRef, handleSubmit } = useNewPlaylistForm();
   const { instance } = useLanguage();
+  const container = useModalContainer();
   return (
     <form id="form-rhf-post" onSubmit={form.handleSubmit(handleSubmit)} ref={formRef}>
       <FieldGroup className={`flex  items-center  flex-col ${axe === "x" && "md:flex-row"}`}>
@@ -43,9 +49,6 @@ export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid} className="gap-1">
-                {/* <FieldLabel htmlFor="form-rhf-post-title" className="title-4">
-                  {instance.getItem("title")}
-                </FieldLabel> */}
                 <Input
                   {...field}
                   id="form-rhf-post-title"
@@ -63,9 +66,6 @@ export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid} className="gap-1">
-                {/* <FieldLabel htmlFor="form-rhf-post-content" className="title-4">
-                  {instance.getItem("description")} {instance.getItem("optional")}
-                </FieldLabel> */}
                 <InputGroup className="">
                   <InputGroupTextarea
                     {...field}
@@ -91,10 +91,27 @@ export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid} className="gap-1">
-                {/* <FieldLabel htmlFor="form-rhf-tags" className="title-4">
-                  {instance.getItem("tags")} (10 {instance.getItem("max")})
-                </FieldLabel> */}
                 <TagsInput defaultValue={field.value} onChange={(tags) => form.setValue("tags", tags)} />
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              </Field>
+            )}
+          />
+          <Controller
+            name="visibility"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid} className="gap-1">
+                <div className="flex gap-2 items-center">
+                  <FieldLabel htmlFor="visibility-switch">{instance.getItem("public")}</FieldLabel>
+
+                  <span className="inline-flex">
+                    <Switch
+                      id="visibility-switch"
+                      defaultChecked={field.value === "public"}
+                      onCheckedChange={(checked) => form.setValue("visibility", checked ? "public" : "private")}
+                    />
+                  </span>
+                </div>
                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}

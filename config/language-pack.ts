@@ -715,4 +715,25 @@ export const languagePack = {
     de: "Zur Playlist hinzufügen",
     zh: "添加到播放列表",
   },
+  visibility: {
+    fr: "Visibilité",
+    en: "Visibility",
+    es: "Visibilidad",
+    de: "Sichtbarkeit",
+    zh: "可见性",
+  },
+  public: {
+    fr: "Publique",
+    en: "Public",
+    es: "Pública",
+    de: "Öffentlich",
+    zh: "公开",
+  },
+  private: {
+    fr: "Privée",
+    en: "Private",
+    es: "Privada",
+    de: "Privat",
+    zh: "私密",
+  },
 } as const;

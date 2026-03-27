@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useOnClickOutside } from "usehooks-ts";
 
@@ -20,6 +20,9 @@ const modalSizes = {
   xl: "max-w-xl",
   full: "max-w-4xl",
 };
+
+const ModalContext = React.createContext<HTMLDivElement | null>(null);
+export const useModalContainer = () => React.useContext(ModalContext);
 
 export default function Modal({ isOpen, onClose, title, children, size = "md" }: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -149,28 +152,9 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
                     }
               }
             >
-              {/* Header */}
-              {/* <div className="mb-4 flex items-center justify-between">
-                {title && (
-                  <h3 className="font-medium text-xl leading-6" id={titleId}>
-                    {title}
-                  </h3>
-                )}
-                <motion.button
-                  aria-label="Close modal"
-                  className="ml-auto min-h-[44px] min-w-[44px] rounded-full p-2 transition-colors hover:bg-secondary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-                  onClick={onClose}
-                  ref={closeButtonRef}
-                  transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
-                  type="button"
-                  whileHover={shouldReduceMotion ? {} : { rotate: 90 }}
-                >
-                  <X aria-hidden="true" className="h-5 w-5" />
-                </motion.button>
-              </div> */}
-
-              {/* Content */}
-              <div className="relative">{children}</div>
+              <ModalContext.Provider value={modalRef.current}>
+                <div className="relative">{children}</div>
+              </ModalContext.Provider>
             </motion.div>
           </motion.div>
         </>
