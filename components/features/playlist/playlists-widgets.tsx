@@ -4,6 +4,7 @@ import { useLanguage } from "@/hooks/use-language";
 import { getRandomPlaylist } from "@/lib/utils";
 import AddToPlaylistButton from "./add-to-playlist-menu";
 import NewPlaylistModal from "./new-playlist-modal";
+import { useState } from "react";
 
 export function SmallPlaylistWidget() {
   const playlist = getRandomPlaylist();
@@ -34,9 +35,13 @@ export function SmallPlaylistWidget() {
 
 export function SmallAddNewPlaylistWidget() {
   const { instance } = useLanguage();
+  const [isOpen, setIsOpen] = useState(false);
   return (
-    <NewPlaylistModal>
-      <div className=" w-full hover:bg-popover rounded flex gap-2 cursor-pointer transition p-1.5 text-primary">
+    <NewPlaylistModal isOpen={isOpen} setIsOpen={setIsOpen}>
+      <button
+        onClick={() => setIsOpen(true)}
+        className=" w-full hover:bg-popover rounded flex gap-2 cursor-pointer transition p-1.5 text-primary"
+      >
         <div className="h-12 w-12 aspect-square overflow-hidden bg-popover flex items-center justify-center">
           <Plus />
         </div>
@@ -45,7 +50,7 @@ export function SmallAddNewPlaylistWidget() {
             {instance.getItem("new_playlist")}
           </p>
         </div>
-      </div>
+      </button>
     </NewPlaylistModal>
   );
 }

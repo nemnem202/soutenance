@@ -65,7 +65,7 @@ function Playlists() {
       <div className="w-full flex justify-between items-center">
         <h2 className="title-3">{instance.getItem("playlists")}</h2>
         <NewPlaylistModal isOpen={isOpen} setIsOpen={setIsOpen}>
-          <PlusButton />
+          <PlusButton onClick={() => setIsOpen(true)} />
         </NewPlaylistModal>
       </div>
       <div className="flex flex-col w-full gap-2">
