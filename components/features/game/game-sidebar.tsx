@@ -1,5 +1,5 @@
 import { SidebarSection } from "../layout/app-sidebar";
-import { SidebarSlider, SidebarTabButton, SmallCheckboxGroup, SmallInput } from "./game-assets";
+import { SidebarTabButton } from "./game-assets";
 import {
   Select,
   SelectContent,
@@ -11,13 +11,15 @@ import {
 } from "@/components/organisms/select";
 import { Separator } from "@/components/ui/separator";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import SwitchParam from "@/components/molecules/switch-param";
-import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
 import { X } from "lucide-react";
+import GeneralSettings from "./settings/general-settings";
+import BackingTrackSettings from "./settings/backing-track-settings";
+import AppearanceSettings from "./settings/appearance-settings";
+import MidiSettings from "./settings/midi-settings";
 
 export default function GameSidebar({
   sidebarOpen,
@@ -110,7 +112,7 @@ function TabBar() {
   );
 }
 
-function ParamsAccordion({ children, title }: { children: ReactNode; title: ReactNode }) {
+export function ParamsAccordion({ children, title }: { children: ReactNode; title: ReactNode }) {
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1">
@@ -118,182 +120,5 @@ function ParamsAccordion({ children, title }: { children: ReactNode; title: Reac
         <AccordionContent className="pt-1">{children}</AccordionContent>
       </AccordionItem>
     </Accordion>
-  );
-}
-
-function BackingTrackSettings() {
-  const [backingTackActive, setBackingTrackActive] = useState(false);
-  const { instance } = useLanguage();
-  return (
-    <ParamsAccordion title={<h3 className="title-3">{instance.getItem("backing_track")}</h3>}>
-      <div className="flex gap-4 w-full">
-        <SwitchParam checked={backingTackActive} order="label-switch" setChecked={setBackingTrackActive}>
-          <p className="paragraph  text-foreground">{instance.getItem("active")}</p>
-        </SwitchParam>
-        <SwitchParam checked={true} setChecked={() => {}} disabled={!backingTackActive} order="label-switch">
-          <p className="paragraph">{instance.getItem("melody")}</p>
-        </SwitchParam>
-      </div>
-      <div className={`flex flex-col w-full gap-2 py-2 ${!backingTackActive && "text-muted-foreground"}`}>
-        <SidebarSlider defaultValue={50} disabled={!backingTackActive}>
-          <p className="paragraph w-15">{instance.getItem("piano")}</p>
-        </SidebarSlider>
-        <SidebarSlider defaultValue={50} disabled={!backingTackActive}>
-          <p className="paragraph w-15">{instance.getItem("guitar")}</p>
-        </SidebarSlider>
-        <SidebarSlider defaultValue={50} disabled={!backingTackActive}>
-          <p className="paragraph w-15">{instance.getItem("bass")}</p>
-        </SidebarSlider>
-        <SidebarSlider defaultValue={50} disabled={!backingTackActive}>
-          <p className="paragraph w-15">{instance.getItem("drums")}</p>
-        </SidebarSlider>
-        <div className="w-full flex items-center">
-          <Label className="paragraph w-15" htmlFor="style-select">
-            {instance.getItem("style")}
-          </Label>
-          <Select defaultValue="original" disabled={!backingTackActive}>
-            <SelectTrigger className="w-full max-w-30" id="style-select">
-              <SelectValue className="text-left" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>{instance.getItem("styles")}</SelectLabel>
-                <SelectItem value="original">{instance.getItem("original")}</SelectItem>
-                <SelectItem value="swing">Bossa nova</SelectItem>
-                <SelectItem value="blues">Blues</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-    </ParamsAccordion>
-  );
-}
-
-function GeneralSettings() {
-  const { instance } = useLanguage();
-  return (
-    <ParamsAccordion title={<h3 className="title-3">{instance.getItem("general")}</h3>}>
-      <div className="mb-2">
-        <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
-          <p className="paragraph text-foreground">{instance.getItem("count_before_play")}</p>
-        </SwitchParam>
-      </div>
-      <div className={`flex flex-col w-full py-2`}>
-        <div className="grid gap-3 grid-cols-3">
-          <SmallInput
-            label={instance.getItem("transpose")}
-            type="number"
-            defaultValue={0}
-            containerClassName="w-full"
-            icon={<p className="paragraph-sm text-muted-foreground">sem:</p>}
-          />
-          <SmallInput
-            label={instance.getItem("practice")}
-            type="number"
-            defaultValue={0}
-            containerClassName="w-full"
-            icon={<p className="paragraph-sm text-muted-foreground">sem:</p>}
-            tooltip={<p className="paragraph-sm">Increase the global trampose at each loop.</p>}
-          />
-          <SmallInput
-            label={instance.getItem("repeats")}
-            type="number"
-            defaultValue={3}
-            containerClassName="w-full"
-            icon={<p className="paragraph-sm text-muted-foreground">x</p>}
-          />
-        </div>
-        <div className="grid gap-3 grid-cols-3">
-          <SmallInput label={instance.getItem("bpm")} type="number" defaultValue={0} containerClassName="w-full" />
-          <SmallInput
-            label={instance.getItem("bpm_practice")}
-            type="number"
-            defaultValue={0}
-            containerClassName="w-full"
-            icon={<p className="paragraph-sm text-muted-foreground">+</p>}
-            tooltip={<p className="paragraph-sm ">Increase the Bpm at each loop.</p>}
-          />
-          {/* <div className=" w-full "></div> */}
-        </div>
-      </div>
-    </ParamsAccordion>
-  );
-}
-
-function AppearanceSettings() {
-  const { instance } = useLanguage();
-  return (
-    <ParamsAccordion title={<h3 className="title-3">{instance.getItem("appearance")}</h3>}>
-      <div className="gap-2 flex flex-col">
-        <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
-          <p className="paragraph w-45 text-foreground">{instance.getItem("show_chords")}</p>
-        </SwitchParam>
-        <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
-          <p className="paragraph w-45 text-foreground">{instance.getItem("highlight_current_measure")}</p>
-        </SwitchParam>
-        <p className="pragraph">{instance.getItem("chords_diagrams")}:</p>
-        <div className="flex gap-4">
-          <SmallCheckboxGroup label={instance.getItem("piano")} labelProps={{ className: "text-muted-foreground" }} />
-          <SmallCheckboxGroup label={instance.getItem("guitar")} labelProps={{ className: "text-muted-foreground" }} />
-        </div>
-      </div>
-    </ParamsAccordion>
-  );
-}
-
-function MidiSettings() {
-  const { instance } = useLanguage();
-  return (
-    <ParamsAccordion title={<h3 className="title-3">{instance.getItem("midi")}</h3>}>
-      <div className="gap-2 flex flex-col">
-        <div className="w-full flex items-center">
-          <Label className="paragraph w-25" htmlFor="style-select">
-            {instance.getItem("midi_inputs")}
-          </Label>
-          <Select defaultValue="Keysation mk3">
-            <SelectTrigger className="w-full max-w-40" id="style-select">
-              <SelectValue className="text-left" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>{instance.getItem("midi_inputs")}</SelectLabel>
-                <SelectItem value="Keysation mk3">Keysation mk3</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="w-full flex items-center">
-          <Label className="paragraph w-25" htmlFor="style-select">
-            {instance.getItem("sound_preset")}
-          </Label>
-          <Select defaultValue="Piano grand">
-            <SelectTrigger className="w-full max-w-40" id="style-select">
-              <SelectValue className="text-left" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>{instance.getItem("sounds")}</SelectLabel>
-                <SelectItem value="Piano grand">Piano grand</SelectItem>
-                <SelectItem value="Piano electric">Piano electric</SelectItem>
-                <SelectItem value="Synth pad">Synth pad</SelectItem>
-                <SelectItem value="Strings">Strings</SelectItem>
-                <SelectItem value="Vibraphone">Vibraphone</SelectItem>
-                <SelectItem value="Organ">Organ</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
-          <p className="paragraph w-38 text-foreground">{instance.getItem("highlight_wrong_notes")}</p>
-        </SwitchParam>
-        <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
-          <p className="paragraph w-38 text-foreground">{instance.getItem("highlight_correct_notes")}</p>
-        </SwitchParam>
-        <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
-          <p className="paragraph w-38 text-foreground">{instance.getItem("highlight_missed_notes")}</p>
-        </SwitchParam>
-      </div>
-    </ParamsAccordion>
   );
 }
