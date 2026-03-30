@@ -24,11 +24,12 @@ services:
         condition: service_healthy
     environment:
       NODE_ENV: test
+      DATABASE_URL: ${DATABASE_URL}
     ports:
       - "${APP_PORT}:3000"
     volumes:
       - ./:/app
       - /app/node_modules
-    command: ["sh", "-c", "pnpm lint && pnpm test"]
+    command: ["sh", "-c", "pnpm prisma migrate deploy pnpm lint && pnpm test"]
 volumes:
   music-sandbox-data-ci:
