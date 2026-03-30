@@ -24,18 +24,37 @@ function Desktop() {
   return (
     <>
       <Headline>{instance.getItem("settings")}</Headline>
+      <Content />
+    </>
+  );
+}
+
+function Mobile() {
+  const { instance } = useLanguage();
+  return (
+    <>
+      <MobileHeader title={instance.getItem("settings")} />
+      <Content />
+    </>
+  );
+}
+
+function Content() {
+  const { instance } = useLanguage();
+  return (
+    <>
       <SettingsSection title={instance.getItem("appearance")}>
         <ThemeParam />
         <LanguageParam />
       </SettingsSection>
       <SettingsSection title={instance.getItem("account")}>
-        <div className="flex gap-2">
+        <div className="flex gap-2 md:flex-row flex-col items-center md:items-start">
           <div className="w-33 aspect-square">
             <EditableImage alt="profile picture" onImageChange={() => {}} />
           </div>
           <UsernameParam />
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-4 flex-wrap">
           <div>
             <ChangeAccountButton />
           </div>
@@ -47,15 +66,6 @@ function Desktop() {
           </div>
         </div>
       </SettingsSection>
-    </>
-  );
-}
-
-function Mobile() {
-  const { instance } = useLanguage();
-  return (
-    <>
-      <MobileHeader title={instance.getItem("settings")} />
     </>
   );
 }

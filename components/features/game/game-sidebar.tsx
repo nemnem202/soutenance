@@ -37,7 +37,7 @@ export default function GameSidebar({
     >
       <div className="w-full h-full">
         <div className="w-fullflex flex-col">
-          <div className="h-20 p-4 flex items-center justify-between w-full">
+          <div className="h-20 p-4 flex items-center justify-between w-full md:flex-wrap gap-2">
             <h2 className="headline !text-[2rem] hidden md:block">{instance.getItem("settings")}</h2>
             <PresetSelect />
 
@@ -84,7 +84,7 @@ function PresetSelect() {
   const { instance } = useLanguage();
   return (
     <Select defaultValue="default">
-      <SelectTrigger className="w-full max-w-40">
+      <SelectTrigger className="w-full max-w-35">
         <SelectValue className="text-left" />
       </SelectTrigger>
       <SelectContent className="z-52">
