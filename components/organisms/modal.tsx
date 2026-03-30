@@ -102,19 +102,19 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
           <motion.div
             ref={overlayRef}
             onClick={handleBackdropClick}
-            className="fixed inset-0 z-[80] bg-background/70 backdrop-blur-sm"
+            className="fixed inset-0 z-[80] bg-background/70 backdrop-blur-sm "
             exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           />
 
           {/* Modal */}
-          <div className="fixed inset-0 z-[90] flex items-center justify-center pointer-events-none">
+          <div className="fixed inset-0 z-[90] flex items-center justify-center pointer-events-none ">
             <motion.div
               onClick={(e) => e.stopPropagation()}
               aria-labelledby={titleId}
               aria-modal="true"
-              className={`${modalSizes[size]} relative mx-auto w-fit md:w-full rounded-xl border bg-card p-4 shadow-xl sm:p-6 pointer-events-auto`}
+              className={`${modalSizes[size]} relative mx-auto w-fit overflow-hidden md:w-full rounded-xl border bg-card shadow-xl  pointer-events-auto `}
               ref={modalRef}
               role="dialog"
               animate={shouldReduceMotion ? {} : { scale: 1, y: 0, opacity: 1 }}
@@ -141,7 +141,7 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
               }
             >
               <ModalContext.Provider value={modalRef.current}>
-                <div className="relative">{children}</div>
+                <div className="relative max-h-[90vh] overflow-y-auto p-4 sm:p-6">{children}</div>
               </ModalContext.Provider>
             </motion.div>
           </div>
