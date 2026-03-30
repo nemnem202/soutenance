@@ -736,4 +736,25 @@ export const languagePack = {
     de: "Privat",
     zh: "私密",
   },
+  remove_account: {
+    fr: "Supprimer le compte",
+    en: "Remove account",
+    es: "Eliminar cuenta",
+    de: "Konto löschen",
+    zh: "删除账户",
+  },
+  account: {
+    fr: "Compte",
+    en: "Account",
+    es: "Cuenta",
+    de: "Konto",
+    zh: "账户",
+  },
+  change_account: {
+    fr: "Changer de compte",
+    en: "Change account",
+    es: "Cambiar de cuenta",
+    de: "Konto wechseln",
+    zh: "切换账户",
+  },
 } as const;
