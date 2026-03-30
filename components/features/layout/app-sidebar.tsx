@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { type ReactNode, useState } from "react";
 import { Separator } from "../../ui/separator";
 import { Compass, Heart, House, LayoutDashboard } from "lucide-react";
 import { SmallPlaylistWidget } from "../playlist/playlists-widgets";
@@ -45,12 +45,24 @@ function NavBar() {
   return (
     <nav className="flex flex-col w-full">
       <Link href="/" text={instance.getItem("homepage")} icon={<House />} />
-      <Link href="/explorer" text={instance.getItem("explorePageTitle")} icon={<Compass />} />
+      <Link
+        href="/explorer"
+        text={instance.getItem("explorePageTitle")}
+        icon={<Compass />}
+      />
 
       {session && (
         <>
-          <Link href="/favorites" text={instance.getItem("favoritesPageTitle")} icon={<Heart />} />
-          <Link href={`/account/${session.userId}`} text={instance.getItem("dashboard")} icon={<LayoutDashboard />} />
+          <Link
+            href="/favorites"
+            text={instance.getItem("favoritesPageTitle")}
+            icon={<Heart />}
+          />
+          <Link
+            href={`/account/${session.userId}`}
+            text={instance.getItem("dashboard")}
+            icon={<LayoutDashboard />}
+          />
         </>
       )}
     </nav>

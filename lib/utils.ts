@@ -1,12 +1,11 @@
 import { availableLanguages } from "@/config/language-pack";
-import { Data } from "@/pages/+data";
-import { Account, Playlist } from "@/types/entities";
-import { Language } from "@/types/i18n";
-import { Chord } from "@/types/music";
+import type { Data } from "@/pages/+data";
+import type { Account, Playlist } from "@/types/entities";
+import type { Language } from "@/types/i18n";
+import type { Chord } from "@/types/music";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { useData } from "vike-react/useData";
-import { keyof } from "zod";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -38,4 +37,5 @@ export const getPreferredLanguage = (header: string | null): Language => {
   return availableLanguages[0];
 };
 
-export const chordToString = (chord: Chord) => `${chord.root} ${chord.harm?.symbolLabel ?? ""}`;
+export const chordToString = (chord: Chord) =>
+  `${chord.root} ${chord.harm?.symbolLabel ?? ""}`;

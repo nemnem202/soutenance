@@ -1,7 +1,15 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { usePageContext } from "vike-react/usePageContext";
 
-export default function Link({ href, text, icon }: { href: string; text: string; icon?: ReactNode }) {
+export default function Link({
+  href,
+  text,
+  icon,
+}: {
+  href: string;
+  text: string;
+  icon?: ReactNode;
+}) {
   const { urlPathname } = usePageContext();
   return (
     <a

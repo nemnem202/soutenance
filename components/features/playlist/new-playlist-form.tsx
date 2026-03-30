@@ -1,8 +1,18 @@
 import { useNewPlaylistForm } from "@/hooks/use-forms";
-import { Field, FieldError, FieldGroup, FieldLabel } from "../../molecules/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "../../molecules/field";
 import { Controller } from "react-hook-form";
 import { Input } from "../../ui/input";
-import { InputGroup, InputGroupAddon, InputGroupText, InputGroupTextarea } from "../../molecules/input-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  InputGroupTextarea,
+} from "../../molecules/input-group";
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { Badge } from "../../ui/badge";
@@ -10,17 +20,19 @@ import EditableImage from "../../organisms/editable-image";
 import { Button } from "../../ui/button";
 import { useLanguage } from "@/hooks/use-language";
 import { Switch } from "../../ui/switch";
-import { useModalContainer } from "../../organisms/modal";
-
-export interface NewPlaylistFormProps {}
 
 export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
   const { form, formRef, handleSubmit } = useNewPlaylistForm();
   const { instance } = useLanguage();
-  const container = useModalContainer();
   return (
-    <form id="form-rhf-post" onSubmit={form.handleSubmit(handleSubmit)} ref={formRef}>
-      <FieldGroup className={`flex  items-center  flex-col ${axe === "x" && "md:flex-row"}`}>
+    <form
+      id="form-rhf-post"
+      onSubmit={form.handleSubmit(handleSubmit)}
+      ref={formRef}
+    >
+      <FieldGroup
+        className={`flex  items-center  flex-col ${axe === "x" && "md:flex-row"}`}
+      >
         <Controller
           name="image.src"
           control={form.control}
@@ -54,7 +66,9 @@ export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
                   autoComplete="off"
                   className="paragraph !text-left px-2"
                 />
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -73,13 +87,18 @@ export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
                     aria-invalid={fieldState.invalid}
                     maxLength={500}
                   />
-                  <InputGroupAddon align="block-end" className="w-full flex justify-end px-3">
+                  <InputGroupAddon
+                    align="block-end"
+                    className="w-full flex justify-end px-3"
+                  >
                     <InputGroupText className="tabular-nums paragraph-sm">
                       {field.value ? field.value.length : 0}/500
                     </InputGroupText>
                   </InputGroupAddon>
                 </InputGroup>
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -88,8 +107,13 @@ export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid} className="gap-1">
-                <TagsInput defaultValue={field.value} onChange={(tags) => form.setValue("tags", tags)} />
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                <TagsInput
+                  defaultValue={field.value}
+                  onChange={(tags) => form.setValue("tags", tags)}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -99,17 +123,26 @@ export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid} className="gap-1">
                 <div className="flex gap-2 items-center">
-                  <FieldLabel htmlFor="visibility-switch">{instance.getItem("public")}</FieldLabel>
+                  <FieldLabel htmlFor="visibility-switch">
+                    {instance.getItem("public")}
+                  </FieldLabel>
 
                   <span className="inline-flex">
                     <Switch
                       id="visibility-switch"
                       defaultChecked={field.value === "public"}
-                      onCheckedChange={(checked) => form.setValue("visibility", checked ? "public" : "private")}
+                      onCheckedChange={(checked) =>
+                        form.setValue(
+                          "visibility",
+                          checked ? "public" : "private",
+                        )
+                      }
                     />
                   </span>
                 </div>
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -124,12 +157,21 @@ export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
   );
 }
 
-function TagsInput({ onChange, defaultValue = [] }: { defaultValue?: string[]; onChange: (tags: string[]) => void }) {
+function TagsInput({
+  onChange,
+  defaultValue = [],
+}: {
+  defaultValue?: string[];
+  onChange: (tags: string[]) => void;
+}) {
   const [tags, setTags] = useState<string[]>(defaultValue);
   const { instance } = useLanguage();
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: qsdqsd
   useEffect(() => {
     onChange(tags);
   }, [tags]);
+
   return (
     <div className="flex flex-col w-full gap-2">
       <Input
@@ -151,9 +193,14 @@ function TagsInput({ onChange, defaultValue = [] }: { defaultValue?: string[]; o
       />
       <div className="flex flex-wrap items-center gap-2">
         {tags.map((t, index) => (
-          <Badge variant="outline" className="text-muted-foreground paragraph-md gap-2 py-1.5 pl-2">
+          <Badge
+            variant="outline"
+            className="text-muted-foreground paragraph-md gap-2 py-1.5 pl-2"
+            key={t}
+          >
             {t}
             <button
+              type="button"
               onClick={(e) => {
                 e.preventDefault();
                 setTags((prev) => prev.filter((_, i) => i !== index));

@@ -8,7 +8,8 @@ import vikeReact from "vike-react/config";
 export default {
   // https://vike.dev/head-tags
   title: "Music Sandbox",
-  description: "A musical training app made for both beginner and advanced players.",
+  description:
+    "A musical training app made for both beginner and advanced players.",
 
   extends: [vikeReact, vikePhoton],
 

@@ -7,11 +7,10 @@ import {
   ThemeParam,
   UsernameParam,
 } from "@/components/features/settings/parameters";
-import { SettingsParam, SettingsSection } from "@/components/features/settings/settings-assets";
+import { SettingsSection } from "@/components/features/settings/settings-assets";
 import SizeAdapter from "@/components/molecules/size-adapter";
 import EditableImage from "@/components/organisms/editable-image";
 import Headline from "@/components/ui/headline";
-import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/hooks/use-language";
 
 export default function Page() {

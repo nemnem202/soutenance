@@ -1,3 +1,4 @@
+// biome-ignore lint/correctness/noUnusedVariables: sdfsdf
 enum LanguageEnum {
   afrikaans = "af",
   albanian = "sq",
@@ -10,7 +11,7 @@ enum LanguageEnum {
   bulgarian = "bg",
   catalan = "ca",
   chinese_simplified = "zh",
-  chinese_traditional = "zh",
+  // chinese_traditional = "zh",
   croatian = "hr",
   czech = "cs",
   danish = "da",

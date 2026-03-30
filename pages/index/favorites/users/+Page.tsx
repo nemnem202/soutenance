@@ -1,6 +1,5 @@
 import { MediumAccountWrapper } from "@/components/features/auth/account-widgets";
 import FavoritesSearchbarSpace from "@/components/features/layout/favorites-searchbar-space";
-import Searchbar from "@/components/organisms/searchbar";
 import { useLanguage } from "@/hooks/use-language";
 
 export default function Page() {

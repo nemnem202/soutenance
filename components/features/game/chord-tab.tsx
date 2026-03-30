@@ -16,13 +16,11 @@ export default function ChordTab() {
   const handleClickNext = () => {
     if (display === "carousel") {
       api?.scrollNext();
-    } else {
     }
   };
   const handleClickPrev = () => {
     if (display === "carousel") {
       api?.scrollPrev();
-    } else {
     }
   };
   return (
@@ -30,11 +28,17 @@ export default function ChordTab() {
       {display === "grid" ? (
         <ChordGrid />
       ) : (
-        <ChordCarousel key={axis} api={api} carouselRef={carouselRef} axis={axis} />
+        <ChordCarousel
+          key={axis}
+          api={api}
+          carouselRef={carouselRef}
+          axis={axis}
+        />
       )}
       <div className="w-full h-20 flex justify-between items-end gap-2 p-2 hidden md:flex">
         <div className="border rounded-md flex items-center h-10 overflow-hidden ">
           <button
+            type="button"
             onClick={() => setDisplay("carousel")}
             className={`cursor-pointer w-full h-full flex justify-center items-center px-2 ${display === "grid" && "text-muted-foreground bg-popover"}`}
           >
@@ -42,6 +46,7 @@ export default function ChordTab() {
           </button>
           <Separator orientation="vertical" />
           <button
+            type="button"
             onClick={() => setDisplay("grid")}
             className={`cursor-pointer w-full h-full flex justify-center items-center px-2 ${display === "carousel" && "text-muted-foreground bg-popover"}`}
           >
@@ -49,10 +54,20 @@ export default function ChordTab() {
           </button>
         </div>
         <div className="flex gap-2 ">
-          <Button variant={"outline"} className="rounded-full" size={"icon"} onClick={handleClickPrev}>
+          <Button
+            variant={"outline"}
+            className="rounded-full"
+            size={"icon"}
+            onClick={handleClickPrev}
+          >
             <ChevronLeft />
           </Button>
-          <Button variant={"outline"} className="rounded-full" size={"icon"} onClick={handleClickNext}>
+          <Button
+            variant={"outline"}
+            className="rounded-full"
+            size={"icon"}
+            onClick={handleClickNext}
+          >
             <ChevronRight />
           </Button>
         </div>

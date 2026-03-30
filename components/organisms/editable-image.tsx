@@ -15,13 +15,28 @@ export interface EditableImageProps {
   alt: string;
 }
 
-export default function EditableImage({ onImageChange, src, alt, canBeEdited = true }: EditableImageProps) {
+export default function EditableImage({
+  onImageChange,
+  src,
+  alt,
+  canBeEdited = true,
+}: EditableImageProps) {
   const editImage = useEditImage({ onImageChange, src, alt });
 
-  const { hovered, setHovered, imageSource, changeImage, open, setOpen, inputRef, handleImageChange } = editImage;
+  const {
+    hovered,
+    setHovered,
+    imageSource,
+    changeImage,
+    open,
+    setOpen,
+    inputRef,
+    handleImageChange,
+  } = editImage;
 
   return (
     <>
+      {/** biome-ignore lint/a11y/noStaticElementInteractions: qsdqd */}
       <div
         className="size-full relative z-0"
         onMouseEnter={() => setHovered(true)}
@@ -46,6 +61,7 @@ export default function EditableImage({ onImageChange, src, alt, canBeEdited = t
         )}
 
         <button
+          type="button"
           className={`cursor-pointer absolute inset-0 bg-popover transition opacity-40 z-1 flex items-center justify-center ${!hovered && "!opacity-0"}`}
           onClick={(e) => {
             e.preventDefault();
@@ -55,13 +71,29 @@ export default function EditableImage({ onImageChange, src, alt, canBeEdited = t
           <Upload size={50} />
         </button>
 
-        <img className="size-full object-cover z-0" src={imageSource ?? PlaceholderImage} alt={alt} loading="lazy" />
+        <img
+          className="size-full object-cover z-0"
+          src={imageSource ?? PlaceholderImage}
+          alt={alt}
+          loading="lazy"
+        />
       </div>
 
-      <Modal isOpen={open} onClose={() => setOpen(false)} size="md" title="Edit image">
+      <Modal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        size="md"
+        title="Edit image"
+      >
         <EditImageModalContent {...editImage} />
       </Modal>
-      <input type="file" accept="image/*" ref={inputRef} className="hidden" onChange={handleImageChange} />
+      <input
+        type="file"
+        accept="image/*"
+        ref={inputRef}
+        className="hidden"
+        onChange={handleImageChange}
+      />
     </>
   );
 }
@@ -69,8 +101,15 @@ export default function EditableImage({ onImageChange, src, alt, canBeEdited = t
 type EditableImageModalProps = ReturnType<typeof useEditImage>;
 
 function EditImageModalContent(props: EditableImageModalProps) {
-  const { avatarEditorRef, avatarZoom, setAvatarZoom, changeImage, handleEditorEditsSave, handleWheel, imageSource } =
-    props;
+  const {
+    avatarEditorRef,
+    avatarZoom,
+    setAvatarZoom,
+    changeImage,
+    handleEditorEditsSave,
+    handleWheel,
+    imageSource,
+  } = props;
 
   const { instance } = useLanguage();
   const isMobile = useScreen() === "sm";
@@ -101,7 +140,7 @@ function EditImageModalContent(props: EditableImageModalProps) {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            setAvatarZoom((prev) => Math.max(1, (prev /= 1.1)));
+            setAvatarZoom((prev) => Math.max(1, prev / 1.1));
           }}
         >
           <ZoomOut />

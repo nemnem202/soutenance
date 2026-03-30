@@ -1,11 +1,11 @@
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: sdfsdf */
 import useCarousel from "@/hooks/use-carousel";
-import { ReactNode, RefObject, useEffect } from "react";
+import { type ReactNode, type RefObject, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeftButton, ChevrontRightButton } from "../ui/custom-buttons";
 import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
-import { navigate } from "vike/client/router";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import SizeAdapter from "../molecules/size-adapter";
 
 interface MediumWidgetGroupProps {
@@ -18,7 +18,14 @@ interface MediumWidgetGroupProps {
 }
 
 export function MediumWidgetGroup(props: MediumWidgetGroupProps) {
-  const { widgets, containerRef, widgetsRef, handleScroll, handleScrollEnd, onLastItemVisibilityChange } = props;
+  const {
+    widgets,
+    containerRef,
+    widgetsRef,
+    handleScroll,
+    handleScrollEnd,
+    onLastItemVisibilityChange,
+  } = props;
   const size = useScreen();
 
   useEffect(() => {
@@ -26,10 +33,13 @@ export function MediumWidgetGroup(props: MediumWidgetGroupProps) {
     const lastItem = widgetsRef.current[widgets.length - 1];
     if (!lastItem) return;
 
-    const observer = new IntersectionObserver(([entry]) => onLastItemVisibilityChange(entry.isIntersecting), {
-      root: containerRef.current,
-      threshold: 1.0,
-    });
+    const observer = new IntersectionObserver(
+      ([entry]) => onLastItemVisibilityChange(entry.isIntersecting),
+      {
+        root: containerRef.current,
+        threshold: 1.0,
+      },
+    );
 
     observer.observe(lastItem);
     return () => observer.disconnect();
@@ -40,11 +50,12 @@ export function MediumWidgetGroup(props: MediumWidgetGroupProps) {
       className="w-full overflow-x-auto scrollbar-hide flex md:gap-8.5 gap-2 scroll-smooth relative snap-x snap-mandatory bg-background"
       ref={containerRef}
       onScroll={handleScroll}
+      //@eslint-ignore
       onScrollEnd={handleScrollEnd}
     >
       {widgets.map((widget, index) => (
         <div
-          key={index}
+          key={crypto.randomUUID()}
           ref={(el) => {
             widgetsRef.current[index] = el;
           }}
@@ -63,7 +74,11 @@ export interface MediumWidgetCarouselProps {
   seeAllUrl?: string;
 }
 
-export function MediumWidgetCarousel({ title, widgets, seeAllUrl = "/see-all" }: MediumWidgetCarouselProps) {
+export function MediumWidgetCarousel({
+  title,
+  widgets,
+  seeAllUrl = "/see-all",
+}: MediumWidgetCarouselProps) {
   const {
     isLastItemVisible,
     itemIndex,
@@ -114,7 +129,7 @@ export function WidgetTitle({
   widgetsRef?: RefObject<(HTMLDivElement | null)[]>;
 }) {
   const { instance } = useLanguage();
-  const isMobile = useScreen() == "sm";
+  const isMobile = useScreen() === "sm";
   return (
     <div className="flex w-full justify-between items-center">
       <div className="flex items-center gap-x-5 w-full">
@@ -139,10 +154,17 @@ export function WidgetTitle({
           scrollToIndex &&
           widgetsRef && (
             <div className="flex">
-              <ChevronLeftButton disabled={itemIndex <= 0} onClick={() => scrollToIndex(Math.max(0, itemIndex - 1))} />
+              <ChevronLeftButton
+                disabled={itemIndex <= 0}
+                onClick={() => scrollToIndex(Math.max(0, itemIndex - 1))}
+              />
               <ChevrontRightButton
                 disabled={isLastItemVisible}
-                onClick={() => scrollToIndex(Math.min(widgetsRef.current.length - 1, itemIndex + 1))}
+                onClick={() =>
+                  scrollToIndex(
+                    Math.min(widgetsRef.current.length - 1, itemIndex + 1),
+                  )
+                }
               />
             </div>
           )

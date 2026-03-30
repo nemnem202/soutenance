@@ -1,6 +1,6 @@
-import { EditableImageProps } from "@/components/organisms/editable-image";
-import { useEffect, useRef, useState, WheelEvent } from "react";
-import AvatarEditor from "react-avatar-editor";
+import type { EditableImageProps } from "@/components/organisms/editable-image";
+import { useEffect, useRef, useState, type WheelEvent } from "react";
+import type AvatarEditor from "react-avatar-editor";
 
 export default function useEditImage(props: EditableImageProps) {
   const [imageSource, setImageSource] = useState<string | undefined>(props.src);
@@ -12,7 +12,7 @@ export default function useEditImage(props: EditableImageProps) {
 
   const handleWheel = (e: WheelEvent) => {
     if (e.deltaY > 0) {
-      setAvatarZoom((prev) => Math.max(1, (prev /= 1.1)));
+      setAvatarZoom((prev) => Math.max(1, prev / 1.1));
     } else {
       setAvatarZoom((prev) => (prev *= 1.1));
     }
@@ -44,6 +44,7 @@ export default function useEditImage(props: EditableImageProps) {
     setOpen(false);
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: qsdqsd
   useEffect(() => {
     if (!imageSource) return;
     props.onImageChange(imageSource);

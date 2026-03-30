@@ -2,8 +2,13 @@ import { useLanguage } from "@/hooks/use-language";
 import { SettingsParam } from "./settings-assets";
 import { useTheme } from "@/hooks/use-theme";
 import { useId, useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/organisms/select";
-import { Language } from "@/types/i18n";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/organisms/select";
+import type { Language } from "@/types/i18n";
 import { availableLanguages } from "@/config/language-pack";
 import flags from "@/i18n/flags";
 import { Button } from "@/components/ui/button";
@@ -42,6 +47,7 @@ export function LanguageParam() {
   const getLanguageItem = (lang: Language) => (
     <div className="flex gap-2">
       <img
+        alt={`flag of ${lang}`}
         style={{ width: "20px" }}
         src={`https://purecatamphetamine.github.io/country-flag-icons/3x2/${flags[lang]}.svg`}
       />
@@ -50,11 +56,18 @@ export function LanguageParam() {
   );
   return (
     <SettingsParam label={instance.getItem("language")} id={id}>
-      <Select value={instance.getCurrentLanguage()} onValueChange={(value) => setLanguage(value as Language)}>
-        <SelectTrigger id={id}>{getLanguageItem(instance.getCurrentLanguage())}</SelectTrigger>
+      <Select
+        value={instance.getCurrentLanguage()}
+        onValueChange={(value) => setLanguage(value as Language)}
+      >
+        <SelectTrigger id={id}>
+          {getLanguageItem(instance.getCurrentLanguage())}
+        </SelectTrigger>
         <SelectContent>
           {availableLanguages.map((lang) => (
-            <SelectItem value={lang}>{getLanguageItem(lang)}</SelectItem>
+            <SelectItem value={lang} key={lang}>
+              {getLanguageItem(lang)}
+            </SelectItem>
           ))}
         </SelectContent>
       </Select>
@@ -104,8 +117,16 @@ export function UsernameParam() {
   const id = useId();
   const { session } = useSession();
   return (
-    <SettingsParam label={instance.getItem("username")} id={id} orientation="vertical">
-      <Input className="!text-left p-2" id={id} defaultValue={session?.username} />
+    <SettingsParam
+      label={instance.getItem("username")}
+      id={id}
+      orientation="vertical"
+    >
+      <Input
+        className="!text-left p-2"
+        id={id}
+        defaultValue={session?.username}
+      />
     </SettingsParam>
   );
 }

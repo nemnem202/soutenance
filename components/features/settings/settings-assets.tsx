@@ -1,6 +1,10 @@
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/molecules/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/molecules/tooltip";
 import { Separator } from "@/components/ui/separator";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export function SettingsParam({
   children,
@@ -20,7 +24,9 @@ export function SettingsParam({
   const generateLabel = () => (
     <label className={`flex-1 flex flex-col`} htmlFor={id}>
       <p className="title-4 whitespace-nowrap">{label}</p>
-      {description && <p className="text-muted-foreground paragramh-md">{description}</p>}
+      {description && (
+        <p className="text-muted-foreground paragramh-md">{description}</p>
+      )}
     </label>
   );
   return (
@@ -40,7 +46,13 @@ export function SettingsParam({
   );
 }
 
-export function SettingsSection({ children, title }: { children: ReactNode; title: string }) {
+export function SettingsSection({
+  children,
+  title,
+}: {
+  children: ReactNode;
+  title: string;
+}) {
   return (
     <section className="flex flex-col w-full p-4 gap-4">
       <h2 className="title-2">{title}</h2>

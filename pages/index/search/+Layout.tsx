@@ -3,10 +3,15 @@ import Searchbar from "@/components/organisms/searchbar";
 import SizeAdapter from "@/components/molecules/size-adapter";
 import { useLanguage } from "@/hooks/use-language";
 import useSearchNavigation from "@/hooks/use-search-navigation";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export default function Layout({ children }: { children: ReactNode }) {
-  return <SizeAdapter sm={<Mobile>{children}</Mobile>} md={<Desktop>{children}</Desktop>} />;
+  return (
+    <SizeAdapter
+      sm={<Mobile>{children}</Mobile>}
+      md={<Desktop>{children}</Desktop>}
+    />
+  );
 }
 
 function Desktop({ children }: { children: ReactNode }) {

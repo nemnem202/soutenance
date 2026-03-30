@@ -1,11 +1,14 @@
-import { languagePack, availableLanguages } from "@/config/language-pack";
-import { Language, LanguagePackKeys } from "@/types/i18n";
+import { languagePack } from "@/config/language-pack";
+import type { Language, LanguagePackKeys } from "@/types/i18n";
 
 export default class I18nModule {
   private _currentLanguage: Language;
   private _undefinedValuePlaceholder: string;
 
-  constructor(defaultLanguage: Language, undefinedValuePlaceholder = "Undefined") {
+  constructor(
+    defaultLanguage: Language,
+    undefinedValuePlaceholder = "Undefined",
+  ) {
     this._currentLanguage = defaultLanguage;
     this._undefinedValuePlaceholder = undefinedValuePlaceholder;
   }

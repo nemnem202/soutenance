@@ -16,7 +16,9 @@ import { ParamsAccordion } from "../game-sidebar";
 export default function MidiSettings() {
   const { instance } = useLanguage();
   return (
-    <ParamsAccordion title={<h3 className="title-3">{instance.getItem("midi")}</h3>}>
+    <ParamsAccordion
+      title={<h3 className="title-3">{instance.getItem("midi")}</h3>}
+    >
       <div className="gap-2 flex flex-col">
         <div className="w-full flex items-center">
           <Label className="paragraph w-25" htmlFor="style-select">
@@ -56,13 +58,19 @@ export default function MidiSettings() {
           </Select>
         </div>
         <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
-          <p className="paragraph w-38 text-foreground">{instance.getItem("highlight_wrong_notes")}</p>
+          <p className="paragraph w-38 text-foreground">
+            {instance.getItem("highlight_wrong_notes")}
+          </p>
         </SwitchParam>
         <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
-          <p className="paragraph w-38 text-foreground">{instance.getItem("highlight_correct_notes")}</p>
+          <p className="paragraph w-38 text-foreground">
+            {instance.getItem("highlight_correct_notes")}
+          </p>
         </SwitchParam>
         <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
-          <p className="paragraph w-38 text-foreground">{instance.getItem("highlight_missed_notes")}</p>
+          <p className="paragraph w-38 text-foreground">
+            {instance.getItem("highlight_missed_notes")}
+          </p>
         </SwitchParam>
       </div>
     </ParamsAccordion>

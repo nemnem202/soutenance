@@ -34,7 +34,9 @@ export default function AnimatedTabs({
   const generatedId = useId();
   const layoutId = customLayoutId ?? `animated-tabs-${generatedId}`;
 
-  const [internalActiveTab, setInternalActiveTab] = useState(defaultTab ?? tabs[0]?.id ?? "");
+  const [internalActiveTab, setInternalActiveTab] = useState(
+    defaultTab ?? tabs[0]?.id ?? "",
+  );
 
   const isControlled = controlledActiveTab !== undefined;
   const activeTab = isControlled ? controlledActiveTab : internalActiveTab;
@@ -48,7 +50,7 @@ export default function AnimatedTabs({
       }
       onChange?.(tabId);
     },
-    [isControlled, onChange],
+    [isControlled, onChange, tabs],
   );
 
   const handleKeyDown = useCallback(
@@ -79,7 +81,9 @@ export default function AnimatedTabs({
       }
       if (newTab) {
         handleTabChange(newTab.id);
-        const tabElement = document.getElementById(`${layoutId}-tab-${newTab.id}`);
+        const tabElement = document.getElementById(
+          `${layoutId}-tab-${newTab.id}`,
+        );
         tabElement?.focus();
       }
     },
@@ -129,11 +133,16 @@ export default function AnimatedTabs({
       "absolute",
       variant === "underline" && "right-0 -bottom-px left-0 h-0.5 bg-primary",
       variant === "pill" && "inset-0 rounded-sm bg-primary shadow-sm",
-      variant === "segment" && "inset-0 rounded-md border border-border bg-primary shadow-sm",
+      variant === "segment" &&
+        "inset-0 rounded-md border border-border bg-primary shadow-sm",
     );
 
   return (
-    <div aria-label="Tabs" className={cn(baseContainerStyles, className)} role="tablist">
+    <div
+      aria-label="Tabs"
+      className={cn(baseContainerStyles, className)}
+      role="tablist"
+    >
       {tabs.map((tab, index) => {
         const isActive = activeTab === tab.id;
 

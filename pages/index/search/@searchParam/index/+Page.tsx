@@ -10,19 +10,21 @@ export default function Page() {
   const { instance } = useLanguage();
   return (
     <>
-      <SearchExercisesList seeAllUrl={`/search/${routeParams.searchParam}/exercises`} />
+      <SearchExercisesList
+        seeAllUrl={`/search/${routeParams.searchParam}/exercises`}
+      />
       <MediumWidgetCarousel
         title={instance.getItem("users")}
         seeAllUrl={`/search/${routeParams.searchParam}/users`}
         widgets={Array.from({ length: 20 }).map(() => (
-          <MediumAccountWidget />
+          <MediumAccountWidget key={crypto.randomUUID()} />
         ))}
       />
       <MediumWidgetCarousel
         title="Playlists"
         seeAllUrl={`/search/${routeParams.searchParam}/playlists`}
         widgets={Array.from({ length: 20 }).map(() => (
-          <MediumPlaylistWidget />
+          <MediumPlaylistWidget key={crypto.randomUUID()} />
         ))}
       />
     </>

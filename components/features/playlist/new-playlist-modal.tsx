@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import type { ReactNode } from "react";
 import Modal from "../../organisms/modal";
 import NewPlaylistForm from "./new-playlist-form";
 import { useLanguage } from "@/hooks/use-language";
@@ -18,7 +18,9 @@ export default function NewPlaylistModal({
       {children}
 
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <h2 className="headline text-center p-4">{instance.getItem("new_playlist")}</h2>
+        <h2 className="headline text-center p-4">
+          {instance.getItem("new_playlist")}
+        </h2>
         <NewPlaylistForm axe="y" />
       </Modal>
     </>

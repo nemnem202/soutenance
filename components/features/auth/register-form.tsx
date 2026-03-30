@@ -1,5 +1,10 @@
 import { Button } from "../../ui/button";
-import { Field, FieldError, FieldGroup, FieldLabel } from "../../molecules/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "../../molecules/field";
 import { Controller } from "react-hook-form";
 import { Input } from "../../ui/input";
 import { useRegisterForm } from "@/hooks/use-forms";
@@ -17,7 +22,9 @@ export default function RegisterForm() {
       ref={formRef}
       className="w-full flex flex-col items-center justify-between gap-4"
     >
-      <h2 className="title-2 text-primary">{instance.getItem("create_your_account")}</h2>
+      <h2 className="title-2 text-primary">
+        {instance.getItem("create_your_account")}
+      </h2>
       <FieldGroup className="gap-3 mb-3">
         <Controller
           name="image.src"
@@ -90,7 +97,9 @@ export default function RegisterForm() {
                   autoComplete="off"
                   className="paragraph !text-left px-2"
                 />
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -108,7 +117,9 @@ export default function RegisterForm() {
                   autoComplete="off"
                   className="paragraph !text-left px-2"
                 />
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
@@ -123,18 +134,31 @@ export default function RegisterForm() {
                   <Checkbox
                     id="form-rhf-remember"
                     defaultChecked={field.value}
-                    onCheckedChange={(c) => form.setValue("agree_terms_of_service", typeof c === "boolean" ? c : false)}
+                    onCheckedChange={(c) =>
+                      form.setValue(
+                        "agree_terms_of_service",
+                        typeof c === "boolean" ? c : false,
+                      )
+                    }
                   />
-                  <FieldLabel htmlFor="form-rhf-remember" className=" paragraph-md max-w-70">
+                  <FieldLabel
+                    htmlFor="form-rhf-remember"
+                    className=" paragraph-md max-w-70"
+                  >
                     <span>
                       {instance.getItem("by_checking_this")}{" "}
-                      <a href="/therms-of-service" className="text-primary p-0 h-min hover:underline">
+                      <a
+                        href="/therms-of-service"
+                        className="text-primary p-0 h-min hover:underline"
+                      >
                         {instance.getItem("therms_of_service")} {/* TODO */}
                       </a>
                     </span>
                   </FieldLabel>
                 </div>
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />

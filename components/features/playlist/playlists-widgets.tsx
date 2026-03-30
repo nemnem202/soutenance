@@ -24,7 +24,9 @@ export function SmallPlaylistWidget() {
         />
       </div>
       <div className="flex flex-1 flex-col min-w-0">
-        <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{playlist.title}</p>
+        <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">
+          {playlist.title}
+        </p>
         <p className="paragraph-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
           {instance.getItem("by")} {playlist.author}
         </p>
@@ -39,6 +41,7 @@ export function SmallAddNewPlaylistWidget() {
   return (
     <NewPlaylistModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <button
+        type="button"
         onClick={() => setIsOpen(true)}
         className=" w-full hover:bg-popover rounded flex gap-2 cursor-pointer transition p-1.5 text-primary"
       >
@@ -69,7 +72,10 @@ export function MediumPlaylistWidget() {
         </div>
       </div>
       <div className="cursor-pointer rounded-md transition group-hover:opacity-80">
-        <a href={`/playlist/${playlist.id}`} className="flex flex-col rounded gap-2.5">
+        <a
+          href={`/playlist/${playlist.id}`}
+          className="flex flex-col rounded gap-2.5"
+        >
           <div className="w-full aspect-square rounded overflow-hidden">
             <img
               src={playlist.image.src}
@@ -81,14 +87,18 @@ export function MediumPlaylistWidget() {
           </div>
 
           <div className="flex-col flex w-full">
-            <h3 className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{playlist.title}</h3>
+            <h3 className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">
+              {playlist.title}
+            </h3>
 
             <div className="w-full justify-between paragraph-sm text-muted-foreground flex wrap">
               <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[80%]">
                 {instance.getItem("by")} {playlist.author}
               </p>
               <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[15%]">
-                {playlist.exercisesIds.length > 99 ? ">99" : playlist.exercisesIds.length}
+                {playlist.exercisesIds.length > 99
+                  ? ">99"
+                  : playlist.exercisesIds.length}
               </p>
             </div>
           </div>
@@ -115,12 +125,16 @@ function MediumAddNewPlaylistWidget() {
   );
 }
 
-export function MediumPlaylistWrapper({ allowToAddANewPlaylist }: { allowToAddANewPlaylist?: boolean }) {
+export function MediumPlaylistWrapper({
+  allowToAddANewPlaylist,
+}: {
+  allowToAddANewPlaylist?: boolean;
+}) {
   return (
     <div className="grid gap-y-5 md:gap-y-4 gap-2 container grid-cols-[repeat(auto-fit,minmax(30vw,1fr))] md:grid-cols-[repeat(auto-fit,minmax(10rem,1fr))]">
       {allowToAddANewPlaylist && <MediumAddNewPlaylistWidget />}
-      {Array.from({ length: 50 }).map((_, index) => (
-        <MediumPlaylistWidget key={index} />
+      {Array.from({ length: 50 }).map((_) => (
+        <MediumPlaylistWidget key={crypto.randomUUID()} />
       ))}
     </div>
   );

@@ -1,20 +1,42 @@
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/molecules/input-group";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/molecules/tooltip";
-import { ComponentProps, ReactNode, useId, useState } from "react";
-import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
-import { Button, ButtonProps } from "@/components/ui/button";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/molecules/input-group";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/molecules/tooltip";
+import { type ComponentProps, type ReactNode, useId, useState } from "react";
+import type * as CheckboxPrimitive from "@radix-ui/react-checkbox";
+import { Button, type ButtonProps } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Maximize, Minimize } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
-  return <div className="flex gap-2 w-fit h-12 px-5 bg-card rounded-md items-center select-none">{children}</div>;
+  return (
+    <div className="flex gap-2 w-fit h-12 px-5 bg-card rounded-md items-center select-none">
+      {children}
+    </div>
+  );
 }
 
-export function IconButton({ children, onClick = () => {} }: { children: ReactNode; onClick?: () => any }) {
+export function IconButton({
+  children,
+  onClick = () => {},
+}: {
+  children: ReactNode;
+  onClick?: () => void;
+}) {
   return (
-    <button onClick={onClick} className="all-unset cursor-pointer ">
+    <button
+      type="button"
+      onClick={onClick}
+      className="all-unset cursor-pointer "
+    >
       {children}
     </button>
   );
@@ -25,11 +47,13 @@ export function SidebarTabButton({
   isActive,
   onClick = () => {},
   props = {},
+  disabled = false,
 }: {
   text: string;
   isActive: boolean;
   onClick?: () => void;
   props?: ButtonProps;
+  disabled?: boolean;
 }) {
   return (
     <Button
@@ -38,7 +62,11 @@ export function SidebarTabButton({
       {...props}
     >
       {text}
-      {props.disabled && <span className="paragraph-sm text-muted-foreground ml-5 hidden md:block">upcoming</span>}
+      {disabled && (
+        <span className="paragraph-sm text-muted-foreground ml-5 hidden md:block">
+          upcoming
+        </span>
+      )}
     </Button>
   );
 }
@@ -105,7 +133,10 @@ export function SmallInput({
       <Tooltip>
         <TooltipTrigger>
           <div className={`flex flex-col gap-2 p-1 ${containerClassName}`}>
-            <Label className="paragraph-sm cursor-pointer !text-left" htmlFor={id}>
+            <Label
+              className="paragraph-sm cursor-pointer !text-left"
+              htmlFor={id}
+            >
               {label}
             </Label>
             <InputGroup className="w-full border-none !bg-popover h-full !rounded-xs">
@@ -160,7 +191,11 @@ export function SmallCheckboxGroup({
   const id = useId();
   return (
     <div className="flex gap-2">
-      <Label htmlFor={id} className={"paragaph " + labelProps?.className} {...labelProps}>
+      <Label
+        htmlFor={id}
+        className={`paragraph ${labelProps?.className}`}
+        {...labelProps}
+      >
         {label}
       </Label>
       <Checkbox id={id} {...checkboxProps} />
@@ -178,7 +213,9 @@ export function FullScreenButton({
   setFullScreen: (full: boolean) => void;
 }) {
   return (
-    <div className={`absolute m-2 top-0 right-0 transition ${hover ? "opacity-100" : "opacity-0"}`}>
+    <div
+      className={`absolute m-2 top-0 right-0 transition ${hover ? "opacity-100" : "opacity-0"}`}
+    >
       <Button variant={"ghost"} onClick={() => setFullScreen(!fullScreen)}>
         {fullScreen ? (
           <Minimize className=" stroke-muted-foreground !hover:stroke-foreground" />
@@ -194,15 +231,27 @@ export function Tab({ children }: { children: ReactNode }) {
   const [hover, setHover] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
 
+  const interactiveProps = {
+    role: "region",
+    tabIndex: 0,
+    onMouseEnter: () => setHover(true),
+    onMouseLeave: () => setHover(false),
+    onFocus: () => setHover(true),
+    onBlur: () => setHover(false),
+  };
+
   if (!fullScreen) {
     return (
       <div
+        {...interactiveProps}
         className="size-full md:bg-card md:rounded-md relative overflow-hidden"
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
       >
         <div className="hidden md:block">
-          <FullScreenButton hover={hover} fullScreen={fullScreen} setFullScreen={setFullScreen} />
+          <FullScreenButton
+            hover={hover}
+            fullScreen={fullScreen}
+            setFullScreen={setFullScreen}
+          />
         </div>
         {children}
       </div>
@@ -210,11 +259,14 @@ export function Tab({ children }: { children: ReactNode }) {
   } else {
     return (
       <div
+        {...interactiveProps}
         className="inset-0 absolute top-0 left-0 z-100 bg-background"
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
       >
-        <FullScreenButton hover={hover} fullScreen={fullScreen} setFullScreen={setFullScreen} />
+        <FullScreenButton
+          hover={hover}
+          fullScreen={fullScreen}
+          setFullScreen={setFullScreen}
+        />
         {children}
       </div>
     );

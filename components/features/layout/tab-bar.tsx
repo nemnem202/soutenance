@@ -1,5 +1,5 @@
 import { Compass, Heart, House, LayoutDashboard, Search } from "lucide-react";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { usePageContext } from "vike-react/usePageContext";
 import useSession from "@/hooks/use-session";
 
@@ -11,7 +11,12 @@ export default function TabBar() {
       <Link href="/explorer" icon={<Compass className="w-full h-full" />} />
       <Link href="/favorites" icon={<Heart className="w-full h-full" />} />
       <Link href="/search" icon={<Search className="w-full h-full" />} />
-      {session && <Link href={`/account/${session.userId}`} icon={<LayoutDashboard className="w-full h-full" />} />}
+      {session && (
+        <Link
+          href={`/account/${session.userId}`}
+          icon={<LayoutDashboard className="w-full h-full" />}
+        />
+      )}
     </nav>
   );
 }

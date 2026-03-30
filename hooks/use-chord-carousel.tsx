@@ -1,14 +1,16 @@
-import { ChordCarouselProps } from "@/components/features/game/chord-carousel";
-import { Data } from "@/pages/+data";
-import { EmblaCarouselType } from "embla-carousel";
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: qsdqsd */
+import type { ChordCarouselProps } from "@/components/features/game/chord-carousel";
+import type { Data } from "@/pages/+data";
+import type { EmblaCarouselType } from "embla-carousel";
 import { useSpring } from "motion/react";
 import { useCallback, useEffect, useRef } from "react";
 import { useData } from "vike-react/useData";
 
 const TWEEN_FACTOR_BASE = 0.4;
-const numberWithinRange = (number: number, min: number, max: number): number => Math.min(Math.max(number, min), max);
+const numberWithinRange = (number: number, min: number, max: number): number =>
+  Math.min(Math.max(number, min), max);
 
-export default function useChordCarousel({ carouselRef, api, axis }: ChordCarouselProps) {
+export default function useChordCarousel({ api, axis }: ChordCarouselProps) {
   const chords = useData<Data>().chordsPlaceholders;
   const tweenFactor = useRef(0);
   const tweenNodes = useRef<HTMLElement[]>([]);

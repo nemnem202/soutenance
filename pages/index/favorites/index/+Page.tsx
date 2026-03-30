@@ -15,19 +15,19 @@ function Desktop() {
       <MediumWidgetCarousel
         title={instance.getItem("recentlyPlayed")}
         widgets={Array.from({ length: 20 }).map(() => (
-          <MediumPlaylistWidget />
+          <MediumPlaylistWidget key={crypto.randomUUID()} />
         ))}
       />
       <MediumWidgetCarousel
         title={instance.getItem("accounts")}
         widgets={Array.from({ length: 20 }).map(() => (
-          <MediumAccountWidget />
+          <MediumAccountWidget key={crypto.randomUUID()} />
         ))}
       />
       <MediumWidgetCarousel
         title={instance.getItem("playlists")}
         widgets={Array.from({ length: 20 }).map(() => (
-          <MediumPlaylistWidget />
+          <MediumPlaylistWidget key={crypto.randomUUID()} />
         ))}
       />
     </>
@@ -42,21 +42,21 @@ function Mobile() {
         seeAllUrl="favorites/exercises"
         title={instance.getItem("recentlyPlayed")}
         widgets={Array.from({ length: 20 }).map(() => (
-          <MediumPlaylistWidget />
+          <MediumPlaylistWidget key={crypto.randomUUID()} />
         ))}
       />
       <MediumWidgetCarousel
         seeAllUrl="favorites/users"
         title={instance.getItem("accounts")}
         widgets={Array.from({ length: 20 }).map(() => (
-          <MediumAccountWidget />
+          <MediumAccountWidget key={crypto.randomUUID()} />
         ))}
       />
       <MediumWidgetCarousel
         seeAllUrl="favorites/playlists"
         title={instance.getItem("playlists")}
         widgets={Array.from({ length: 20 }).map(() => (
-          <MediumPlaylistWidget />
+          <MediumPlaylistWidget key={crypto.randomUUID()} />
         ))}
       />
     </>

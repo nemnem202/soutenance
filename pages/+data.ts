@@ -1,14 +1,16 @@
 import { getPreferredLanguage } from "@/lib/utils";
-import { ScreenSizeType } from "@/providers/screen-size-provider";
-import { PageContextServer } from "vike/types";
+import type { ScreenSizeType } from "@/providers/screen-size-provider";
+import type { PageContextServer } from "vike/types";
 import { UAParser } from "ua-parser-js";
-import { ChordHarmony, Notes } from "@/types/music";
+import { type ChordHarmony, Notes } from "@/types/music";
 import { faker } from "@faker-js/faker";
 import { CHORDS_DICTIONNARY } from "@/config/chords-dictionary";
-import { Account, Exercise, Playlist } from "@/types/entities";
+import type { Account, Exercise, Playlist } from "@/types/entities";
 
 function getScreen(pageContext: PageContextServer): ScreenSizeType {
-  const ua = pageContext.headers ? (pageContext.headers["user-agent"] ?? "") : "";
+  const ua = pageContext.headers
+    ? (pageContext.headers["user-agent"] ?? "")
+    : "";
   const parser = new UAParser(ua);
   const device = parser.getDevice().type;
   if (device && ["mobile", "wearable", "embedded"].includes(device)) {
@@ -25,7 +27,9 @@ const generatePlaceholders = () =>
     const root = faker.helpers.arrayElement(Notes);
     let harm: ChordHarmony | null = null;
     if (root !== "%") {
-      const randomHarm = faker.helpers.arrayElement(Object.entries(CHORDS_DICTIONNARY));
+      const randomHarm = faker.helpers.arrayElement(
+        Object.entries(CHORDS_DICTIONNARY),
+      );
       harm = randomHarm[1];
     }
 
@@ -52,10 +56,22 @@ export async function data(pageContext: PageContextServer) {
       exercises: Exercise[];
       playlists: Playlist[];
     };
-    return { accounts, exercises, playlists, preferredLanguage, screen, chordsPlaceholders: generatePlaceholders() };
+    return {
+      accounts,
+      exercises,
+      playlists,
+      preferredLanguage,
+      screen,
+      chordsPlaceholders: generatePlaceholders(),
+    };
   } catch (err) {
     console.error(err);
-    return { accounts: [], exercises: [], playlists: [], chordsPlaceholders: generatePlaceholders() };
+    return {
+      accounts: [],
+      exercises: [],
+      playlists: [],
+      chordsPlaceholders: generatePlaceholders(),
+    };
   }
 }
 

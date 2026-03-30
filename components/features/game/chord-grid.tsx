@@ -1,8 +1,8 @@
-import { CarouselChord, Note } from "@/types/music";
+import type { CarouselChord, Note } from "@/types/music";
 import { useData } from "vike-react/useData";
 import useScreen from "@/hooks/use-screen";
 import { faker } from "@faker-js/faker";
-import { Data } from "@/pages/+data";
+import type { Data } from "@/pages/+data";
 
 export default function ChordGrid() {
   return (
@@ -66,18 +66,37 @@ function ChordCellGroup() {
     );
   return (
     <div className="flex w-full">
-      {chords.map((chord, i) => chord && <ChordNameCell key={i} root={chord.root} harm={chord?.harm?.symbolLabel} />)}
+      {chords.map(
+        (chord) =>
+          chord && (
+            <ChordNameCell
+              key={chord.tickStart}
+              root={chord.root}
+              harm={chord?.harm?.symbolLabel}
+            />
+          ),
+      )}
     </div>
   );
 }
 
-function ChordNameCell({ root, harm }: { root: Note | undefined; harm?: string }) {
+function ChordNameCell({
+  root,
+  harm,
+}: {
+  root: Note | undefined;
+  harm?: string;
+}) {
   return (
     <div className=" w-[25%] px-0.5 md:px-2 h-full overflow-hidden">
       <div className=" rounded-md h-full w-full flex items-center ">
         <p className="whitespace-nowrap font-mono semibold text-xl flex lg:gap-1">
           <span>{root}</span>
-          {harm && <span className="text-muted-foreground  paragraph-sm max-w[50%]">{harm}</span>}
+          {harm && (
+            <span className="text-muted-foreground  paragraph-sm max-w[50%]">
+              {harm}
+            </span>
+          )}
         </p>
       </div>
     </div>

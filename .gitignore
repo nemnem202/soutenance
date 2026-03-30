@@ -77,9 +77,9 @@ web_modules/
 
 # dotenv environment variable files
 .env
-.env.development.local
+.env.dev
 .env.test.local
-.env.production.local
+.env.prod
 .env.local
 
 # parcel-bundler cache (https://parceljs.org/)
@@ -147,3 +147,5 @@ dist
 # aws-cdk
 .cdk.staging
 cdk.out
+
+/lib/generated/prisma

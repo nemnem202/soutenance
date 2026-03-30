@@ -7,7 +7,7 @@ export default function useSearchNavigation() {
   const [activeTab, setActiveTab] = useState(urlPathname.split("/")[3] ?? "");
   const handleNav = (to: string) => {
     setActiveTab(to);
-    navigate("/search/" + routeParams.searchParam + "/" + to);
+    navigate(`/search/${routeParams.searchParam}/${to}`);
   };
   useEffect(() => {
     setActiveTab(urlPathname.split("/")[3] ?? "");

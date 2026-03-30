@@ -5,8 +5,8 @@ import Searchbar from "@/components/organisms/searchbar";
 import { Separator } from "@/components/ui/separator";
 import SizeAdapter from "@/components/molecules/size-adapter";
 import { useLanguage } from "@/hooks/use-language";
-import { Data } from "@/pages/+data";
-import { Playlist } from "@/types/entities";
+import type { Data } from "@/pages/+data";
+import type { Playlist } from "@/types/entities";
 import { useEffect, useState } from "react";
 import { useData } from "vike-react/useData";
 import { usePageContext } from "vike-react/usePageContext";
@@ -15,11 +15,13 @@ import { PlaylistItemsList } from "@/components/features/playlist/playlist-items
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
-  const [playlist] = useState(useData<Data>().playlists.find((e) => e.id === id));
+  const [playlist] = useState(
+    useData<Data>().playlists.find((e) => e.id === id),
+  );
 
   useEffect(() => {
     if (!playlist) navigate("/404");
-  }, []);
+  }, [playlist]);
 
   if (!playlist) return null;
   return (
@@ -36,7 +38,9 @@ export default function Page() {
 
 function Banner({ playlist }: { playlist: Playlist }) {
   const { instance } = useLanguage();
-  const account = useData<Data>().accounts.find((account) => account.id === playlist.accountId);
+  const account = useData<Data>().accounts.find(
+    (account) => account.id === playlist.accountId,
+  );
   return (
     <div className="flex md:flex-row gap-0 md:gap-8 flex-col w-full items-center relative">
       <SizeAdapter
@@ -65,11 +69,13 @@ function Banner({ playlist }: { playlist: Playlist }) {
         <div className="flex flex-col gap-3">
           {account && (
             <a
-              href={"/account/" + account.id}
+              href={`/account/${account.id}`}
               className="flex items-center gap-2 hover:opacity-80 transition cursor-pointer"
             >
               <SizeAdapter md={<AccountPP image={account.picture} />} />
-              <p className="title-4 md:text-foreground text-muted-foreground ">{playlist.author}</p>
+              <p className="title-4 md:text-foreground text-muted-foreground ">
+                {playlist.author}
+              </p>
             </a>
           )}
 
@@ -77,12 +83,17 @@ function Banner({ playlist }: { playlist: Playlist }) {
             md={
               <div className="flex gap-2">
                 <p className="text-muted-foreground">
-                  {playlist.exercisesIds.length} {instance.getItem("exercises").toLowerCase()}
+                  {playlist.exercisesIds.length}{" "}
+                  {instance.getItem("exercises").toLowerCase()}
                 </p>
                 <Separator orientation="vertical" />
-                <p className="text-muted-foreground">{instance.getItem("medium")}</p>
+                <p className="text-muted-foreground">
+                  {instance.getItem("medium")}
+                </p>
                 <Separator orientation="vertical" />
-                <p className="text-muted-foreground">{instance.getItem("pop").toLowerCase()}</p>
+                <p className="text-muted-foreground">
+                  {instance.getItem("pop").toLowerCase()}
+                </p>
               </div>
             }
           />
