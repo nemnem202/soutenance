@@ -65,7 +65,7 @@ export const languagePack = {
     zh: "你喜欢的",
   },
   popularExercises: {
-    fr: "Exercises populaires",
+    fr: "Exercices populaires",
     en: "Popular exercises",
     es: "Ejercicios populares",
     de: "Beliebte Übungen",
@@ -212,7 +212,7 @@ export const languagePack = {
     zh: "全部",
   },
   browse_exercises: {
-    fr: "Parcourir les exercises",
+    fr: "Parcourir les exercices",
     en: "Browse exercises",
     es: "Explorar ejercicios",
     de: "Übungen durchsuchen",
@@ -513,14 +513,14 @@ export const languagePack = {
     zh: "保存",
   },
   exercises: {
-    fr: "Exercises",
+    fr: "Exercices",
     en: "Exercises",
     es: "Ejercicios",
     de: "Übungen",
     zh: "练习",
   },
   exercise: {
-    fr: "Exercise",
+    fr: "Exercice",
     en: "Exercise",
     es: "Ejercicio",
     de: "Übung",
@@ -735,5 +735,26 @@ export const languagePack = {
     es: "Privada",
     de: "Privat",
     zh: "私密",
+  },
+  remove_account: {
+    fr: "Supprimer le compte",
+    en: "Remove account",
+    es: "Eliminar cuenta",
+    de: "Konto löschen",
+    zh: "删除账户",
+  },
+  account: {
+    fr: "Compte",
+    en: "Account",
+    es: "Cuenta",
+    de: "Konto",
+    zh: "账户",
+  },
+  change_account: {
+    fr: "Changer de compte",
+    en: "Change account",
+    es: "Cambiar de cuenta",
+    de: "Konto wechseln",
+    zh: "切换账户",
   },
 } as const;

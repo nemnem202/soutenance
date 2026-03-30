@@ -9,17 +9,31 @@ import LoginForm from "./login-form";
 
 export default function LoginButton() {
   const [isOpen, setIsOpen] = useState(false);
-  const [mode, setMode] = useState<"login" | "register">("login");
   const { instance } = useLanguage();
   return (
     <>
       <Button variant={"link"} className="title-3 text-primary" onClick={() => setIsOpen(true)}>
         {instance.getItem("login")}
       </Button>
-      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} size="md" title="Login Modal">
-        {mode === "login" ? <LoginModalContent setMode={setMode} /> : <RegisterModalContent setMode={setMode} />}
-      </Modal>
+      <LoginModal isOpen={isOpen} setIsOpen={setIsOpen} initMode="login" />
     </>
+  );
+}
+
+export function LoginModal({
+  isOpen,
+  setIsOpen,
+  initMode,
+}: {
+  isOpen: boolean;
+  setIsOpen: (value: boolean) => void;
+  initMode: "login" | "register";
+}) {
+  const [mode, setMode] = useState<"login" | "register">(initMode);
+  return (
+    <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} size="md" title="Login Modal">
+      {mode === "login" ? <LoginModalContent setMode={setMode} /> : <RegisterModalContent setMode={setMode} />}
+    </Modal>
   );
 }
 

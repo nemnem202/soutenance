@@ -7,10 +7,10 @@ import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { Badge } from "../../ui/badge";
 import EditableImage from "../../organisms/editable-image";
-import { Button } from "../../ui/button"; 
+import { Button } from "../../ui/button";
 import { useLanguage } from "@/hooks/use-language";
 import { Switch } from "../../ui/switch";
-import { useModalContainer } from "../../organisms/modal"; 
+import { useModalContainer } from "../../organisms/modal";
 
 export interface NewPlaylistFormProps {}
 
