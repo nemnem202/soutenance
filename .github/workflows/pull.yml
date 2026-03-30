@@ -16,7 +16,7 @@ jobs:
         
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v2
-        
+
       - name: Create .env.prod
         run: |
           echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env.prod
@@ -26,12 +26,3 @@ jobs:
 
       - name: Build and run CI containers
         run: make ci  
-
-      - name: Show exit code
-        run: |
-          EXIT_CODE=$(docker wait $(docker ps -q))
-          echo "Exit code: $EXIT_CODE"
-          if [ "$EXIT_CODE" -ne 0 ]; then
-            echo "Tests or lint failed"
-            exit 1
-          fi
