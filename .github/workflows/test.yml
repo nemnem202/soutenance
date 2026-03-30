@@ -22,7 +22,9 @@ jobs:
           echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env.prod
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env.prod
           echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env.prod
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env.prod
           echo "APP_PORT=${{ secrets.APP_PORT }}" >> .env.prod
+         
 
       - name: Build and run CI containers
         run: make ci  
