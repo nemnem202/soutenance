@@ -1,18 +1,16 @@
-import AnimatedTabs from "@/components/animated-tabs";
-import { Button } from "@/components/button";
-import { HistoryBackButton } from "@/components/custom-buttons";
-import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/drawer";
-import Header from "@/components/game-header";
-import ChordTab from "@/components/game/chord-tab";
-import { Tab } from "@/components/game/game-assets";
-import DesktopGameControlsSection, { MobileGameControlSection } from "@/components/game/game-controls-section";
-import GameSidebar from "@/components/game/game-sidebar";
-import Headline from "@/components/headline";
-import MobileHeaderNavContainer from "@/components/mobile-header-nav-container";
-import SizeAdapter from "@/components/size-adapter";
+import AnimatedTabs from "@/components/organisms/animated-tabs";
+import { HistoryBackButton } from "@/components/ui/custom-buttons";
+import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/organisms/drawer";
+import Header from "@/components/features/layout/game-header";
+import ChordTab from "@/components/features/game/chord-tab";
+import { Tab } from "@/components/features/game/game-assets";
+import DesktopGameControlsSection, { MobileGameControlSection } from "@/components/features/game/game-controls-section";
+import GameSidebar from "@/components/features/game/game-sidebar";
+import Headline from "@/components/ui/headline";
+import MobileHeaderNavContainer from "@/components/features/layout/mobile-header-nav-container";
+import SizeAdapter from "@/components/molecules/size-adapter";
 import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
-import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 
 export default function Page() {

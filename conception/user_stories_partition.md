@@ -13,24 +13,24 @@
 | US-007 | Utilisateur connecté | Demander la vérification en tant que compositeur officiel | Certifier mes créations                              | • Formulaire de demande<br>• Badge visible sur le profil si vérifié<br>• Processus de validation administrateur (v1.0 futur)                                                                                      | Won't Have v1.0 |
 | US-008 | Utilisateur connecté | Supprimer mon profil                                      | Supprimer mes données personnelles                   | • Bouton de suppression<br>• Confirmation avant suppression<br>• Conformité RGPD                                                                                                                                  | Should Have     |
 
-## Gestion des Exercices et Playlists
+## Gestion des Exercises et Playlists
 
 | ID     | En tant que          | Je souhaite                              | Afin de                                     | Critères d'acceptation                                                                     | Priorité    |
 | ------ | -------------------- | ---------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------ | ----------- |
-| US-009 | Visiteur             | Chercher un exercice                     | Trouver rapidement un exercice à consulter  | • Barre de recherche<br>• Affichage des résultats pertinents<br>• Accès en lecture seule   | Must Have   |
-| US-010 | Visiteur             | Utiliser un exercice sans le modifier    | Tester l’exercice sans danger               | • Lecture de l’exercice<br>• Pas de modification possible                                  | Must Have   |
-| US-011 | Utilisateur connecté | Enregistrer un exercice dans ma playlist | Organiser mes exercices préférés            | • Choix de la playlist propriétaire<br>• Confirmation après ajout                          | Must Have   |
-| US-012 | Utilisateur connecté | Créer une nouvelle playlist propriétaire | Organiser mes exercices comme je veux       | • Formulaire de création de playlist<br>• Nom et description<br>• Confirmation en français | Must Have   |
-| US-013 | Utilisateur connecté | Importer un exercice ou une playlist     | Ajouter du contenu existant dans mon compte | • Import de fichiers XML ou liens iReal Pro<br>• Confirmation de l'importation             | Should Have |
-| US-014 | Utilisateur connecté | Liker une playlist ou un exercice        | Marquer mes contenus préférés               | • Bouton "Like"<br>• Enregistrement dans la liste de likes                                 | Should Have |
+| US-009 | Visiteur             | Chercher un exercise                     | Trouver rapidement un exercise à consulter  | • Barre de recherche<br>• Affichage des résultats pertinents<br>• Accès en lecture seule   | Must Have   |
+| US-010 | Visiteur             | Utiliser un exercise sans le modifier    | Tester l’exercise sans danger               | • Lecture de l’exercise<br>• Pas de modification possible                                  | Must Have   |
+| US-011 | Utilisateur connecté | Enregistrer un exercise dans ma playlist | Organiser mes exercises préférés            | • Choix de la playlist propriétaire<br>• Confirmation après ajout                          | Must Have   |
+| US-012 | Utilisateur connecté | Créer une nouvelle playlist propriétaire | Organiser mes exercises comme je veux       | • Formulaire de création de playlist<br>• Nom et description<br>• Confirmation en français | Must Have   |
+| US-013 | Utilisateur connecté | Importer un exercise ou une playlist     | Ajouter du contenu existant dans mon compte | • Import de fichiers XML ou liens iReal Pro<br>• Confirmation de l'importation             | Should Have |
+| US-014 | Utilisateur connecté | Liker une playlist ou un exercise        | Marquer mes contenus préférés               | • Bouton "Like"<br>• Enregistrement dans la liste de likes                                 | Should Have |
 
-## Gestion d’un Exercice (Modules)
+## Gestion d’un Exercise (Modules)
 
 | ID     | En tant que          | Je souhaite                        | Afin de                                   | Critères d'acceptation                                                                                      | Priorité    |
 | ------ | -------------------- | ---------------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ----------- |
-| US-015 | Utilisateur connecté | Modifier un exercice               | Mettre à jour son contenu                 | • Modifier nom, visibilité, crédits<br>• Gestion des modules incluse                                        | Must Have   |
+| US-015 | Utilisateur connecté | Modifier un exercise               | Mettre à jour son contenu                 | • Modifier nom, visibilité, crédits<br>• Gestion des modules incluse                                        | Must Have   |
 | US-016 | Utilisateur connecté | Modifier la partition              | Ajuster la mélodie ou la grille d’accords | • Modifier notes, accords<br>• Choisir ou définir des voicings<br>• Modifier le mode d’affichage            | Must Have   |
 | US-017 | Utilisateur connecté | Modifier le module accompagnement  | Ajouter ou supprimer des pistes           | • Ajouter/retirer piste<br>• Modifier le MIDI des pistes                                                    | Should Have |
-| US-018 | Utilisateur connecté | Utiliser le Sampler                | Ajouter des sons ou effets à mon exercice | • Importer un sample<br>• Utiliser banque publique ou privée<br>• Ajouter ou retirer un effet via le mixeur | Should Have |
-| US-019 | Utilisateur connecté | Modifier le module Contrôleur MIDI | Jouer l'exercice via un contrôleur        | • Activer/désactiver contrôle MIDI<br>• Modifier le son<br>• Activer retour d’erreur                        | Should Have |
-| US-020 | Utilisateur connecté | Modifier le module Lecture         | Contrôler la lecture de l'exercice        | • Modifier BPM<br>• Lancer/Stopper la lecture                                                               | Must Have   |
+| US-018 | Utilisateur connecté | Utiliser le Sampler                | Ajouter des sons ou effets à mon exercise | • Importer un sample<br>• Utiliser banque publique ou privée<br>• Ajouter ou retirer un effet via le mixeur | Should Have |
+| US-019 | Utilisateur connecté | Modifier le module Contrôleur MIDI | Jouer l'exercise via un contrôleur        | • Activer/désactiver contrôle MIDI<br>• Modifier le son<br>• Activer retour d’erreur                        | Should Have |
+| US-020 | Utilisateur connecté | Modifier le module Lecture         | Contrôler la lecture de l'exercise        | • Modifier BPM<br>• Lancer/Stopper la lecture                                                               | Must Have   |

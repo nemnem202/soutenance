@@ -1,10 +1,10 @@
-import AnimatedTabs from "@/components/animated-tabs";
-import Headline from "@/components/headline";
+import AnimatedTabs from "@/components/organisms/animated-tabs";
+import Headline from "@/components/ui/headline";
 import { ReactNode } from "react";
 import { useLanguage } from "@/hooks/use-language";
 import useFavoritesNavigation from "@/hooks/use-favorites-navigation";
-import MobileHeader from "@/components/mobile/header";
-import SizeAdapter from "@/components/size-adapter";
+import MobileHeader from "@/components/features/layout/mobile-header";
+import SizeAdapter from "@/components/molecules/size-adapter";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return <SizeAdapter sm={<Mobile>{children}</Mobile>} md={<Desktop>{children}</Desktop>} />;
@@ -15,7 +15,7 @@ function Desktop({ children }: { children: ReactNode }) {
   const { instance } = useLanguage();
   const tabs = [
     { id: "", label: instance.getItem("overview") },
-    { id: "exercices", label: instance.getItem("exercices") },
+    { id: "exercises", label: instance.getItem("exercises") },
     { id: "playlists", label: instance.getItem("playlists") },
     { id: "users", label: instance.getItem("users") },
   ];

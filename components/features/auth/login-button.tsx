@@ -1,0 +1,78 @@
+import { Dispatch, SetStateAction, useState } from "react";
+import { Button } from "../../ui/button";
+import Logo from "../../ui/logo";
+import GoogleLoginButton from "../../organisms/google-login-button";
+import Modal from "../../organisms/modal";
+import { useLanguage } from "@/hooks/use-language";
+import RegisterForm from "./register-form";
+import LoginForm from "./login-form";
+
+export default function LoginButton() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [mode, setMode] = useState<"login" | "register">("login");
+  const { instance } = useLanguage();
+  return (
+    <>
+      <Button variant={"link"} className="title-3 text-primary" onClick={() => setIsOpen(true)}>
+        {instance.getItem("login")}
+      </Button>
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} size="md" title="Login Modal">
+        {mode === "login" ? <LoginModalContent setMode={setMode} /> : <RegisterModalContent setMode={setMode} />}
+      </Modal>
+    </>
+  );
+}
+
+function LoginModalContent({ setMode }: { setMode: Dispatch<SetStateAction<"login" | "register">> }) {
+  const { instance } = useLanguage();
+  return (
+    <div className="flex flex-col items-center min-w-0 min-h-0 gap-4">
+      <Logo />
+      <LoginForm />
+      <div className="flex flex-col items-center w-full gap-3">
+        <p className="paragraph-sm text-muted-foreground">{instance.getItem("or_login_with")}</p>
+        <GoogleLoginButton />
+      </div>
+      <p className="paragraph-md flex gap-2">
+        {instance.getItem("dont_have_an_account")}
+        <Button
+          variant={"link"}
+          className="text-primary p-0 h-min paragraph-md "
+          onClick={(e) => {
+            e.preventDefault();
+            setMode("register");
+          }}
+        >
+          {instance.getItem("register_here")}
+        </Button>
+      </p>
+    </div>
+  );
+}
+
+function RegisterModalContent({ setMode }: { setMode: Dispatch<SetStateAction<"login" | "register">> }) {
+  const { instance } = useLanguage();
+  return (
+    <div className="flex flex-col items-center min-w-0 min-h-0 gap-4">
+      <Logo />
+      <RegisterForm />
+      <div className="flex flex-col items-center w-full gap-3">
+        <p className="paragraph-sm text-muted-foreground">{instance.getItem("or_login_with")}</p>
+        <GoogleLoginButton />
+      </div>
+      <p className="paragraph-md flex gap-2">
+        {instance.getItem("already_have_an_account")}
+        <Button
+          variant={"link"}
+          className="text-primary p-0 h-min paragraph-md "
+          onClick={(e) => {
+            e.preventDefault();
+            setMode("login");
+          }}
+        >
+          {instance.getItem("login_here")}
+        </Button>
+      </p>
+    </div>
+  );
+}

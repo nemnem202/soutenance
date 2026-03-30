@@ -1,5 +1,4 @@
 import { availableLanguages, languagePack } from "@/config/language-pack";
-import LanguageEnum from "@/i18n/languages";
 
 export type LanguageKey = keyof typeof LanguageEnum;
 

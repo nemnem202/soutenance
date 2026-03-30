@@ -1,4 +1,4 @@
-import { SearchbarProps } from "@/components/searchbar";
+import { SearchbarProps } from "@/components/organisms/searchbar";
 import { faker } from "@faker-js/faker";
 import { History, Search } from "lucide-react";
 import { ChangeEvent, JSX, useEffect, useState } from "react";

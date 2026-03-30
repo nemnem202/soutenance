@@ -64,8 +64,8 @@ export const languagePack = {
     de: "Dir haben sie gefallen",
     zh: "你喜欢的",
   },
-  popularExercices: {
-    fr: "Exercices populaires",
+  popularExercises: {
+    fr: "Exercises populaires",
     en: "Popular exercises",
     es: "Ejercicios populares",
     de: "Beliebte Übungen",
@@ -211,8 +211,8 @@ export const languagePack = {
     de: "Alle",
     zh: "全部",
   },
-  browse_exercices: {
-    fr: "Parcourir les exercices",
+  browse_exercises: {
+    fr: "Parcourir les exercises",
     en: "Browse exercises",
     es: "Explorar ejercicios",
     de: "Übungen durchsuchen",
@@ -512,15 +512,15 @@ export const languagePack = {
     de: "Speichern",
     zh: "保存",
   },
-  exercices: {
-    fr: "Exercices",
+  exercises: {
+    fr: "Exercises",
     en: "Exercises",
     es: "Ejercicios",
     de: "Übungen",
     zh: "练习",
   },
-  exercice: {
-    fr: "Exercice",
+  exercise: {
+    fr: "Exercise",
     en: "Exercise",
     es: "Ejercicio",
     de: "Übung",

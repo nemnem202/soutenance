@@ -1,5 +1,4 @@
-import { Account } from "@/types/account";
-import { Exercice, Playlist } from "@/types/project";
+import { Account, Exercise, Playlist } from "@/types/entities";
 import { Faker, en } from "@faker-js/faker";
 
 const faker = new Faker({ locale: [en] });
@@ -13,7 +12,7 @@ function generateAccount(): Account {
   };
 }
 
-function generateExercice(accounts: Account[]): Exercice {
+function generateExercise(accounts: Account[]): Exercise {
   return {
     id: faker.string.uuid(),
     title: faker.music.songName(),
@@ -24,14 +23,14 @@ function generateExercice(accounts: Account[]): Exercice {
     },
     creation: faker.date.anytime(),
     hasChords: faker.datatype.boolean(),
-    haseMelody: faker.datatype.boolean(),
+    hasMelody: faker.datatype.boolean(),
     midiFileId: faker.string.uuid(),
   };
 }
 
-function generatePlaylist(exercices: Exercice[], accounts: Account[]): Playlist {
-  const nbExercices = faker.number.int({ min: 1, max: 5 });
-  const selected = faker.helpers.arrayElements(exercices, nbExercices);
+function generatePlaylist(exercises: Exercise[], accounts: Account[]): Playlist {
+  const nbExercises = faker.number.int({ min: 1, max: 5 });
+  const selected = faker.helpers.arrayElements(exercises, nbExercises);
 
   return {
     id: faker.string.uuid(),
@@ -43,21 +42,22 @@ function generatePlaylist(exercices: Exercice[], accounts: Account[]): Playlist 
     },
     title: faker.music.album(),
     tags: Array.from({ length: faker.number.int({ min: 1, max: 5 }) }, () => faker.hacker.noun()),
-    exercicesIds: selected.map((e) => e.id),
+    exercisesIds: selected.map((e) => e.id),
     description: faker.lorem.sentences(faker.number.int({ min: 1, max: 3 })),
+    visibility: "public",
   };
 }
 
 export function generatePlaceholders() {
   const accounts = Array.from({ length: 20 }, generateAccount);
 
-  const exercices = Array.from({ length: 100 }, () => generateExercice(accounts));
+  const exercises = Array.from({ length: 100 }, () => generateExercise(accounts));
 
-  const playlists = Array.from({ length: 20 }, () => generatePlaylist(exercices, accounts));
+  const playlists = Array.from({ length: 20 }, () => generatePlaylist(exercises, accounts));
 
   return {
     accounts,
-    exercices,
+    exercises,
     playlists,
   };
 }

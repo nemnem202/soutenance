@@ -1,9 +1,6 @@
 import { getRandomAccount } from "@/lib/utils";
-import { Data } from "@/pages/+data";
-import { Session } from "@/types/session";
+import { Session } from "@/types/auth";
 import { createContext, Dispatch, ReactNode, SetStateAction, useState } from "react";
-import { useData } from "vike-react/useData";
-
 export interface SessionData {
   session: Session | null;
   setSession: Dispatch<SetStateAction<Session | null>>;

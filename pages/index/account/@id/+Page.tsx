@@ -1,15 +1,15 @@
-import ArrowElipsisTopMenu from "@/components/mobile/arrow-elipsis-top-menu";
-import { MediumPlaylistWrapper } from "@/components/playlists-widgets";
-import Searchbar from "@/components/searchbar";
-import SizeAdapter from "@/components/size-adapter";
+import ArrowElipsisTopMenu from "@/components/features/layout/arrow-elipsis-top-menu";
+import Searchbar from "@/components/organisms/searchbar";
+import SizeAdapter from "@/components/molecules/size-adapter";
 import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
 import { Data } from "@/pages/+data";
-import { Account } from "@/types/account";
-import { useEffect, useState } from "react";
+import { Account } from "@/types/entities";
+import { useEffect } from "react";
 import { useData } from "vike-react/useData";
 import { usePageContext } from "vike-react/usePageContext";
 import { navigate } from "vike/client/router";
+import { MediumPlaylistWrapper } from "@/components/features/playlist/playlists-widgets";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
@@ -32,7 +32,6 @@ export default function Page() {
     </div>
   );
 }
-
 function Banner({ account }: { account: Account }) {
   return (
     <div className="flex w-full md:flex-row flex-col gap-8 items-center">

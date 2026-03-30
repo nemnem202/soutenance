@@ -9,13 +9,13 @@ export default startApp() as unknown;
 function startApp() {
   const app = express();
 
-  const { accounts, exercices, playlists } = generatePlaceholders();
+  const { accounts, exercises, playlists } = generatePlaceholders();
 
   app.get("/placeholders", (req, res) => {
     console.log("Placeholder asked");
     return res.send({
       accounts,
-      exercices,
+      exercises,
       playlists,
     });
   });

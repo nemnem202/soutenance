@@ -1,12 +1,11 @@
 import { getPreferredLanguage } from "@/lib/utils";
 import { ScreenSizeType } from "@/providers/screen-size-provider";
-import { Account } from "@/types/account";
-import { Exercice, Playlist } from "@/types/project";
 import { PageContextServer } from "vike/types";
 import { UAParser } from "ua-parser-js";
-import { ChordHarmony, Notes } from "@/types/midi";
+import { ChordHarmony, Notes } from "@/types/music";
 import { faker } from "@faker-js/faker";
-import { CHORDS_DICTIONNARY } from "@/config/chords-dictionnary";
+import { CHORDS_DICTIONNARY } from "@/config/chords-dictionary";
+import { Account, Exercise, Playlist } from "@/types/entities";
 
 function getScreen(pageContext: PageContextServer): ScreenSizeType {
   const ua = pageContext.headers ? (pageContext.headers["user-agent"] ?? "") : "";
@@ -48,15 +47,15 @@ export async function data(pageContext: PageContextServer) {
     const screen = getScreen(pageContext);
     const preferredLanguage = getPreferredLanguage(acceptLanguage);
     const res = await fetch("http://localhost:3000/placeholders");
-    const { accounts, exercices, playlists } = (await res.json()) as {
+    const { accounts, exercises, playlists } = (await res.json()) as {
       accounts: Account[];
-      exercices: Exercice[];
+      exercises: Exercise[];
       playlists: Playlist[];
     };
-    return { accounts, exercices, playlists, preferredLanguage, screen, chordsPlaceholders: generatePlaceholders() };
+    return { accounts, exercises, playlists, preferredLanguage, screen, chordsPlaceholders: generatePlaceholders() };
   } catch (err) {
     console.error(err);
-    return { accounts: [], exercices: [], playlists: [], chordsPlaceholders: generatePlaceholders() };
+    return { accounts: [], exercises: [], playlists: [], chordsPlaceholders: generatePlaceholders() };
   }
 }
 

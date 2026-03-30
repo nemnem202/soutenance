@@ -1,5 +1,5 @@
-import FavoritesSearchbarSpace from "@/components/favorites-searchbar-space";
-import { MediumPlaylistWrapper } from "@/components/playlists-widgets";
+import FavoritesSearchbarSpace from "@/components/features/layout/favorites-searchbar-space";
+import { MediumPlaylistWrapper } from "@/components/features/playlist/playlists-widgets";
 import { useLanguage } from "@/hooks/use-language";
 
 export default function Page() {

@@ -1,20 +1,17 @@
-import AccountPP from "@/components/account-pp";
-import { Badge } from "@/components/badge";
-import { Button } from "@/components/button";
-import { Checkbox } from "@/components/checkbox";
-import { LikeButton, PlusButton } from "@/components/custom-buttons";
-import ArrowElipsisTopMenu from "@/components/mobile/arrow-elipsis-top-menu";
-import { PlaylistItemsList } from "@/components/playlist-items";
-import Searchbar from "@/components/searchbar";
-import { Separator } from "@/components/separator";
-import SizeAdapter from "@/components/size-adapter";
+import AccountPP from "@/components/ui/account-pp";
+import { LikeButton, PlusButton } from "@/components/ui/custom-buttons";
+import ArrowElipsisTopMenu from "@/components/features/layout/arrow-elipsis-top-menu";
+import Searchbar from "@/components/organisms/searchbar";
+import { Separator } from "@/components/ui/separator";
+import SizeAdapter from "@/components/molecules/size-adapter";
 import { useLanguage } from "@/hooks/use-language";
 import { Data } from "@/pages/+data";
-import { Playlist } from "@/types/project";
+import { Playlist } from "@/types/entities";
 import { useEffect, useState } from "react";
 import { useData } from "vike-react/useData";
 import { usePageContext } from "vike-react/usePageContext";
 import { navigate } from "vike/client/router";
+import { PlaylistItemsList } from "@/components/features/playlist/playlist-items";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
@@ -80,7 +77,7 @@ function Banner({ playlist }: { playlist: Playlist }) {
             md={
               <div className="flex gap-2">
                 <p className="text-muted-foreground">
-                  {playlist.exercicesIds.length} {instance.getItem("exercices").toLowerCase()}
+                  {playlist.exercisesIds.length} {instance.getItem("exercises").toLowerCase()}
                 </p>
                 <Separator orientation="vertical" />
                 <p className="text-muted-foreground">{instance.getItem("medium")}</p>
