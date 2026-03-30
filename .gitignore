@@ -147,3 +147,5 @@ dist
 # aws-cdk
 .cdk.staging
 cdk.out
+
+/lib/generated/prisma
