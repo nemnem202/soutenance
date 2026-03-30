@@ -8,7 +8,8 @@
     "prod": "vike build && node ./dist/server/index.mjs",
     "prisma:studio": "prisma studio",
     "prisma:generate": "prisma generate",
-    "shadcn": "npx shadcn@latest"
+    "shadcn": "npx shadcn@latest",
+    "test": "vitest run"
   },
   "dependencies": {
     "@faker-js/faker": "^10.3.0",
@@ -67,7 +68,8 @@
     "prisma": "^7.4.0",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3",
-    "vite": "^7.3.1"
+    "vite": "^7.3.1",
+    "vitest": "^4.1.2"
   },
   "type": "module"
 }
