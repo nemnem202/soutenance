@@ -1,6 +1,6 @@
 import { getRandomAccount } from "@/lib/utils";
-import { Session } from "@/types/auth";
-import { createContext, Dispatch, ReactNode, SetStateAction, useState } from "react";
+import type { Session } from "@/types/auth";
+import { createContext, type Dispatch, type ReactNode, type SetStateAction, useState } from "react";
 export interface SessionData {
   session: Session | null;
   setSession: Dispatch<SetStateAction<Session | null>>;

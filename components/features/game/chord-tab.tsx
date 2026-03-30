@@ -16,13 +16,11 @@ export default function ChordTab() {
   const handleClickNext = () => {
     if (display === "carousel") {
       api?.scrollNext();
-    } else {
     }
   };
   const handleClickPrev = () => {
     if (display === "carousel") {
       api?.scrollPrev();
-    } else {
     }
   };
   return (
@@ -35,6 +33,7 @@ export default function ChordTab() {
       <div className="w-full h-20 flex justify-between items-end gap-2 p-2 hidden md:flex">
         <div className="border rounded-md flex items-center h-10 overflow-hidden ">
           <button
+            type="button"
             onClick={() => setDisplay("carousel")}
             className={`cursor-pointer w-full h-full flex justify-center items-center px-2 ${display === "grid" && "text-muted-foreground bg-popover"}`}
           >
@@ -42,6 +41,7 @@ export default function ChordTab() {
           </button>
           <Separator orientation="vertical" />
           <button
+            type="button"
             onClick={() => setDisplay("grid")}
             className={`cursor-pointer w-full h-full flex justify-center items-center px-2 ${display === "carousel" && "text-muted-foreground bg-popover"}`}
           >

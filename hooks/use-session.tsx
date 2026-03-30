@@ -1,4 +1,4 @@
-import { SessionContext, SessionData } from "@/providers/session-provider";
+import { SessionContext, type SessionData } from "@/providers/session-provider";
 import { useContext } from "react";
 
 export default function useSession(): SessionData {

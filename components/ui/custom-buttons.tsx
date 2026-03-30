@@ -1,5 +1,5 @@
 import { ArrowLeft, ChevronLeft, ChevronRight, Heart, Plus } from "lucide-react";
-import { Button, ButtonProps } from "./button";
+import { Button, type ButtonProps } from "./button";
 
 export function LikeButton({ ...props }: ButtonProps) {
   return (

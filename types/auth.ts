@@ -1,5 +1,5 @@
-import { loginSchema, registerSchema } from "@/schemas/auth.schema";
-import z from "zod";
+import type { loginSchema, registerSchema } from "@/schemas/auth.schema";
+import type z from "zod";
 
 export type Session = {
   username: string;

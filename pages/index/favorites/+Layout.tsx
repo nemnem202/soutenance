@@ -1,6 +1,6 @@
 import AnimatedTabs from "@/components/organisms/animated-tabs";
 import Headline from "@/components/ui/headline";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useLanguage } from "@/hooks/use-language";
 import useFavoritesNavigation from "@/hooks/use-favorites-navigation";
 import MobileHeader from "@/components/features/layout/mobile-header";

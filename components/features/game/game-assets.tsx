@@ -1,8 +1,8 @@
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/molecules/input-group";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/molecules/tooltip";
-import { ComponentProps, ReactNode, useId, useState } from "react";
-import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
-import { Button, ButtonProps } from "@/components/ui/button";
+import { type ComponentProps, type ReactNode, useId, useState } from "react";
+import type * as CheckboxPrimitive from "@radix-ui/react-checkbox";
+import { Button, type ButtonProps } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Maximize, Minimize } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
@@ -12,9 +12,9 @@ export function ControlsSection({ children }: { children: ReactNode }) {
   return <div className="flex gap-2 w-fit h-12 px-5 bg-card rounded-md items-center select-none">{children}</div>;
 }
 
-export function IconButton({ children, onClick = () => {} }: { children: ReactNode; onClick?: () => any }) {
+export function IconButton({ children, onClick = () => {} }: { children: ReactNode; onClick?: () => void }) {
   return (
-    <button onClick={onClick} className="all-unset cursor-pointer ">
+    <button type="button" onClick={onClick} className="all-unset cursor-pointer ">
       {children}
     </button>
   );
@@ -25,11 +25,13 @@ export function SidebarTabButton({
   isActive,
   onClick = () => {},
   props = {},
+  disabled = false,
 }: {
   text: string;
   isActive: boolean;
   onClick?: () => void;
   props?: ButtonProps;
+  disabled?: boolean;
 }) {
   return (
     <Button
@@ -38,7 +40,7 @@ export function SidebarTabButton({
       {...props}
     >
       {text}
-      {props.disabled && <span className="paragraph-sm text-muted-foreground ml-5 hidden md:block">upcoming</span>}
+      {disabled && <span className="paragraph-sm text-muted-foreground ml-5 hidden md:block">upcoming</span>}
     </Button>
   );
 }
@@ -160,7 +162,7 @@ export function SmallCheckboxGroup({
   const id = useId();
   return (
     <div className="flex gap-2">
-      <Label htmlFor={id} className={"paragaph " + labelProps?.className} {...labelProps}>
+      <Label htmlFor={id} className={`paragraph ${labelProps?.className}`} {...labelProps}>
         {label}
       </Label>
       <Checkbox id={id} {...checkboxProps} />
@@ -194,13 +196,18 @@ export function Tab({ children }: { children: ReactNode }) {
   const [hover, setHover] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
 
+  const interactiveProps = {
+    role: "region",
+    tabIndex: 0,
+    onMouseEnter: () => setHover(true),
+    onMouseLeave: () => setHover(false),
+    onFocus: () => setHover(true),
+    onBlur: () => setHover(false),
+  };
+
   if (!fullScreen) {
     return (
-      <div
-        className="size-full md:bg-card md:rounded-md relative overflow-hidden"
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-      >
+      <div {...interactiveProps} className="size-full md:bg-card md:rounded-md relative overflow-hidden">
         <div className="hidden md:block">
           <FullScreenButton hover={hover} fullScreen={fullScreen} setFullScreen={setFullScreen} />
         </div>
@@ -209,11 +216,7 @@ export function Tab({ children }: { children: ReactNode }) {
     );
   } else {
     return (
-      <div
-        className="inset-0 absolute top-0 left-0 z-100 bg-background"
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-      >
+      <div {...interactiveProps} className="inset-0 absolute top-0 left-0 z-100 bg-background">
         <FullScreenButton hover={hover} fullScreen={fullScreen} setFullScreen={setFullScreen} />
         {children}
       </div>

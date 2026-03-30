@@ -1,4 +1,4 @@
-import { Note, ChordDictionary, ChordIntervals, ChordLabel, ChordHarmony } from "@/types/music";
+import type { ChordDictionary, ChordIntervals, ChordLabel } from "@/types/music";
 
 const CHORDS_DICTIONNARY_RAW: Record<string, [number[], string[]?]> = {
   "4": [[0, 4, 10, 15], ["quartal"]],

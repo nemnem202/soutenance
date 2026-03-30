@@ -10,14 +10,10 @@ import EditableImage from "../../organisms/editable-image";
 import { Button } from "../../ui/button";
 import { useLanguage } from "@/hooks/use-language";
 import { Switch } from "../../ui/switch";
-import { useModalContainer } from "../../organisms/modal";
-
-export interface NewPlaylistFormProps {}
 
 export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
   const { form, formRef, handleSubmit } = useNewPlaylistForm();
   const { instance } = useLanguage();
-  const container = useModalContainer();
   return (
     <form id="form-rhf-post" onSubmit={form.handleSubmit(handleSubmit)} ref={formRef}>
       <FieldGroup className={`flex  items-center  flex-col ${axe === "x" && "md:flex-row"}`}>
@@ -151,9 +147,10 @@ function TagsInput({ onChange, defaultValue = [] }: { defaultValue?: string[]; o
       />
       <div className="flex flex-wrap items-center gap-2">
         {tags.map((t, index) => (
-          <Badge variant="outline" className="text-muted-foreground paragraph-md gap-2 py-1.5 pl-2">
+          <Badge variant="outline" className="text-muted-foreground paragraph-md gap-2 py-1.5 pl-2" key={t}>
             {t}
             <button
+              type="button"
               onClick={(e) => {
                 e.preventDefault();
                 setTags((prev) => prev.filter((_, i) => i !== index));

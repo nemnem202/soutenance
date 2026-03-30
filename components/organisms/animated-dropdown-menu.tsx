@@ -1,10 +1,10 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState } from "react";
+import { type Dispatch, type ReactNode, type SetStateAction, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-const ROTATION_ANGLE_OPEN = 180;
+// const ROTATION_ANGLE_OPEN = 180;
 const DROPDOWN_OFFSET = 4;
 
 export interface DropdownItem {
@@ -26,7 +26,7 @@ export interface BasicDropdownProps {
 }
 
 export default function BasicDropdown({
-  label,
+  // label,
   items,
   onItemClick,
   onFocusChange,
@@ -109,7 +109,7 @@ export default function BasicDropdown({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, closeOnClickOutside, setIsOpen]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

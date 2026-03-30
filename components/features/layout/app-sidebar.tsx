@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { type ReactNode, useState } from "react";
 import { Separator } from "../../ui/separator";
 import { Compass, Heart, House, LayoutDashboard } from "lucide-react";
 import { SmallPlaylistWidget } from "../playlist/playlists-widgets";

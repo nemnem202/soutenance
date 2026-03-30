@@ -1,5 +1,5 @@
-import { languagePack, availableLanguages } from "@/config/language-pack";
-import { Language, LanguagePackKeys } from "@/types/i18n";
+import { languagePack } from "@/config/language-pack";
+import type { Language, LanguagePackKeys } from "@/types/i18n";
 
 export default class I18nModule {
   private _currentLanguage: Language;

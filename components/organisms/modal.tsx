@@ -3,7 +3,6 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useOnClickOutside } from "usehooks-ts";
 
 export interface ModalProps {
   isOpen: boolean;

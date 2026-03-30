@@ -26,26 +26,26 @@ function Desktop() {
       <MediumWidgetCarousel
         title={instance.getItem("recentlyPlayed")}
         widgets={Array.from({ length: 20 }).map(() => (
-          <MediumPlaylistWidget />
+          <MediumPlaylistWidget key={crypto.randomUUID()} />
         ))}
       />
       <MediumWidgetCarousel
         title={instance.getItem("moreOfThem")}
         widgets={Array.from({ length: 20 }).map(() => (
-          <MediumAccountWidget />
+          <MediumAccountWidget key={crypto.randomUUID()}/>
         ))}
       />
       <MediumWidgetCarousel
         title={instance.getItem("popularExercises")}
         widgets={Array.from({ length: 20 }).map(() => (
-          <MediumPlaylistWidget />
+          <MediumPlaylistWidget key={crypto.randomUUID()}/>
         ))}
       />
 
       <MediumWidgetCarousel
         title={instance.getItem("discover")}
         widgets={Array.from({ length: 20 }).map(() => (
-          <MediumPlaylistWidget />
+          <MediumPlaylistWidget key={crypto.randomUUID()}/>
         ))}
       />
     </>
@@ -60,26 +60,26 @@ function Mobile() {
       <MediumWidgetCarousel
         title={instance.getItem("recentlyPlayed")}
         widgets={Array.from({ length: 20 }).map(() => (
-          <MediumPlaylistWidget />
+          <MediumPlaylistWidget key={crypto.randomUUID()}/>
         ))}
       />
       <MediumWidgetCarousel
         title={instance.getItem("moreOfThem")}
         widgets={Array.from({ length: 20 }).map(() => (
-          <MediumAccountWidget />
+          <MediumAccountWidget key={crypto.randomUUID()}/>
         ))}
       />
       <MediumWidgetCarousel
         title={instance.getItem("popularExercises")}
         widgets={Array.from({ length: 20 }).map(() => (
-          <MediumPlaylistWidget />
+          <MediumPlaylistWidget key={crypto.randomUUID()}/>
         ))}
       />
 
       <MediumWidgetCarousel
         title={instance.getItem("discover")}
         widgets={Array.from({ length: 20 }).map(() => (
-          <MediumPlaylistWidget />
+          <MediumPlaylistWidget key={crypto.randomUUID()}/>
         ))}
       />
     </>

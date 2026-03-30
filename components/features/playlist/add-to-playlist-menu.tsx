@@ -8,7 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "../../organisms/dropdown-menu";
-import { Data } from "@/pages/+data";
+import type { Data } from "@/pages/+data";
 import { faker } from "@faker-js/faker";
 import { SmallAddNewPlaylistWidget, SmallPlaylistWidget } from "./playlists-widgets";
 import { Separator } from "../../ui/separator";

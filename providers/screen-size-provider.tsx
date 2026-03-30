@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useEffect, useState } from "react";
+import { createContext, type ReactNode, useEffect, useState } from "react";
 import { useData } from "vike-react/useData";
 
 const BREAKPOINTS = {

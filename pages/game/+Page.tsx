@@ -1,21 +1,26 @@
 import AnimatedTabs from "@/components/organisms/animated-tabs";
 import { HistoryBackButton } from "@/components/ui/custom-buttons";
-import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/organisms/drawer";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/organisms/drawer";
 import Header from "@/components/features/layout/game-header";
 import ChordTab from "@/components/features/game/chord-tab";
 import { Tab } from "@/components/features/game/game-assets";
-import DesktopGameControlsSection, { MobileGameControlSection } from "@/components/features/game/game-controls-section";
+import DesktopGameControlsSection, {
+  MobileGameControlSection,
+} from "@/components/features/game/game-controls-section";
 import GameSidebar from "@/components/features/game/game-sidebar";
 import Headline from "@/components/ui/headline";
 import MobileHeaderNavContainer from "@/components/features/layout/mobile-header-nav-container";
 import SizeAdapter from "@/components/molecules/size-adapter";
 import { useLanguage } from "@/hooks/use-language";
-import useScreen from "@/hooks/use-screen";
 import { useState } from "react";
 
 export default function Page() {
   const [sidebarOpen, setOpen] = useState(false);
-  const size = useScreen();
   return (
     <div className="flex flex-row w-screen h-screen overflow-hidden">
       <GameSidebar sidebarOpen={sidebarOpen} setOpen={setOpen} />
@@ -31,7 +36,9 @@ export default function Page() {
               <DrawerContent className="rounded-none border-t border-l-0 border-r-0 border-b-0">
                 <DrawerTitle className="hidden">Game controls</DrawerTitle>
                 <div className="mx-auto w-full max-w-sm h-fit py-10 pt-0">
-                  <MobileGameControlSection toggleSidebar={() => setOpen((prev) => !prev)} />
+                  <MobileGameControlSection
+                    toggleSidebar={() => setOpen((prev) => !prev)}
+                  />
                 </div>
               </DrawerContent>
             </Drawer>
@@ -90,7 +97,11 @@ function Game({ ...props }: Gameprops) {
             <div className="col-2 flex-1 justify-center hidden sm:flex">
               <AnimatedTabs
                 activeTab={activeTab}
-                onChange={(v) => setActiveTab(v as any)}
+                onChange={(v) =>
+                  setActiveTab(
+                    v as "piano-roll" | "chords" | "sheet" | "guitar",
+                  )
+                }
                 tabs={tabs}
                 variant="pill"
                 className="my-2"

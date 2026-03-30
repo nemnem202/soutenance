@@ -14,13 +14,19 @@ import {
 } from "../../organisms/dropdown-menu";
 
 import { Button } from "../../ui/button";
-import { Brush, LanguagesIcon, LogOutIcon, Settings2, SettingsIcon, UserIcon } from "lucide-react";
+import {
+  Brush,
+  LanguagesIcon,
+  LogOutIcon,
+  Settings2,
+  UserIcon,
+} from "lucide-react";
 import { navigate } from "vike/client/router";
 import { useTheme } from "@/hooks/use-theme";
 import { useLanguage } from "@/hooks/use-language";
 import { availableLanguages } from "@/config/language-pack";
 import flags from "@/i18n/flags";
-import { Language } from "@/types/i18n";
+import type { Language } from "@/types/i18n";
 
 export default function AccountMenu() {
   const { session, setSession } = useSession();
@@ -40,7 +46,9 @@ export default function AccountMenu() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem onClick={() => navigate("/account/" + session.userId)}>
+        <DropdownMenuItem
+          onClick={() => navigate(`/account/${session.userId}`)}
+        >
           <UserIcon />
           {instance.getItem("profile")}
         </DropdownMenuItem>
@@ -84,12 +92,14 @@ export default function AccountMenu() {
             <DropdownMenuSubContent className="min-w-0">
               {availableLanguages.map((lang) => (
                 <DropdownMenuCheckboxItem
+                  key={lang}
                   checked={lang === instance.getCurrentLanguage()}
                   onClick={() => handleLanguageChange(lang)}
                   className="flex items-center justify-between gap-2"
                 >
                   {lang.charAt(0).toUpperCase() + lang.slice(1)}
                   <img
+                    alt={`a flag of ${lang}`}
                     style={{ width: "20px" }}
                     src={`https://purecatamphetamine.github.io/country-flag-icons/3x2/${flags[lang]}.svg`}
                   />

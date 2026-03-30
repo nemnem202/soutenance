@@ -10,7 +10,7 @@ enum LanguageEnum {
   bulgarian = "bg",
   catalan = "ca",
   chinese_simplified = "zh",
-  chinese_traditional = "zh",
+  // chinese_traditional = "zh",
   croatian = "hr",
   czech = "cs",
   danish = "da",

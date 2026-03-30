@@ -1,5 +1,5 @@
 import useScreen from "@/hooks/use-screen";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export default function SizeAdapter({ sm, md }: { sm?: ReactNode; md?: ReactNode }) {
   const size = useScreen();

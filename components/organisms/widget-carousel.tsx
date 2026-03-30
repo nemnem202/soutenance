@@ -1,11 +1,10 @@
 import useCarousel from "@/hooks/use-carousel";
-import { ReactNode, RefObject, useEffect } from "react";
+import { type ReactNode, type RefObject, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeftButton, ChevrontRightButton } from "../ui/custom-buttons";
 import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
-import { navigate } from "vike/client/router";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import SizeAdapter from "../molecules/size-adapter";
 
 interface MediumWidgetGroupProps {
@@ -40,6 +39,7 @@ export function MediumWidgetGroup(props: MediumWidgetGroupProps) {
       className="w-full overflow-x-auto scrollbar-hide flex md:gap-8.5 gap-2 scroll-smooth relative snap-x snap-mandatory bg-background"
       ref={containerRef}
       onScroll={handleScroll}
+      //@eslint-ignore
       onScrollEnd={handleScrollEnd}
     >
       {widgets.map((widget, index) => (

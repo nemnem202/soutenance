@@ -1,8 +1,5 @@
-import { useState } from "react";
-import { LikeButton } from "../../ui/custom-buttons";
-import { useData } from "vike-react/useData";
-import { Data } from "@/pages/+data";
 import { getRandomAccount } from "@/lib/utils";
+import { LikeButton } from "../../ui/custom-buttons";
 
 export function MediumAccountWidget() {
   const account = getRandomAccount();
@@ -33,8 +30,8 @@ export function MediumAccountWidget() {
 export function MediumAccountWrapper() {
   return (
     <div className="grid gap-y-5 md:gap-y-4 gap-2 container grid-cols-[repeat(auto-fit,minmax(30vw,1fr))] md:grid-cols-[repeat(auto-fit,minmax(10rem,1fr))]">
-      {Array.from({ length: 50 }).map((_, index) => (
-        <MediumAccountWidget key={index} />
+      {Array.from({ length: 50 }).map(() => (
+        <MediumAccountWidget key={crypto.randomUUID()} />
       ))}
     </div>
   );

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { type Dispatch, type SetStateAction, useState } from "react";
 import { Button } from "../../ui/button";
 import Logo from "../../ui/logo";
 import GoogleLoginButton from "../../organisms/google-login-button";

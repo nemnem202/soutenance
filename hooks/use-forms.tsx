@@ -1,9 +1,9 @@
-import { useEffect, useRef } from "react";
-import { Resolver, useForm } from "react-hook-form";
+import { useRef } from "react";
+import { type Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { faker } from "@faker-js/faker";
-import { PlaylistSchema } from "@/types/entities";
-import { LoginData, RegisterData } from "@/types/auth";
+import type { PlaylistSchema } from "@/types/entities";
+import type { LoginData, RegisterData } from "@/types/auth";
 import { loginSchema, registerSchema } from "@/schemas/auth.schema";
 import { playlistSchema } from "@/schemas/entities.schema";
 

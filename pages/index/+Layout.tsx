@@ -1,6 +1,6 @@
 import "@/stylesheets/tailwind.css";
 import "@/stylesheets/general.css";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import Sidebar from "@/components/features/layout/app-sidebar";
 import Header from "@/components/features/layout/header";
 import TabBar from "@/components/features/layout/tab-bar";

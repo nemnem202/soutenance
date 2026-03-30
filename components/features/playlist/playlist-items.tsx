@@ -7,9 +7,9 @@ import { useLanguage } from "@/hooks/use-language";
 import { getRandomPlaylist } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { useData } from "vike-react/useData";
-import { Playlist } from "@/types/entities";
-import { Data } from "@/pages/+data";
-import { ReactNode } from "react";
+import type { Playlist } from "@/types/entities";
+import type { Data } from "@/pages/+data";
+import type { ReactNode } from "react";
 
 export function PlaylistItemsList({ playlist }: { playlist: Playlist }) {
   const { instance } = useLanguage();

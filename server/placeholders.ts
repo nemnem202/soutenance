@@ -1,4 +1,4 @@
-import { Account, Exercise, Playlist } from "@/types/entities";
+import type { Account, Exercise, Playlist } from "@/types/entities";
 import { Faker, en } from "@faker-js/faker";
 
 const faker = new Faker({ locale: [en] });

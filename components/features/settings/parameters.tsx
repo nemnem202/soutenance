@@ -3,7 +3,7 @@ import { SettingsParam } from "./settings-assets";
 import { useTheme } from "@/hooks/use-theme";
 import { useId, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/organisms/select";
-import { Language } from "@/types/i18n";
+import type { Language } from "@/types/i18n";
 import { availableLanguages } from "@/config/language-pack";
 import flags from "@/i18n/flags";
 import { Button } from "@/components/ui/button";
@@ -42,6 +42,7 @@ export function LanguageParam() {
   const getLanguageItem = (lang: Language) => (
     <div className="flex gap-2">
       <img
+        alt={`flag of ${lang}`}
         style={{ width: "20px" }}
         src={`https://purecatamphetamine.github.io/country-flag-icons/3x2/${flags[lang]}.svg`}
       />
@@ -54,7 +55,9 @@ export function LanguageParam() {
         <SelectTrigger id={id}>{getLanguageItem(instance.getCurrentLanguage())}</SelectTrigger>
         <SelectContent>
           {availableLanguages.map((lang) => (
-            <SelectItem value={lang}>{getLanguageItem(lang)}</SelectItem>
+            <SelectItem value={lang} key={lang}>
+              {getLanguageItem(lang)}
+            </SelectItem>
           ))}
         </SelectContent>
       </Select>
