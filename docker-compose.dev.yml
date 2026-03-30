@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: music-sandbox-db-dev
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - music-sandbox-data-dev:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      retries: 5
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile.dev
+    image: music-sandbox-app-dev
+    container_name: music-sandbox-app-dev
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "${APP_PORT}:3000"
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    command: ["pnpm", "dev"]
+    restart: unless-stopped
+volumes:
+  music-sandbox-data-dev:
