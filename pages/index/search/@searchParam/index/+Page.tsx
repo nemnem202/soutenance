@@ -16,15 +16,15 @@ export default function Page() {
       <MediumWidgetCarousel
         title={instance.getItem("users")}
         seeAllUrl={`/search/${routeParams.searchParam}/users`}
-        widgets={Array.from({ length: 20 }).map(() => (
-          <MediumAccountWidget key={crypto.randomUUID()} />
+        widgets={Array.from({ length: 20 }).map((_, index) => (
+          <MediumAccountWidget key={index} />
         ))}
       />
       <MediumWidgetCarousel
         title="Playlists"
         seeAllUrl={`/search/${routeParams.searchParam}/playlists`}
-        widgets={Array.from({ length: 20 }).map(() => (
-          <MediumPlaylistWidget key={crypto.randomUUID()} />
+        widgets={Array.from({ length: 20 }).map((_, index) => (
+          <MediumPlaylistWidget key={index} />
         ))}
       />
     </>

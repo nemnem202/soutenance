@@ -133,8 +133,8 @@ export function MediumPlaylistWrapper({
   return (
     <div className="grid gap-y-5 md:gap-y-4 gap-2 container grid-cols-[repeat(auto-fit,minmax(30vw,1fr))] md:grid-cols-[repeat(auto-fit,minmax(10rem,1fr))]">
       {allowToAddANewPlaylist && <MediumAddNewPlaylistWidget />}
-      {Array.from({ length: 50 }).map((_) => (
-        <MediumPlaylistWidget key={crypto.randomUUID()} />
+      {Array.from({ length: 50 }).map((_, i) => (
+        <MediumPlaylistWidget key={i} />
       ))}
     </div>
   );
