@@ -2,7 +2,10 @@ import { Button } from "@/components/ui/button";
 
 export default function GoogleLoginButton() {
   return (
-    <Button variant={"outline"} className="rounded-full h-fit aspect-square p-2">
+    <Button
+      variant={"outline"}
+      className="rounded-full h-fit aspect-square p-2"
+    >
       <img
         data-alt-override="false"
         alt="G"

@@ -1,5 +1,10 @@
 import { Button } from "../../ui/button";
-import { Field, FieldError, FieldGroup, FieldLabel } from "../../molecules/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "../../molecules/field";
 import { Controller } from "react-hook-form";
 import { Input } from "../../ui/input";
 import { useLoginForm } from "@/hooks/use-forms";
@@ -16,7 +21,9 @@ export default function LoginForm() {
       ref={formRef}
       className="w-full flex flex-col items-center justify-between gap-4"
     >
-      <h2 className="title-2 text-primary">{instance.getItem("login_to_your_account")}</h2>
+      <h2 className="title-2 text-primary">
+        {instance.getItem("login_to_your_account")}
+      </h2>
       <FieldGroup className="gap-3">
         <Controller
           name="email"
@@ -64,15 +71,28 @@ export default function LoginForm() {
                   <Checkbox
                     id="form-rhf-remember"
                     defaultChecked={field.value}
-                    onCheckedChange={(c) => form.setValue("remember", typeof c === "boolean" ? c : false)}
+                    onCheckedChange={(c) =>
+                      form.setValue(
+                        "remember",
+                        typeof c === "boolean" ? c : false,
+                      )
+                    }
                   />
-                  <FieldLabel htmlFor="form-rhf-remember">{instance.getItem("remember_me")}</FieldLabel>
+                  <FieldLabel htmlFor="form-rhf-remember">
+                    {instance.getItem("remember_me")}
+                  </FieldLabel>
                 </div>
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
-          <Button variant={"link"} className="text-primary p-0 h-min" onClick={(e) => e.preventDefault()}>
+          <Button
+            variant={"link"}
+            className="text-primary p-0 h-min"
+            onClick={(e) => e.preventDefault()}
+          >
             {instance.getItem("forgot_password")}
           </Button>
         </div>

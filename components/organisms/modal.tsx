@@ -23,7 +23,13 @@ const modalSizes = {
 const ModalContext = React.createContext<HTMLDivElement | null>(null);
 export const useModalContainer = () => React.useContext(ModalContext);
 
-export default function Modal({ isOpen, onClose, title, children, size = "md" }: ModalProps) {
+export default function Modal({
+  isOpen,
+  onClose,
+  title,
+  children,
+  size = "md",
+}: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -32,7 +38,9 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
   const [mounted, setMounted] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
-  const titleId = title ? `modal-title-${Math.random().toString(36).substring(2, 9)}` : undefined;
+  const titleId = title
+    ? `modal-title-${Math.random().toString(36).substring(2, 9)}`
+    : undefined;
 
   useEffect(() => {
     setMounted(true);
@@ -127,7 +135,11 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
                       transition: { duration: 0.15 },
                     }
               }
-              initial={shouldReduceMotion ? { opacity: 1 } : { scale: 0.95, y: 10, opacity: 0 }}
+              initial={
+                shouldReduceMotion
+                  ? { opacity: 1 }
+                  : { scale: 0.95, y: 10, opacity: 0 }
+              }
               transition={
                 shouldReduceMotion
                   ? { duration: 0 }
@@ -140,7 +152,9 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
               }
             >
               <ModalContext.Provider value={modalRef.current}>
-                <div className="relative max-h-[90vh] overflow-y-auto p-4 sm:p-6">{children}</div>
+                <div className="relative max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+                  {children}
+                </div>
               </ModalContext.Provider>
             </motion.div>
           </div>

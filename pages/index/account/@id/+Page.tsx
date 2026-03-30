@@ -17,7 +17,7 @@ export default function Page() {
 
   useEffect(() => {
     if (!account) navigate("/404");
-  }, []);
+  }, [account]);
 
   if (!account) return null;
   return (
@@ -38,7 +38,7 @@ function Banner({ account }: { account: Account }) {
       <div className="w-50 md:w-75 rounded-full aspect-square overflow-hidden">
         <img
           src={account.picture}
-          alt={"An image of " + account.firstName + " " + account.lastName}
+          alt={`${account.firstName} ${account.lastName}`}
           width={300}
           height={300}
           loading="lazy"
@@ -65,7 +65,9 @@ function Content() {
         <Searchbar placeholder={instance.getItem("search")} />
       </div>
       <div className="flex  gap-x-auto gap-y-5 flex-wrap container">
-        <MediumPlaylistWrapper allowToAddANewPlaylist={id === session?.userId} />
+        <MediumPlaylistWrapper
+          allowToAddANewPlaylist={id === session?.userId}
+        />
       </div>
     </div>
   );

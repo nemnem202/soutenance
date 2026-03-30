@@ -1,7 +1,14 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { type Dispatch, type ReactNode, type SetStateAction, useEffect, useRef, useState } from "react";
+import {
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 
 // const ROTATION_ANGLE_OPEN = 180;
@@ -111,10 +118,14 @@ export default function BasicDropdown({
     };
   }, [isOpen, closeOnClickOutside, setIsOpen]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: qsdqsd
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (!isOpen) {
-        if ((event.key === "Enter" || event.key === " ") && document.activeElement === triggerReg.current) {
+        if (
+          (event.key === "Enter" || event.key === " ") &&
+          document.activeElement === triggerReg.current
+        ) {
           event.preventDefault();
           handleToggle();
         }
@@ -148,7 +159,7 @@ export default function BasicDropdown({
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, items, focusedIndex, handleItemSelect, handleToggle]);
+  }, [isOpen, items, focusedIndex]);
 
   useEffect(() => {
     setFocusedIndex(-1);
@@ -164,6 +175,7 @@ export default function BasicDropdown({
   const dropdownContent = (
     <AnimatePresence>
       {isOpen && (
+        // biome-ignore lint/a11y/noStaticElementInteractions:qsdqsd
         <div
           ref={portalRef}
           onMouseLeave={() => {
@@ -172,7 +184,11 @@ export default function BasicDropdown({
           }}
         >
           <motion.div
-            animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, scaleY: 1 }}
+            animate={
+              shouldReduceMotion
+                ? { opacity: 1 }
+                : { opacity: 1, y: 0, scaleY: 1 }
+            }
             className="fixed z-50 origin-top rounded-lg border bg-background shadow-lg"
             exit={
               shouldReduceMotion
@@ -184,22 +200,44 @@ export default function BasicDropdown({
                     transition: { duration: 0.15 },
                   }
             }
-            initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -10, scaleY: 0.8 }}
+            initial={
+              shouldReduceMotion
+                ? { opacity: 1 }
+                : { opacity: 0, y: -10, scaleY: 0.8 }
+            }
             style={{
               top: `${position.top}px`,
               left: `${position.left}px`,
               width: `${position.width}px`,
             }}
-            transition={shouldReduceMotion ? { duration: 0 } : { type: "spring", bounce: 0.1, duration: 0.25 }}
+            transition={
+              shouldReduceMotion
+                ? { duration: 0 }
+                : { type: "spring", bounce: 0.1, duration: 0.25 }
+            }
           >
-            <ul aria-label="Dropdown options" className="p-2" id="dropdown-items">
+            <ul
+              aria-label="Dropdown options"
+              className="p-2"
+              id="dropdown-items"
+            >
               {items.map((item, index) => (
                 <motion.li
-                  animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
-                  aria-selected={selectedItem?.id === item.id || index === focusedIndex}
+                  animate={
+                    shouldReduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }
+                  }
+                  aria-selected={
+                    selectedItem?.id === item.id || index === focusedIndex
+                  }
                   className="block"
-                  exit={shouldReduceMotion ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, x: -20 }}
-                  initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, x: -20 }}
+                  exit={
+                    shouldReduceMotion
+                      ? { opacity: 0, transition: { duration: 0 } }
+                      : { opacity: 0, x: -20 }
+                  }
+                  initial={
+                    shouldReduceMotion ? { opacity: 1 } : { opacity: 0, x: -20 }
+                  }
                   key={item.id}
                   role="option"
                   transition={
@@ -217,7 +255,9 @@ export default function BasicDropdown({
                   <button
                     aria-label={item.label}
                     className={`flex min-h-[44px] w-full items-center px-4 py-2 text-left text-sm transition-colors cursor-pointer hover:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded text-muted-foreground ${
-                      selectedItem?.id === item.id ? "font-medium text-brand" : ""
+                      selectedItem?.id === item.id
+                        ? "font-medium text-brand"
+                        : ""
                     } ${index === focusedIndex ? "bg-muted" : ""}`}
                     onClick={() => {
                       handleItemSelect(item);
@@ -241,11 +281,15 @@ export default function BasicDropdown({
   return (
     <>
       <div className={`relative inline-block ${className}`} ref={dropdownRef}>
+        {/** biome-ignore lint/a11y/noStaticElementInteractions: qsdqsd */}
+        {/** biome-ignore lint/a11y/useKeyWithClickEvents: qsdqsd */}
         <div className="" ref={triggerReg} onClick={handleToggle}>
           {children}
         </div>
       </div>
-      {typeof window !== "undefined" ? createPortal(dropdownContent, document.body) : null}
+      {typeof window !== "undefined"
+        ? createPortal(dropdownContent, document.body)
+        : null}
     </>
   );
 }

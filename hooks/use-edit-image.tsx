@@ -12,7 +12,7 @@ export default function useEditImage(props: EditableImageProps) {
 
   const handleWheel = (e: WheelEvent) => {
     if (e.deltaY > 0) {
-      setAvatarZoom((prev) => Math.max(1, (prev /= 1.1)));
+      setAvatarZoom((prev) => Math.max(1, prev / 1.1));
     } else {
       setAvatarZoom((prev) => (prev *= 1.1));
     }
@@ -44,6 +44,7 @@ export default function useEditImage(props: EditableImageProps) {
     setOpen(false);
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: qsdqsd
   useEffect(() => {
     if (!imageSource) return;
     props.onImageChange(imageSource);

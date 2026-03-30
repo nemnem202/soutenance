@@ -11,7 +11,7 @@ function startApp() {
 
   const { accounts, exercises, playlists } = generatePlaceholders();
 
-  app.get("/placeholders", (req, res) => {
+  app.get("/placeholders", (_, res) => {
     console.log("Placeholder asked");
     return res.send({
       accounts,

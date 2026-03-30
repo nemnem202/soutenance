@@ -6,7 +6,12 @@ import useSearchNavigation from "@/hooks/use-search-navigation";
 import type { ReactNode } from "react";
 
 export default function Layout({ children }: { children: ReactNode }) {
-  return <SizeAdapter sm={<Mobile>{children}</Mobile>} md={<Desktop>{children}</Desktop>} />;
+  return (
+    <SizeAdapter
+      sm={<Mobile>{children}</Mobile>}
+      md={<Desktop>{children}</Desktop>}
+    />
+  );
 }
 
 function Desktop({ children }: { children: ReactNode }) {

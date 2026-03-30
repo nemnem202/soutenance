@@ -2,7 +2,9 @@ import * as z from "zod";
 import { imageSchema } from "./common.schema";
 
 export const loginSchema = z.object({
-  email: z.email({ error: "The email is required" }).max(255, { error: "The email is too long (max 255)." }),
+  email: z
+    .email({ error: "The email is required" })
+    .max(255, { error: "The email is too long (max 255)." }),
   password: z
     .string({ error: "The password is required." })
     .min(8, { error: "The password must be at least 8 characters." })
@@ -17,7 +19,9 @@ export const registerSchema = z
       .string({ error: "The username is required" })
       .min(5, { error: "The username must be at least 5 characters." })
       .max(20, { error: "The username must be 20 characters max." }),
-    email: z.email({ message: "The email is required" }).max(255, { message: "The email is too long (max 255)." }),
+    email: z
+      .email({ message: "The email is required" })
+      .max(255, { message: "The email is too long (max 255)." }),
     password: z
       .string({ message: "The password is required." })
       .min(8, { message: "The password must be at least 8 characters." })

@@ -7,7 +7,7 @@ export default function useFavoritesNavigation() {
   const [activeTab, setActiveTab] = useState(urlPathname.split("/")[2] ?? "");
   const handleNav = (to: string) => {
     setActiveTab(to);
-    navigate("/favorites/" + to);
+    navigate(`/favorites/${to}`);
   };
   useEffect(() => {
     setActiveTab(urlPathname.split("/")[2] ?? "");

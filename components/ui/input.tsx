@@ -14,7 +14,15 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
         }
 
         if (type === "number") {
-          const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End"];
+          const allowedKeys = [
+            "Backspace",
+            "Delete",
+            "ArrowLeft",
+            "ArrowRight",
+            "Tab",
+            "Home",
+            "End",
+          ];
 
           const isNumber = /^[0-9]$/.test(e.key);
 

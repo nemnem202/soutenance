@@ -9,7 +9,10 @@ export const playlistSchema = z.object({
     })
     .min(1, { error: "The title is too short." })
     .max(100, { error: "The title is too long, max 100 caracters." }),
-  description: z.string().max(500, { error: "The descripition is too long, max 100 caracters." }).optional(),
+  description: z
+    .string()
+    .max(500, { error: "The descripition is too long, max 100 caracters." })
+    .optional(),
   tags: z
     .array(
       z

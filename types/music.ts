@@ -23,7 +23,11 @@ export type Note = (typeof Notes)[number];
 
 export type ChordIntervals = number[];
 export type ChordLabel = string;
-export type ChordHarmony = { intervals: ChordIntervals; labels: ChordLabel[]; symbolLabel: ChordLabel };
+export type ChordHarmony = {
+  intervals: ChordIntervals;
+  labels: ChordLabel[];
+  symbolLabel: ChordLabel;
+};
 export type ChordDictionary = Record<string, ChordHarmony | null>;
 
 export interface Chord {

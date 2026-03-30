@@ -15,13 +15,15 @@ interface DropdownItem {
 }
 
 const dataset: DatasetItem[] = Array.from({ length: 500 }).map(() => ({
-  content: faker.music.songName() + " - " + faker.music.artist(),
+  content: `${faker.music.songName()} - ${faker.music.artist()}`,
   inHistory: Math.random() > 0.9,
 }));
 
 export default function useSearchbar({ ...props }: SearchbarProps) {
   const defineItemsFromString = (value: string) => {
-    const matching = dataset.filter((item) => item.content.toLowerCase().includes(value));
+    const matching = dataset.filter((item) =>
+      item.content.toLowerCase().includes(value),
+    );
 
     const matchingHistory = matching.filter((item) => item.inHistory);
     const matchingSearch = matching.filter((item) => !item.inHistory);
@@ -66,5 +68,12 @@ export default function useSearchbar({ ...props }: SearchbarProps) {
     setSearchbarValue(value);
   };
 
-  return { items, handleInputValueChange, searchbarValue, setSearchbarValue, placeholder, setPlaceholder };
+  return {
+    items,
+    handleInputValueChange,
+    searchbarValue,
+    setSearchbarValue,
+    placeholder,
+    setPlaceholder,
+  };
 }

@@ -9,8 +9,18 @@ export const LanguagesContext = createContext<{
   setLanguage: (language: (typeof availableLanguages)[number]) => void;
 } | null>(null);
 
-const LanguagesProvider = ({ children, module }: { children: React.ReactNode; module?: I18nModule }) => {
-  return <LanguagesContext.Provider value={useLanguageProvider({ module })}>{children}</LanguagesContext.Provider>;
+const LanguagesProvider = ({
+  children,
+  module,
+}: {
+  children: React.ReactNode;
+  module?: I18nModule;
+}) => {
+  return (
+    <LanguagesContext.Provider value={useLanguageProvider({ module })}>
+      {children}
+    </LanguagesContext.Provider>
+  );
 };
 
 export default LanguagesProvider;

@@ -1,6 +1,12 @@
 import { getRandomAccount } from "@/lib/utils";
 import type { Session } from "@/types/auth";
-import { createContext, type Dispatch, type ReactNode, type SetStateAction, useState } from "react";
+import {
+  createContext,
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+  useState,
+} from "react";
 export interface SessionData {
   session: Session | null;
   setSession: Dispatch<SetStateAction<Session | null>>;
@@ -17,5 +23,9 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
   };
   const [session, setSession] = useState<Session | null>(placeholder_session);
 
-  return <SessionContext.Provider value={{ session, setSession }}>{children}</SessionContext.Provider>;
+  return (
+    <SessionContext.Provider value={{ session, setSession }}>
+      {children}
+    </SessionContext.Provider>
+  );
 }

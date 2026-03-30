@@ -4,8 +4,8 @@
       "includes": ["**/+data.ts", "**/+data.js"],
       "linter": {
         "rules": {
-          "correctness": {
-            "useHookAtTopLevel": "off"
+          "suspicious": {
+            "noAssignInExpressions": "warn"
           }
         }
       }
@@ -21,7 +21,8 @@
       "!**/*.ts.build-*.mjs",
       "!dist/*",
       "!node_modules/*",
-      "!**/.DS_Store"
+      "!**/.DS_Store",
+      "!**/*.css"
     ]
   },
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",

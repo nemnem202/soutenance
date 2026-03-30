@@ -1,5 +1,9 @@
 import BasicDropdown from "./animated-dropdown-menu";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "../molecules/input-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "../molecules/input-group";
 import { Search } from "lucide-react";
 import useSearchbar from "@/hooks/use-searchbar";
 import { navigate } from "vike/client/router";
@@ -9,8 +13,14 @@ export interface SearchbarProps {
 }
 
 export default function Searchbar({ ...props }: SearchbarProps) {
-  const { items, handleInputValueChange, searchbarValue, setSearchbarValue, placeholder, setPlaceholder } =
-    useSearchbar(props);
+  const {
+    items,
+    handleInputValueChange,
+    searchbarValue,
+    setSearchbarValue,
+    placeholder,
+    setPlaceholder,
+  } = useSearchbar(props);
   const [isOpen, setIsOpen] = useState(false);
   return (
     <BasicDropdown
@@ -19,7 +29,7 @@ export default function Searchbar({ ...props }: SearchbarProps) {
       className="w-full"
       onItemClick={(item) => {
         setSearchbarValue(item.label);
-        navigate("/search/" + item.label);
+        navigate(`/search/${item.label}`);
       }}
       onFocusChange={(item) => {
         if (!item) return setPlaceholder(props.placeholder);
@@ -31,7 +41,8 @@ export default function Searchbar({ ...props }: SearchbarProps) {
       <InputGroup
         className="w-full h-full"
         onKeyDownCapture={(e) => {
-          if (e.key.toLowerCase() === "enter") navigate("/search/" + searchbarValue);
+          if (e.key.toLowerCase() === "enter")
+            navigate(`/search/${searchbarValue}`);
         }}
       >
         <InputGroupAddon align="inline-start" className="pl-3">

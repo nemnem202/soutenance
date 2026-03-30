@@ -2,7 +2,12 @@ import { useLanguage } from "@/hooks/use-language";
 import { SettingsParam } from "./settings-assets";
 import { useTheme } from "@/hooks/use-theme";
 import { useId, useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/organisms/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/organisms/select";
 import type { Language } from "@/types/i18n";
 import { availableLanguages } from "@/config/language-pack";
 import flags from "@/i18n/flags";
@@ -51,8 +56,13 @@ export function LanguageParam() {
   );
   return (
     <SettingsParam label={instance.getItem("language")} id={id}>
-      <Select value={instance.getCurrentLanguage()} onValueChange={(value) => setLanguage(value as Language)}>
-        <SelectTrigger id={id}>{getLanguageItem(instance.getCurrentLanguage())}</SelectTrigger>
+      <Select
+        value={instance.getCurrentLanguage()}
+        onValueChange={(value) => setLanguage(value as Language)}
+      >
+        <SelectTrigger id={id}>
+          {getLanguageItem(instance.getCurrentLanguage())}
+        </SelectTrigger>
         <SelectContent>
           {availableLanguages.map((lang) => (
             <SelectItem value={lang} key={lang}>
@@ -107,8 +117,16 @@ export function UsernameParam() {
   const id = useId();
   const { session } = useSession();
   return (
-    <SettingsParam label={instance.getItem("username")} id={id} orientation="vertical">
-      <Input className="!text-left p-2" id={id} defaultValue={session?.username} />
+    <SettingsParam
+      label={instance.getItem("username")}
+      id={id}
+      orientation="vertical"
+    >
+      <Input
+        className="!text-left p-2"
+        id={id}
+        defaultValue={session?.username}
+      />
     </SettingsParam>
   );
 }

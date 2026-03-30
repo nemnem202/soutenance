@@ -28,7 +28,12 @@ export default function ChordTab() {
       {display === "grid" ? (
         <ChordGrid />
       ) : (
-        <ChordCarousel key={axis} api={api} carouselRef={carouselRef} axis={axis} />
+        <ChordCarousel
+          key={axis}
+          api={api}
+          carouselRef={carouselRef}
+          axis={axis}
+        />
       )}
       <div className="w-full h-20 flex justify-between items-end gap-2 p-2 hidden md:flex">
         <div className="border rounded-md flex items-center h-10 overflow-hidden ">
@@ -49,10 +54,20 @@ export default function ChordTab() {
           </button>
         </div>
         <div className="flex gap-2 ">
-          <Button variant={"outline"} className="rounded-full" size={"icon"} onClick={handleClickPrev}>
+          <Button
+            variant={"outline"}
+            className="rounded-full"
+            size={"icon"}
+            onClick={handleClickPrev}
+          >
             <ChevronLeft />
           </Button>
-          <Button variant={"outline"} className="rounded-full" size={"icon"} onClick={handleClickNext}>
+          <Button
+            variant={"outline"}
+            className="rounded-full"
+            size={"icon"}
+            onClick={handleClickNext}
+          >
             <ChevronRight />
           </Button>
         </div>

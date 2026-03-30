@@ -22,8 +22,16 @@ export default function DesktopGameControlsSection({ ...props }: Gameprops) {
         </IconButton>
         <Separator orientation="vertical" className="!h-6" />
         <Field className="flex flex-row items-center justify-center !w-min">
-          <Input id="bpm" type="number" defaultValue={"120"} className="!w-15 min-w-0 p-0 text-center" />
-          <FieldLabel htmlFor="bpm" className="!w-min text-muted-foreground paragraph-small">
+          <Input
+            id="bpm"
+            type="number"
+            defaultValue={"120"}
+            className="!w-15 min-w-0 p-0 text-center"
+          />
+          <FieldLabel
+            htmlFor="bpm"
+            className="!w-min text-muted-foreground paragraph-small"
+          >
             {instance.getItem("bpm").toLowerCase()}
           </FieldLabel>
         </Field>

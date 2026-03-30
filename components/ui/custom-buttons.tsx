@@ -1,9 +1,20 @@
-import { ArrowLeft, ChevronLeft, ChevronRight, Heart, Plus } from "lucide-react";
+import {
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+  Heart,
+  Plus,
+} from "lucide-react";
 import { Button, type ButtonProps } from "./button";
 
 export function LikeButton({ ...props }: ButtonProps) {
   return (
-    <Button variant={"ghost"} size={"icon"} {...props} className={"rounded-full " + props.className}>
+    <Button
+      variant={"ghost"}
+      size={"icon"}
+      {...props}
+      className={`rounded-full ${props.className}`}
+    >
       <Heart />
     </Button>
   );
@@ -11,7 +22,12 @@ export function LikeButton({ ...props }: ButtonProps) {
 
 export function PlusButton({ ...props }: ButtonProps) {
   return (
-    <Button variant={"ghost"} size={"icon"} {...props} className={"rounded-full " + props.className}>
+    <Button
+      variant={"ghost"}
+      size={"icon"}
+      {...props}
+      className={`rounded-full ${props.className}`}
+    >
       <Plus />
     </Button>
   );
@@ -19,7 +35,12 @@ export function PlusButton({ ...props }: ButtonProps) {
 
 export function ChevronLeftButton({ ...props }: ButtonProps) {
   return (
-    <Button variant={"ghost"} size={"icon"} {...props} className={"rounded-full " + props.className}>
+    <Button
+      variant={"ghost"}
+      size={"icon"}
+      {...props}
+      className={`rounded-full ${props.className}`}
+    >
       <ChevronLeft />
     </Button>
   );
@@ -27,7 +48,12 @@ export function ChevronLeftButton({ ...props }: ButtonProps) {
 
 export function ChevrontRightButton({ ...props }: ButtonProps) {
   return (
-    <Button variant={"ghost"} size={"icon"} {...props} className={"rounded-full " + props.className}>
+    <Button
+      variant={"ghost"}
+      size={"icon"}
+      {...props}
+      className={`rounded-full ${props.className}`}
+    >
       <ChevronRight />
     </Button>
   );
@@ -35,7 +61,11 @@ export function ChevrontRightButton({ ...props }: ButtonProps) {
 
 export function HistoryBackButton() {
   return (
-    <button onClick={() => window.history.back()} className="cursor-pointer">
+    <button
+      type="button"
+      onClick={() => window.history.back()}
+      className="cursor-pointer"
+    >
       <ArrowLeft />
     </button>
   );

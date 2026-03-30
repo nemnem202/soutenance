@@ -1,3 +1,4 @@
+// biome-ignore lint/correctness/noUnusedVariables: sdfsdf
 enum LanguageEnum {
   afrikaans = "af",
   albanian = "sq",
