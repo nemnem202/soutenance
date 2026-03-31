@@ -46,5 +46,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ~/Projects/Music-sandbox
+            make clear-preprod
+            make free-space
             docker compose --env-file .env.preprod -f docker-compose.preprod.yml pull
             docker compose --env-file .env.preprod -f docker-compose.preprod.yml up -d
