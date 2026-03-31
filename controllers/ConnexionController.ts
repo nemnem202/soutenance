@@ -22,18 +22,22 @@ export class ConnexionController extends Controller<ControllerDeps> {
   }
 
   private async setCookie(userId: number, remember: boolean) {
-    const jwt = await this.generateJwt(userId, remember);
+    try {
+      const jwt = await this.generateJwt(userId, remember);
 
-    // biome-ignore lint/suspicious/noTsIgnore: intentional
-    // @ts-ignore
-    const reply = context.fastify.reply as FastifyReply;
-    reply.setCookie("token", jwt, {
-      httpOnly: true,
-      secure: false,
-      path: "/",
-      maxAge: remember ? 365 * 24 * 3600 : 3600,
-      sameSite: "lax",
-    });
+      // biome-ignore lint/suspicious/noTsIgnore: intentional
+      // @ts-ignore
+      const reply = context.fastify.reply as FastifyReply;
+      reply.setCookie("token", jwt, {
+        httpOnly: true,
+        secure: false,
+        path: "/",
+        maxAge: remember ? 365 * 24 * 3600 : 3600,
+        sameSite: "lax",
+      });
+    } catch (err) {
+      logger.error("Cookie generation failed: ", err);
+    }
   }
 
   async login({ ...props }: LoginData): Promise<ServerResponse> {
