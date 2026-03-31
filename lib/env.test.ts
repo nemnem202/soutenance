@@ -9,6 +9,7 @@ describe("Environnement variabels", () => {
       POSTGRES_DB,
       POSTGRES_PASSWORD,
       POSTGRES_USER,
+      TOKEN_SECRET,
     } = env;
 
     expect(APP_PORT).toBeDefined();
@@ -16,5 +17,6 @@ describe("Environnement variabels", () => {
     expect(POSTGRES_DB).toBeDefined();
     expect(POSTGRES_PASSWORD).toBeDefined();
     expect(POSTGRES_USER).toBeDefined();
+    expect(TOKEN_SECRET).toBeDefined();
   });
 });
