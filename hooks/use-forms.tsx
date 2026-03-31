@@ -6,6 +6,9 @@ import { loginSchema, registerSchema } from "@/schemas/auth.schema";
 import { playlistSchema } from "@/schemas/entities.schema";
 import type { LoginData, RegisterData } from "@/types/auth";
 import type { PlaylistSchema } from "@/types/entities";
+import { onLogin, onRegister } from "@/telefunc/connexion.telefunc";
+import { logger } from "@/lib/logger";
+import { Status } from "@/types/server-response";
 
 export function useNewPlaylistForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -38,8 +41,19 @@ export function useLoginForm() {
     },
   });
 
-  const handleSubmit = (form: LoginData) => {
-    console.log(form);
+  const handleSubmit = async (submitted: LoginData) => {
+    const response = await onLogin(submitted);
+    logger.info("Login: ", response);
+    if (!response.success) {
+      switch (response.status) {
+        case Status.IncorrectPassword:
+          form.setError("password", { message: response.title });
+          break;
+        case Status.IncorrectEmail:
+          form.setError("email", { message: response.title });
+          break;
+      }
+    }
   };
 
   return { formRef, form, handleSubmit };
@@ -58,8 +72,22 @@ export function useRegisterForm() {
     },
   });
 
-  const handleSubmit = (form: RegisterData) => {
-    console.log(form);
+  const handleSubmit = async (submitted: RegisterData) => {
+    const response = await onRegister(submitted);
+    logger.info("Register: ", response);
+    if (!response.success) {
+      switch (response.status) {
+        case Status.ExistingEmail:
+        case Status.IncorrectEmail:
+          form.setError("email", { message: response.title });
+          break;
+        case Status.IncorrectPassword:
+          form.setError("password", { message: response.title });
+          break;
+        case Status.ExistingUsername:
+          form.setError("username", { message: response.title });
+      }
+    }
   };
 
   return { formRef, form, handleSubmit };

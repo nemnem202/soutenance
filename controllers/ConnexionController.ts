@@ -27,7 +27,7 @@ export class ConnexionController extends Controller<ControllerDeps> {
 
       // biome-ignore lint/suspicious/noTsIgnore: intentional
       // @ts-ignore
-      const reply = context.fastify.reply as FastifyReply;
+      const reply = this.deps.context.fastify.reply as FastifyReply;
       reply.setCookie("token", jwt, {
         httpOnly: true,
         secure: false,
@@ -42,6 +42,8 @@ export class ConnexionController extends Controller<ControllerDeps> {
 
   async login({ ...props }: LoginData): Promise<ServerResponse> {
     try {
+      logger.info("Login requested");
+
       const loginValidation = loginSchema.safeParse(props);
 
       if (!loginValidation.success) {
@@ -95,9 +97,11 @@ export class ConnexionController extends Controller<ControllerDeps> {
 
       await this.setCookie(user.id, remember);
 
+      logger.success("Login", user.username);
+
       return { success: true, status: Status.Logged };
     } catch (err) {
-      logger.error("Failed to register", err);
+      logger.error("Failed to login", err);
       return {
         success: false,
         title: "Internal server error",
@@ -109,6 +113,8 @@ export class ConnexionController extends Controller<ControllerDeps> {
 
   async register({ ...props }: RegisterData): Promise<ServerResponse> {
     try {
+      logger.info("Register request");
+
       const registerValidation = registerSchema.safeParse(props);
 
       if (!registerValidation.success) {
@@ -170,6 +176,8 @@ export class ConnexionController extends Controller<ControllerDeps> {
       });
 
       await this.setCookie(user.id, true);
+
+      logger.info("Register", username);
 
       return { success: true, status: Status.Registered };
     } catch (err) {

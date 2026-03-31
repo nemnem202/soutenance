@@ -4,15 +4,15 @@ import type { LoginData, RegisterData } from "@/types/auth";
 import { getContext } from "telefunc";
 
 export function onLogin({ ...props }: LoginData) {
-  const { request } = getContext();
-  return new ConnexionController({ client: prismaClient, request }).login({
+  const context = getContext();
+  return new ConnexionController({ client: prismaClient, context }).login({
     ...props,
   });
 }
 
 export function onRegister({ ...props }: RegisterData) {
-  const { request } = getContext();
-  return new ConnexionController({ client: prismaClient, request }).register({
+  const context = getContext();
+  return new ConnexionController({ client: prismaClient, context }).register({
     ...props,
   });
 }
