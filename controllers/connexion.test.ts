@@ -78,18 +78,16 @@ describe("ConnexionController (integration)", () => {
   });
 
   it("should login successfully", async () => {
-    const hash = await argon2.hash("password");
-    await prismaClient.user.create({
-      data: {
-        email: "success@test.com",
-        username: "success",
-        profilePicture: "",
-        classicAuthMethod: {
-          create: {
-            password: hash,
-          },
-        },
+    await controller.register({
+      agree_terms_of_service: true,
+      email: "success@test.com",
+      password: "password",
+      password_confirm: "password",
+      image: {
+        alt: "success image",
+        src: "http://image-succes.wepb",
       },
+      username: "user-success",
     });
 
     const res = await controller.login({
@@ -167,8 +165,8 @@ describe("ConnexionController (integration)", () => {
       email: "new@test.com",
       username: "newuser",
       password: "password",
-      password_confirm: "",
-      image: { src: "", alt: "" },
+      password_confirm: "password",
+      image: { src: "http://image-succes.wepb", alt: "" },
       agree_terms_of_service: true,
     });
 
