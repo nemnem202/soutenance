@@ -22,7 +22,8 @@ export default class SessionController extends Controller<ControllerDeps> {
         username: userData.username,
       };
     } catch (err) {
-      logger.error("Session request failed", err);
+      const message = err instanceof Error ? err.message : String(err);
+      logger.error(`Session request failed: ${message}`);
       return null;
     }
   }
