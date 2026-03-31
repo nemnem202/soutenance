@@ -1,23 +1,23 @@
-import AnimatedTabs from "@/components/organisms/animated-tabs";
-import { HistoryBackButton } from "@/components/ui/custom-buttons";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/organisms/drawer";
-import Header from "@/components/features/layout/game-header";
+import { useState } from "react";
 import ChordTab from "@/components/features/game/chord-tab";
 import { Tab } from "@/components/features/game/game-assets";
 import DesktopGameControlsSection, {
   MobileGameControlSection,
 } from "@/components/features/game/game-controls-section";
 import GameSidebar from "@/components/features/game/game-sidebar";
-import Headline from "@/components/ui/headline";
+import Header from "@/components/features/layout/game-header";
 import MobileHeaderNavContainer from "@/components/features/layout/mobile-header-nav-container";
 import SizeAdapter from "@/components/molecules/size-adapter";
+import AnimatedTabs from "@/components/organisms/animated-tabs";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/organisms/drawer";
+import { HistoryBackButton } from "@/components/ui/custom-buttons";
+import Headline from "@/components/ui/headline";
 import { useLanguage } from "@/hooks/use-language";
-import { useState } from "react";
 
 export default function Page() {
   const [sidebarOpen, setOpen] = useState(false);

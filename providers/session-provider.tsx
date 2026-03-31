@@ -1,5 +1,3 @@
-import { getRandomAccount } from "@/lib/utils";
-import type { Session } from "@/types/auth";
 import {
   createContext,
   type Dispatch,
@@ -7,6 +5,8 @@ import {
   type SetStateAction,
   useState,
 } from "react";
+import { getRandomAccount } from "@/lib/utils";
+import type { Session } from "@/types/auth";
 export interface SessionData {
   session: Session | null;
   setSession: Dispatch<SetStateAction<Session | null>>;

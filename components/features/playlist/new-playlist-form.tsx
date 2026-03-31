@@ -1,24 +1,24 @@
+import { X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Controller } from "react-hook-form";
 import { useNewPlaylistForm } from "@/hooks/use-forms";
+import { useLanguage } from "@/hooks/use-language";
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "../../molecules/field";
-import { Controller } from "react-hook-form";
-import { Input } from "../../ui/input";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
   InputGroupTextarea,
 } from "../../molecules/input-group";
-import { useEffect, useState } from "react";
-import { X } from "lucide-react";
-import { Badge } from "../../ui/badge";
 import EditableImage from "../../organisms/editable-image";
+import { Badge } from "../../ui/badge";
 import { Button } from "../../ui/button";
-import { useLanguage } from "@/hooks/use-language";
+import { Input } from "../../ui/input";
 import { Switch } from "../../ui/switch";
 
 export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {

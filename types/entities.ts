@@ -1,5 +1,5 @@
-import type { playlistSchema } from "@/schemas/entities.schema";
 import type z from "zod";
+import type { playlistSchema } from "@/schemas/entities.schema";
 
 export type Account = {
   id: string;

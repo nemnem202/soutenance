@@ -1,8 +1,8 @@
-import Headline from "@/components/ui/headline";
+import { usePageContext } from "vike-react/usePageContext";
 import MobileHeader from "@/components/features/layout/mobile-header";
 import SizeAdapter from "@/components/molecules/size-adapter";
+import Headline from "@/components/ui/headline";
 import { useLanguage } from "@/hooks/use-language";
-import { usePageContext } from "vike-react/usePageContext";
 
 export default function Page() {
   return <SizeAdapter sm={<Mobile />} md={<Desktop />} />;

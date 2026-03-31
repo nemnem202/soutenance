@@ -1,19 +1,18 @@
-import {
-  SelectContent,
-  SelectTrigger,
-  SelectLabel,
-  SelectGroup,
-  SelectValue,
-  SelectItem,
-  Select,
-} from "@/components/organisms/select";
-import SwitchParam from "@/components/molecules/switch-param";
-import { useLanguage } from "@/hooks/use-language";
-import { Label } from "@/components/ui/label";
 import { useState } from "react";
-
-import { ParamsAccordion } from "../game-sidebar";
+import SwitchParam from "@/components/molecules/switch-param";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/organisms/select";
+import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/hooks/use-language";
 import { SidebarSlider } from "../game-assets";
+import { ParamsAccordion } from "../game-sidebar";
 
 export default function BackingTrackSettings() {
   const [backingTackActive, setBackingTrackActive] = useState(false);

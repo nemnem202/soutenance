@@ -1,9 +1,9 @@
-import { ChevronLeft, ChevronRight, Columns3, Grid3X3 } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
 import useCarousel from "embla-carousel-react";
-import useScreen from "@/hooks/use-screen";
+import { ChevronLeft, ChevronRight, Columns3, Grid3X3 } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import useScreen from "@/hooks/use-screen";
 
 import ChordCarousel from "./chord-carousel";
 import ChordGrid from "./chord-grid";

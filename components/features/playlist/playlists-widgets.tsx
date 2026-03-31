@@ -1,10 +1,10 @@
 import { Plus } from "lucide-react";
+import { useState } from "react";
 import { LikeButton } from "@/components/ui/custom-buttons";
 import { useLanguage } from "@/hooks/use-language";
 import { getRandomPlaylist } from "@/lib/utils";
 import AddToPlaylistButton from "./add-to-playlist-menu";
 import NewPlaylistModal from "./new-playlist-modal";
-import { useState } from "react";
 
 export function SmallPlaylistWidget() {
   const playlist = getRandomPlaylist();

@@ -1,6 +1,4 @@
-import { useLanguage } from "@/hooks/use-language";
-import { SettingsParam } from "./settings-assets";
-import { useTheme } from "@/hooks/use-theme";
+import { ArrowRightLeft, LogOut, X } from "lucide-react";
 import { useId, useState } from "react";
 import {
   Select,
@@ -8,14 +6,16 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/organisms/select";
-import type { Language } from "@/types/i18n";
-import { availableLanguages } from "@/config/language-pack";
-import flags from "@/i18n/flags";
 import { Button } from "@/components/ui/button";
-import { ArrowRightLeft, LogOut, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { availableLanguages } from "@/config/language-pack";
+import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
+import { useTheme } from "@/hooks/use-theme";
+import flags from "@/i18n/flags";
+import type { Language } from "@/types/i18n";
 import { LoginModal } from "../auth/login-button";
+import { SettingsParam } from "./settings-assets";
 
 export function ThemeParam() {
   const { instance } = useLanguage();

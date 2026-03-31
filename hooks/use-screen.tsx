@@ -1,5 +1,5 @@
-import { ScreenSizeContext } from "@/providers/screen-size-provider";
 import { useContext } from "react";
+import { ScreenSizeContext } from "@/providers/screen-size-provider";
 
 export default function useScreen() {
   const size = useContext(ScreenSizeContext);

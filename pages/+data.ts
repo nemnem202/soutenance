@@ -1,11 +1,11 @@
+import { faker } from "@faker-js/faker";
+import { UAParser } from "ua-parser-js";
+import type { PageContextServer } from "vike/types";
+import { CHORDS_DICTIONNARY } from "@/config/chords-dictionary";
 import { getPreferredLanguage } from "@/lib/utils";
 import type { ScreenSizeType } from "@/providers/screen-size-provider";
-import type { PageContextServer } from "vike/types";
-import { UAParser } from "ua-parser-js";
-import { type ChordHarmony, Notes } from "@/types/music";
-import { faker } from "@faker-js/faker";
-import { CHORDS_DICTIONNARY } from "@/config/chords-dictionary";
 import type { Account, Exercise, Playlist } from "@/types/entities";
+import { type ChordHarmony, Notes } from "@/types/music";
 
 function getScreen(pageContext: PageContextServer): ScreenSizeType {
   const ua = pageContext.headers

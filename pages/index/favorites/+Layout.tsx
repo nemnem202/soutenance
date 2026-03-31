@@ -1,10 +1,10 @@
-import AnimatedTabs from "@/components/organisms/animated-tabs";
-import Headline from "@/components/ui/headline";
 import type { ReactNode } from "react";
-import { useLanguage } from "@/hooks/use-language";
-import useFavoritesNavigation from "@/hooks/use-favorites-navigation";
 import MobileHeader from "@/components/features/layout/mobile-header";
 import SizeAdapter from "@/components/molecules/size-adapter";
+import AnimatedTabs from "@/components/organisms/animated-tabs";
+import Headline from "@/components/ui/headline";
+import useFavoritesNavigation from "@/hooks/use-favorites-navigation";
+import { useLanguage } from "@/hooks/use-language";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (

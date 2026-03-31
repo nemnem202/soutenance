@@ -1,16 +1,16 @@
-import { Button } from "../../ui/button";
+import { Controller } from "react-hook-form";
+import { useRegisterForm } from "@/hooks/use-forms";
+import { useLanguage } from "@/hooks/use-language";
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "../../molecules/field";
-import { Controller } from "react-hook-form";
-import { Input } from "../../ui/input";
-import { useRegisterForm } from "@/hooks/use-forms";
-import { Checkbox } from "../../ui/checkbox";
 import EditableImage from "../../organisms/editable-image";
-import { useLanguage } from "@/hooks/use-language";
+import { Button } from "../../ui/button";
+import { Checkbox } from "../../ui/checkbox";
+import { Input } from "../../ui/input";
 
 export default function RegisterForm() {
   const { form, formRef, handleSubmit } = useRegisterForm();

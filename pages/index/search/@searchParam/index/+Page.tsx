@@ -1,9 +1,9 @@
+import { usePageContext } from "vike-react/usePageContext";
 import { MediumAccountWidget } from "@/components/features/auth/account-widgets";
 import { SearchExercisesList } from "@/components/features/playlist/playlist-items";
 import { MediumPlaylistWidget } from "@/components/features/playlist/playlists-widgets";
 import { MediumWidgetCarousel } from "@/components/organisms/widget-carousel";
 import { useLanguage } from "@/hooks/use-language";
-import { usePageContext } from "vike-react/usePageContext";
 
 export default function Page() {
   const { routeParams } = usePageContext();

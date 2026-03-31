@@ -1,10 +1,10 @@
 import { Play, Settings, Square } from "lucide-react";
-import { ControlsSection, IconButton } from "./game-assets";
 import { Field, FieldLabel } from "@/components/molecules/field";
-import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
-import type { Gameprops } from "@/pages/game/+Page";
+import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
+import type { Gameprops } from "@/pages/game/+Page";
+import { ControlsSection, IconButton } from "./game-assets";
 
 export default function DesktopGameControlsSection({ ...props }: Gameprops) {
   const { instance } = useLanguage();

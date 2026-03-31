@@ -1,11 +1,11 @@
 import { type Dispatch, type SetStateAction, useState } from "react";
-import { Button } from "../../ui/button";
-import Logo from "../../ui/logo";
+import { useLanguage } from "@/hooks/use-language";
 import GoogleLoginButton from "../../organisms/google-login-button";
 import Modal from "../../organisms/modal";
-import { useLanguage } from "@/hooks/use-language";
-import RegisterForm from "./register-form";
+import { Button } from "../../ui/button";
+import Logo from "../../ui/logo";
 import LoginForm from "./login-form";
+import RegisterForm from "./register-form";
 
 export default function LoginButton() {
   const [isOpen, setIsOpen] = useState(false);

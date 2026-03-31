@@ -1,5 +1,5 @@
+import { en, Faker } from "@faker-js/faker";
 import type { Account, Exercise, Playlist } from "@/types/entities";
-import { Faker, en } from "@faker-js/faker";
 
 const faker = new Faker({ locale: [en] });
 

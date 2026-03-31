@@ -1,5 +1,7 @@
+import { faker } from "@faker-js/faker";
 import { useData } from "vike-react/useData";
-import { PlusButton } from "../../ui/custom-buttons";
+import { useLanguage } from "@/hooks/use-language";
+import type { Data } from "@/pages/+data";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,15 +10,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "../../organisms/dropdown-menu";
-import type { Data } from "@/pages/+data";
-import { faker } from "@faker-js/faker";
+import Searchbar from "../../organisms/searchbar";
+import { PlusButton } from "../../ui/custom-buttons";
+import { Separator } from "../../ui/separator";
 import {
   SmallAddNewPlaylistWidget,
   SmallPlaylistWidget,
 } from "./playlists-widgets";
-import { Separator } from "../../ui/separator";
-import Searchbar from "../../organisms/searchbar";
-import { useLanguage } from "@/hooks/use-language";
 
 export default function AddToPlaylistButton() {
   const { playlists } = useData<Data>();

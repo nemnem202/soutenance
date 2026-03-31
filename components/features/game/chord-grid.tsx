@@ -1,8 +1,8 @@
-import type { CarouselChord, Note } from "@/types/music";
+import { faker } from "@faker-js/faker";
 import { useData } from "vike-react/useData";
 import useScreen from "@/hooks/use-screen";
-import { faker } from "@faker-js/faker";
 import type { Data } from "@/pages/+data";
+import type { CarouselChord, Note } from "@/types/music";
 
 export default function ChordGrid() {
   return (

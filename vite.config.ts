@@ -1,9 +1,11 @@
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-import vike from "vike/plugin";
+import telefunc from "telefunc/vite";
 import { defineConfig } from "vite";
+import vike from "vike/plugin";
+
 export default defineConfig({
-  plugins: [vike(), react(), tailwindcss()],
+  plugins: [vike(), react(), tailwindcss(), telefunc()],
   server: {
     host: "0.0.0.0",
     port: 3000,

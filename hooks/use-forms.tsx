@@ -1,11 +1,11 @@
+import { faker } from "@faker-js/faker";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRef } from "react";
 import { type Resolver, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { faker } from "@faker-js/faker";
-import type { PlaylistSchema } from "@/types/entities";
-import type { LoginData, RegisterData } from "@/types/auth";
 import { loginSchema, registerSchema } from "@/schemas/auth.schema";
 import { playlistSchema } from "@/schemas/entities.schema";
+import type { LoginData, RegisterData } from "@/types/auth";
+import type { PlaylistSchema } from "@/types/entities";
 
 export function useNewPlaylistForm() {
   const formRef = useRef<HTMLFormElement>(null);
