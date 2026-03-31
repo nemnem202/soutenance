@@ -145,13 +145,13 @@ export default function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
                     htmlFor="form-rhf-remember"
                     className=" paragraph-md max-w-70"
                   >
-                    <span>
+                    <span className="text-foreground">
                       {instance.getItem("by_checking_this")}{" "}
                       <a
                         href="/therms-of-service"
                         className="text-primary p-0 h-min hover:underline"
                       >
-                        {instance.getItem("therms_of_service")} {/* TODO */}
+                        {instance.getItem("therms_of_service")}
                       </a>
                     </span>
                   </FieldLabel>

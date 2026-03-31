@@ -6,6 +6,7 @@ import type { LoginData, RegisterData } from "@/types/auth";
 import { loginSchema, registerSchema } from "@/schemas/auth.schema";
 import { SignJWT } from "jose";
 import { env } from "@/lib/env";
+import { faker } from "@faker-js/faker";
 
 export class ConnexionController extends Controller<ControllerDeps> {
   private async generateJwt(
@@ -123,8 +124,7 @@ export class ConnexionController extends Controller<ControllerDeps> {
         };
       }
 
-      const { agree_terms_of_service, email, image, password, username } =
-        props;
+      const { agree_terms_of_service, email, password, username } = props;
 
       if (!agree_terms_of_service) {
         return {
@@ -163,7 +163,7 @@ export class ConnexionController extends Controller<ControllerDeps> {
         data: {
           email: email,
           username: username,
-          profilePicture: image.src,
+          profilePicture: faker.image.avatar(),
           classicAuthMethod: {
             create: {
               password: passwordHash,

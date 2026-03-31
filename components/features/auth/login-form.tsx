@@ -78,7 +78,7 @@ export default function LoginForm({ onSuccess }: { onSuccess: () => void }) {
                       )
                     }
                   />
-                  <FieldLabel htmlFor="form-rhf-remember">
+                  <FieldLabel htmlFor="form-rhf-remember ">
                     {instance.getItem("remember_me")}
                   </FieldLabel>
                 </div>
