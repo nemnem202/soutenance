@@ -1,1 +1,0 @@
-- refactorisation (Mauvais nommage, arborescence des fichiers, plus d'elements react au lieu de copier coller du jsx, correction des erreurs console )
