@@ -16,6 +16,9 @@ export default class SessionController extends Controller<ControllerDeps> {
 
       if (!userData) throw new Error("User id could not be found in db");
 
+      logger.success("Session requested");
+      logger.table(userData);
+
       return {
         id: userData.id,
         profilePictureSource: userData.profilePicture,
