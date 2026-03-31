@@ -12,7 +12,7 @@ model User {
 model ClassicAuthMethod {
    id        Int      @id @default(autoincrement())
    password  String
-   user      User     @relation(fields: [userId], references: [id])
+   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
    userId    Int      @unique
    createdAt DateTime @default(now())
 }
@@ -21,7 +21,7 @@ model AuthMethod {
    id         Int          @id @default(autoincrement())
    provider   AuthProvider
    providerId String
-   user       User         @relation(fields: [userId], references: [id])
+   user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
    userId     Int
    createdAt  DateTime     @default(now())
 }
