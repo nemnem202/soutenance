@@ -1,18 +1,26 @@
 model User {
-   id        Int      @id @default(autoincrement())
-   email     String   @unique
-   name      String?
-   createdAt DateTime @default(now())
-   updatedAt DateTime @updatedAt
+   id                Int                @id @default(autoincrement())
+   email             String             @unique
+   username          String
+   createdAt         DateTime           @default(now())
+   updatedAt         DateTime           @updatedAt
+   profilePicture    String
+   authMethods       AuthMethod[]
+   classicAuthMethod ClassicAuthMethod?
+}
 
-   authMethods AuthMethod[]
+model ClassicAuthMethod {
+   id        Int      @id @default(autoincrement())
+   password  String
+   user      User     @relation(fields: [userId], references: [id])
+   userId    Int      @unique
+   createdAt DateTime @default(now())
 }
 
 model AuthMethod {
    id         Int          @id @default(autoincrement())
    provider   AuthProvider
    providerId String
-   password   String?
    user       User         @relation(fields: [userId], references: [id])
    userId     Int
    createdAt  DateTime     @default(now())

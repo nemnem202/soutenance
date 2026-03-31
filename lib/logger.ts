@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: Intentional */
 const IS_DEV = process.env.NODE_ENV === "dev" || import.meta.env?.DEV;
 const IS_BROWSER = typeof window !== "undefined";
 
