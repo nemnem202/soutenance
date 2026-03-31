@@ -16,13 +16,13 @@ jobs:
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Create .env.prod
+      - name: Create .env.dev
         run: |
-          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env.prod
-          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env.prod
-          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env.prod
-          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env.prod
-          echo "APP_PORT=${{ secrets.APP_PORT }}" >> .env.prod
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env.dev
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env.dev
+          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env.dev
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env.dev
+          echo "APP_PORT=${{ secrets.APP_PORT }}" >> .env.dev
          
 
       - name: Build and run CI containers
