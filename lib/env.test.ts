@@ -1,15 +1,15 @@
 import { describe, expect, it } from "vitest";
-import EnvironnementProvider from "./environnement-provider";
+import { env } from "./env";
 
 describe("Environnement variabels", () => {
-  it("Get all environnement variables", () => {
+  it("Expect environnement variables to be defined at startup", () => {
     const {
       APP_PORT,
       DATABASE_URL,
       POSTGRES_DB,
       POSTGRES_PASSWORD,
       POSTGRES_USER,
-    } = EnvironnementProvider.get();
+    } = env;
 
     expect(APP_PORT).toBeDefined();
     expect(DATABASE_URL).toBeDefined();
