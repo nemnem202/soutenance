@@ -5,6 +5,11 @@ declare module "telefunc" {
     interface Context {
       user: null | { id: string };
       request: Request;
+      setCookie: (
+        name: string,
+        value: string,
+        options: Record<string, unknown>,
+      ) => void;
     }
   }
 }

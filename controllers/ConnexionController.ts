@@ -25,10 +25,7 @@ export class ConnexionController extends Controller<ControllerDeps> {
     try {
       const jwt = await this.generateJwt(userId, remember);
 
-      // biome-ignore lint/suspicious/noTsIgnore: intentional
-      // @ts-ignore
-      const reply = this.deps.context.fastify.reply as FastifyReply;
-      reply.setCookie("token", jwt, {
+      this.deps.context.setCookie("token", jwt, {
         httpOnly: true,
         secure: false,
         path: "/",
