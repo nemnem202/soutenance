@@ -9,6 +9,7 @@ import type { PlaylistSchema } from "@/types/entities";
 import { onLogin, onRegister } from "@/telefunc/connexion.telefunc";
 import { logger } from "@/lib/logger";
 import { Status } from "@/types/server-response";
+import { errorToast, successToast } from "@/lib/toaster";
 
 export function useNewPlaylistForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -52,7 +53,11 @@ export function useLoginForm() {
         case Status.IncorrectEmail:
           form.setError("email", { message: response.title });
           break;
+        default:
+          errorToast(response.title, response.description);
       }
+    } else {
+      successToast("Welcome back !");
     }
   };
 
@@ -86,7 +91,12 @@ export function useRegisterForm() {
           break;
         case Status.ExistingUsername:
           form.setError("username", { message: response.title });
+          break;
+        default:
+          errorToast(response.title, response.description);
       }
+    } else {
+      successToast("Welcome !");
     }
   };
 
