@@ -14,20 +14,20 @@ function Desktop() {
     <>
       <MediumWidgetCarousel
         title={instance.getItem("recentlyPlayed")}
-        widgets={Array.from({ length: 20 }).map(() => (
-          <MediumPlaylistWidget key={crypto.randomUUID()} />
+        widgets={Array.from({ length: 20 }).map((_, index) => (
+          <MediumPlaylistWidget key={index} />
         ))}
       />
       <MediumWidgetCarousel
         title={instance.getItem("accounts")}
-        widgets={Array.from({ length: 20 }).map(() => (
-          <MediumAccountWidget key={crypto.randomUUID()} />
+        widgets={Array.from({ length: 20 }).map((_, index) => (
+          <MediumAccountWidget key={index} />
         ))}
       />
       <MediumWidgetCarousel
         title={instance.getItem("playlists")}
-        widgets={Array.from({ length: 20 }).map(() => (
-          <MediumPlaylistWidget key={crypto.randomUUID()} />
+        widgets={Array.from({ length: 20 }).map((_, index) => (
+          <MediumPlaylistWidget key={index} />
         ))}
       />
     </>
@@ -41,22 +41,22 @@ function Mobile() {
       <MediumWidgetCarousel
         seeAllUrl="favorites/exercises"
         title={instance.getItem("recentlyPlayed")}
-        widgets={Array.from({ length: 20 }).map(() => (
-          <MediumPlaylistWidget key={crypto.randomUUID()} />
+        widgets={Array.from({ length: 20 }).map((_, index) => (
+          <MediumPlaylistWidget key={index} />
         ))}
       />
       <MediumWidgetCarousel
         seeAllUrl="favorites/users"
         title={instance.getItem("accounts")}
-        widgets={Array.from({ length: 20 }).map(() => (
-          <MediumAccountWidget key={crypto.randomUUID()} />
+        widgets={Array.from({ length: 20 }).map((_, index) => (
+          <MediumAccountWidget key={index} />
         ))}
       />
       <MediumWidgetCarousel
         seeAllUrl="favorites/playlists"
         title={instance.getItem("playlists")}
-        widgets={Array.from({ length: 20 }).map(() => (
-          <MediumPlaylistWidget key={crypto.randomUUID()} />
+        widgets={Array.from({ length: 20 }).map((_, index) => (
+          <MediumPlaylistWidget key={index} />
         ))}
       />
     </>

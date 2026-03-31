@@ -55,7 +55,7 @@ export function MediumWidgetGroup(props: MediumWidgetGroupProps) {
     >
       {widgets.map((widget, index) => (
         <div
-          key={crypto.randomUUID()}
+          key={index}
           ref={(el) => {
             widgetsRef.current[index] = el;
           }}
