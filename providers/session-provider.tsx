@@ -18,7 +18,7 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
   const placeholder_account = getRandomAccount();
   const placeholder_session: Session = {
     profilePictureSource: placeholder_account.picture,
-    userId: placeholder_account.id,
+    id: placeholder_account.id,
     username: placeholder_account.firstName,
   };
   const [session, setSession] = useState<Session | null>(placeholder_session);

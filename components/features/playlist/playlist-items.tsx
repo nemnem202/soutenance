@@ -66,7 +66,7 @@ export function PlaylistItemBox({
 export interface PLaylistItemProps {
   index: number;
   playlist: Playlist;
-  id: string;
+  id: number;
 }
 
 export function PlaylistItem({ ...props }: PLaylistItemProps) {

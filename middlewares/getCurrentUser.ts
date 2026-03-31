@@ -12,6 +12,6 @@ function parseCookie(str: string): Record<string, string> {
 
 export default async function getCurrentUserFromCookie(
   cookie: string,
-): Promise<{ id: string } | null> {
+): Promise<{ id: number } | null> {
   return null;
 }

@@ -45,9 +45,7 @@ export default function AccountMenu() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem
-          onClick={() => navigate(`/account/${session.userId}`)}
-        >
+        <DropdownMenuItem onClick={() => navigate(`/account/${session.id}`)}>
           <UserIcon />
           {instance.getItem("profile")}
         </DropdownMenuItem>

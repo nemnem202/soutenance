@@ -59,7 +59,7 @@ function NavBar() {
             icon={<Heart />}
           />
           <Link
-            href={`/account/${session.userId}`}
+            href={`/account/${session.id}`}
             text={instance.getItem("dashboard")}
             icon={<LayoutDashboard />}
           />

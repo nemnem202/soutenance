@@ -3,7 +3,7 @@ import type { loginSchema, registerSchema } from "@/schemas/auth.schema";
 
 export type Session = {
   username: string;
-  userId: string;
+  id: number;
   profilePictureSource: string;
 };
 

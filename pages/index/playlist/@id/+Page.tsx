@@ -16,7 +16,7 @@ import type { Playlist } from "@/types/entities";
 export default function Page() {
   const { id } = usePageContext().routeParams;
   const [playlist] = useState(
-    useData<Data>().playlists.find((e) => e.id === id),
+    useData<Data>().playlists.find((e) => String(e.id) === id),
   );
 
   useEffect(() => {

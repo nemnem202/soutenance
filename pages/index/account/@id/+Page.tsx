@@ -13,7 +13,7 @@ import type { Account } from "@/types/entities";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
-  const account = useData<Data>().accounts.find((e) => e.id === id);
+  const account = useData<Data>().accounts.find((e) => String(e.id) === id);
 
   useEffect(() => {
     if (!account) navigate("/404");
@@ -66,7 +66,7 @@ function Content() {
       </div>
       <div className="flex  gap-x-auto gap-y-5 flex-wrap container">
         <MediumPlaylistWrapper
-          allowToAddANewPlaylist={id === session?.userId}
+          allowToAddANewPlaylist={id === String(session?.id)}
         />
       </div>
     </div>

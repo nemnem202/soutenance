@@ -13,6 +13,8 @@ describe("ConnexionController (integration)", () => {
 
     controller = new ConnexionController({
       client: prismaClient,
+      // biome-ignore lint/suspicious/noTsIgnore: intentional
+      // @ts-ignore
       request: {} as Request,
     });
   });

@@ -20,7 +20,7 @@ export function useNewPlaylistForm() {
       image: {
         alt: "The cover of the playlist",
       },
-      accountId: faker.string.uuid(),
+      accountId: faker.number.int(),
       visibility: "public",
     },
   });

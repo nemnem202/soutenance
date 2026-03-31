@@ -13,7 +13,7 @@ export default function TabBar() {
       <Link href="/search" icon={<Search className="w-full h-full" />} />
       {session && (
         <Link
-          href={`/account/${session.userId}`}
+          href={`/account/${session.id}`}
           icon={<LayoutDashboard className="w-full h-full" />}
         />
       )}

@@ -6,8 +6,6 @@ export const telefuncHandler: UniversalHandler = enhance(
   async (request, context, runtime) => {
     const cookieHeader = request.headers.get("cookie") ?? "";
     const user = await getCurrentUserFromCookie(cookieHeader);
-
-    // Accumulateur pour les cookies à setter
     const cookiesToSet: string[] = [];
 
     const httpResponse = await telefunc({
@@ -17,7 +15,6 @@ export const telefuncHandler: UniversalHandler = enhance(
         ...runtime,
         user,
         request,
-        // Helper pour setter un cookie depuis le controller
         setCookie: (
           name: string,
           value: string,

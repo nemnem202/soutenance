@@ -3,7 +3,7 @@ import "telefunc";
 declare module "telefunc" {
   namespace Telefunc {
     interface Context {
-      user: null | { id: string };
+      user: null | { id: number };
       request: Request;
       setCookie: (
         name: string,
