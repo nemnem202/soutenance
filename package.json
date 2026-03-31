@@ -39,6 +39,7 @@
     "embla-carousel": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "express": "^5.2.1",
+    "jose": "^6.2.2",
     "lucide-react": "^0.564.0",
     "motion": "^12.35.0",
     "react": "^19.2.4",
