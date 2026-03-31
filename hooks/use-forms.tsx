@@ -10,6 +10,8 @@ import { onLogin, onRegister } from "@/telefunc/connexion.telefunc";
 import { logger } from "@/lib/logger";
 import { Status } from "@/types/server-response";
 import { errorToast, successToast } from "@/lib/toaster";
+import { onSessionRequest } from "@/telefunc/session.telefunc";
+import useSession from "./use-session";
 
 export function useNewPlaylistForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -33,6 +35,7 @@ export function useNewPlaylistForm() {
 }
 
 export function useLoginForm({ onSuccess }: { onSuccess: () => void }) {
+  const { setSession } = useSession();
   const formRef = useRef<HTMLFormElement>(null);
 
   const form = useForm<LoginData>({
@@ -57,8 +60,12 @@ export function useLoginForm({ onSuccess }: { onSuccess: () => void }) {
           errorToast(response.title, response.description);
       }
     } else {
-      successToast("Welcome back !");
-      onSuccess();
+      const session = await onSessionRequest();
+      setSession(session);
+      if (session) {
+        successToast(`Welcome back, ${session.username} !`);
+        onSuccess();
+      }
     }
   };
 
@@ -66,6 +73,7 @@ export function useLoginForm({ onSuccess }: { onSuccess: () => void }) {
 }
 
 export function useRegisterForm({ onSuccess }: { onSuccess: () => void }) {
+  const { setSession } = useSession();
   const formRef = useRef<HTMLFormElement>(null);
 
   const form = useForm<RegisterData>({
@@ -97,8 +105,12 @@ export function useRegisterForm({ onSuccess }: { onSuccess: () => void }) {
           errorToast(response.title, response.description);
       }
     } else {
-      successToast("Welcome !");
-      onSuccess();
+      const session = await onSessionRequest();
+      setSession(session);
+      if (session) {
+        successToast(`Welcome back, ${session.username} !`);
+        onSuccess();
+      }
     }
   };
 
