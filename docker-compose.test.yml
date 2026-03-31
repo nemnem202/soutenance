@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:16-alpine
-    container_name: music-sandbox-db-dev
+    container_name: music-sandbox-db-test
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -17,8 +17,8 @@ services:
     build:
       context: .
       dockerfile: dockerfile.dev
-    image: music-sandbox-app-dev
-    container_name: music-sandbox-app-dev
+    image: music-sandbox-app-test
+    container_name: music-sandbox-app-test
     depends_on:
       db:
         condition: service_healthy
@@ -36,6 +36,6 @@ services:
     volumes:
       - ./:/app
       - /app/node_modules
-    command: ["pnpm", "test"]
+    command: ["sh", "-c", "pnpm prisma migrate deploy && pnpm test"]
 volumes:
   music-sandbox-data-dev:
