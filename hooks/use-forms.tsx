@@ -32,7 +32,7 @@ export function useNewPlaylistForm() {
   return { formRef, form, handleSubmit };
 }
 
-export function useLoginForm() {
+export function useLoginForm({ onSuccess }: { onSuccess: () => void }) {
   const formRef = useRef<HTMLFormElement>(null);
 
   const form = useForm<LoginData>({
@@ -58,13 +58,14 @@ export function useLoginForm() {
       }
     } else {
       successToast("Welcome back !");
+      onSuccess();
     }
   };
 
   return { formRef, form, handleSubmit };
 }
 
-export function useRegisterForm() {
+export function useRegisterForm({ onSuccess }: { onSuccess: () => void }) {
   const formRef = useRef<HTMLFormElement>(null);
 
   const form = useForm<RegisterData>({
@@ -97,6 +98,7 @@ export function useRegisterForm() {
       }
     } else {
       successToast("Welcome !");
+      onSuccess();
     }
   };
 

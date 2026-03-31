@@ -42,9 +42,9 @@ export function LoginModal({
       title="Login Modal"
     >
       {mode === "login" ? (
-        <LoginModalContent setMode={setMode} />
+        <LoginModalContent setMode={setMode} setIsOpen={setIsOpen} />
       ) : (
-        <RegisterModalContent setMode={setMode} />
+        <RegisterModalContent setMode={setMode} setIsOpen={setIsOpen} />
       )}
     </Modal>
   );
@@ -52,14 +52,16 @@ export function LoginModal({
 
 function LoginModalContent({
   setMode,
+  setIsOpen,
 }: {
   setMode: Dispatch<SetStateAction<"login" | "register">>;
+  setIsOpen: (value: boolean) => void;
 }) {
   const { instance } = useLanguage();
   return (
     <div className="flex flex-col items-center min-w-0 min-h-0 gap-4">
       <Logo />
-      <LoginForm />
+      <LoginForm onSuccess={() => setIsOpen(false)} />
       <div className="flex flex-col items-center w-full gap-3">
         <p className="paragraph-sm text-muted-foreground">
           {instance.getItem("or_login_with")}
@@ -85,14 +87,16 @@ function LoginModalContent({
 
 function RegisterModalContent({
   setMode,
+  setIsOpen,
 }: {
   setMode: Dispatch<SetStateAction<"login" | "register">>;
+  setIsOpen: (value: boolean) => void;
 }) {
   const { instance } = useLanguage();
   return (
     <div className="flex flex-col items-center min-w-0 min-h-0 gap-4">
       <Logo />
-      <RegisterForm />
+      <RegisterForm onSuccess={() => setIsOpen(false)} />
       <div className="flex flex-col items-center w-full gap-3">
         <p className="paragraph-sm text-muted-foreground">
           {instance.getItem("or_login_with")}

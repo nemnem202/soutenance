@@ -11,8 +11,8 @@ import { Button } from "../../ui/button";
 import { Checkbox } from "../../ui/checkbox";
 import { Input } from "../../ui/input";
 
-export default function LoginForm() {
-  const { form, formRef, handleSubmit } = useLoginForm();
+export default function LoginForm({ onSuccess }: { onSuccess: () => void }) {
+  const { form, formRef, handleSubmit } = useLoginForm({ onSuccess });
   const { instance } = useLanguage();
   return (
     <form
