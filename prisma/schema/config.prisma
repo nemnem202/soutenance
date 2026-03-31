@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../lib/generated/prisma"
+  output   = "../../lib/generated/prisma"
 }
 
 generator zod {
@@ -17,7 +17,3 @@ datasource db {
   provider = "postgresql"
 }
 
-model Test {
-  id      Int     @id @default(autoincrement())
-  createdAt DateTime @default(now())
-}
