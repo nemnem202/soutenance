@@ -21,3 +21,11 @@ export function onLogout() {
   const context = getContext();
   return new ConnexionController({ client: prismaClient, context }).logout();
 }
+
+export function onRemoveAccount() {
+  const context = getContext();
+  return new ConnexionController({
+    client: prismaClient,
+    context,
+  }).removeAccount();
+}

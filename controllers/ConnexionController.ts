@@ -247,4 +247,34 @@ export class ConnexionController extends Controller<ConnexionDeps> {
       };
     }
   }
+
+  async removeAccount(): Promise<ServerResponse> {
+    try {
+      const user = this.deps.context.user;
+      if (!user) {
+        return {
+          success: false,
+          status: Status.NotConnected,
+          title: "You are not connected",
+          description: "You must be connected to remove your account",
+        };
+      }
+      const removed = await this.deps.client.user.delete({
+        where: {
+          id: user.id,
+        },
+      });
+
+      logger.success("User account removed", removed.username);
+      return { success: true, status: Status.RemoveAccountSuccessfull };
+    } catch (err) {
+      logger.error("Remove account error", err);
+      return {
+        success: false,
+        status: Status.UnknownError,
+        title: "An error occured",
+        description: "Please try later",
+      };
+    }
+  }
 }
