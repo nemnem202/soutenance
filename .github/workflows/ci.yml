@@ -23,7 +23,7 @@ jobs:
           echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env.prod
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env.prod
           echo "APP_PORT=${{ secrets.APP_PORT }}" >> .env.prod
-         
+          echo "TOKEN_SECRET=${{ secrets.TOKEN_SECRET }}" >> .env.prod
 
       - name: Build and run CI containers
         run: make ci
