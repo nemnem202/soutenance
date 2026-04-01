@@ -18,6 +18,7 @@ import { LoginModal } from "../auth/login-button";
 import { SettingsParam } from "./settings-assets";
 import useLogout from "@/hooks/use-logout";
 import { Spinner } from "@/components/ui/spinner";
+import { navigate } from "vike/client/router";
 
 export function ThemeParam() {
   const { instance } = useLanguage();
@@ -81,7 +82,13 @@ export function LogoutButton() {
   const { instance } = useLanguage();
   const { logoutLoading, triggerLogout } = useLogout();
   return (
-    <Button variant={"destructive"} onClick={() => triggerLogout()}>
+    <Button
+      variant={"destructive"}
+      onClick={async () => {
+        await triggerLogout();
+        navigate("/");
+      }}
+    >
       {logoutLoading ? (
         <Spinner />
       ) : (
