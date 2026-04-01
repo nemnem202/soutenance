@@ -10,6 +10,9 @@ describe("Environnement variabels", () => {
       POSTGRES_PASSWORD,
       POSTGRES_USER,
       TOKEN_SECRET,
+      GOOGLE_CLIENT_ID,
+      GOOGLE_CLIENT_SECRET,
+      GOOGLE_REDIRECT_URI,
     } = env;
 
     expect(APP_PORT).toBeDefined();
@@ -18,5 +21,8 @@ describe("Environnement variabels", () => {
     expect(POSTGRES_PASSWORD).toBeDefined();
     expect(POSTGRES_USER).toBeDefined();
     expect(TOKEN_SECRET).toBeDefined();
+    expect(GOOGLE_CLIENT_ID).toBeDefined();
+    expect(GOOGLE_CLIENT_SECRET).toBeDefined();
+    expect(GOOGLE_REDIRECT_URI).toBeDefined();
   });
 });
