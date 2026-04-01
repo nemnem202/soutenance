@@ -62,12 +62,9 @@ export function useLoginForm({ onSuccess }: { onSuccess: () => void }) {
           errorToast(response.title, response.description);
       }
     } else {
-      const session = await onSessionRequest();
-      setSession(session);
-      if (session) {
-        successToast(`Welcome back, ${session.username} !`);
-        onSuccess();
-      }
+      setSession(response.session);
+      successToast(`Welcome back, ${response.session.username} !`);
+      onSuccess();
     }
     setSubmitLoading(false);
   };
@@ -110,12 +107,9 @@ export function useRegisterForm({ onSuccess }: { onSuccess: () => void }) {
           errorToast(response.title, response.description);
       }
     } else {
-      const session = await onSessionRequest();
-      setSession(session);
-      if (session) {
-        successToast(`Welcome back, ${session.username} !`);
-        onSuccess();
-      }
+      setSession(response.session);
+      successToast(`Welcome, ${response.session.username} !`);
+      onSuccess();
     }
     setSubmitLoading(false);
   };

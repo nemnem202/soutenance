@@ -1,8 +1,8 @@
-import { Status, type ServerResponse } from "@/types/server-response";
+import { Status, type ErrorServerResponse } from "@/types/server-response";
 import { Controller, type ControllerDeps } from "./Controller";
 import { logger } from "@/lib/logger";
 import argon2 from "argon2";
-import type { LoginData, RegisterData } from "@/types/auth";
+import type { LoginData, RegisterData, Session } from "@/types/auth";
 import { loginSchema, registerSchema } from "@/schemas/auth.schema";
 import { SignJWT } from "jose";
 import { env } from "@/lib/env";
@@ -43,7 +43,11 @@ export class ConnexionController extends Controller<ConnexionDeps> {
     }
   }
 
-  async login({ ...props }: LoginData): Promise<ServerResponse> {
+  async login({
+    ...props
+  }: LoginData): Promise<
+    ErrorServerResponse | { success: true; session: Session }
+  > {
     try {
       logger.info("Login requested");
 
@@ -102,7 +106,14 @@ export class ConnexionController extends Controller<ConnexionDeps> {
 
       logger.success("Login", user.username);
 
-      return { success: true, status: Status.Logged };
+      return {
+        success: true,
+        session: {
+          id: user.id,
+          username: user.username,
+          profilePictureSource: user.profilePicture,
+        },
+      };
     } catch (err) {
       logger.error("Failed to login", err);
       return {
@@ -114,7 +125,11 @@ export class ConnexionController extends Controller<ConnexionDeps> {
     }
   }
 
-  async register({ ...props }: RegisterData): Promise<ServerResponse> {
+  async register({
+    ...props
+  }: RegisterData): Promise<
+    ErrorServerResponse | { success: true; session: Session }
+  > {
     try {
       logger.info("Register request");
 
@@ -181,7 +196,14 @@ export class ConnexionController extends Controller<ConnexionDeps> {
 
       logger.info("Register", username);
 
-      return { success: true, status: Status.Registered };
+      return {
+        success: true,
+        session: {
+          id: user.id,
+          username: user.username,
+          profilePictureSource: user.profilePicture,
+        },
+      };
     } catch (err) {
       logger.error("Failed to register", err);
       return {

@@ -11,7 +11,12 @@ export enum Status {
   IncorrectLoginData,
   RefusedTermsOfService,
 }
+export type ErrorServerResponse = {
+  success: false;
+  title: string;
+  description?: string;
+  status: Status;
+};
+export type SuccessServerResponse = { success: true; status: Status };
 
-export type ServerResponse =
-  | { success: true; status: Status }
-  | { success: false; title: string; description?: string; status: Status };
+export type ServerResponse = SuccessServerResponse | ErrorServerResponse;
