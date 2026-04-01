@@ -2,9 +2,8 @@ import { apply, serve } from "@photonjs/express";
 import express from "express";
 import { generatePlaceholders } from "./placeholders";
 import { telefuncHandler } from "./telefunc-handler";
-import { env } from "@/lib/env";
 
-const port = env.APP_PORT;
+const port = 3000;
 
 export default startApp() as unknown;
 
