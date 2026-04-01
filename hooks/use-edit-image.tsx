@@ -1,6 +1,6 @@
-import type { EditableImageProps } from "@/components/organisms/editable-image";
 import { useEffect, useRef, useState, type WheelEvent } from "react";
 import type AvatarEditor from "react-avatar-editor";
+import type { EditableImageProps } from "@/components/organisms/editable-image";
 
 export default function useEditImage(props: EditableImageProps) {
   const [imageSource, setImageSource] = useState<string | undefined>(props.src);

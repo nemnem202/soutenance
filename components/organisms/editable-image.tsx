@@ -1,12 +1,12 @@
 import { Pen, Upload, ZoomIn, ZoomOut } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import AvatarEditor from "react-avatar-editor";
-import { Slider } from "../ui/slider";
+import PlaceholderImage from "@/assets/images/placeholder.webp";
+import { Button } from "@/components/ui/button";
 import useEditImage from "@/hooks/use-edit-image";
-import Modal from "./modal";
 import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
-import PlaceholderImage from "@/assets/images/placeholder.webp";
+import { Slider } from "../ui/slider";
+import Modal from "./modal";
 
 export interface EditableImageProps {
   onImageChange: (src: string) => void;

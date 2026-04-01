@@ -1,19 +1,19 @@
+import { useEffect } from "react";
+import { navigate } from "vike/client/router";
+import { useData } from "vike-react/useData";
+import { usePageContext } from "vike-react/usePageContext";
 import ArrowElipsisTopMenu from "@/components/features/layout/arrow-elipsis-top-menu";
-import Searchbar from "@/components/organisms/searchbar";
+import { MediumPlaylistWrapper } from "@/components/features/playlist/playlists-widgets";
 import SizeAdapter from "@/components/molecules/size-adapter";
+import Searchbar from "@/components/organisms/searchbar";
 import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
 import type { Data } from "@/pages/+data";
 import type { Account } from "@/types/entities";
-import { useEffect } from "react";
-import { useData } from "vike-react/useData";
-import { usePageContext } from "vike-react/usePageContext";
-import { navigate } from "vike/client/router";
-import { MediumPlaylistWrapper } from "@/components/features/playlist/playlists-widgets";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
-  const account = useData<Data>().accounts.find((e) => e.id === id);
+  const account = useData<Data>().accounts.find((e) => String(e.id) === id);
 
   useEffect(() => {
     if (!account) navigate("/404");
@@ -66,7 +66,7 @@ function Content() {
       </div>
       <div className="flex  gap-x-auto gap-y-5 flex-wrap container">
         <MediumPlaylistWrapper
-          allowToAddANewPlaylist={id === session?.userId}
+          allowToAddANewPlaylist={id === String(session?.id)}
         />
       </div>
     </div>

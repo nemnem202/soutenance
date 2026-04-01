@@ -1,10 +1,10 @@
+import type { ReactNode } from "react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/molecules/tooltip";
 import { Separator } from "@/components/ui/separator";
-import type { ReactNode } from "react";
 
 export function SettingsParam({
   children,

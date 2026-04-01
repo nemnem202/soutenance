@@ -1,6 +1,4 @@
-import { useLanguage } from "@/hooks/use-language";
-import { SettingsParam } from "./settings-assets";
-import { useTheme } from "@/hooks/use-theme";
+import { ArrowRightLeft, LogOut, X } from "lucide-react";
 import { useId, useState } from "react";
 import {
   Select,
@@ -8,14 +6,21 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/organisms/select";
-import type { Language } from "@/types/i18n";
-import { availableLanguages } from "@/config/language-pack";
-import flags from "@/i18n/flags";
 import { Button } from "@/components/ui/button";
-import { ArrowRightLeft, LogOut, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { availableLanguages } from "@/config/language-pack";
+import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
+import { useTheme } from "@/hooks/use-theme";
+import flags from "@/i18n/flags";
+import type { Language } from "@/types/i18n";
 import { LoginModal } from "../auth/login-button";
+import { SettingsParam } from "./settings-assets";
+import useLogout from "@/hooks/use-logout";
+import { Spinner } from "@/components/ui/spinner";
+import { navigate } from "vike/client/router";
+import useRemoveAccount from "@/hooks/use-remove-account";
+import Modal from "@/components/organisms/modal";
 
 export function ThemeParam() {
   const { instance } = useLanguage();
@@ -77,20 +82,71 @@ export function LanguageParam() {
 
 export function LogoutButton() {
   const { instance } = useLanguage();
-  const { setSession } = useSession();
+  const { logoutLoading, triggerLogout } = useLogout();
   return (
-    <Button variant={"destructive"} onClick={() => setSession(null)}>
-      <LogOut /> {instance.getItem("log_out")}
+    <Button
+      variant={"destructive"}
+      disabled={logoutLoading}
+      onClick={async () => {
+        await triggerLogout();
+        navigate("/");
+      }}
+    >
+      {logoutLoading ? (
+        <Spinner />
+      ) : (
+        <>
+          <LogOut /> {instance.getItem("log_out")}
+        </>
+      )}
     </Button>
   );
 }
 
 export function RemoveAccountButton() {
   const { instance } = useLanguage();
+  const { removeAccountLoading, triggerRemoveAccount } = useRemoveAccount();
+  const [isOpen, setIsOpen] = useState(false);
   return (
-    <Button variant={"destructive"}>
-      <X /> {instance.getItem("remove_account")}
-    </Button>
+    <>
+      <Button
+        variant={"destructive"}
+        onClick={() => setIsOpen(true)}
+        disabled={removeAccountLoading}
+      >
+        {removeAccountLoading ? (
+          <Spinner />
+        ) : (
+          <>
+            {" "}
+            <X /> {instance.getItem("remove_account")}
+          </>
+        )}
+      </Button>
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+        <div className="w-full flex flex-col items-center gap-8">
+          <div className="flex flex-col items-center w-full">
+            <h2 className="title-1 text-primary">Are you shure ?</h2>
+            <p className="paragraph-md">
+              Your account and all the related data will be removed
+            </p>
+          </div>
+          <Button
+            variant={"destructive"}
+            onClick={triggerRemoveAccount}
+            disabled={removeAccountLoading}
+          >
+            {removeAccountLoading ? (
+              <Spinner />
+            ) : (
+              <>
+                <X /> {instance.getItem("remove_account")}
+              </>
+            )}
+          </Button>
+        </div>
+      </Modal>
+    </>
   );
 }
 
@@ -107,7 +163,12 @@ export function ChangeAccountButton() {
       >
         <ArrowRightLeft /> {instance.getItem("change_account")}
       </Button>
-      <LoginModal initMode="login" isOpen={isOpen} setIsOpen={setIsOpen} />
+      <LoginModal
+        initMode="login"
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        onSuccess={() => navigate("/")}
+      />
     </>
   );
 }

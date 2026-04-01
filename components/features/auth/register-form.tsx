@@ -1,19 +1,22 @@
-import { Button } from "../../ui/button";
+import { Controller } from "react-hook-form";
+import { useRegisterForm } from "@/hooks/use-forms";
+import { useLanguage } from "@/hooks/use-language";
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "../../molecules/field";
-import { Controller } from "react-hook-form";
-import { Input } from "../../ui/input";
-import { useRegisterForm } from "@/hooks/use-forms";
-import { Checkbox } from "../../ui/checkbox";
 import EditableImage from "../../organisms/editable-image";
-import { useLanguage } from "@/hooks/use-language";
+import { Button } from "../../ui/button";
+import { Checkbox } from "../../ui/checkbox";
+import { Input } from "../../ui/input";
+import { Spinner } from "@/components/ui/spinner";
 
-export default function RegisterForm() {
-  const { form, formRef, handleSubmit } = useRegisterForm();
+export default function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
+  const { form, formRef, handleSubmit, submitLoading } = useRegisterForm({
+    onSuccess,
+  });
   const { instance } = useLanguage();
   return (
     <form
@@ -145,13 +148,13 @@ export default function RegisterForm() {
                     htmlFor="form-rhf-remember"
                     className=" paragraph-md max-w-70"
                   >
-                    <span>
+                    <span className="text-foreground">
                       {instance.getItem("by_checking_this")}{" "}
                       <a
                         href="/therms-of-service"
                         className="text-primary p-0 h-min hover:underline"
                       >
-                        {instance.getItem("therms_of_service")} {/* TODO */}
+                        {instance.getItem("therms_of_service")}
                       </a>
                     </span>
                   </FieldLabel>
@@ -164,8 +167,8 @@ export default function RegisterForm() {
           />
         </div>
       </FieldGroup>
-      <Button className="title-3 w-full" type="submit">
-        {instance.getItem("register")}
+      <Button className="title-3 w-full" type="submit" disabled={submitLoading}>
+        {submitLoading ? <Spinner /> : instance.getItem("register")}
       </Button>
     </form>
   );

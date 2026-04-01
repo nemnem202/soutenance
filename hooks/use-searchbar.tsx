@@ -1,7 +1,7 @@
-import type { SearchbarProps } from "@/components/organisms/searchbar";
 import { faker } from "@faker-js/faker";
 import { History, Search } from "lucide-react";
 import { type ChangeEvent, type JSX, useEffect, useState } from "react";
+import type { SearchbarProps } from "@/components/organisms/searchbar";
 
 interface DatasetItem {
   content: string;

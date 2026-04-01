@@ -1,0 +1,15 @@
+import "telefunc";
+
+declare module "telefunc" {
+  namespace Telefunc {
+    interface Context {
+      user: null | { id: number };
+      request: Request;
+      setCookie: (
+        name: string,
+        value: string,
+        options: Record<string, unknown>,
+      ) => void;
+    }
+  }
+}

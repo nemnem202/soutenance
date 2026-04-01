@@ -1,11 +1,11 @@
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { useData } from "vike-react/useData";
 import { availableLanguages } from "@/config/language-pack";
 import type { Data } from "@/pages/+data";
 import type { Account, Playlist } from "@/types/entities";
 import type { Language } from "@/types/i18n";
 import type { Chord } from "@/types/music";
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-import { useData } from "vike-react/useData";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

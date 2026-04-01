@@ -1,8 +1,10 @@
 import { apply, serve } from "@photonjs/express";
 import express from "express";
 import { generatePlaceholders } from "./placeholders";
+import { telefuncHandler } from "./telefunc-handler";
+import { env } from "@/lib/env";
 
-const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+const port = env.APP_PORT;
 
 export default startApp() as unknown;
 
@@ -20,7 +22,7 @@ function startApp() {
     });
   });
 
-  apply(app, []);
+  apply(app, [telefuncHandler]);
 
   return serve(app, {
     port,

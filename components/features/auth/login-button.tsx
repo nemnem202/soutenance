@@ -1,11 +1,11 @@
 import { type Dispatch, type SetStateAction, useState } from "react";
-import { Button } from "../../ui/button";
-import Logo from "../../ui/logo";
+import { useLanguage } from "@/hooks/use-language";
 import GoogleLoginButton from "../../organisms/google-login-button";
 import Modal from "../../organisms/modal";
-import { useLanguage } from "@/hooks/use-language";
-import RegisterForm from "./register-form";
+import { Button } from "../../ui/button";
+import Logo from "../../ui/logo";
 import LoginForm from "./login-form";
+import RegisterForm from "./register-form";
 
 export default function LoginButton() {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,24 +27,36 @@ export default function LoginButton() {
 export function LoginModal({
   isOpen,
   setIsOpen,
+  onSuccess = () => {},
   initMode,
 }: {
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
+  onSuccess?: () => void;
   initMode: "login" | "register";
 }) {
   const [mode, setMode] = useState<"login" | "register">(initMode);
   return (
     <Modal
       isOpen={isOpen}
-      onClose={() => setIsOpen(false)}
+      onClose={() => {
+        setIsOpen(false);
+      }}
       size="md"
       title="Login Modal"
     >
       {mode === "login" ? (
-        <LoginModalContent setMode={setMode} />
+        <LoginModalContent
+          setMode={setMode}
+          setIsOpen={setIsOpen}
+          onSuccess={onSuccess}
+        />
       ) : (
-        <RegisterModalContent setMode={setMode} />
+        <RegisterModalContent
+          setMode={setMode}
+          setIsOpen={setIsOpen}
+          onSuccess={onSuccess}
+        />
       )}
     </Modal>
   );
@@ -52,14 +64,23 @@ export function LoginModal({
 
 function LoginModalContent({
   setMode,
+  setIsOpen,
+  onSuccess = () => {},
 }: {
   setMode: Dispatch<SetStateAction<"login" | "register">>;
+  setIsOpen: (value: boolean) => void;
+  onSuccess?: () => void;
 }) {
   const { instance } = useLanguage();
   return (
     <div className="flex flex-col items-center min-w-0 min-h-0 gap-4">
       <Logo />
-      <LoginForm />
+      <LoginForm
+        onSuccess={() => {
+          setIsOpen(false);
+          onSuccess();
+        }}
+      />
       <div className="flex flex-col items-center w-full gap-3">
         <p className="paragraph-sm text-muted-foreground">
           {instance.getItem("or_login_with")}
@@ -85,14 +106,23 @@ function LoginModalContent({
 
 function RegisterModalContent({
   setMode,
+  setIsOpen,
+  onSuccess = () => {},
 }: {
   setMode: Dispatch<SetStateAction<"login" | "register">>;
+  setIsOpen: (value: boolean) => void;
+  onSuccess?: () => void;
 }) {
   const { instance } = useLanguage();
   return (
     <div className="flex flex-col items-center min-w-0 min-h-0 gap-4">
       <Logo />
-      <RegisterForm />
+      <RegisterForm
+        onSuccess={() => {
+          setIsOpen(false);
+          onSuccess();
+        }}
+      />
       <div className="flex flex-col items-center w-full gap-3">
         <p className="paragraph-sm text-muted-foreground">
           {instance.getItem("or_login_with")}

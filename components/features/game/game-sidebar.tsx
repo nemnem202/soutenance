@@ -1,5 +1,5 @@
-import { SidebarSection } from "../layout/app-sidebar";
-import { SidebarTabButton } from "./game-assets";
+import { X } from "lucide-react";
+import type { ReactNode } from "react";
 import {
   Select,
   SelectContent,
@@ -9,21 +9,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/organisms/select";
-import { Separator } from "@/components/ui/separator";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
-import { X } from "lucide-react";
-import GeneralSettings from "./settings/general-settings";
-import BackingTrackSettings from "./settings/backing-track-settings";
+import { SidebarSection } from "../layout/app-sidebar";
+import { SidebarTabButton } from "./game-assets";
 import AppearanceSettings from "./settings/appearance-settings";
+import BackingTrackSettings from "./settings/backing-track-settings";
+import GeneralSettings from "./settings/general-settings";
 import MidiSettings from "./settings/midi-settings";
 
 export default function GameSidebar({

@@ -1,22 +1,22 @@
+import { useEffect, useState } from "react";
+import { navigate } from "vike/client/router";
+import { useData } from "vike-react/useData";
+import { usePageContext } from "vike-react/usePageContext";
+import ArrowElipsisTopMenu from "@/components/features/layout/arrow-elipsis-top-menu";
+import { PlaylistItemsList } from "@/components/features/playlist/playlist-items";
+import SizeAdapter from "@/components/molecules/size-adapter";
+import Searchbar from "@/components/organisms/searchbar";
 import AccountPP from "@/components/ui/account-pp";
 import { LikeButton, PlusButton } from "@/components/ui/custom-buttons";
-import ArrowElipsisTopMenu from "@/components/features/layout/arrow-elipsis-top-menu";
-import Searchbar from "@/components/organisms/searchbar";
 import { Separator } from "@/components/ui/separator";
-import SizeAdapter from "@/components/molecules/size-adapter";
 import { useLanguage } from "@/hooks/use-language";
 import type { Data } from "@/pages/+data";
 import type { Playlist } from "@/types/entities";
-import { useEffect, useState } from "react";
-import { useData } from "vike-react/useData";
-import { usePageContext } from "vike-react/usePageContext";
-import { navigate } from "vike/client/router";
-import { PlaylistItemsList } from "@/components/features/playlist/playlist-items";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
   const [playlist] = useState(
-    useData<Data>().playlists.find((e) => e.id === id),
+    useData<Data>().playlists.find((e) => String(e.id) === id),
   );
 
   useEffect(() => {

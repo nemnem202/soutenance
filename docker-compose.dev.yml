@@ -25,12 +25,18 @@ services:
     environment:
       NODE_ENV: dev
       CHOKIDAR_USEPOLLING: "true"
+      APP_PORT: ${APP_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      DATABASE_URL: ${DATABASE_URL}
+      TOKEN_SECRET: ${TOKEN_SECRET}
     ports:
       - "${APP_PORT}:3000"
     volumes:
       - ./:/app
       - /app/node_modules
-    command: ["pnpm", "dev"]
+    command: ["sh", "-c", "pnpm prisma migrate deploy && pnpm dev"]
     restart: unless-stopped
 volumes:
   music-sandbox-data-dev:

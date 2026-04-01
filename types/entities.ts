@@ -1,8 +1,8 @@
-import type { playlistSchema } from "@/schemas/entities.schema";
 import type z from "zod";
+import type { playlistSchema } from "@/schemas/entities.schema";
 
 export type Account = {
-  id: string;
+  id: number;
   firstName: string;
   lastName?: string;
   picture: string;
@@ -13,7 +13,7 @@ export type ExerciseConfig = {
 };
 
 export type Exercise = {
-  id: string;
+  id: number;
   title: string;
   author: string;
   account: Account;
@@ -21,9 +21,9 @@ export type Exercise = {
   hasChords: boolean;
   hasMelody: boolean;
   config: ExerciseConfig;
-  midiFileId: string;
+  midiFileId: number;
 };
 
 export type PlaylistSchema = z.infer<typeof playlistSchema>;
 
-export type Playlist = PlaylistSchema & { id: string; author: string };
+export type Playlist = PlaylistSchema & { id: number; author: string };

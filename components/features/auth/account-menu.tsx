@@ -1,5 +1,17 @@
+import {
+  Brush,
+  LanguagesIcon,
+  LogOutIcon,
+  Settings2,
+  UserIcon,
+} from "lucide-react";
+import { navigate } from "vike/client/router";
+import { availableLanguages } from "@/config/language-pack";
+import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
-import AccountPP from "../../ui/account-pp";
+import { useTheme } from "@/hooks/use-theme";
+import flags from "@/i18n/flags";
+import type { Language } from "@/types/i18n";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -12,24 +24,14 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "../../organisms/dropdown-menu";
-
+import AccountPP from "../../ui/account-pp";
 import { Button } from "../../ui/button";
-import {
-  Brush,
-  LanguagesIcon,
-  LogOutIcon,
-  Settings2,
-  UserIcon,
-} from "lucide-react";
-import { navigate } from "vike/client/router";
-import { useTheme } from "@/hooks/use-theme";
-import { useLanguage } from "@/hooks/use-language";
-import { availableLanguages } from "@/config/language-pack";
-import flags from "@/i18n/flags";
-import type { Language } from "@/types/i18n";
+import useLogout from "@/hooks/use-logout";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function AccountMenu() {
-  const { session, setSession } = useSession();
+  const { session } = useSession();
+  const { logoutLoading, triggerLogout } = useLogout();
   const { currentTheme, setDark, setLight } = useTheme();
   const { instance, setLanguage } = useLanguage();
   if (!session) return null;
@@ -46,9 +48,7 @@ export default function AccountMenu() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem
-          onClick={() => navigate(`/account/${session.userId}`)}
-        >
+        <DropdownMenuItem onClick={() => navigate(`/account/${session.id}`)}>
           <UserIcon />
           {instance.getItem("profile")}
         </DropdownMenuItem>
@@ -109,15 +109,15 @@ export default function AccountMenu() {
           </DropdownMenuPortal>
         </DropdownMenuSub>
         <DropdownMenuSeparator className="bg-border" />
-        <DropdownMenuItem
-          variant="destructive"
-          onClick={() => {
-            setSession(null);
-            navigate("/");
-          }}
-        >
-          <LogOutIcon />
-          {instance.getItem("log_out")}
+        <DropdownMenuItem variant="destructive" onClick={() => triggerLogout()}>
+          {logoutLoading ? (
+            <Spinner />
+          ) : (
+            <>
+              <LogOutIcon />
+              {instance.getItem("log_out")}
+            </>
+          )}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

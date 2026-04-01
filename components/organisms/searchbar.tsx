@@ -1,13 +1,13 @@
-import BasicDropdown from "./animated-dropdown-menu";
+import { Search } from "lucide-react";
+import { useState } from "react";
+import { navigate } from "vike/client/router";
+import useSearchbar from "@/hooks/use-searchbar";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "../molecules/input-group";
-import { Search } from "lucide-react";
-import useSearchbar from "@/hooks/use-searchbar";
-import { navigate } from "vike/client/router";
-import { useState } from "react";
+import BasicDropdown from "./animated-dropdown-menu";
 export interface SearchbarProps {
   placeholder: string;
 }

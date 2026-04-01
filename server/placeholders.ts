@@ -1,11 +1,11 @@
+import { en, Faker } from "@faker-js/faker";
 import type { Account, Exercise, Playlist } from "@/types/entities";
-import { Faker, en } from "@faker-js/faker";
 
 const faker = new Faker({ locale: [en] });
 
 function generateAccount(): Account {
   return {
-    id: faker.string.uuid(),
+    id: faker.number.int(),
     firstName: faker.music.artist(),
     lastName: Math.random() > 0.5 ? faker.person.lastName() : undefined,
     picture: faker.image.avatar(),
@@ -14,7 +14,7 @@ function generateAccount(): Account {
 
 function generateExercise(accounts: Account[]): Exercise {
   return {
-    id: faker.string.uuid(),
+    id: faker.number.int(),
     title: faker.music.songName(),
     account: faker.helpers.arrayElement(accounts),
     author: faker.person.firstName(),
@@ -24,7 +24,7 @@ function generateExercise(accounts: Account[]): Exercise {
     creation: faker.date.anytime(),
     hasChords: faker.datatype.boolean(),
     hasMelody: faker.datatype.boolean(),
-    midiFileId: faker.string.uuid(),
+    midiFileId: faker.number.int(),
   };
 }
 
@@ -36,7 +36,7 @@ function generatePlaylist(
   const selected = faker.helpers.arrayElements(exercises, nbExercises);
 
   return {
-    id: faker.string.uuid(),
+    id: faker.number.int(),
     author: faker.person.firstName() + faker.person.lastName(),
     accountId: faker.helpers.arrayElement(accounts).id,
     image: {

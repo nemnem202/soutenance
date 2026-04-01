@@ -1,18 +1,21 @@
-import { Button } from "../../ui/button";
+import { Controller } from "react-hook-form";
+import { useLoginForm } from "@/hooks/use-forms";
+import { useLanguage } from "@/hooks/use-language";
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "../../molecules/field";
-import { Controller } from "react-hook-form";
-import { Input } from "../../ui/input";
-import { useLoginForm } from "@/hooks/use-forms";
+import { Button } from "../../ui/button";
 import { Checkbox } from "../../ui/checkbox";
-import { useLanguage } from "@/hooks/use-language";
+import { Input } from "../../ui/input";
+import { Spinner } from "@/components/ui/spinner";
 
-export default function LoginForm() {
-  const { form, formRef, handleSubmit } = useLoginForm();
+export default function LoginForm({ onSuccess }: { onSuccess: () => void }) {
+  const { form, formRef, handleSubmit, submitLoading } = useLoginForm({
+    onSuccess,
+  });
   const { instance } = useLanguage();
   return (
     <form
@@ -36,7 +39,7 @@ export default function LoginForm() {
                 aria-invalid={fieldState.invalid}
                 placeholder={instance.getItem("email")}
                 type="email"
-                autoComplete="off"
+                autoComplete="on"
                 className="paragraph !text-left px-2"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -54,7 +57,7 @@ export default function LoginForm() {
                 aria-invalid={fieldState.invalid}
                 placeholder={instance.getItem("password")}
                 type="password"
-                autoComplete="off"
+                autoComplete="on"
                 className="paragraph !text-left px-2"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -78,7 +81,7 @@ export default function LoginForm() {
                       )
                     }
                   />
-                  <FieldLabel htmlFor="form-rhf-remember">
+                  <FieldLabel htmlFor="form-rhf-remember ">
                     {instance.getItem("remember_me")}
                   </FieldLabel>
                 </div>
@@ -97,8 +100,8 @@ export default function LoginForm() {
           </Button>
         </div>
       </FieldGroup>
-      <Button className="title-3 w-full" type="submit">
-        {instance.getItem("login")}
+      <Button className="title-3 w-full" type="submit" disabled={submitLoading}>
+        {submitLoading ? <Spinner /> : instance.getItem("login")}
       </Button>
     </form>
   );

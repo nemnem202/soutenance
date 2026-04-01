@@ -1,6 +1,6 @@
 import useSession from "@/hooks/use-session";
-import LoginButton from "./login-button";
 import AccountMenu from "./account-menu";
+import LoginButton from "./login-button";
 
 export default function AuthNavControls() {
   const { session } = useSession();

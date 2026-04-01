@@ -1,11 +1,11 @@
 import { MediumAccountWidget } from "@/components/features/auth/account-widgets";
-import Headline from "@/components/ui/headline";
 import MobileHeader from "@/components/features/layout/mobile-header";
+import { MediumPlaylistWidget } from "@/components/features/playlist/playlists-widgets";
 import SizeAdapter from "@/components/molecules/size-adapter";
 import { MediumWidgetCarousel } from "@/components/organisms/widget-carousel";
+import Headline from "@/components/ui/headline";
 import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
-import { MediumPlaylistWidget } from "@/components/features/playlist/playlists-widgets";
 
 export default function Page() {
   return <SizeAdapter sm={<Mobile />} md={<Desktop />} />;

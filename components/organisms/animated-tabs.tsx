@@ -1,8 +1,8 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { motion, useReducedMotion } from "motion/react";
 import { type ReactNode, useCallback, useId, useState } from "react";
+import { cn } from "@/lib/utils";
 import UpcomingToolTip from "../molecules/upcoming-tooltip";
 
 export interface AnimatedTabsProps {

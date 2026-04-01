@@ -1,6 +1,6 @@
-import Headline from "@/components/ui/headline";
 import MobileHeader from "@/components/features/layout/mobile-header";
 import SizeAdapter from "@/components/molecules/size-adapter";
+import Headline from "@/components/ui/headline";
 import { useLanguage } from "@/hooks/use-language";
 
 export default function Page() {

@@ -1,15 +1,15 @@
+import SwitchParam from "@/components/molecules/switch-param";
 import {
+  Select,
   SelectContent,
-  SelectTrigger,
   SelectGroup,
   SelectItem,
   SelectLabel,
+  SelectTrigger,
   SelectValue,
-  Select,
 } from "@/components/organisms/select";
-import SwitchParam from "@/components/molecules/switch-param";
-import { useLanguage } from "@/hooks/use-language";
 import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/hooks/use-language";
 
 import { ParamsAccordion } from "../game-sidebar";
 

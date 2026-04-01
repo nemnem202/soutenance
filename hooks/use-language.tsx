@@ -1,10 +1,10 @@
+import { useContext, useEffect, useMemo, useState } from "react";
+import { useData } from "vike-react/useData";
 import { availableLanguages } from "@/config/language-pack";
 import I18nModule from "@/i18n/module";
 import type { Data } from "@/pages/+data";
 import { LanguagesContext } from "@/providers/language-provider";
 import type { Language } from "@/types/i18n";
-import { useContext, useEffect, useMemo, useState } from "react";
-import { useData } from "vike-react/useData";
 
 export function useLanguageProvider({ module }: { module?: I18nModule }) {
   const preferredLanguage = useData<Data>().preferredLanguage ?? "en";

@@ -1,13 +1,13 @@
-import { type ReactNode, useState } from "react";
-import { Separator } from "../../ui/separator";
 import { Compass, Heart, House, LayoutDashboard } from "lucide-react";
-import { SmallPlaylistWidget } from "../playlist/playlists-widgets";
-import Logo from "../../ui/logo";
-import Link from "../../ui/link";
-import { PlusButton } from "../../ui/custom-buttons";
+import { type ReactNode, useState } from "react";
 import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
+import { PlusButton } from "../../ui/custom-buttons";
+import Link from "../../ui/link";
+import Logo from "../../ui/logo";
+import { Separator } from "../../ui/separator";
 import NewPlaylistModal from "../playlist/new-playlist-modal";
+import { SmallPlaylistWidget } from "../playlist/playlists-widgets";
 
 export default function Sidebar() {
   return (
@@ -59,7 +59,7 @@ function NavBar() {
             icon={<Heart />}
           />
           <Link
-            href={`/account/${session.userId}`}
+            href={`/account/${session.id}`}
             text={instance.getItem("dashboard")}
             icon={<LayoutDashboard />}
           />

@@ -1,3 +1,6 @@
+import type * as CheckboxPrimitive from "@radix-ui/react-checkbox";
+import { Maximize, Minimize } from "lucide-react";
+import { type ComponentProps, type ReactNode, useId, useState } from "react";
 import {
   InputGroup,
   InputGroupAddon,
@@ -8,13 +11,10 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/molecules/tooltip";
-import { type ComponentProps, type ReactNode, useId, useState } from "react";
-import type * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Maximize, Minimize } from "lucide-react";
-import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
   return (

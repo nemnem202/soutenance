@@ -1,12 +1,13 @@
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: sdfsdf */
-import useCarousel from "@/hooks/use-carousel";
+
+import { ChevronRight } from "lucide-react";
 import { type ReactNode, type RefObject, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronLeftButton, ChevrontRightButton } from "../ui/custom-buttons";
+import useCarousel from "@/hooks/use-carousel";
 import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
-import { ChevronRight } from "lucide-react";
 import SizeAdapter from "../molecules/size-adapter";
+import { ChevronLeftButton, ChevrontRightButton } from "../ui/custom-buttons";
 
 interface MediumWidgetGroupProps {
   widgets: ReactNode[];

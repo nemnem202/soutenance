@@ -148,4 +148,5 @@ dist
 .cdk.staging
 cdk.out
 
-/lib/generated/prisma
+prisma/generated
+lib/generated/prisma
