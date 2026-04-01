@@ -6,7 +6,7 @@ import argon2 from "argon2";
 import prismaClient from "@/lib/prisma-client";
 
 async function createContextWithUser(userId: number, remember = true) {
-  let cookieStore: Record<string, { value: string; options: any }> = {};
+  const cookieStore: Record<string, { value: string; options: any }> = {};
 
   const context = {
     setCookie: (name: string, value: string, options: any) => {
@@ -229,7 +229,7 @@ describe("logout", () => {
 
     const ctrl = new ConnexionController({
       client: prismaClient,
-      // @ts-ignore
+      // @ts-expect-error
       context,
     });
 
@@ -244,7 +244,7 @@ describe("removeAccount", () => {
   it("should fail if user is not connected", async () => {
     const ctrl = new ConnexionController({
       client: prismaClient,
-      // @ts-ignore
+      // @ts-expect-error
       context: createUnauthenticatedContext(),
     });
 
@@ -265,7 +265,7 @@ describe("removeAccount", () => {
 
     const ctrl = new ConnexionController({
       client: prismaClient,
-      // @ts-ignore
+      // @ts-expect-error
       context: { setCookie: vi.fn(), user: { id: created.id } },
     });
 
@@ -282,7 +282,7 @@ describe("removeAccount", () => {
   it("should fail if user id does not exist in db", async () => {
     const ctrl = new ConnexionController({
       client: prismaClient,
-      // @ts-ignore
+      // @ts-expect-error
       context: { setCookie: vi.fn(), user: { id: 999999 } },
     });
 

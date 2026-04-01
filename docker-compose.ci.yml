@@ -35,6 +35,6 @@ services:
     volumes:
       - ./:/app
       - /app/node_modules
-    command: ["sh", "-c", "pnpm prisma migrate deploy pnpm lint && pnpm test"]
+    command: ["sh", "-c", "pnpm prisma generate && pnpm prisma migrate deploy && pnpm lint && pnpm test"]
 volumes:
   music-sandbox-data-ci:

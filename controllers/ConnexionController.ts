@@ -1,5 +1,5 @@
 import {
-  ServerResponse,
+  type ServerResponse,
   Status,
   type ErrorServerResponse,
 } from "@/types/server-response";
