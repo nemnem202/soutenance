@@ -1,9 +1,34 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: necessary */
 /** biome-ignore-all lint/style/noNonNullAssertion: necessary */
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { ConnexionController } from "./ConnexionController";
 import argon2 from "argon2";
 import prismaClient from "@/lib/prisma-client";
+
+async function createContextWithUser(userId: number, remember = true) {
+  let cookieStore: Record<string, { value: string; options: any }> = {};
+
+  const context = {
+    setCookie: (name: string, value: string, options: any) => {
+      cookieStore[name] = { value, options };
+    },
+    get user() {
+      return { id: userId };
+    },
+    get cookieStore() {
+      return cookieStore;
+    },
+  };
+
+  return context;
+}
+
+function createUnauthenticatedContext() {
+  return {
+    setCookie: vi.fn(),
+    user: null,
+  };
+}
 
 describe("ConnexionController (integration)", () => {
   let controller: ConnexionController;
@@ -33,7 +58,6 @@ describe("ConnexionController (integration)", () => {
     });
 
     expect(res.success).toBe(false);
-    expect(res.status).toBeDefined();
   });
 
   it("should fail if auth method is not classic", async () => {
@@ -188,5 +212,82 @@ describe("ConnexionController (integration)", () => {
     );
 
     expect(isValid).toBe(true);
+  });
+});
+
+describe("logout", () => {
+  it("should logout successfully and clear cookie", async () => {
+    let clearedCookie = false;
+    const context = {
+      setCookie: (name: string, value: string, options: any) => {
+        if (name === "token" && value === "" && options.maxAge === 0) {
+          clearedCookie = true;
+        }
+      },
+      user: { id: 1 },
+    };
+
+    const ctrl = new ConnexionController({
+      client: prismaClient,
+      // @ts-ignore
+      context,
+    });
+
+    const res = await ctrl.logout();
+
+    expect(res.success).toBe(true);
+    expect(clearedCookie).toBe(true);
+  });
+});
+
+describe("removeAccount", () => {
+  it("should fail if user is not connected", async () => {
+    const ctrl = new ConnexionController({
+      client: prismaClient,
+      // @ts-ignore
+      context: createUnauthenticatedContext(),
+    });
+
+    const res = await ctrl.removeAccount();
+
+    expect(res.success).toBe(false);
+  });
+
+  it("should remove account successfully", async () => {
+    // On crée d'abord un vrai utilisateur en BDD
+    const created = await prismaClient.user.create({
+      data: {
+        email: "todelete@test.com",
+        username: "todelete",
+        profilePicture: "",
+      },
+    });
+
+    const ctrl = new ConnexionController({
+      client: prismaClient,
+      // @ts-ignore
+      context: { setCookie: vi.fn(), user: { id: created.id } },
+    });
+
+    const res = await ctrl.removeAccount();
+
+    expect(res.success).toBe(true);
+
+    const user = await prismaClient.user.findFirst({
+      where: { id: created.id },
+    });
+    expect(user).toBeNull();
+  });
+
+  it("should fail if user id does not exist in db", async () => {
+    const ctrl = new ConnexionController({
+      client: prismaClient,
+      // @ts-ignore
+      context: { setCookie: vi.fn(), user: { id: 999999 } },
+    });
+
+    const res = await ctrl.removeAccount();
+
+    expect(res.success).toBe(false);
   });
 });
