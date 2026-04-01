@@ -4,5 +4,8 @@ import { getContext } from "telefunc";
 
 export function onSessionRequest() {
   const context = getContext();
-  return new SessionController({ client: prismaClient, context }).getSession();
+  return new SessionController({
+    client: prismaClient,
+    user: context.user,
+  }).getSession();
 }

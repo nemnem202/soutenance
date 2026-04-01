@@ -16,3 +16,8 @@ export function onRegister({ ...props }: RegisterData) {
     ...props,
   });
 }
+
+export function onLogout() {
+  const context = getContext();
+  return new ConnexionController({ client: prismaClient, context }).logout();
+}

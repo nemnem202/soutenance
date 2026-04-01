@@ -26,9 +26,12 @@ import {
 } from "../../organisms/dropdown-menu";
 import AccountPP from "../../ui/account-pp";
 import { Button } from "../../ui/button";
+import useLogout from "@/hooks/use-logout";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function AccountMenu() {
-  const { session, setSession } = useSession();
+  const { session } = useSession();
+  const { logoutLoading, triggerLogout } = useLogout();
   const { currentTheme, setDark, setLight } = useTheme();
   const { instance, setLanguage } = useLanguage();
   if (!session) return null;
@@ -106,15 +109,15 @@ export default function AccountMenu() {
           </DropdownMenuPortal>
         </DropdownMenuSub>
         <DropdownMenuSeparator className="bg-border" />
-        <DropdownMenuItem
-          variant="destructive"
-          onClick={() => {
-            setSession(null);
-            navigate("/");
-          }}
-        >
-          <LogOutIcon />
-          {instance.getItem("log_out")}
+        <DropdownMenuItem variant="destructive" onClick={() => triggerLogout()}>
+          {logoutLoading ? (
+            <Spinner />
+          ) : (
+            <>
+              <LogOutIcon />
+              {instance.getItem("log_out")}
+            </>
+          )}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

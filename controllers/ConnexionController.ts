@@ -1,4 +1,8 @@
-import { Status, type ErrorServerResponse } from "@/types/server-response";
+import {
+  ServerResponse,
+  Status,
+  type ErrorServerResponse,
+} from "@/types/server-response";
 import { Controller, type ControllerDeps } from "./Controller";
 import { logger } from "@/lib/logger";
 import argon2 from "argon2";
@@ -14,6 +18,8 @@ interface ConnexionDeps extends ControllerDeps {
 }
 
 export class ConnexionController extends Controller<ConnexionDeps> {
+  private readonly cookieSecure = false;
+
   private async generateJwt(
     userId: number,
     remember: boolean,
@@ -33,13 +39,27 @@ export class ConnexionController extends Controller<ConnexionDeps> {
 
       this.deps.context.setCookie("token", jwt, {
         httpOnly: true,
-        secure: false,
+        secure: this.cookieSecure,
         path: "/",
         maxAge: remember ? 365 * 24 * 3600 : 3600,
         sameSite: "lax",
       });
     } catch (err) {
       logger.error("Cookie generation failed: ", err);
+    }
+  }
+
+  private clearCookie() {
+    try {
+      this.deps.context.setCookie("token", "", {
+        httpOnly: true,
+        secure: this.cookieSecure,
+        path: "/",
+        maxAge: 0,
+        sameSite: "lax",
+      });
+    } catch (err) {
+      logger.error("Cookie clearing failed: ", err);
     }
   }
 
@@ -211,6 +231,19 @@ export class ConnexionController extends Controller<ConnexionDeps> {
         title: "Internal server error",
         description: "Try later",
         status: Status.UnknownError,
+      };
+    }
+  }
+
+  async logout(): Promise<ServerResponse> {
+    try {
+      this.clearCookie();
+      return { success: true, status: Status.LogoutSuccessfull };
+    } catch {
+      return {
+        success: false,
+        status: Status.UnknownError,
+        title: "Something went wrong...",
       };
     }
   }

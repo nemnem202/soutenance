@@ -3,7 +3,7 @@ import type { Session } from "@/types/auth";
 import { Controller, type ControllerDeps } from "./Controller";
 
 interface SessionDeps extends ControllerDeps {
-  user: { id: number };
+  user: { id: number } | null;
 }
 
 export default class SessionController extends Controller<SessionDeps> {

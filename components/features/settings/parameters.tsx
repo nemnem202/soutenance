@@ -16,6 +16,8 @@ import flags from "@/i18n/flags";
 import type { Language } from "@/types/i18n";
 import { LoginModal } from "../auth/login-button";
 import { SettingsParam } from "./settings-assets";
+import useLogout from "@/hooks/use-logout";
+import { Spinner } from "@/components/ui/spinner";
 
 export function ThemeParam() {
   const { instance } = useLanguage();
@@ -77,10 +79,16 @@ export function LanguageParam() {
 
 export function LogoutButton() {
   const { instance } = useLanguage();
-  const { setSession } = useSession();
+  const { logoutLoading, triggerLogout } = useLogout();
   return (
-    <Button variant={"destructive"} onClick={() => setSession(null)}>
-      <LogOut /> {instance.getItem("log_out")}
+    <Button variant={"destructive"} onClick={() => triggerLogout()}>
+      {logoutLoading ? (
+        <Spinner />
+      ) : (
+        <>
+          <LogOut /> {instance.getItem("log_out")}
+        </>
+      )}
     </Button>
   );
 }

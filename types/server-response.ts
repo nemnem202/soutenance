@@ -10,6 +10,7 @@ export enum Status {
   IncorrectRegisterData,
   IncorrectLoginData,
   RefusedTermsOfService,
+  LogoutSuccessfull,
 }
 export type ErrorServerResponse = {
   success: false;
