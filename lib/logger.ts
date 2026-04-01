@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Intentional */
 const IS_DEV = process.env.NODE_ENV === "dev" || import.meta.env?.DEV;
+const IS_TEST = process.env.NODE_ENV === "test" || import.meta.env?.TEST;
 const IS_BROWSER = typeof window !== "undefined";
 
 type LogLevel = "info" | "success" | "warn" | "error";
@@ -22,8 +23,11 @@ const formatLog = (level: LogLevel, message: string) => {
 };
 
 const shouldLog = () => {
+  if (IS_TEST) return false;
   return IS_DEV || !IS_BROWSER;
 };
+
+console.info("SHOULD LOG: ", shouldLog(), "Node env: ", process.env.NODE_ENV);
 
 export const logger = {
   info: (msg: string, ...args: any[]) => {

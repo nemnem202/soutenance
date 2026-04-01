@@ -9,7 +9,7 @@
     "prisma:studio": "prisma studio",
     "prisma:generate": "prisma generate",
     "shadcn": "npx shadcn@latest",
-    "test": "vitest run"
+    "test": "vitest run --reporter=tree"
   },
   "dependencies": {
     "@faker-js/faker": "^10.3.0",
