@@ -7,8 +7,13 @@ import { loginSchema, registerSchema } from "@/schemas/auth.schema";
 import { SignJWT } from "jose";
 import { env } from "@/lib/env";
 import { faker } from "@faker-js/faker";
+import type { Telefunc } from "telefunc";
 
-export class ConnexionController extends Controller<ControllerDeps> {
+interface ConnexionDeps extends ControllerDeps {
+  context: Telefunc.Context;
+}
+
+export class ConnexionController extends Controller<ConnexionDeps> {
   private async generateJwt(
     userId: number,
     remember: boolean,

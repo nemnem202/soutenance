@@ -6,6 +6,10 @@ import { getPreferredLanguage } from "@/lib/utils";
 import type { ScreenSizeType } from "@/providers/screen-size-provider";
 import type { Account, Exercise, Playlist } from "@/types/entities";
 import { type ChordHarmony, Notes } from "@/types/music";
+import getCurrentUserFromCookie from "@/middlewares/getCurrentUser";
+import SessionController from "@/controllers/SessionController";
+import prismaClient from "@/lib/prisma-client";
+import type { Session } from "@/types/auth";
 
 function getScreen(pageContext: PageContextServer): ScreenSizeType {
   const ua = pageContext.headers
@@ -20,6 +24,20 @@ function getScreen(pageContext: PageContextServer): ScreenSizeType {
   } else {
     return "lg";
   }
+}
+
+async function getSessionCookie(
+  pageContext: PageContextServer,
+): Promise<Session | null> {
+  const cookie = pageContext.headers["cookie"];
+  const user = await getCurrentUserFromCookie(cookie);
+  if (!user) return null;
+  const session = await new SessionController({
+    client: prismaClient,
+    user,
+  }).getSession();
+
+  return session;
 }
 
 const generatePlaceholders = () =>
@@ -47,6 +65,7 @@ const generatePlaceholders = () =>
 
 export async function data(pageContext: PageContextServer) {
   try {
+    const session = await getSessionCookie(pageContext);
     const acceptLanguage = pageContext.headers["accept-language"];
     const screen = getScreen(pageContext);
     const preferredLanguage = getPreferredLanguage(acceptLanguage);
@@ -57,6 +76,7 @@ export async function data(pageContext: PageContextServer) {
       playlists: Playlist[];
     };
     return {
+      session,
       accounts,
       exercises,
       playlists,
@@ -67,6 +87,7 @@ export async function data(pageContext: PageContextServer) {
   } catch (err) {
     console.error(err);
     return {
+      session: null,
       accounts: [],
       exercises: [],
       playlists: [],

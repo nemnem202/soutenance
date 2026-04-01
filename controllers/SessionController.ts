@@ -2,10 +2,14 @@ import { logger } from "@/lib/logger";
 import type { Session } from "@/types/auth";
 import { Controller, type ControllerDeps } from "./Controller";
 
-export default class SessionController extends Controller<ControllerDeps> {
+interface SessionDeps extends ControllerDeps {
+  user: { id: number };
+}
+
+export default class SessionController extends Controller<SessionDeps> {
   async getSession(): Promise<Session | null> {
     try {
-      const { user } = this.deps.context;
+      const { user } = this.deps;
       if (!user) throw new Error("No user id in http cookie");
 
       const userData = await this.deps.client.user.findFirst({

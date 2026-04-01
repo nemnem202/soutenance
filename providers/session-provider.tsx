@@ -3,11 +3,11 @@ import {
   type Dispatch,
   type ReactNode,
   type SetStateAction,
-  useEffect,
   useState,
 } from "react";
 import type { Session } from "@/types/auth";
-import { onSessionRequest } from "@/telefunc/session.telefunc";
+import { useData } from "vike-react/useData";
+import type { Data } from "@/pages/+data";
 export interface SessionData {
   session: Session | null;
   setSession: Dispatch<SetStateAction<Session | null>>;
@@ -16,19 +16,11 @@ export interface SessionData {
 export const SessionContext = createContext<SessionData | null>(null);
 
 export default function SessionProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
-
-  useEffect(() => {
-    const getSession = async () => {
-      const session = await onSessionRequest();
-      if (session) setSession(session);
-    };
-
-    getSession();
-  }, []);
+  const { session } = useData<Data>();
+  const [currentSession, setSession] = useState<Session | null>(session);
 
   return (
-    <SessionContext.Provider value={{ session, setSession }}>
+    <SessionContext.Provider value={{ session: currentSession, setSession }}>
       {children}
     </SessionContext.Provider>
   );
