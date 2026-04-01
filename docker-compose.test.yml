@@ -3,7 +3,7 @@ services:
     image: postgres:16-alpine
     container_name: music-sandbox-db-test
     env_file:
-      - .env.test
+      - .env.test.local
     restart: unless-stopped
     volumes:
       - music-sandbox-data-test:/var/lib/postgresql/data
@@ -24,7 +24,7 @@ services:
       NODE_ENV: test
       CHOKIDAR_USEPOLLING: "true"
     env_file:
-      - .env.test
+      - .env.test.local
     ports:
       - "${APP_PORT}:3000"
     volumes:
