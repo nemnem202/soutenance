@@ -20,10 +20,7 @@ interface ConnexionDeps extends ControllerDeps {
 export class ConnexionController extends Controller<ConnexionDeps> {
   private readonly cookieSecure = false;
 
-  private async generateJwt(
-    userId: number,
-    remember: boolean,
-  ): Promise<string> {
+  static async generateJwt(userId: number, remember: boolean): Promise<string> {
     const secret = new TextEncoder().encode(env.TOKEN_SECRET);
 
     return await new SignJWT({ id: userId })
@@ -35,7 +32,7 @@ export class ConnexionController extends Controller<ConnexionDeps> {
 
   private async setCookie(userId: number, remember: boolean) {
     try {
-      const jwt = await this.generateJwt(userId, remember);
+      const jwt = await ConnexionController.generateJwt(userId, remember);
 
       this.deps.context.setCookie("token", jwt, {
         httpOnly: true,
