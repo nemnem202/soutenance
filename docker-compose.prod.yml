@@ -2,10 +2,8 @@ services:
   db:
     image: postgres:16-alpine
     container_name: music-sandbox-db-prod
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+    env_file:
+      - .env.prod
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
@@ -22,12 +20,8 @@ services:
         condition: service_healthy
     environment:
       NODE_ENV: prod
-      APP_PORT: ${APP_PORT}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      DATABASE_URL: ${DATABASE_URL}
-      TOKEN_SECRET: ${TOKEN_SECRET}
+    env_file:
+      - .env.prod
     ports:
       - "${APP_PORT}:3000"
     command: ["sh", "-c", "pnpm prisma migrate deploy && node ./dist/server/index.mjs"]
