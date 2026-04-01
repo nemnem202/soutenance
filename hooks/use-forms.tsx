@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { type Resolver, useForm } from "react-hook-form";
 import { loginSchema, registerSchema } from "@/schemas/auth.schema";
 import { playlistSchema } from "@/schemas/entities.schema";
@@ -35,6 +35,7 @@ export function useNewPlaylistForm() {
 }
 
 export function useLoginForm({ onSuccess }: { onSuccess: () => void }) {
+  const [submitLoading, setSubmitLoading] = useState(false);
   const { setSession } = useSession();
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -46,6 +47,7 @@ export function useLoginForm({ onSuccess }: { onSuccess: () => void }) {
   });
 
   const handleSubmit = async (submitted: LoginData) => {
+    setSubmitLoading(true);
     const response = await onLogin(submitted);
     logger.info("Login: ", response);
     if (!response.success) {
@@ -67,12 +69,14 @@ export function useLoginForm({ onSuccess }: { onSuccess: () => void }) {
         onSuccess();
       }
     }
+    setSubmitLoading(false);
   };
 
-  return { formRef, form, handleSubmit };
+  return { formRef, form, handleSubmit, submitLoading };
 }
 
 export function useRegisterForm({ onSuccess }: { onSuccess: () => void }) {
+  const [submitLoading, setSubmitLoading] = useState(false);
   const { setSession } = useSession();
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -87,6 +91,7 @@ export function useRegisterForm({ onSuccess }: { onSuccess: () => void }) {
   });
 
   const handleSubmit = async (submitted: RegisterData) => {
+    setSubmitLoading(true);
     const response = await onRegister(submitted);
     logger.info("Register: ", response);
     if (!response.success) {
@@ -112,7 +117,8 @@ export function useRegisterForm({ onSuccess }: { onSuccess: () => void }) {
         onSuccess();
       }
     }
+    setSubmitLoading(false);
   };
 
-  return { formRef, form, handleSubmit };
+  return { formRef, form, handleSubmit, submitLoading };
 }

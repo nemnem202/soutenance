@@ -10,9 +10,12 @@ import {
 import { Button } from "../../ui/button";
 import { Checkbox } from "../../ui/checkbox";
 import { Input } from "../../ui/input";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function LoginForm({ onSuccess }: { onSuccess: () => void }) {
-  const { form, formRef, handleSubmit } = useLoginForm({ onSuccess });
+  const { form, formRef, handleSubmit, submitLoading } = useLoginForm({
+    onSuccess,
+  });
   const { instance } = useLanguage();
   return (
     <form
@@ -36,7 +39,7 @@ export default function LoginForm({ onSuccess }: { onSuccess: () => void }) {
                 aria-invalid={fieldState.invalid}
                 placeholder={instance.getItem("email")}
                 type="email"
-                autoComplete="off"
+                autoComplete="on"
                 className="paragraph !text-left px-2"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -54,7 +57,7 @@ export default function LoginForm({ onSuccess }: { onSuccess: () => void }) {
                 aria-invalid={fieldState.invalid}
                 placeholder={instance.getItem("password")}
                 type="password"
-                autoComplete="off"
+                autoComplete="on"
                 className="paragraph !text-left px-2"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -97,8 +100,8 @@ export default function LoginForm({ onSuccess }: { onSuccess: () => void }) {
           </Button>
         </div>
       </FieldGroup>
-      <Button className="title-3 w-full" type="submit">
-        {instance.getItem("login")}
+      <Button className="title-3 w-full" type="submit" disabled={submitLoading}>
+        {submitLoading ? <Spinner /> : instance.getItem("login")}
       </Button>
     </form>
   );

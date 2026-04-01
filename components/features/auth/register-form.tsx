@@ -11,9 +11,12 @@ import EditableImage from "../../organisms/editable-image";
 import { Button } from "../../ui/button";
 import { Checkbox } from "../../ui/checkbox";
 import { Input } from "../../ui/input";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
-  const { form, formRef, handleSubmit } = useRegisterForm({ onSuccess });
+  const { form, formRef, handleSubmit, submitLoading } = useRegisterForm({
+    onSuccess,
+  });
   const { instance } = useLanguage();
   return (
     <form
@@ -164,8 +167,8 @@ export default function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
           />
         </div>
       </FieldGroup>
-      <Button className="title-3 w-full" type="submit">
-        {instance.getItem("register")}
+      <Button className="title-3 w-full" type="submit" disabled={submitLoading}>
+        {submitLoading ? <Spinner /> : instance.getItem("register")}
       </Button>
     </form>
   );
