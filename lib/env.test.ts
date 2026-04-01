@@ -12,7 +12,7 @@ describe("Environnement variabels", () => {
       TOKEN_SECRET,
       GOOGLE_CLIENT_ID,
       GOOGLE_CLIENT_SECRET,
-      GOOGLE_REDIRECT_URI,
+      GOOGLE_REDIRECT_PATH,
     } = env;
 
     expect(APP_PORT).toBeDefined();
@@ -23,6 +23,6 @@ describe("Environnement variabels", () => {
     expect(TOKEN_SECRET).toBeDefined();
     expect(GOOGLE_CLIENT_ID).toBeDefined();
     expect(GOOGLE_CLIENT_SECRET).toBeDefined();
-    expect(GOOGLE_REDIRECT_URI).toBeDefined();
+    expect(GOOGLE_REDIRECT_PATH).toBeDefined();
   });
 });

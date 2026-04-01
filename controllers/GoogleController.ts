@@ -28,7 +28,10 @@ export default class GooogleController extends Controller<GoogleDeps> {
   ): URL {
     const redirectUrl = new URL(authorization_endpoint);
     redirectUrl.searchParams.set("client_id", env.GOOGLE_CLIENT_ID);
-    redirectUrl.searchParams.set("redirect_uri", env.GOOGLE_REDIRECT_URI);
+    redirectUrl.searchParams.set(
+      "redirect_uri",
+      env.APP_BASE_URL + env.GOOGLE_REDIRECT_PATH,
+    );
     redirectUrl.searchParams.set("response_type", "code");
     redirectUrl.searchParams.set("scope", "openid email profile");
     redirectUrl.searchParams.set("state", state);
@@ -81,7 +84,6 @@ export default class GooogleController extends Controller<GoogleDeps> {
         state,
         codeChallenge,
       );
-
       return { success: true, redirect: redirectUrl.toString() };
     } catch (err) {
       logger.error("Google Oauth GET redirect failed", err);

@@ -9,7 +9,7 @@ const {
   TOKEN_SECRET,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
-  GOOGLE_REDIRECT_URI,
+  GOOGLE_REDIRECT_PATH,
   APP_BASE_URL,
 } = process.env;
 
@@ -22,7 +22,7 @@ if (
   !TOKEN_SECRET ||
   !GOOGLE_CLIENT_ID ||
   !GOOGLE_CLIENT_SECRET ||
-  !GOOGLE_REDIRECT_URI ||
+  !GOOGLE_REDIRECT_PATH ||
   !APP_BASE_URL
 ) {
   if (!POSTGRES_USER)
@@ -37,8 +37,8 @@ if (
     logger.error("Missing environment variable: GOOGLE_CLIENT_ID");
   if (!GOOGLE_CLIENT_SECRET)
     logger.error("Missing environment variable: GOOGLE_CLIENT_ID");
-  if (!GOOGLE_REDIRECT_URI)
-    logger.error("Missing environment variable: GOOGLE_REDIRECT_URI");
+  if (!GOOGLE_REDIRECT_PATH)
+    logger.error("Missing environment variable: GOOGLE_REDIRECT_PATH");
   if (!APP_BASE_URL) logger.error("Missing environment variable: APP_BASE_URL");
   process.exit(1);
 } else {
@@ -54,6 +54,6 @@ export const env = {
   TOKEN_SECRET,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
-  GOOGLE_REDIRECT_URI,
+  GOOGLE_REDIRECT_PATH,
   APP_BASE_URL,
 };
