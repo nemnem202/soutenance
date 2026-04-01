@@ -19,6 +19,8 @@ import { SettingsParam } from "./settings-assets";
 import useLogout from "@/hooks/use-logout";
 import { Spinner } from "@/components/ui/spinner";
 import { navigate } from "vike/client/router";
+import useRemoveAccount from "@/hooks/use-remove-account";
+import Modal from "@/components/organisms/modal";
 
 export function ThemeParam() {
   const { instance } = useLanguage();
@@ -84,6 +86,7 @@ export function LogoutButton() {
   return (
     <Button
       variant={"destructive"}
+      disabled={logoutLoading}
       onClick={async () => {
         await triggerLogout();
         navigate("/");
@@ -102,10 +105,48 @@ export function LogoutButton() {
 
 export function RemoveAccountButton() {
   const { instance } = useLanguage();
+  const { removeAccountLoading, triggerRemoveAccount } = useRemoveAccount();
+  const [isOpen, setIsOpen] = useState(false);
   return (
-    <Button variant={"destructive"}>
-      <X /> {instance.getItem("remove_account")}
-    </Button>
+    <>
+      <Button
+        variant={"destructive"}
+        onClick={() => setIsOpen(true)}
+        disabled={removeAccountLoading}
+      >
+        {removeAccountLoading ? (
+          <Spinner />
+        ) : (
+          <>
+            {" "}
+            <X /> {instance.getItem("remove_account")}
+          </>
+        )}
+      </Button>
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+        <div className="w-full flex flex-col items-center gap-8">
+          <div className="flex flex-col items-center w-full">
+            <h2 className="title-1 text-primary">Are you shure ?</h2>
+            <p className="paragraph-md">
+              Your account and all the related data will be removed
+            </p>
+          </div>
+          <Button
+            variant={"destructive"}
+            onClick={triggerRemoveAccount}
+            disabled={removeAccountLoading}
+          >
+            {removeAccountLoading ? (
+              <Spinner />
+            ) : (
+              <>
+                <X /> {instance.getItem("remove_account")}
+              </>
+            )}
+          </Button>
+        </div>
+      </Modal>
+    </>
   );
 }
 
