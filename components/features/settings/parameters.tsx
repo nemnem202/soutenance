@@ -163,7 +163,12 @@ export function ChangeAccountButton() {
       >
         <ArrowRightLeft /> {instance.getItem("change_account")}
       </Button>
-      <LoginModal initMode="login" isOpen={isOpen} setIsOpen={setIsOpen} />
+      <LoginModal
+        initMode="login"
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        onSuccess={() => navigate("/")}
+      />
     </>
   );
 }

@@ -27,24 +27,36 @@ export default function LoginButton() {
 export function LoginModal({
   isOpen,
   setIsOpen,
+  onSuccess = () => {},
   initMode,
 }: {
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
+  onSuccess?: () => void;
   initMode: "login" | "register";
 }) {
   const [mode, setMode] = useState<"login" | "register">(initMode);
   return (
     <Modal
       isOpen={isOpen}
-      onClose={() => setIsOpen(false)}
+      onClose={() => {
+        setIsOpen(false);
+      }}
       size="md"
       title="Login Modal"
     >
       {mode === "login" ? (
-        <LoginModalContent setMode={setMode} setIsOpen={setIsOpen} />
+        <LoginModalContent
+          setMode={setMode}
+          setIsOpen={setIsOpen}
+          onSuccess={onSuccess}
+        />
       ) : (
-        <RegisterModalContent setMode={setMode} setIsOpen={setIsOpen} />
+        <RegisterModalContent
+          setMode={setMode}
+          setIsOpen={setIsOpen}
+          onSuccess={onSuccess}
+        />
       )}
     </Modal>
   );
@@ -53,15 +65,22 @@ export function LoginModal({
 function LoginModalContent({
   setMode,
   setIsOpen,
+  onSuccess = () => {},
 }: {
   setMode: Dispatch<SetStateAction<"login" | "register">>;
   setIsOpen: (value: boolean) => void;
+  onSuccess?: () => void;
 }) {
   const { instance } = useLanguage();
   return (
     <div className="flex flex-col items-center min-w-0 min-h-0 gap-4">
       <Logo />
-      <LoginForm onSuccess={() => setIsOpen(false)} />
+      <LoginForm
+        onSuccess={() => {
+          setIsOpen(false);
+          onSuccess();
+        }}
+      />
       <div className="flex flex-col items-center w-full gap-3">
         <p className="paragraph-sm text-muted-foreground">
           {instance.getItem("or_login_with")}
@@ -88,15 +107,22 @@ function LoginModalContent({
 function RegisterModalContent({
   setMode,
   setIsOpen,
+  onSuccess = () => {},
 }: {
   setMode: Dispatch<SetStateAction<"login" | "register">>;
   setIsOpen: (value: boolean) => void;
+  onSuccess?: () => void;
 }) {
   const { instance } = useLanguage();
   return (
     <div className="flex flex-col items-center min-w-0 min-h-0 gap-4">
       <Logo />
-      <RegisterForm onSuccess={() => setIsOpen(false)} />
+      <RegisterForm
+        onSuccess={() => {
+          setIsOpen(false);
+          onSuccess();
+        }}
+      />
       <div className="flex flex-col items-center w-full gap-3">
         <p className="paragraph-sm text-muted-foreground">
           {instance.getItem("or_login_with")}
