@@ -10,6 +10,7 @@ const {
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
   GOOGLE_REDIRECT_URI,
+  APP_BASE_URL,
 } = process.env;
 
 if (
@@ -21,7 +22,8 @@ if (
   !TOKEN_SECRET ||
   !GOOGLE_CLIENT_ID ||
   !GOOGLE_CLIENT_SECRET ||
-  !GOOGLE_REDIRECT_URI
+  !GOOGLE_REDIRECT_URI ||
+  !APP_BASE_URL
 ) {
   if (!POSTGRES_USER)
     logger.error("Missing environment variable: POSTGRES_USER");
@@ -37,6 +39,7 @@ if (
     logger.error("Missing environment variable: GOOGLE_CLIENT_ID");
   if (!GOOGLE_REDIRECT_URI)
     logger.error("Missing environment variable: GOOGLE_REDIRECT_URI");
+  if (!APP_BASE_URL) logger.error("Missing environment variable: APP_BASE_URL");
   process.exit(1);
 } else {
   logger.success("All environement variables are set");
@@ -52,4 +55,5 @@ export const env = {
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
   GOOGLE_REDIRECT_URI,
+  APP_BASE_URL,
 };
