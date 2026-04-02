@@ -1,78 +1,96 @@
-Generated with [vike.dev/new](https://vike.dev/new) ([version 581](https://www.npmjs.com/package/create-vike/v/0.0.581)) using this command:
+# 🎵 Music Sandbox
 
-```sh
-pnpm create vike@latest --react --tailwindcss --shadcn-ui --express --prisma --eslint --prettier --shadcnUi
-```
+> **An interactive platform for creating and sharing musical scores — making music accessible to everyone, at every skill level.**
 
-## Contents
+---
 
-- [Vike](#vike)
-  - [Plus files](#plus-files)
-  - [Routing](#routing)
-  - [SSR](#ssr)
-  - [HTML Streaming](#html-streaming)
-- [Photon](#photon)
-- [shadcn/ui](#shadcnui)
-  - [Configuration](#configuration)
-  - [Add Components to Your ProjectSchema](#add-components-to-your-project)
+## 📖 Overview
 
-## Vike
+**Music Sandbox** is a web-based application for creating, playing, and sharing interactive musical scores. Whether you're a complete beginner or an experienced musician, Music Sandbox provides an intuitive environment to explore music composition, experiment with harmonies, and collaborate with others.
 
-This app is ready to start. It's powered by [Vike](https://vike.dev) and [React](https://react.dev/learn).
+> ⚠️ **Status: Currently in active development.**
 
-### Plus files
+---
 
-[The + files are the interface](https://vike.dev/config) between Vike and your code.
+## ✨ Features
 
-- [`+config.ts`](https://vike.dev/settings) — Settings (e.g. `<title>`)
-- [`+Page.tsx`](https://vike.dev/Page) — The `<Page>` component
-- [`+data.ts`](https://vike.dev/data) — Fetching data (for your `<Page>` component)
-- [`+Layout.tsx`](https://vike.dev/Layout) — The `<Layout>` component (wraps your `<Page>` components)
-- [`+Head.tsx`](https://vike.dev/Head) - Sets `<head>` tags
-- [`/pages/_error/+Page.tsx`](https://vike.dev/error-page) — The error page (rendered when an error occurs)
-- [`+onPageTransitionStart.ts`](https://vike.dev/onPageTransitionStart) and `+onPageTransitionEnd.ts` — For page transition animations
+### 🎸 Automatic Backing Track Generation
+- Define a **chord grid manually** using your own chord progressions
+- Generate a full **backing track automatically** from a selection of musical styles (jazz, rock, bossa nova, blues, and more)
+- Full post-generation editing: adjust tempo, instruments, rhythm patterns, and more
 
-### Routing
+### 🎹 Melody Creation & Import
+- **Create melodies** directly within the app using a built-in editor
+- **Import MIDI files** to integrate existing melodies into your score
+- Edit and refine note by note
 
-[Vike's built-in router](https://vike.dev/routing) lets you choose between:
+### 🎼 Multi-View Score Player
+Play and visualize your score in multiple display formats:
+| View | Description |
+|---|---|
+| 🎹 **Piano Roll** | Classic DAW-style MIDI visualization |
+| 🔷 **Chord Grid** | Chart-style chord display for quick reading |
+| 🎵 **Classical Score** | Traditional music notation |
+| 🎸 **Guitar Tablature** | Tab notation for guitarists |
 
-- [Filesystem Routing](https://vike.dev/filesystem-routing) (the URL of a page is determined based on where its `+Page.jsx` file is located on the filesystem)
-- [Route Strings](https://vike.dev/route-string)
-- [Route Functions](https://vike.dev/route-function)
+> **Interactive MIDI Controller Support**: Connect a MIDI controller to get real-time visual feedback as you play along with the score.
 
-### SSR
+### 📤 Sharing & Export
+- **Share** your scores publicly or with specific users
+- **Download** scores in standard formats for offline use
 
-SSR is enabled by default. You can [disable it](https://vike.dev/ssr) for all or specific pages.
+---
 
-### HTML Streaming
+## 🖥️ Platform Support
 
-You can [enable/disable HTML streaming](https://vike.dev/stream) for all or specific pages.
+| Platform | Status |
+|---|---|
+| 🖥️ Desktop | Planned |
+| 📱 Mobile | Planned |
 
-## Photon
+---
 
-[Photon](https://photonjs.dev) is a next-generation infrastructure for deploying JavaScript servers.
+## 🛠️ Tech Stack
 
-See [Introducing Photon](https://vike.dev/blog/photon) and [Why Photon](https://photonjs.dev/why) to learn more.
+> *To be updated as the project evolves.*
 
-## shadcn/ui
+---
 
-Beautifully designed components that you can copy and paste into your apps. Accessible. Customizable. Open Source.
+## 🚀 Getting Started
 
-### Configuration
+> *Installation and setup instructions will be added as development progresses.*
 
-see [shadcn/ui theming](https://ui.shadcn.com/docs/theming)
+---
 
-Base Configuration can be found in `components.json` file.
+## 🗺️ Roadmap
 
-> \[!NOTE]
-> changes to the `components.json` file **will not** be reflected in existing components. Only new components will be affected.
+- [ ] Chord grid editor
+- [ ] Backing track generation engine
+- [ ] Style selector (jazz, rock, blues, bossa nova…)
+- [ ] Piano Roll view
+- [ ] Classical score renderer
+- [ ] Guitar tablature renderer
+- [ ] MIDI file import
+- [ ] MIDI controller live feedback
+- [ ] Score sharing system
+- [ ] Score download / export
+- [ ] Mobile version
+- [ ] Desktop version
 
-### Add Components to Your ProjectSchema
+---
 
-**Example:** add a component to your project.
-`pnpm shadcn add button`
+## 🎓 Project Context
 
-use the `<Button />` component in your project:
-`import { Button } from "@/components/ui/button";`
+Music Sandbox is a **graduation project** (*projet de soutenance*) developed with the ambition of democratizing music practice and composition through intuitive, interactive digital tools.
 
-more [shadcn/ui components](https://ui.shadcn.com/docs/components/accordion)
+---
+
+## 📄 License
+
+> *To be defined.*
+
+---
+
+<p align="center">
+  Made with ♪ and passion
+</p>
