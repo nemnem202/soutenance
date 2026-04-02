@@ -3,6 +3,7 @@ import { logger } from "@/lib/logger";
 import { jwtVerify } from "jose";
 
 function parseCookie(str: string): Record<string, string> {
+  if (!str || str === "") return {};
   return Object.fromEntries(
     str.split(";").map((p) => {
       const idx = p.indexOf("=");

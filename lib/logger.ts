@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Intentional */
-const IS_DEV = process.env.NODE_ENV === "dev" || import.meta.env?.DEV;
-const IS_TEST = process.env.NODE_ENV === "test" || import.meta.env?.TEST;
-const IS_BROWSER = typeof window !== "undefined";
+// const IS_DEV = process.env.NODE_ENV === "dev" || import.meta.env?.DEV;
+// const IS_TEST = process.env.NODE_ENV === "test" || import.meta.env?.TEST;
+// const IS_BROWSER = typeof window !== "undefined";
 
 type LogLevel = "info" | "success" | "warn" | "error";
 
@@ -22,28 +22,27 @@ const formatLog = (level: LogLevel, message: string) => {
   ];
 };
 
-const shouldLog = () => {
-  if (IS_TEST) return false;
-  return IS_DEV || !IS_BROWSER;
-};
+// const shouldLog = () => {
+//   if (IS_TEST) return false;
+//   return IS_DEV || !IS_BROWSER;
+// };
 
-console.info("SHOULD LOG: ", shouldLog(), "Node env: ", process.env.NODE_ENV);
+// console.info("SHOULD LOG: ", shouldLog(), "Node env: ", process.env.NODE_ENV);
 
 export const logger = {
   info: (msg: string, ...args: any[]) => {
-    if (shouldLog()) console.log(...formatLog("info", msg), ...args);
+    console.log(...formatLog("info", msg), ...args);
   },
   success: (msg: string, ...args: any[]) => {
-    if (shouldLog()) console.log(...formatLog("success", msg), ...args);
+    console.log(...formatLog("success", msg), ...args);
   },
   warn: (msg: string, ...args: any[]) => {
-    if (shouldLog()) console.warn(...formatLog("warn", msg), ...args);
+    console.warn(...formatLog("warn", msg), ...args);
   },
   error: (msg: string, ...args: any[]) => {
-    if (shouldLog()) console.error(...formatLog("error", msg), ...args);
+    console.error(...formatLog("error", msg), ...args);
   },
   table: (data: any, msg?: string) => {
-    if (!shouldLog()) return;
     if (msg) console.log(...formatLog("info", msg));
     console.table(data);
   },

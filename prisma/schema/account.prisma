@@ -20,7 +20,7 @@ model ClassicAuthMethod {
 model AuthMethod {
    id         Int          @id @default(autoincrement())
    provider   AuthProvider
-   providerId String
+   providerId String // the user id given by the provider
    user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
    userId     Int
    createdAt  DateTime     @default(now())

@@ -7,6 +7,10 @@ const {
   DATABASE_URL,
   APP_PORT,
   TOKEN_SECRET,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_REDIRECT_PATH,
+  APP_BASE_URL,
 } = process.env;
 
 if (
@@ -15,7 +19,11 @@ if (
   !POSTGRES_DB ||
   !DATABASE_URL ||
   !APP_PORT ||
-  !TOKEN_SECRET
+  !TOKEN_SECRET ||
+  !GOOGLE_CLIENT_ID ||
+  !GOOGLE_CLIENT_SECRET ||
+  !GOOGLE_REDIRECT_PATH ||
+  !APP_BASE_URL
 ) {
   if (!POSTGRES_USER)
     logger.error("Missing environment variable: POSTGRES_USER");
@@ -24,7 +32,14 @@ if (
   if (!POSTGRES_DB) logger.error("Missing environment variable: POSTGRES_DB");
   if (!DATABASE_URL) logger.error("Missing environment variable: DATABASE_URL");
   if (!APP_PORT) logger.error("Missing environment variable: APP_PORT");
-  if (!TOKEN_SECRET) logger.error("Missin environment variable: TOKEN_SECRET");
+  if (!TOKEN_SECRET) logger.error("Missing environment variable: TOKEN_SECRET");
+  if (!GOOGLE_CLIENT_ID)
+    logger.error("Missing environment variable: GOOGLE_CLIENT_ID");
+  if (!GOOGLE_CLIENT_SECRET)
+    logger.error("Missing environment variable: GOOGLE_CLIENT_ID");
+  if (!GOOGLE_REDIRECT_PATH)
+    logger.error("Missing environment variable: GOOGLE_REDIRECT_PATH");
+  if (!APP_BASE_URL) logger.error("Missing environment variable: APP_BASE_URL");
   process.exit(1);
 } else {
   logger.success("All environement variables are set");
@@ -37,4 +52,8 @@ export const env = {
   DATABASE_URL,
   APP_PORT: parseInt(APP_PORT, 10),
   TOKEN_SECRET,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_REDIRECT_PATH,
+  APP_BASE_URL,
 };

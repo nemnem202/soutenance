@@ -2,6 +2,7 @@ import { apply, serve } from "@photonjs/express";
 import express from "express";
 import { generatePlaceholders } from "./placeholders";
 import { telefuncHandler } from "./telefunc-handler";
+import router from "./router";
 
 const port = 3000;
 
@@ -20,6 +21,8 @@ function startApp() {
       playlists,
     });
   });
+
+  app.use("/api", router);
 
   apply(app, [telefuncHandler]);
 

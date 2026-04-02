@@ -16,7 +16,7 @@ jobs:
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Create .env.dev
+      - name: Create .env.prod
         run: |
           echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env.prod
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env.prod
@@ -24,6 +24,9 @@ jobs:
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env.prod
           echo "APP_PORT=${{ secrets.APP_PORT }}" >> .env.prod
           echo "TOKEN_SECRET=${{ secrets.TOKEN_SECRET }}" >> .env.prod
-
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env.prod
+          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env.prod
+          echo "GOOGLE_REDIRECT_PATH=${{ secrets.GOOGLE_REDIRECT_PATH }}" >> .env.prod
+          echo "APP_BASE_URL=${{ secrets.APP_BASE_URL }}" >> .env.prod
       - name: Build and run CI containers
         run: make ci
