@@ -2,9 +2,7 @@ import { apply, serve } from "@photonjs/express";
 import express from "express";
 import { generatePlaceholders } from "./placeholders";
 import { telefuncHandler } from "./telefunc-handler";
-import { env } from "@/lib/env";
-import GooogleController from "@/controllers/GoogleController";
-import prismaClient from "@/lib/prisma-client";
+import router from "./router";
 
 const port = 3000;
 
@@ -24,9 +22,7 @@ function startApp() {
     });
   });
 
-  app.get(env.GOOGLE_REDIRECT_PATH, (req, res) =>
-    new GooogleController({ client: prismaClient, req, res }).getCallback(),
-  );
+  app.use("/api", router);
 
   apply(app, [telefuncHandler]);
 
