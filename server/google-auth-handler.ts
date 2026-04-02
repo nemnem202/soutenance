@@ -62,7 +62,7 @@ export default function googleAuthHandler() {
         id: payload?.sub,
         email: payload?.email,
         name: payload.name ?? faker.person.firstName(),
-        picture: payload.picture ?? faker.image.avatar(),
+        picture: payload.picture,
       };
 
       if (!user.email || !user.id)
@@ -81,7 +81,7 @@ export default function googleAuthHandler() {
         dbUser = await prismaClient.user.create({
           data: {
             email: user.email,
-            profilePicture: user.picture,
+            profilePicture: user.picture ?? faker.image.avatar(),
             username: generateRandomUsername(user.name),
             authMethods: {
               create: {
@@ -89,6 +89,18 @@ export default function googleAuthHandler() {
                 providerId: user.id,
               },
             },
+          },
+        });
+      } else if (user.picture) {
+        await prismaClient.user.update({
+          select: {
+            id: true,
+          },
+          where: {
+            id: dbUser.id,
+          },
+          data: {
+            profilePicture: user.picture,
           },
         });
       }
