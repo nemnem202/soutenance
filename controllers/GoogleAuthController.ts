@@ -36,6 +36,7 @@ export default class GoogleAuthController extends Controller<GoogleAuthDeps> {
         state,
         prompt: "consent",
       });
+      logger.info(`Redirect URL: ${url}`);
 
       res.redirect(url);
     } catch (err) {
