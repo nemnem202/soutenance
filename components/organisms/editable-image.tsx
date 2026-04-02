@@ -9,7 +9,7 @@ import { Slider } from "../ui/slider";
 import Modal from "./modal";
 
 export interface EditableImageProps {
-  onImageChange: (src: string) => void;
+  onImageChange: (image: File) => void;
   src?: string;
   canBeEdited?: boolean;
   alt: string;

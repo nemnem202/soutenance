@@ -30,7 +30,7 @@ export default function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
       </h2>
       <FieldGroup className="gap-3 mb-3">
         <Controller
-          name="image.src"
+          name="image.file"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid} className="gap-1">
@@ -38,7 +38,7 @@ export default function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
                 <div className="w-50 h-50 overflow-hidden">
                   <EditableImage
                     alt="playlist cover"
-                    src={field.value}
+                    // src={field.value}
                     onImageChange={(source) => field.onChange(source)}
                     canBeEdited={false}
                   />

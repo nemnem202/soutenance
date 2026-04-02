@@ -14,7 +14,12 @@ export const loginSchema = z.object({
 
 export const registerSchema = z
   .object({
-    image: imageSchema,
+    image: z.object({
+      file: z.any().refine((val) => val && typeof val === "object", {
+        message: "A valid file is required",
+      }),
+      alt: z.string({ error: "The image description must be provided." }),
+    }),
     username: z
       .string({ error: "The username is required" })
       .min(5, { error: "The username must be at least 5 characters." })

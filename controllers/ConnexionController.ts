@@ -149,10 +149,10 @@ export class ConnexionController extends Controller<ConnexionDeps> {
   > {
     try {
       logger.info("Register request");
-
       const registerValidation = registerSchema.safeParse(props);
 
       if (!registerValidation.success) {
+        logger.error("Register failed", registerValidation.error.message);
         return {
           success: false,
           status: Status.IncorrectRegisterData,
@@ -161,7 +161,10 @@ export class ConnexionController extends Controller<ConnexionDeps> {
         };
       }
 
-      const { agree_terms_of_service, email, password, username } = props;
+      const { agree_terms_of_service, email, password, username, image } =
+        props;
+
+      logger.info("Image: ", image.file);
 
       if (!agree_terms_of_service) {
         return {

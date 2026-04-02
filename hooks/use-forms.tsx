@@ -10,7 +10,6 @@ import { onLogin, onRegister } from "@/telefunc/connexion.telefunc";
 import { logger } from "@/lib/logger";
 import { Status } from "@/types/server-response";
 import { errorToast, successToast } from "@/lib/toaster";
-import { onSessionRequest } from "@/telefunc/session.telefunc";
 import useSession from "./use-session";
 
 export function useNewPlaylistForm() {
