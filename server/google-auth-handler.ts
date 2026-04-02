@@ -1,12 +1,18 @@
+import { ConnexionController } from "@/controllers/ConnexionController";
 import { env } from "@/lib/env";
 import googleClient from "@/lib/google-auth-client";
 import { logger } from "@/lib/logger";
-import { Session } from "@/types/auth";
+import prismaClient from "@/lib/prisma-client";
+import type { Session } from "@/types/auth";
 import { faker } from "@faker-js/faker";
 import cookieParser from "cookie-parser";
 import { Router } from "express";
-
+import { nanoid } from "nanoid";
 // /api/auth
+
+function generateRandomUsername(username: string): string {
+  return `${username.split(" ").join("_")}_${nanoid(8)}`;
+}
 
 export default function googleAuthHandler() {
   const router = Router();
@@ -52,7 +58,6 @@ export default function googleAuthHandler() {
 
       if (!payload) throw new Error("No payload");
 
-      // 👉 user Google
       const user = {
         id: payload?.sub,
         email: payload?.email,
@@ -60,18 +65,49 @@ export default function googleAuthHandler() {
         picture: payload.picture ?? faker.image.avatar(),
       };
 
+      if (!user.email || !user.id)
+        throw new Error("Payload do not have email or id");
+
       logger.info("Google user authentified !");
       logger.table(user);
 
-      // TODO: créer / retrouver user en DB
+      let dbUser = await prismaClient.user.findUnique({
+        where: {
+          email: user.email,
+        },
+      });
 
-      // res.status(200);
+      if (!dbUser) {
+        dbUser = await prismaClient.user.create({
+          data: {
+            email: user.email,
+            profilePicture: user.picture,
+            username: generateRandomUsername(user.name),
+            authMethods: {
+              create: {
+                provider: "Google",
+                providerId: user.id,
+              },
+            },
+          },
+        });
+      }
 
       const session: Session = {
-        id: 10,
-        profilePictureSource: user.picture,
-        username: user.name,
+        id: dbUser.id,
+        profilePictureSource: dbUser.profilePicture,
+        username: dbUser.username,
       };
+
+      const jwt = await ConnexionController.generateJwt(dbUser.id, true);
+
+      res.cookie("token", jwt, {
+        httpOnly: true,
+        secure: false,
+        path: "/",
+        maxAge: 365 * 24 * 3600 * 1000,
+        sameSite: "lax",
+      });
 
       res.send(`
       <html>
