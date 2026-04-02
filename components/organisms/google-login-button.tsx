@@ -1,8 +1,22 @@
 import { Button } from "@/components/ui/button";
+import useSession from "@/hooks/use-session";
 
 export default function GoogleLoginButton() {
+  const { setSession } = useSession();
   const handleConnexion = async () => {
-    window.location.href = "/api/auth/google";
+    window.open("/api/auth/google", "google-auth", "width=500,height=600");
+
+    window.addEventListener("message", (event) => {
+      if (event.origin !== window.location.origin) return;
+
+      const { session } = event.data;
+
+      if (!session) return;
+
+      console.log("User connecté :", session);
+      setSession(session);
+      window.close();
+    });
   };
   return (
     <Button

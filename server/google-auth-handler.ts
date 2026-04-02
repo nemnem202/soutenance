@@ -1,6 +1,8 @@
 import { env } from "@/lib/env";
 import googleClient from "@/lib/google-auth-client";
 import { logger } from "@/lib/logger";
+import { Session } from "@/types/auth";
+import { faker } from "@faker-js/faker";
 import cookieParser from "cookie-parser";
 import { Router } from "express";
 
@@ -48,12 +50,14 @@ export default function googleAuthHandler() {
 
       const payload = ticket.getPayload();
 
+      if (!payload) throw new Error("No payload");
+
       // 👉 user Google
       const user = {
         id: payload?.sub,
         email: payload?.email,
-        name: payload?.name,
-        picture: payload?.picture,
+        name: payload.name ?? faker.person.firstName(),
+        picture: payload.picture ?? faker.image.avatar(),
       };
 
       logger.info("Google user authentified !");
@@ -61,9 +65,28 @@ export default function googleAuthHandler() {
 
       // TODO: créer / retrouver user en DB
 
-      res.status(200);
+      // res.status(200);
+
+      const session: Session = {
+        id: 10,
+        profilePictureSource: user.picture,
+        username: user.name,
+      };
+
+      res.send(`
+      <html>
+        <body>
+          <script>
+            window.opener.postMessage(
+              { session: ${JSON.stringify(session)} },
+            );
+            window.close();
+          </script>
+        </body>
+      </html>
+    `);
     } catch (err) {
-      console.error(err);
+      logger.error("Google auth error", err);
       res.status(500).send("Auth error");
     }
   });
