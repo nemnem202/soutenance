@@ -121,6 +121,13 @@ export default function googleAuthHandler() {
         sameSite: "lax",
       });
 
+      res.clearCookie("oauth_state", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        path: "/",
+      });
+
       res.send(`
       <html>
         <body>
