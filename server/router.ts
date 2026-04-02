@@ -3,6 +3,6 @@ import googleAuthHandler from "./google-auth-handler";
 
 const router = Router();
 
-router.use("/auth", googleAuthHandler);
+router.use("/auth", googleAuthHandler());
 
 export default router;

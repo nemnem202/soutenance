@@ -1,12 +1,16 @@
 import cookieParser from "cookie-parser";
-import type { Express } from "express";
+import { Router } from "express";
 
-export default function googleAuthHandler(app: Express) {
-  app.use(cookieParser());
+export default function googleAuthHandler() {
+  const router = Router();
 
-  app.get("/google", async (_req, res) => {
-    res.send("Coucou");
+  router.use(cookieParser());
+
+  router.get("/google", async (_req, res) => {
+    return res.send("Coucou");
   });
 
-  app.get("/callback", async (req, res) => {});
+  router.get("/callback", async (req, res) => {});
+
+  return router;
 }
