@@ -99,18 +99,6 @@ export default class GoogleAuthController extends Controller<GoogleAuthDeps> {
             },
           },
         });
-      } else if (user.picture) {
-        await client.user.update({
-          select: {
-            id: true,
-          },
-          where: {
-            id: dbUser.id,
-          },
-          data: {
-            profilePicture: user.picture,
-          },
-        });
       }
 
       const session: Session = {
