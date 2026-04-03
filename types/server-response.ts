@@ -13,6 +13,7 @@ export enum Status {
   LogoutSuccessfull,
   RemoveAccountSuccessfull,
   NotConnected,
+  ImageUploadFail,
 }
 export type ErrorServerResponse = {
   success: false;

@@ -11,15 +11,8 @@ import { loginSchema, registerSchema } from "@/schemas/auth.schema";
 import { SignJWT } from "jose";
 import { env } from "@/lib/env";
 import type { Telefunc } from "telefunc";
-import { type UploadApiResponse, v2 as cloudinary } from "cloudinary";
-import { Readable } from "stream";
-
-cloudinary.config({
-  cloud_name: env.CLOUD_NAME,
-  api_key: env.CLOUD_API_KEY,
-  api_secret: env.CLOUD_API_SECRET,
-  secure: true,
-});
+import FileController from "./fileController";
+import prismaClient from "@/lib/prisma-client";
 
 interface ConnexionDeps extends ControllerDeps {
   context: Telefunc.Context;
@@ -66,31 +59,6 @@ export class ConnexionController extends Controller<ConnexionDeps> {
     } catch (err) {
       logger.error("Cookie clearing failed: ", err);
     }
-  }
-
-  async uploadImageFile(
-    image: File,
-    folder: string,
-  ): Promise<UploadApiResponse> {
-    return new Promise((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
-        {
-          folder: folder,
-          format: "webp",
-          resource_type: "image",
-          transformation: [{ width: 1000, crop: "limit", quality: "auto" }],
-        },
-        (error, result) => {
-          if (error) return reject(error);
-          if (!result) return reject(new Error("Upload failed"));
-          resolve(result);
-        },
-      );
-
-      // biome-ignore lint/suspicious/noTsIgnore: intentional
-      // @ts-ignore
-      Readable.fromWeb(image.stream()).pipe(uploadStream);
-    });
   }
 
   async login({
@@ -232,16 +200,20 @@ export class ConnexionController extends Controller<ConnexionDeps> {
 
       const passwordHash = await argon2.hash(password);
 
-      const imageupload = await this.uploadImageFile(
-        image.file,
-        env.CLOUD_IMAGE_FOLDER_NAME,
-      );
+      const fileController = new FileController({
+        client: prismaClient,
+        file: image.file,
+      });
+
+      const fileUpload = await fileController.uploadFileAsImage();
+
+      if (!fileUpload.success) return fileUpload;
 
       const user = await this.deps.client.user.create({
         data: {
           email: email,
           username: username,
-          profilePicture: imageupload.url,
+          profilePicture: fileUpload.url,
           classicAuthMethod: {
             create: {
               password: passwordHash,
