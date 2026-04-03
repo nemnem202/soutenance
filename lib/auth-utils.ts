@@ -5,7 +5,7 @@ export const COOKIE_NAME = "token";
 
 export const getCookieOptions = (remember: boolean) => ({
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
+  secure: false,
   path: "/",
   maxAge: remember ? 365 * 24 * 3600 : 3600, // En secondes
   sameSite: "lax" as const,

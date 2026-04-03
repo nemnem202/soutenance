@@ -3,7 +3,7 @@ import express from "express";
 import { generatePlaceholders } from "./placeholders";
 import router from "./router";
 import { telefuncHandler } from "./telefunc-handler";
-
+import cookieParser from "cookie-parser";
 const port = 3000;
 
 export default startApp() as unknown;
@@ -11,6 +11,7 @@ export default startApp() as unknown;
 function startApp() {
   const app = express();
 
+  app.use(cookieParser());
   const { accounts, exercises, playlists } = generatePlaceholders();
 
   app.get("/placeholders", (_, res) => {

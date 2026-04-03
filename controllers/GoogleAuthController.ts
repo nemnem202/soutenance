@@ -1,74 +1,149 @@
+import { faker } from "@faker-js/faker";
+import type { Request, Response } from "express";
 import type { OAuth2Client } from "google-auth-library";
 import { nanoid } from "nanoid";
+import { env } from "@/lib/env";
+import { logger } from "@/lib/logger";
+import type { Session } from "@/types/auth";
 import { Controller, type ControllerDeps } from "./Controller";
-import { AppError } from "@/lib/errors";
-import { Status } from "@/types/server-response";
 import { generateJwt } from "@/lib/auth-utils";
 
 interface GoogleAuthDeps extends ControllerDeps {
-  // req: Request;
-  // res: Response;
+  req: Request;
+  res: Response;
   googleClient: OAuth2Client;
 }
 
 export default class GoogleAuthController extends Controller<GoogleAuthDeps> {
-  async prepareAuth() {
+  private generateRandomUsername(username: string): string {
+    return `${username.split(" ").join("_")}_${nanoid(8)}`;
+  }
+  async getAuth() {
+    const { res, googleClient } = this.deps;
+
     const state = crypto.randomUUID();
-    const url = this.deps.googleClient.generateAuthUrl({
+
+    res.cookie("oauth_state", state, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+
+    const url = googleClient.generateAuthUrl({
       access_type: "offline",
       scope: ["openid", "email", "profile"],
       state,
       prompt: "consent",
     });
-    return { url, state };
+    logger.info(`Redirect URL: ${url}`);
+
+    res.redirect(url);
   }
 
-  async verifyCallback(code: string, state: string, storedState: string | undefined) {
+  async getCallback() {
+    const { req, res, googleClient, client } = this.deps;
+    const { code, state } = req.query;
+    const storedState = req.cookies.oauth_state;
     if (!state || state !== storedState) {
-      throw new AppError(Status.UnknownError, "État invalide", "La session de connexion a expiré.");
+      return res.status(400).send("Invalid state");
     }
 
-    const { tokens } = await this.deps.googleClient.getToken(code);
-    const ticket = await this.deps.googleClient.verifyIdToken({
+    const { tokens } = await googleClient.getToken(code as string);
+
+    googleClient.setCredentials(tokens);
+
+    const ticket = await googleClient.verifyIdToken({
       idToken: tokens.id_token!,
-      audience: process.env.GOOGLE_CLIENT_ID,
+      audience: env.GOOGLE_CLIENT_ID,
     });
 
     const payload = ticket.getPayload();
-    if (!payload?.email)
-      throw new AppError(Status.UnknownError, "Erreur Google", "Email non récupéré.");
 
-    let user = await this.deps.client.user.findUnique({
-      where: { email: payload.email },
-      include: { profilePicture: true },
+    if (!payload) throw new Error("No payload");
+
+    const user = {
+      id: payload?.sub,
+      email: payload?.email,
+      name: payload.name ?? faker.person.firstName(),
+      picture: payload.picture,
+    };
+
+    if (!user.email || !user.id) throw new Error("Payload do not have email or id");
+
+    logger.info("Google user authentified !");
+    logger.table(user);
+
+    let dbUser = await client.user.findUnique({
+      where: {
+        email: user.email,
+      },
+      include: {
+        profilePicture: true,
+      },
     });
 
-    if (!user) {
-      const username = `${payload.name?.replace(/\s/g, "_") || "user"}_${nanoid(5)}`;
-      user = await this.deps.client.user.create({
+    if (!dbUser) {
+      const username = this.generateRandomUsername(user.name);
+      dbUser = await client.user.create({
         data: {
-          email: payload.email,
-          username,
+          email: user.email,
           profilePicture: {
             create: {
-              alt: `Avatar de ${username}`,
-              url: payload.picture || "/assets/images/account-default-pic.webp",
+              alt: `The profile picture of ${username}`,
+              url: user.picture ?? faker.image.avatar(),
             },
           },
-          authMethods: { create: { provider: "Google", providerId: payload.sub } },
+          username: username,
+          authMethods: {
+            create: {
+              provider: "Google",
+              providerId: user.id,
+            },
+          },
         },
-        include: { profilePicture: true },
+        include: {
+          profilePicture: true,
+        },
       });
     }
 
-    const token = await generateJwt(user.id, true);
-    return {
-      token,
-      session: {
-        id: user.id,
-        username: user.username,
-        profilePictureSource: { alt: user.profilePicture.alt, src: user.profilePicture.url },
+    const session: Session = {
+      id: dbUser.id,
+      profilePictureSource: {
+        alt: dbUser.profilePicture.alt,
+        src: dbUser.profilePicture.url,
       },
+      username: dbUser.username,
     };
+
+    const jwt = await generateJwt(dbUser.id, true);
+
+    res.cookie("token", jwt, {
+      httpOnly: true,
+      secure: false,
+      path: "/",
+      maxAge: 365 * 24 * 3600 * 1000,
+      sameSite: "lax",
+    });
+
+    res.clearCookie("oauth_state", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+    });
+
+    res.send(`
+      <html>
+        <body>
+          <script>
+            window.opener.postMessage(
+              { session: ${JSON.stringify(session)} },
+            );
+            window.close();
+          </script>
+        </body>
+      </html>
+    `);
   }
 }
