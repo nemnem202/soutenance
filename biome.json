@@ -1,17 +1,13 @@
 {
-  "overrides": [
-    {
-      "includes": ["**/+data.ts", "**/+data.js"],
-      "linter": {
-        "rules": {
-          "suspicious": {
-            "noAssignInExpressions": "warn"
-          }
-        }
-      }
-    }
-  ],
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "main"
+  },
   "files": {
+    "ignoreUnknown": true,
     "includes": [
       "**",
       "!*.cjs",
@@ -25,32 +21,83 @@
       "!**/*.css"
     ]
   },
-  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "formatter": {
-    "indentStyle": "space"
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100,
+    "lineEnding": "lf"
   },
-  "assist": {
-    "actions": {
-      "source": {
-        "organizeImports": "off"
-      }
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "semicolons": "always",
+      "trailingCommas": "es5",
+      "arrowParentheses": "always"
     }
   },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
+      "correctness": {
+        "noUnusedImports": "error",
+        "noUnusedVariables": "warn"
+      },
       "suspicious": {
-        "noArrayIndexKey": "off"
+        "noArrayIndexKey": "off",
+        "noExplicitAny": "warn"
+      },
+      "style": {
+        "noNonNullAssertion": "warn",
+        "useConst": "error"
+      },
+      "complexity": {
+        "noForEach": "off"
       }
     },
     "domains": {
       "react": "recommended"
     }
   },
-  "vcs": {
+  "assist": {
     "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": true
-  }
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**/+data.ts", "**/+data.js"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noAssignInExpressions": "warn"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["*.config.{js,ts,mjs}", "vite.config.*"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["*.test.ts", "*.spec.ts", "**/__tests__/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    }
+  ]
 }

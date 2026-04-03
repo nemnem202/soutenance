@@ -1,0 +1,59 @@
+{
+  "overrides": [
+    {
+      "includes": ["**/+data.ts", "**/+data.js"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noAssignInExpressions": "warn"
+          }
+        }
+      }
+    }
+  ],
+  "files": {
+    "includes": [
+      "**",
+      "!*.cjs",
+      "!*.js",
+      "!*.mjs",
+      "!*.spec.ts",
+      "!**/*.ts.build-*.mjs",
+      "!dist/*",
+      "!node_modules/*",
+      "!**/.DS_Store",
+      "!**/*.css"
+    ]
+  },
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "formatter": {
+    "indentStyle": "space"
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "off"
+      }
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "noArrayIndexKey": "off"
+      },
+      "correctness": {
+        "noUnusedImports": "error"
+      }
+    },
+    "domains": {
+      "react": "recommended"
+    }
+  },
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  }
+}
