@@ -62,7 +62,7 @@ function Content() {
     });
     const response = await imagePromise;
 
-    if (response.success) setSession(response.session);
+    if (response.success) setSession(response.data.session);
   };
 
   return (

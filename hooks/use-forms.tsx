@@ -61,8 +61,8 @@ export function useLoginForm({ onSuccess }: { onSuccess: () => void }) {
           errorToast(response.title, response.description);
       }
     } else {
-      setSession(response.session);
-      successToast(`Welcome back, ${response.session.username} !`);
+      setSession(response.data.session);
+      successToast(`Welcome back, ${response.data.session.username} !`);
       onSuccess();
     }
     setSubmitLoading(false);
@@ -106,8 +106,8 @@ export function useRegisterForm({ onSuccess }: { onSuccess: () => void }) {
           errorToast(response.title, response.description);
       }
     } else {
-      setSession(response.session);
-      successToast(`Welcome, ${response.session.username} !`);
+      setSession(response.data.session);
+      successToast(`Welcome, ${response.data.session.username} !`);
       onSuccess();
     }
     setSubmitLoading(false);
