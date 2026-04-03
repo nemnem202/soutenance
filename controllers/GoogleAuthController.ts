@@ -1,12 +1,12 @@
-import { ConnexionController } from "@/controllers/ConnexionController";
+import { faker } from "@faker-js/faker";
+import type { Request, Response } from "express";
+import type { OAuth2Client } from "google-auth-library";
+import { nanoid } from "nanoid";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
 import type { Session } from "@/types/auth";
-import { faker } from "@faker-js/faker";
-import type { OAuth2Client } from "google-auth-library";
-import { nanoid } from "nanoid";
 import { Controller, type ControllerDeps } from "./Controller";
-import type { Request, Response } from "express";
+import { generateJwt } from "@/lib/auth-utils";
 
 interface GoogleAuthDeps extends ControllerDeps {
   req: Request;
@@ -19,30 +19,25 @@ export default class GoogleAuthController extends Controller<GoogleAuthDeps> {
     return `${username.split(" ").join("_")}_${nanoid(8)}`;
   }
   async getAuth() {
-    try {
-      const { res, googleClient } = this.deps;
+    const { res, googleClient } = this.deps;
 
-      const state = crypto.randomUUID();
+    const state = crypto.randomUUID();
 
-      res.cookie("oauth_state", state, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-      });
+    res.cookie("oauth_state", state, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
 
-      const url = googleClient.generateAuthUrl({
-        access_type: "offline",
-        scope: ["openid", "email", "profile"],
-        state,
-        prompt: "consent",
-      });
-      logger.info(`Redirect URL: ${url}`);
+    const url = googleClient.generateAuthUrl({
+      access_type: "offline",
+      scope: ["openid", "email", "profile"],
+      state,
+      prompt: "consent",
+    });
+    logger.info(`Redirect URL: ${url}`);
 
-      res.redirect(url);
-    } catch (err) {
-      logger.error("Google auth error", err);
-      this.deps.res.status(500);
-    }
+    res.redirect(url);
   }
 
   async getCallback() {
@@ -52,91 +47,93 @@ export default class GoogleAuthController extends Controller<GoogleAuthDeps> {
     if (!state || state !== storedState) {
       return res.status(400).send("Invalid state");
     }
-    try {
-      const { tokens } = await googleClient.getToken(code as string);
 
-      googleClient.setCredentials(tokens);
+    const { tokens } = await googleClient.getToken(code as string);
 
-      const ticket = await googleClient.verifyIdToken({
-        idToken: tokens.id_token!,
-        audience: env.GOOGLE_CLIENT_ID,
-      });
+    googleClient.setCredentials(tokens);
 
-      const payload = ticket.getPayload();
+    const ticket = await googleClient.verifyIdToken({
+      idToken: tokens.id_token!,
+      audience: env.GOOGLE_CLIENT_ID,
+    });
 
-      if (!payload) throw new Error("No payload");
+    const payload = ticket.getPayload();
 
-      const user = {
-        id: payload?.sub,
-        email: payload?.email,
-        name: payload.name ?? faker.person.firstName(),
-        picture: payload.picture,
-      };
+    if (!payload) throw new Error("No payload");
 
-      if (!user.email || !user.id)
-        throw new Error("Payload do not have email or id");
+    const user = {
+      id: payload?.sub,
+      email: payload?.email,
+      name: payload.name ?? faker.person.firstName(),
+      picture: payload.picture,
+    };
 
-      logger.info("Google user authentified !");
-      logger.table(user);
+    if (!user.email || !user.id) throw new Error("Payload do not have email or id");
 
-      let dbUser = await client.user.findUnique({
-        where: {
+    logger.info("Google user authentified !");
+    logger.table(user);
+
+    let dbUser = await client.user.findUnique({
+      where: {
+        email: user.email,
+      },
+      include: {
+        profilePicture: true,
+      },
+    });
+
+    if (!dbUser) {
+      const username = this.generateRandomUsername(user.name);
+      dbUser = await client.user.create({
+        data: {
           email: user.email,
-        },
-      });
-
-      if (!dbUser) {
-        dbUser = await client.user.create({
-          data: {
-            email: user.email,
-            profilePicture: user.picture ?? faker.image.avatar(),
-            username: this.generateRandomUsername(user.name),
-            authMethods: {
-              create: {
-                provider: "Google",
-                providerId: user.id,
-              },
+          profilePicture: {
+            create: {
+              alt: `The profile picture of ${username}`,
+              url: user.picture ?? faker.image.avatar(),
             },
           },
-        });
-      } else if (user.picture) {
-        await client.user.update({
-          select: {
-            id: true,
+          username: username,
+          authMethods: {
+            create: {
+              provider: "Google",
+              providerId: user.id,
+            },
           },
-          where: {
-            id: dbUser.id,
-          },
-          data: {
-            profilePicture: user.picture,
-          },
-        });
-      }
-
-      const session: Session = {
-        id: dbUser.id,
-        profilePictureSource: dbUser.profilePicture,
-        username: dbUser.username,
-      };
-
-      const jwt = await ConnexionController.generateJwt(dbUser.id, true);
-
-      res.cookie("token", jwt, {
-        httpOnly: true,
-        secure: false,
-        path: "/",
-        maxAge: 365 * 24 * 3600 * 1000,
-        sameSite: "lax",
+        },
+        include: {
+          profilePicture: true,
+        },
       });
+    }
 
-      res.clearCookie("oauth_state", {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-        path: "/",
-      });
+    const session: Session = {
+      id: dbUser.id,
+      profilePictureSource: {
+        alt: dbUser.profilePicture.alt,
+        src: dbUser.profilePicture.url,
+      },
+      username: dbUser.username,
+    };
 
-      res.send(`
+    const jwt = await generateJwt(dbUser.id, true);
+
+    res.cookie("token", jwt, {
+      httpOnly: true,
+      secure: false,
+      path: "/",
+      maxAge: 365 * 24 * 3600 * 1000,
+      sameSite: "lax",
+    });
+
+    res.clearCookie("oauth_state", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+    });
+
+    res.send(`
       <html>
         <body>
           <script>
@@ -148,9 +145,5 @@ export default class GoogleAuthController extends Controller<GoogleAuthDeps> {
         </body>
       </html>
     `);
-    } catch (err) {
-      logger.error("Google auth error", err);
-      res.status(500).send("Auth error");
-    }
   }
 }

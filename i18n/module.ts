@@ -5,10 +5,7 @@ export default class I18nModule {
   private _currentLanguage: Language;
   private _undefinedValuePlaceholder: string;
 
-  constructor(
-    defaultLanguage: Language,
-    undefinedValuePlaceholder = "Undefined",
-  ) {
+  constructor(defaultLanguage: Language, undefinedValuePlaceholder = "Undefined") {
     this._currentLanguage = defaultLanguage;
     this._undefinedValuePlaceholder = undefinedValuePlaceholder;
   }

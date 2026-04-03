@@ -1,16 +1,8 @@
 import type * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Maximize, Minimize } from "lucide-react";
 import { type ComponentProps, type ReactNode, useId, useState } from "react";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/molecules/input-group";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/molecules/tooltip";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/molecules/input-group";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/molecules/tooltip";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -32,11 +24,7 @@ export function IconButton({
   onClick?: () => void;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="all-unset cursor-pointer "
-    >
+    <button type="button" onClick={onClick} className="all-unset cursor-pointer ">
       {children}
     </button>
   );
@@ -63,9 +51,7 @@ export function SidebarTabButton({
     >
       {text}
       {disabled && (
-        <span className="paragraph-sm text-muted-foreground ml-5 hidden md:block">
-          upcoming
-        </span>
+        <span className="paragraph-sm text-muted-foreground ml-5 hidden md:block">upcoming</span>
       )}
     </Button>
   );
@@ -133,10 +119,7 @@ export function SmallInput({
       <Tooltip>
         <TooltipTrigger>
           <div className={`flex flex-col gap-2 p-1 ${containerClassName}`}>
-            <Label
-              className="paragraph-sm cursor-pointer !text-left"
-              htmlFor={id}
-            >
+            <Label className="paragraph-sm cursor-pointer !text-left" htmlFor={id}>
               {label}
             </Label>
             <InputGroup className="w-full border-none !bg-popover h-full !rounded-xs">
@@ -191,11 +174,7 @@ export function SmallCheckboxGroup({
   const id = useId();
   return (
     <div className="flex gap-2">
-      <Label
-        htmlFor={id}
-        className={`paragraph ${labelProps?.className}`}
-        {...labelProps}
-      >
+      <Label htmlFor={id} className={`paragraph ${labelProps?.className}`} {...labelProps}>
         {label}
       </Label>
       <Checkbox id={id} {...checkboxProps} />
@@ -213,9 +192,7 @@ export function FullScreenButton({
   setFullScreen: (full: boolean) => void;
 }) {
   return (
-    <div
-      className={`absolute m-2 top-0 right-0 transition ${hover ? "opacity-100" : "opacity-0"}`}
-    >
+    <div className={`absolute m-2 top-0 right-0 transition ${hover ? "opacity-100" : "opacity-0"}`}>
       <Button variant={"ghost"} onClick={() => setFullScreen(!fullScreen)}>
         {fullScreen ? (
           <Minimize className=" stroke-muted-foreground !hover:stroke-foreground" />
@@ -247,26 +224,15 @@ export function Tab({ children }: { children: ReactNode }) {
         className="size-full md:bg-card md:rounded-md relative overflow-hidden"
       >
         <div className="hidden md:block">
-          <FullScreenButton
-            hover={hover}
-            fullScreen={fullScreen}
-            setFullScreen={setFullScreen}
-          />
+          <FullScreenButton hover={hover} fullScreen={fullScreen} setFullScreen={setFullScreen} />
         </div>
         {children}
       </div>
     );
   } else {
     return (
-      <div
-        {...interactiveProps}
-        className="inset-0 absolute top-0 left-0 z-100 bg-background"
-      >
-        <FullScreenButton
-          hover={hover}
-          fullScreen={fullScreen}
-          setFullScreen={setFullScreen}
-        />
+      <div {...interactiveProps} className="inset-0 absolute top-0 left-0 z-100 bg-background">
+        <FullScreenButton hover={hover} fullScreen={fullScreen} setFullScreen={setFullScreen} />
         {children}
       </div>
     );

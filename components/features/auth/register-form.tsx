@@ -1,17 +1,12 @@
 import { Controller } from "react-hook-form";
+import { Spinner } from "@/components/ui/spinner";
 import { useRegisterForm } from "@/hooks/use-forms";
 import { useLanguage } from "@/hooks/use-language";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "../../molecules/field";
+import { Field, FieldError, FieldGroup, FieldLabel } from "../../molecules/field";
 import EditableImage from "../../organisms/editable-image";
 import { Button } from "../../ui/button";
 import { Checkbox } from "../../ui/checkbox";
 import { Input } from "../../ui/input";
-import { Spinner } from "@/components/ui/spinner";
 
 export default function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
   const { form, formRef, handleSubmit, submitLoading } = useRegisterForm({
@@ -25,12 +20,10 @@ export default function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
       ref={formRef}
       className="w-full flex flex-col items-center justify-between gap-4"
     >
-      <h2 className="title-2 text-primary">
-        {instance.getItem("create_your_account")}
-      </h2>
+      <h2 className="title-2 text-primary">{instance.getItem("create_your_account")}</h2>
       <FieldGroup className="gap-3 mb-3">
         <Controller
-          name="image.src"
+          name="image.file"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid} className="gap-1">
@@ -38,7 +31,7 @@ export default function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
                 <div className="w-50 h-50 overflow-hidden">
                   <EditableImage
                     alt="playlist cover"
-                    src={field.value}
+                    // src={field.value}
                     onImageChange={(source) => field.onChange(source)}
                     canBeEdited={false}
                   />
@@ -100,9 +93,7 @@ export default function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
                   autoComplete="off"
                   className="paragraph !text-left px-2"
                 />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
@@ -120,9 +111,7 @@ export default function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
                   autoComplete="off"
                   className="paragraph !text-left px-2"
                 />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
@@ -138,16 +127,10 @@ export default function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
                     id="form-rhf-remember"
                     defaultChecked={field.value}
                     onCheckedChange={(c) =>
-                      form.setValue(
-                        "agree_terms_of_service",
-                        typeof c === "boolean" ? c : false,
-                      )
+                      form.setValue("agree_terms_of_service", typeof c === "boolean" ? c : false)
                     }
                   />
-                  <FieldLabel
-                    htmlFor="form-rhf-remember"
-                    className=" paragraph-md max-w-70"
-                  >
+                  <FieldLabel htmlFor="form-rhf-remember" className=" paragraph-md max-w-70">
                     <span className="text-foreground">
                       {instance.getItem("by_checking_this")}{" "}
                       <a
@@ -159,9 +142,7 @@ export default function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
                     </span>
                   </FieldLabel>
                 </div>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />

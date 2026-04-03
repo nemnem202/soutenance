@@ -10,9 +10,9 @@ export function useLanguageProvider({ module }: { module?: I18nModule }) {
   const preferredLanguage = useData<Data>().preferredLanguage ?? "en";
   const DEFAULT_MODULE = new I18nModule(preferredLanguage as Language);
 
-  const [currentLanguage, setCurrentLanguage] = useState<
-    (typeof availableLanguages)[number]
-  >(module?.getCurrentLanguage() ?? DEFAULT_MODULE.getCurrentLanguage());
+  const [currentLanguage, setCurrentLanguage] = useState<(typeof availableLanguages)[number]>(
+    module?.getCurrentLanguage() ?? DEFAULT_MODULE.getCurrentLanguage()
+  );
 
   const instance = useMemo(() => {
     const m = module ?? DEFAULT_MODULE;
@@ -27,10 +27,7 @@ export function useLanguageProvider({ module }: { module?: I18nModule }) {
   // biome-ignore lint/correctness/useExhaustiveDependencies: qsqds
   useEffect(() => {
     const preferredLanguage = localStorage.getItem("preferred-language");
-    if (
-      preferredLanguage &&
-      availableLanguages.includes(preferredLanguage as Language)
-    )
+    if (preferredLanguage && availableLanguages.includes(preferredLanguage as Language))
       setLanguage(preferredLanguage as Language);
   }, []);
 
@@ -39,7 +36,6 @@ export function useLanguageProvider({ module }: { module?: I18nModule }) {
 
 export function useLanguage() {
   const languageData = useContext(LanguagesContext);
-  if (!languageData)
-    throw new Error("use language must be called inside it's provider.");
+  if (!languageData) throw new Error("use language must be called inside it's provider.");
   return languageData;
 }

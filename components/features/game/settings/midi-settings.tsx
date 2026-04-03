@@ -16,9 +16,7 @@ import { ParamsAccordion } from "../game-sidebar";
 export default function MidiSettings() {
   const { instance } = useLanguage();
   return (
-    <ParamsAccordion
-      title={<h3 className="title-3">{instance.getItem("midi")}</h3>}
-    >
+    <ParamsAccordion title={<h3 className="title-3">{instance.getItem("midi")}</h3>}>
       <div className="gap-2 flex flex-col">
         <div className="w-full flex items-center">
           <Label className="paragraph w-25" htmlFor="style-select">

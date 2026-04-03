@@ -30,5 +30,9 @@ jobs:
           echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env.prod
           echo "GOOGLE_REDIRECT_PATH=${{ secrets.GOOGLE_REDIRECT_PATH }}" >> .env.prod
           echo "APP_BASE_URL=${{ secrets.APP_BASE_URL }}" >> .env.prod
+          echo "CLOUD_API_KEY=${{ secrets.CLOUD_API_KEY }}" >> .env.prod
+          echo "CLOUD_API_SECRET=${{ secrets.CLOUD_API_SECRET }}" >> .env.prod
+          echo "CLOUD_IMAGE_FOLDER_NAME=${{ secrets.CLOUD_IMAGE_FOLDER_NAME }}" >> .env.prod
+          echo "CLOUD_NAME=${{ secrets.CLOUD_NAME }}" >> .env.prod
       - name: Build and run CI containers
         run: make ci

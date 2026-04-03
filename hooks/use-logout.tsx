@@ -1,8 +1,7 @@
 import { useState } from "react";
-import useSession from "./use-session";
-import { onLogout } from "@/telefunc/connexion.telefunc";
 import { errorToast, successToast } from "@/lib/toaster";
-import { navigate } from "vike/client/router";
+import { onLogout } from "@/telefunc/connexion.telefunc";
+import useSession from "./use-session";
 
 export default function useLogout() {
   const { setSession } = useSession();

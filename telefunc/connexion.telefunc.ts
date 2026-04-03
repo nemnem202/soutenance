@@ -1,31 +1,29 @@
+import { getContext } from "telefunc";
 import { ConnexionController } from "@/controllers/ConnexionController";
 import prismaClient from "@/lib/prisma-client";
 import type { LoginData, RegisterData } from "@/types/auth";
-import { getContext } from "telefunc";
+import { handleAction } from "@/lib/response-handler";
 
-export function onLogin({ ...props }: LoginData) {
-  const context = getContext();
-  return new ConnexionController({ client: prismaClient, context }).login({
-    ...props,
-  });
+export async function onLogin(props: LoginData) {
+  const controller = new ConnexionController({ client: prismaClient, context: getContext() });
+  return handleAction("Login", () => controller.login(props));
 }
 
-export function onRegister({ ...props }: RegisterData) {
-  const context = getContext();
-  return new ConnexionController({ client: prismaClient, context }).register({
-    ...props,
-  });
+export async function onRegister(props: RegisterData) {
+  const controller = new ConnexionController({ client: prismaClient, context: getContext() });
+  return handleAction("Registration", () => controller.register(props));
 }
 
-export function onLogout() {
-  const context = getContext();
-  return new ConnexionController({ client: prismaClient, context }).logout();
+export async function onLogout() {
+  const controller = new ConnexionController({ client: prismaClient, context: getContext() });
+  return handleAction("Logout", () => controller.logout());
 }
-
 export function onRemoveAccount() {
   const context = getContext();
-  return new ConnexionController({
+  const controller = new ConnexionController({
     client: prismaClient,
     context,
-  }).removeAccount();
+  });
+
+  return handleAction("Remove Account", () => controller.removeAccount());
 }

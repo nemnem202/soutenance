@@ -2,11 +2,7 @@ import { Search } from "lucide-react";
 import { useState } from "react";
 import { navigate } from "vike/client/router";
 import useSearchbar from "@/hooks/use-searchbar";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "../molecules/input-group";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "../molecules/input-group";
 import BasicDropdown from "./animated-dropdown-menu";
 export interface SearchbarProps {
   placeholder: string;
@@ -41,8 +37,7 @@ export default function Searchbar({ ...props }: SearchbarProps) {
       <InputGroup
         className="w-full h-full"
         onKeyDownCapture={(e) => {
-          if (e.key.toLowerCase() === "enter")
-            navigate(`/search/${searchbarValue}`);
+          if (e.key.toLowerCase() === "enter") navigate(`/search/${searchbarValue}`);
         }}
       >
         <InputGroupAddon align="inline-start" className="pl-3">

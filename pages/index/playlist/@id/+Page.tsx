@@ -15,9 +15,7 @@ import type { Playlist } from "@/types/entities";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
-  const [playlist] = useState(
-    useData<Data>().playlists.find((e) => String(e.id) === id),
-  );
+  const [playlist] = useState(useData<Data>().playlists.find((e) => String(e.id) === id));
 
   useEffect(() => {
     if (!playlist) navigate("/404");
@@ -38,9 +36,7 @@ export default function Page() {
 
 function Banner({ playlist }: { playlist: Playlist }) {
   const { instance } = useLanguage();
-  const account = useData<Data>().accounts.find(
-    (account) => account.id === playlist.accountId,
-  );
+  const account = useData<Data>().accounts.find((account) => account.id === playlist.accountId);
   return (
     <div className="flex md:flex-row gap-0 md:gap-8 flex-col w-full items-center relative">
       <SizeAdapter
@@ -72,10 +68,10 @@ function Banner({ playlist }: { playlist: Playlist }) {
               href={`/account/${account.id}`}
               className="flex items-center gap-2 hover:opacity-80 transition cursor-pointer"
             >
-              <SizeAdapter md={<AccountPP image={account.picture} />} />
-              <p className="title-4 md:text-foreground text-muted-foreground ">
-                {playlist.author}
-              </p>
+              <SizeAdapter
+                md={<AccountPP image={{ alt: "Placeholder", src: account.picture }} />}
+              />
+              <p className="title-4 md:text-foreground text-muted-foreground ">{playlist.author}</p>
             </a>
           )}
 
@@ -83,17 +79,12 @@ function Banner({ playlist }: { playlist: Playlist }) {
             md={
               <div className="flex gap-2">
                 <p className="text-muted-foreground">
-                  {playlist.exercisesIds.length}{" "}
-                  {instance.getItem("exercises").toLowerCase()}
+                  {playlist.exercisesIds.length} {instance.getItem("exercises").toLowerCase()}
                 </p>
                 <Separator orientation="vertical" />
-                <p className="text-muted-foreground">
-                  {instance.getItem("medium")}
-                </p>
+                <p className="text-muted-foreground">{instance.getItem("medium")}</p>
                 <Separator orientation="vertical" />
-                <p className="text-muted-foreground">
-                  {instance.getItem("pop").toLowerCase()}
-                </p>
+                <p className="text-muted-foreground">{instance.getItem("pop").toLowerCase()}</p>
               </div>
             }
           />

@@ -184,11 +184,7 @@ export default function BasicDropdown({
           }}
         >
           <motion.div
-            animate={
-              shouldReduceMotion
-                ? { opacity: 1 }
-                : { opacity: 1, y: 0, scaleY: 1 }
-            }
+            animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, scaleY: 1 }}
             className="fixed z-50 origin-top rounded-lg border bg-background shadow-lg"
             exit={
               shouldReduceMotion
@@ -200,44 +196,28 @@ export default function BasicDropdown({
                     transition: { duration: 0.15 },
                   }
             }
-            initial={
-              shouldReduceMotion
-                ? { opacity: 1 }
-                : { opacity: 0, y: -10, scaleY: 0.8 }
-            }
+            initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -10, scaleY: 0.8 }}
             style={{
               top: `${position.top}px`,
               left: `${position.left}px`,
               width: `${position.width}px`,
             }}
             transition={
-              shouldReduceMotion
-                ? { duration: 0 }
-                : { type: "spring", bounce: 0.1, duration: 0.25 }
+              shouldReduceMotion ? { duration: 0 } : { type: "spring", bounce: 0.1, duration: 0.25 }
             }
           >
-            <ul
-              aria-label="Dropdown options"
-              className="p-2"
-              id="dropdown-items"
-            >
+            <ul aria-label="Dropdown options" className="p-2" id="dropdown-items">
               {items.map((item, index) => (
                 <motion.li
-                  animate={
-                    shouldReduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }
-                  }
-                  aria-selected={
-                    selectedItem?.id === item.id || index === focusedIndex
-                  }
+                  animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
+                  aria-selected={selectedItem?.id === item.id || index === focusedIndex}
                   className="block"
                   exit={
                     shouldReduceMotion
                       ? { opacity: 0, transition: { duration: 0 } }
                       : { opacity: 0, x: -20 }
                   }
-                  initial={
-                    shouldReduceMotion ? { opacity: 1 } : { opacity: 0, x: -20 }
-                  }
+                  initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, x: -20 }}
                   key={item.id}
                   role="option"
                   transition={
@@ -255,9 +235,7 @@ export default function BasicDropdown({
                   <button
                     aria-label={item.label}
                     className={`flex min-h-[44px] w-full items-center px-4 py-2 text-left text-sm transition-colors cursor-pointer hover:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded text-muted-foreground ${
-                      selectedItem?.id === item.id
-                        ? "font-medium text-brand"
-                        : ""
+                      selectedItem?.id === item.id ? "font-medium text-brand" : ""
                     } ${index === focusedIndex ? "bg-muted" : ""}`}
                     onClick={() => {
                       handleItemSelect(item);
@@ -287,9 +265,7 @@ export default function BasicDropdown({
           {children}
         </div>
       </div>
-      {typeof window !== "undefined"
-        ? createPortal(dropdownContent, document.body)
-        : null}
+      {typeof window !== "undefined" ? createPortal(dropdownContent, document.body) : null}
     </>
   );
 }

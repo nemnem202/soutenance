@@ -3,6 +3,7 @@ import type AvatarEditor from "react-avatar-editor";
 import type { EditableImageProps } from "@/components/organisms/editable-image";
 
 export default function useEditImage(props: EditableImageProps) {
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageSource, setImageSource] = useState<string | undefined>(props.src);
   const [hovered, setHovered] = useState(false);
   const [open, setOpen] = useState(false);
@@ -28,8 +29,8 @@ export default function useEditImage(props: EditableImageProps) {
     const file = inputRef.current.files?.[0];
     if (!file) return;
 
-    const imageUrl = URL.createObjectURL(file);
-    setImageSource(imageUrl);
+    setImageFile(file);
+    setImageSource(URL.createObjectURL(file));
   };
 
   const handleEditorEditsSave = () => {
@@ -37,24 +38,37 @@ export default function useEditImage(props: EditableImageProps) {
 
     const canvas = avatarEditorRef.current.getImageScaledToCanvas();
 
-    const dataUrl = canvas.toDataURL("image/png");
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) return;
 
-    setImageSource(dataUrl);
+        const file = new File(
+          [blob], // ⚠️ tableau obligatoire
+          "avatar.webp", // nom du fichier
+          { type: "image/webp" } // MIME type
+        );
 
-    setOpen(false);
+        setImageFile(file);
+
+        setOpen(false);
+      },
+      "image/webp",
+      0.9
+    );
   };
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: qsdqsd
   useEffect(() => {
-    if (!imageSource) return;
-    props.onImageChange(imageSource);
-  }, [imageSource]);
+    if (!imageFile) return;
+    props.onImageChange(imageFile);
+  }, [imageFile]);
 
   return {
     handleEditorEditsSave,
     handleImageChange,
     handleWheel,
     changeImage,
+    imageFile,
     imageSource,
     hovered,
     setHovered,

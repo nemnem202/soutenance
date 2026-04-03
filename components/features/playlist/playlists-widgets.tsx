@@ -24,9 +24,7 @@ export function SmallPlaylistWidget() {
         />
       </div>
       <div className="flex flex-1 flex-col min-w-0">
-        <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">
-          {playlist.title}
-        </p>
+        <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{playlist.title}</p>
         <p className="paragraph-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
           {instance.getItem("by")} {playlist.author}
         </p>
@@ -72,10 +70,7 @@ export function MediumPlaylistWidget() {
         </div>
       </div>
       <div className="cursor-pointer rounded-md transition group-hover:opacity-80">
-        <a
-          href={`/playlist/${playlist.id}`}
-          className="flex flex-col rounded gap-2.5"
-        >
+        <a href={`/playlist/${playlist.id}`} className="flex flex-col rounded gap-2.5">
           <div className="w-full aspect-square rounded overflow-hidden">
             <img
               src={playlist.image.src}
@@ -96,9 +91,7 @@ export function MediumPlaylistWidget() {
                 {instance.getItem("by")} {playlist.author}
               </p>
               <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[15%]">
-                {playlist.exercisesIds.length > 99
-                  ? ">99"
-                  : playlist.exercisesIds.length}
+                {playlist.exercisesIds.length > 99 ? ">99" : playlist.exercisesIds.length}
               </p>
             </div>
           </div>

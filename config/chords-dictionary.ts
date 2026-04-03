@@ -1,8 +1,4 @@
-import type {
-  ChordDictionary,
-  ChordIntervals,
-  ChordLabel,
-} from "@/types/music";
+import type { ChordDictionary, ChordIntervals, ChordLabel } from "@/types/music";
 
 const CHORDS_DICTIONNARY_RAW: Record<string, [number[], string[]?]> = {
   "4": [[0, 4, 10, 15], ["quartal"]],
@@ -243,17 +239,18 @@ const getSymbolicLabel = (key: string): string => {
   return label.replace(/#/g, "♯").replace(/b/g, "♭").replace(/add/g, "²");
 };
 
-export const CHORDS_DICTIONNARY: ChordDictionary = Object.entries(
-  CHORDS_DICTIONNARY_RAW,
-).reduce((acc, [key, value]) => {
-  const intervals = value[0] as ChordIntervals;
-  const labels = (value[1] as ChordLabel[]) || [];
+export const CHORDS_DICTIONNARY: ChordDictionary = Object.entries(CHORDS_DICTIONNARY_RAW).reduce(
+  (acc, [key, value]) => {
+    const intervals = value[0] as ChordIntervals;
+    const labels = (value[1] as ChordLabel[]) || [];
 
-  acc[key] = {
-    intervals,
-    labels,
-    symbolLabel: getSymbolicLabel(key),
-  };
+    acc[key] = {
+      intervals,
+      labels,
+      symbolLabel: getSymbolicLabel(key),
+    };
 
-  return acc;
-}, {} as ChordDictionary);
+    return acc;
+  },
+  {} as ChordDictionary
+);

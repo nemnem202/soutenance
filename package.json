@@ -3,13 +3,16 @@
     "dev": "vike dev",
     "build": "vike build",
     "preview": "vike build && vike preview",
-    "lint": "biome lint --write .",
-    "format": "biome format --write .",
     "prod": "vike build && node ./dist/server/index.mjs",
     "prisma:studio": "prisma studio",
     "prisma:generate": "prisma generate",
     "shadcn": "npx shadcn@latest",
-    "test": "vitest run --reporter=tree"
+    "test": "vitest run --reporter=tree",
+    "lint": "biome lint --write .",
+    "format": "biome check --write --unsafe .",
+    "format:check": "biome check .",
+    "check": "biome check --write .",
+    "check:ci": "biome ci ."
   },
   "dependencies": {
     "@faker-js/faker": "^10.3.0",
@@ -36,6 +39,7 @@
     "argon2": "^0.44.0",
     "auto-text-size": "^0.2.3",
     "class-variance-authority": "^0.7.1",
+    "cloudinary": "^2.9.0",
     "clsx": "^2.1.1",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.3.1",

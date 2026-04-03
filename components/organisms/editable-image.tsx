@@ -9,10 +9,10 @@ import { Slider } from "../ui/slider";
 import Modal from "./modal";
 
 export interface EditableImageProps {
-  onImageChange: (src: string) => void;
+  onImageChange: (image: File) => void;
   src?: string;
   canBeEdited?: boolean;
-  alt: string;
+  alt?: string;
 }
 
 export default function EditableImage({
@@ -79,12 +79,7 @@ export default function EditableImage({
         />
       </div>
 
-      <Modal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        size="md"
-        title="Edit image"
-      >
+      <Modal isOpen={open} onClose={() => setOpen(false)} size="md" title="Edit image">
         <EditImageModalContent {...editImage} />
       </Modal>
       <input
