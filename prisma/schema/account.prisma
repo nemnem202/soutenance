@@ -4,9 +4,10 @@ model User {
    username          String
    createdAt         DateTime           @default(now())
    updatedAt         DateTime           @updatedAt
-   profilePicture    String
+   profilePicture    Image              @relation(fields: [imageId], references: [id], onDelete: Cascade)
    authMethods       AuthMethod[]
    classicAuthMethod ClassicAuthMethod?
+   imageId           Int
 }
 
 model ClassicAuthMethod {

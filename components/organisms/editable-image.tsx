@@ -12,7 +12,7 @@ export interface EditableImageProps {
   onImageChange: (image: File) => void;
   src?: string;
   canBeEdited?: boolean;
-  alt: string;
+  alt?: string;
 }
 
 export default function EditableImage({

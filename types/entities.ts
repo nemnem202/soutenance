@@ -1,5 +1,6 @@
 import type z from "zod";
 import type { playlistSchema } from "@/schemas/entities.schema";
+import { imageSchema } from "@/schemas/common.schema";
 
 export type Account = {
   id: number;
@@ -27,3 +28,5 @@ export type Exercise = {
 export type PlaylistSchema = z.infer<typeof playlistSchema>;
 
 export type Playlist = PlaylistSchema & { id: number; author: string };
+
+export type Image = z.infer<typeof imageSchema>;

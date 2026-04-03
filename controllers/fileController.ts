@@ -21,7 +21,7 @@ export default class FileController extends Controller<FileDeps> {
   private readonly image_folder = env.CLOUD_IMAGE_FOLDER_NAME;
 
   async uploadFileAsImage(): Promise<
-    ErrorServerResponse | { success: true; url: string }
+    ErrorServerResponse | { success: true; url: string; imageId: string }
   > {
     try {
       const result = await new Promise<UploadApiResponse>((resolve, reject) => {
@@ -46,6 +46,7 @@ export default class FileController extends Controller<FileDeps> {
       return {
         success: true,
         url: result.secure_url,
+        imageId: result.public_id,
       };
     } catch (error: any) {
       return {
@@ -70,6 +71,21 @@ export default class FileController extends Controller<FileDeps> {
           title: "You are not connected",
         };
 
+      const existingUser = await this.deps.client.user.findUnique({
+        where: {
+          id: user.id,
+        },
+        include: {
+          profilePicture: true,
+        },
+      });
+
+      if (!existingUser) throw new Error("Existing user not found in db");
+
+      if (existingUser.profilePicture.cloudId) {
+        await cloudinary.uploader.destroy(existingUser.profilePicture.cloudId);
+      }
+
       const fileUpload = await this.uploadFileAsImage();
 
       if (!fileUpload.success) return fileUpload;
@@ -79,7 +95,14 @@ export default class FileController extends Controller<FileDeps> {
           id: user.id,
         },
         data: {
-          profilePicture: fileUpload.url,
+          profilePicture: {
+            update: {
+              url: fileUpload.url,
+            },
+          },
+        },
+        include: {
+          profilePicture: true,
         },
       });
 
@@ -87,8 +110,11 @@ export default class FileController extends Controller<FileDeps> {
         success: true,
         session: {
           id: user.id,
-          profilePictureSource: update.profilePicture,
           username: update.username,
+          profilePictureSource: {
+            alt: update.profilePicture.alt,
+            src: update.profilePicture.url,
+          },
         },
       };
     } catch (err) {

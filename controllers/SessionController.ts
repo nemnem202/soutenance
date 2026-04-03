@@ -16,6 +16,9 @@ export default class SessionController extends Controller<SessionDeps> {
         where: {
           id: user.id,
         },
+        include: {
+          profilePicture: true,
+        },
       });
 
       if (!userData) throw new Error("User id could not be found in db");
@@ -25,7 +28,10 @@ export default class SessionController extends Controller<SessionDeps> {
 
       return {
         id: userData.id,
-        profilePictureSource: userData.profilePicture,
+        profilePictureSource: {
+          alt: userData.profilePicture.alt,
+          src: userData.profilePicture.url,
+        },
         username: userData.username,
       };
     } catch (err) {

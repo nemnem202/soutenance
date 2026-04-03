@@ -88,6 +88,7 @@ export class ConnexionController extends Controller<ConnexionDeps> {
         },
         include: {
           classicAuthMethod: true,
+          profilePicture: true,
         },
       });
 
@@ -129,7 +130,10 @@ export class ConnexionController extends Controller<ConnexionDeps> {
         session: {
           id: user.id,
           username: user.username,
-          profilePictureSource: user.profilePicture,
+          profilePictureSource: {
+            alt: user.profilePicture.alt,
+            src: user.profilePicture.url,
+          },
         },
       };
     } catch (err) {
@@ -205,20 +209,29 @@ export class ConnexionController extends Controller<ConnexionDeps> {
         file: image.file,
       });
 
-      const fileUpload = await fileController.uploadFileAsImage();
+      const imageUpload = await fileController.uploadFileAsImage();
 
-      if (!fileUpload.success) return fileUpload;
+      if (!imageUpload.success) return imageUpload;
 
       const user = await this.deps.client.user.create({
         data: {
           email: email,
           username: username,
-          profilePicture: fileUpload.url,
+          profilePicture: {
+            create: {
+              alt: `The profile picture of ${username}`,
+              url: imageUpload.url,
+              cloudId: imageUpload.imageId,
+            },
+          },
           classicAuthMethod: {
             create: {
               password: passwordHash,
             },
           },
+        },
+        include: {
+          profilePicture: true,
         },
       });
 
@@ -231,7 +244,10 @@ export class ConnexionController extends Controller<ConnexionDeps> {
         session: {
           id: user.id,
           username: user.username,
-          profilePictureSource: user.profilePicture,
+          profilePictureSource: {
+            alt: user.profilePicture.alt,
+            src: user.profilePicture.url,
+          },
         },
       };
     } catch (err) {

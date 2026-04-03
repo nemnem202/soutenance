@@ -72,7 +72,13 @@ function Banner({ playlist }: { playlist: Playlist }) {
               href={`/account/${account.id}`}
               className="flex items-center gap-2 hover:opacity-80 transition cursor-pointer"
             >
-              <SizeAdapter md={<AccountPP image={account.picture} />} />
+              <SizeAdapter
+                md={
+                  <AccountPP
+                    image={{ alt: "Placeholder", src: account.picture }}
+                  />
+                }
+              />
               <p className="title-4 md:text-foreground text-muted-foreground ">
                 {playlist.author}
               </p>

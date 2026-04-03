@@ -83,14 +83,23 @@ export default class GoogleAuthController extends Controller<GoogleAuthDeps> {
         where: {
           email: user.email,
         },
+        include: {
+          profilePicture: true,
+        },
       });
 
       if (!dbUser) {
+        const username = this.generateRandomUsername(user.name);
         dbUser = await client.user.create({
           data: {
             email: user.email,
-            profilePicture: user.picture ?? faker.image.avatar(),
-            username: this.generateRandomUsername(user.name),
+            profilePicture: {
+              create: {
+                alt: `The profile picture of ${username}`,
+                url: user.picture ?? faker.image.avatar(),
+              },
+            },
+            username: username,
             authMethods: {
               create: {
                 provider: "Google",
@@ -98,12 +107,18 @@ export default class GoogleAuthController extends Controller<GoogleAuthDeps> {
               },
             },
           },
+          include: {
+            profilePicture: true,
+          },
         });
       }
 
       const session: Session = {
         id: dbUser.id,
-        profilePictureSource: dbUser.profilePicture,
+        profilePictureSource: {
+          alt: dbUser.profilePicture.alt,
+          src: dbUser.profilePicture.url,
+        },
         username: dbUser.username,
       };
 

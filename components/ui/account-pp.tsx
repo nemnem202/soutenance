@@ -1,13 +1,17 @@
+import type { Image } from "@/types/entities";
 import { Avatar, AvatarImage } from "./avatar";
 
 export default function AccountPP({
-  image = "assets/images/account-default-pic.webp",
+  image = {
+    alt: "Placeholder image",
+    src: "assets/images/account-default-pic.webp",
+  },
 }: {
-  image?: string;
+  image?: Image;
 }) {
   return (
     <Avatar>
-      <AvatarImage src={image} alt={"user-avatar"} />
+      <AvatarImage {...image} />
     </Avatar>
   );
 }

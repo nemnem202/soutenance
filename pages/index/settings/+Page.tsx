@@ -70,8 +70,8 @@ function Content() {
         <div className="flex gap-2 md:flex-row flex-col items-center md:items-start">
           <div className="w-33 aspect-square">
             <EditableImage
-              alt="profile picture"
-              src={session ? session.profilePictureSource : undefined}
+              alt={session ? session.profilePictureSource.alt : undefined}
+              src={session ? session.profilePictureSource.src : undefined}
               onImageChange={(image) => onImageChange(image)}
             />
           </div>
