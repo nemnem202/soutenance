@@ -1,10 +1,9 @@
 import { Readable } from "node:stream";
 import { v2 as cloudinary, type UploadApiResponse } from "cloudinary";
 import { env } from "@/lib/env";
-import { logger } from "@/lib/logger";
-import type { Session } from "@/types/auth";
-import { type ErrorServerResponse, Status } from "@/types/server-response";
+import { Status } from "@/types/server-response";
 import { Controller, type ControllerDeps } from "./Controller";
+import { AppError } from "@/lib/errors";
 
 interface FileDeps extends ControllerDeps {
   file?: File;
@@ -20,43 +19,43 @@ cloudinary.config({
 export default class FileController extends Controller<FileDeps> {
   private readonly image_folder = env.CLOUD_IMAGE_FOLDER_NAME;
 
-  async uploadFileAsImage(): Promise<
-    ErrorServerResponse | { success: true; url: string; imageId: string }
-  > {
+  async uploadFileAsImage() {
+    if (!this.deps.file) throw new AppError(Status.UnknownError, "Fichier manquant");
+
     try {
-      if (!this.deps.file) throw new Error("File controller init without file");
       const result = await new Promise<UploadApiResponse>((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
-          {
-            folder: this.image_folder,
-            format: "webp",
-            resource_type: "image",
-            transformation: [{ width: 1000, crop: "limit", quality: "auto" }],
-          },
-          (error, result) => {
-            if (error) return reject(error);
-            if (!result) return reject(new Error("No result from Cloudinary"));
-            resolve(result);
-          }
+          { folder: this.image_folder, format: "webp", resource_type: "image" },
+          (error, res) => (error ? reject(error) : resolve(res!))
         );
-        // biome-ignore lint/suspicious/noTsIgnore: intentional
-        // @ts-ignore
-        Readable.fromWeb(this.deps.file.stream()).pipe(uploadStream);
+        Readable.fromWeb(this.deps.file?.stream() as any).pipe(uploadStream);
       });
 
-      return {
-        success: true,
-        url: result.secure_url,
-        imageId: result.public_id,
-      };
-    } catch (error: any) {
-      return {
-        success: false,
-        status: Status.ImageUploadFail,
-        title: "Upload failed",
-        description: error.message || "An unexpected error occurred during the image upload.",
-      };
+      return { url: result.secure_url, imageId: result.public_id };
+    } catch (error) {
+      throw new AppError(Status.ImageUploadFail, "Échec de l'upload", (error as Error).message);
     }
+  }
+
+  async handleUserImageChange(user: { id: number } | null) {
+    if (!user) throw new AppError(Status.NotConnected, "Vous devez être connecté");
+
+    await this.removeUserImage(user.id);
+    const fileUpload = await this.uploadFileAsImage();
+
+    const update = await this.deps.client.user.update({
+      where: { id: user.id },
+      data: { profilePicture: { update: { url: fileUpload.url, cloudId: fileUpload.imageId } } },
+      include: { profilePicture: true },
+    });
+
+    return {
+      session: {
+        id: user.id,
+        username: update.username,
+        profilePictureSource: { alt: update.profilePicture.alt, src: update.profilePicture.url },
+      },
+    };
   }
 
   async removeUserImage(userId: number) {
@@ -73,64 +72,6 @@ export default class FileController extends Controller<FileDeps> {
 
     if (existingUser.profilePicture.cloudId) {
       await cloudinary.uploader.destroy(existingUser.profilePicture.cloudId);
-    }
-  }
-
-  async handleUserImageChange(
-    user: { id: number } | null
-  ): Promise<ErrorServerResponse | { success: true; session: Session }> {
-    try {
-      if (!user)
-        return {
-          success: false,
-          status: Status.NotConnected,
-          title: "You are not connected",
-        };
-
-      await this.removeUserImage(user.id);
-
-      const fileUpload = await this.uploadFileAsImage();
-
-      if (!fileUpload.success) return fileUpload;
-
-      const update = await this.deps.client.user.update({
-        where: {
-          id: user.id,
-        },
-        data: {
-          profilePicture: {
-            update: {
-              url: fileUpload.url,
-              cloudId: fileUpload.imageId,
-            },
-          },
-        },
-        include: {
-          profilePicture: true,
-        },
-      });
-
-      logger.info(`User ${update.username} upated his profile picture`);
-
-      return {
-        success: true,
-        session: {
-          id: user.id,
-          username: update.username,
-          profilePictureSource: {
-            alt: update.profilePicture.alt,
-            src: update.profilePicture.url,
-          },
-        },
-      };
-    } catch (err) {
-      logger.error("Failed to upload image", err);
-      return {
-        success: false,
-        title: "Internal server error",
-        description: "Try later",
-        status: Status.UnknownError,
-      };
     }
   }
 }

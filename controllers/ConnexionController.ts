@@ -3,10 +3,9 @@ import { SignJWT } from "jose";
 import type { Telefunc } from "telefunc";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
-import prismaClient from "@/lib/prisma-client";
 import { loginSchema, registerSchema } from "@/schemas/auth.schema";
-import type { LoginData, RegisterData, Session } from "@/types/auth";
-import { type ErrorServerResponse, type ServerResponse, Status } from "@/types/server-response";
+import type { LoginData, RegisterData } from "@/types/auth";
+import { Status } from "@/types/server-response";
 import { Controller, type ControllerDeps } from "./Controller";
 import FileController from "./fileController";
 import { AppError } from "@/lib/errors";
@@ -89,162 +88,74 @@ export class ConnexionController extends Controller<ConnexionDeps> {
     };
   }
 
-  async register({
-    ...props
-  }: RegisterData): Promise<ErrorServerResponse | { success: true; session: Session }> {
-    try {
-      logger.info("Register request");
-      const registerValidation = registerSchema.safeParse(props);
-
-      if (!registerValidation.success) {
-        logger.error("Register failed", registerValidation.error.message);
-        return {
-          success: false,
-          status: Status.IncorrectRegisterData,
-          title: "Incorrect values",
-          description: registerValidation.error.message,
-        };
-      }
-
-      const { agree_terms_of_service, email, password, username, image } = props;
-
-      logger.info("Image: ", image.file);
-
-      if (!agree_terms_of_service) {
-        return {
-          success: false,
-          status: Status.RefusedTermsOfService,
-          title: "You must accept terms of service",
-        };
-      }
-
-      const existingUser = await this.deps.client.user.findFirst({
-        where: {
-          OR: [{ username: username }, { email: email }],
-        },
-      });
-
-      if (existingUser) {
-        if (existingUser.username === username) {
-          return {
-            success: false,
-            title: "Try another username",
-            status: Status.ExistingUsername,
-          };
-        } else {
-          return {
-            success: false,
-            title: "An account with the same email already exist.",
-            description: "Try to connect or create another account.",
-            status: Status.ExistingEmail,
-          };
-        }
-      }
-
-      const passwordHash = await argon2.hash(password);
-
-      const fileController = new FileController({
-        client: prismaClient,
-        file: image.file,
-      });
-
-      const imageUpload = await fileController.uploadFileAsImage();
-
-      if (!imageUpload.success) return imageUpload;
-
-      const user = await this.deps.client.user.create({
-        data: {
-          email: email,
-          username: username,
-          profilePicture: {
-            create: {
-              alt: `The profile picture of ${username}`,
-              url: imageUpload.url,
-              cloudId: imageUpload.imageId,
-            },
-          },
-          classicAuthMethod: {
-            create: {
-              password: passwordHash,
-            },
-          },
-        },
-        include: {
-          profilePicture: true,
-        },
-      });
-
-      await this.setCookie(user.id, true);
-
-      logger.info("Register", username);
-
-      return {
-        success: true,
-        session: {
-          id: user.id,
-          username: user.username,
-          profilePictureSource: {
-            alt: user.profilePicture.alt,
-            src: user.profilePicture.url,
-          },
-        },
-      };
-    } catch (err) {
-      logger.error("Failed to register", err);
-      return {
-        success: false,
-        title: "Internal server error",
-        description: "Try later",
-        status: Status.UnknownError,
-      };
+  async register(props: RegisterData) {
+    const registerValidation = registerSchema.safeParse(props);
+    if (!registerValidation.success) {
+      throw new AppError(
+        Status.IncorrectRegisterData,
+        "Formulaire invalide",
+        registerValidation.error.message
+      );
     }
+
+    const { email, password, username, image } = props;
+
+    const existingUser = await this.deps.client.user.findFirst({
+      where: { OR: [{ username }, { email }] },
+    });
+
+    if (existingUser) {
+      const isEmail = existingUser.email === email;
+      throw new AppError(
+        isEmail ? Status.ExistingEmail : Status.ExistingUsername,
+        isEmail ? "Email déjà utilisé" : "Pseudo déjà utilisé"
+      );
+    }
+
+    const passwordHash = await argon2.hash(password);
+    const fileController = new FileController({ client: this.deps.client, file: image.file });
+    const imageUpload = await fileController.uploadFileAsImage();
+
+    const user = await this.deps.client.user.create({
+      data: {
+        email,
+        username,
+        profilePicture: {
+          create: {
+            alt: `Avatar de ${username}`,
+            url: imageUpload.url,
+            cloudId: imageUpload.imageId,
+          },
+        },
+        classicAuthMethod: { create: { password: passwordHash } },
+      },
+      include: { profilePicture: true },
+    });
+
+    await this.setCookie(user.id, true);
+
+    return {
+      session: {
+        id: user.id,
+        username: user.username,
+        profilePictureSource: { alt: user.profilePicture.alt, src: user.profilePicture.url },
+      },
+    };
   }
 
-  async logout(): Promise<ServerResponse> {
-    try {
-      this.clearCookie();
-      return { success: true, status: Status.LogoutSuccessfull };
-    } catch {
-      return {
-        success: false,
-        status: Status.UnknownError,
-        title: "Something went wrong...",
-      };
-    }
+  async logout() {
+    this.clearCookie();
+    return { status: Status.LogoutSuccessfull };
   }
 
-  async removeAccount(): Promise<ServerResponse> {
-    try {
-      const user = this.deps.context.user;
-      if (!user) {
-        return {
-          success: false,
-          status: Status.NotConnected,
-          title: "You are not connected",
-          description: "You must be connected to remove your account",
-        };
-      }
+  async removeAccount() {
+    const user = this.deps.context.user;
+    if (!user) throw new AppError(Status.NotConnected, "Non connecté");
 
-      const fileController = new FileController({ client: this.deps.client });
+    const fileController = new FileController({ client: this.deps.client });
+    await fileController.removeUserImage(user.id);
+    await this.deps.client.user.delete({ where: { id: user.id } });
 
-      await fileController.removeUserImage(user.id);
-
-      const removed = await this.deps.client.user.delete({
-        where: {
-          id: user.id,
-        },
-      });
-
-      logger.success("User account removed", removed.username);
-      return { success: true, status: Status.RemoveAccountSuccessfull };
-    } catch (err) {
-      logger.error("Remove account error", err);
-      return {
-        success: false,
-        status: Status.UnknownError,
-        title: "An error occured",
-        description: "Please try later",
-      };
-    }
+    return { status: Status.RemoveAccountSuccessfull };
   }
 }
