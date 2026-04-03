@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { imageSchema } from "./common.schema";
+import { imageSchema, registerImageSchema } from "./common.schema";
 
 export const loginSchema = z.object({
   email: z
@@ -14,12 +14,7 @@ export const loginSchema = z.object({
 
 export const registerSchema = z
   .object({
-    image: z.object({
-      file: z.any().refine((val) => val && typeof val === "object", {
-        message: "A valid file is required",
-      }),
-      alt: z.string({ error: "The image description must be provided." }),
-    }),
+    image: registerImageSchema,
     username: z
       .string({ error: "The username is required" })
       .min(5, { error: "The username must be at least 5 characters." })
