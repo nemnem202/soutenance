@@ -1,42 +1,22 @@
 import { jwtVerify } from "jose";
 import { env } from "@/lib/env";
-import { logger } from "@/lib/logger";
-
-function parseCookie(str: string): Record<string, string> {
-  if (!str || str === "") return {};
-  return Object.fromEntries(
-    str.split(";").map((p) => {
-      const idx = p.indexOf("=");
-      return [
-        decodeURIComponent(p.slice(0, idx).trim()),
-        decodeURIComponent(p.slice(idx + 1).trim()),
-      ];
-    })
-  );
-}
+import { COOKIE_NAME } from "@/lib/auth-utils";
 
 export default async function getCurrentUserFromCookie(
-  cookie: string
+  cookieString: string | undefined
 ): Promise<{ id: number } | null> {
-  const token = parseCookie(cookie).token;
+  if (!cookieString) return null;
 
-  let currentUser: { id: number } | null = null;
+  const cookies = Object.fromEntries(cookieString.split(";").map((c) => c.trim().split("=")));
 
-  logger.info("User token: ", token ? `${token.slice(0, 5)}...` : "absent");
+  const token = cookies[COOKIE_NAME];
+  if (!token) return null;
 
-  if (token) {
-    try {
-      const secret = new TextEncoder().encode(env.TOKEN_SECRET);
-      const { payload } = await jwtVerify(token, secret);
-      if (!payload.id) throw new Error("No username in payload");
-      currentUser = { id: Number(payload.id) };
-    } catch (err) {
-      logger.error("Failed to decode user token", err);
-      currentUser = null;
-    }
+  try {
+    const secret = new TextEncoder().encode(env.TOKEN_SECRET);
+    const { payload } = await jwtVerify(token, secret);
+    return payload.id ? { id: Number(payload.id) } : null;
+  } catch {
+    return null;
   }
-
-  logger.info("User connected: ", currentUser);
-
-  return currentUser;
 }
