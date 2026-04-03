@@ -65,9 +65,7 @@ function Content() {
         <Searchbar placeholder={instance.getItem("search")} />
       </div>
       <div className="flex  gap-x-auto gap-y-5 flex-wrap container">
-        <MediumPlaylistWrapper
-          allowToAddANewPlaylist={id === String(session?.id)}
-        />
+        <MediumPlaylistWrapper allowToAddANewPlaylist={id === String(session?.id)} />
       </div>
     </div>
   );

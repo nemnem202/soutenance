@@ -13,10 +13,7 @@ import {
 import Searchbar from "../../organisms/searchbar";
 import { PlusButton } from "../../ui/custom-buttons";
 import { Separator } from "../../ui/separator";
-import {
-  SmallAddNewPlaylistWidget,
-  SmallPlaylistWidget,
-} from "./playlists-widgets";
+import { SmallAddNewPlaylistWidget, SmallPlaylistWidget } from "./playlists-widgets";
 
 export default function AddToPlaylistButton() {
   const { playlists } = useData<Data>();
@@ -30,11 +27,7 @@ export default function AddToPlaylistButton() {
       <DropdownMenuTrigger asChild>
         <PlusButton />
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        className="bg-background p-0 z-1"
-        side="right"
-        align="start"
-      >
+      <DropdownMenuContent className="bg-background p-0 z-1" side="right" align="start">
         <DropdownMenuGroup className="p-3">
           <DropdownMenuLabel className="title-3">
             {instance.getItem("add_to_playlist")}

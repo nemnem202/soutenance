@@ -1,6 +1,6 @@
+import { jwtVerify } from "jose";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
-import { jwtVerify } from "jose";
 
 function parseCookie(str: string): Record<string, string> {
   if (!str || str === "") return {};
@@ -11,12 +11,12 @@ function parseCookie(str: string): Record<string, string> {
         decodeURIComponent(p.slice(0, idx).trim()),
         decodeURIComponent(p.slice(idx + 1).trim()),
       ];
-    }),
+    })
   );
 }
 
 export default async function getCurrentUserFromCookie(
-  cookie: string,
+  cookie: string
 ): Promise<{ id: number } | null> {
   const token = parseCookie(cookie)["token"];
 

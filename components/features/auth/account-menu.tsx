@@ -1,13 +1,9 @@
-import {
-  Brush,
-  LanguagesIcon,
-  LogOutIcon,
-  Settings2,
-  UserIcon,
-} from "lucide-react";
+import { Brush, LanguagesIcon, LogOutIcon, Settings2, UserIcon } from "lucide-react";
 import { navigate } from "vike/client/router";
+import { Spinner } from "@/components/ui/spinner";
 import { availableLanguages } from "@/config/language-pack";
 import { useLanguage } from "@/hooks/use-language";
+import useLogout from "@/hooks/use-logout";
 import useSession from "@/hooks/use-session";
 import { useTheme } from "@/hooks/use-theme";
 import flags from "@/i18n/flags";
@@ -26,8 +22,6 @@ import {
 } from "../../organisms/dropdown-menu";
 import AccountPP from "../../ui/account-pp";
 import { Button } from "../../ui/button";
-import useLogout from "@/hooks/use-logout";
-import { Spinner } from "@/components/ui/spinner";
 
 export default function AccountMenu() {
   const { session } = useSession();

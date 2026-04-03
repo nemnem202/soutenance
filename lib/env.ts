@@ -33,26 +33,19 @@ if (
   !CLOUD_API_SECRET ||
   !CLOUD_IMAGE_FOLDER_NAME
 ) {
-  if (!POSTGRES_USER)
-    logger.error("Missing environment variable: POSTGRES_USER");
-  if (!POSTGRES_PASSWORD)
-    logger.error("Missing environment variable: POSTGRES_PASSWORD");
+  if (!POSTGRES_USER) logger.error("Missing environment variable: POSTGRES_USER");
+  if (!POSTGRES_PASSWORD) logger.error("Missing environment variable: POSTGRES_PASSWORD");
   if (!POSTGRES_DB) logger.error("Missing environment variable: POSTGRES_DB");
   if (!DATABASE_URL) logger.error("Missing environment variable: DATABASE_URL");
   if (!APP_PORT) logger.error("Missing environment variable: APP_PORT");
   if (!TOKEN_SECRET) logger.error("Missing environment variable: TOKEN_SECRET");
-  if (!GOOGLE_CLIENT_ID)
-    logger.error("Missing environment variable: GOOGLE_CLIENT_ID");
-  if (!GOOGLE_CLIENT_SECRET)
-    logger.error("Missing environment variable: GOOGLE_CLIENT_SECRET");
-  if (!GOOGLE_REDIRECT_PATH)
-    logger.error("Missing environment variable: GOOGLE_REDIRECT_PATH");
+  if (!GOOGLE_CLIENT_ID) logger.error("Missing environment variable: GOOGLE_CLIENT_ID");
+  if (!GOOGLE_CLIENT_SECRET) logger.error("Missing environment variable: GOOGLE_CLIENT_SECRET");
+  if (!GOOGLE_REDIRECT_PATH) logger.error("Missing environment variable: GOOGLE_REDIRECT_PATH");
   if (!APP_BASE_URL) logger.error("Missing environment variable: APP_BASE_URL");
   if (!CLOUD_NAME) logger.error("Missing environment variable: CLOUD_NAME");
-  if (!CLOUD_API_KEY)
-    logger.error("Missing environment variable: CLOUD_API_KEY");
-  if (!CLOUD_API_SECRET)
-    logger.error("Missing environment variable: CLOUD_API_SECRET");
+  if (!CLOUD_API_KEY) logger.error("Missing environment variable: CLOUD_API_KEY");
+  if (!CLOUD_API_SECRET) logger.error("Missing environment variable: CLOUD_API_SECRET");
   if (!CLOUD_IMAGE_FOLDER_NAME)
     logger.error("Missing environment variable: CLOUD_IMAGE_FOLDER_NAME");
   process.exit(1);

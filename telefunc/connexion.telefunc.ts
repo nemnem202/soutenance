@@ -1,7 +1,7 @@
+import { getContext } from "telefunc";
 import { ConnexionController } from "@/controllers/ConnexionController";
 import prismaClient from "@/lib/prisma-client";
 import type { LoginData, RegisterData } from "@/types/auth";
-import { getContext } from "telefunc";
 
 export function onLogin({ ...props }: LoginData) {
   const context = getContext();

@@ -1,26 +1,21 @@
 import { ArrowRightLeft, LogOut, X } from "lucide-react";
 import { useId, useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/components/organisms/select";
+import { navigate } from "vike/client/router";
+import Modal from "@/components/organisms/modal";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/organisms/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import { availableLanguages } from "@/config/language-pack";
 import { useLanguage } from "@/hooks/use-language";
+import useLogout from "@/hooks/use-logout";
+import useRemoveAccount from "@/hooks/use-remove-account";
 import useSession from "@/hooks/use-session";
 import { useTheme } from "@/hooks/use-theme";
 import flags from "@/i18n/flags";
 import type { Language } from "@/types/i18n";
 import { LoginModal } from "../auth/login-button";
 import { SettingsParam } from "./settings-assets";
-import useLogout from "@/hooks/use-logout";
-import { Spinner } from "@/components/ui/spinner";
-import { navigate } from "vike/client/router";
-import useRemoveAccount from "@/hooks/use-remove-account";
-import Modal from "@/components/organisms/modal";
 
 export function ThemeParam() {
   const { instance } = useLanguage();
@@ -65,9 +60,7 @@ export function LanguageParam() {
         value={instance.getCurrentLanguage()}
         onValueChange={(value) => setLanguage(value as Language)}
       >
-        <SelectTrigger id={id}>
-          {getLanguageItem(instance.getCurrentLanguage())}
-        </SelectTrigger>
+        <SelectTrigger id={id}>{getLanguageItem(instance.getCurrentLanguage())}</SelectTrigger>
         <SelectContent>
           {availableLanguages.map((lang) => (
             <SelectItem value={lang} key={lang}>
@@ -127,9 +120,7 @@ export function RemoveAccountButton() {
         <div className="w-full flex flex-col items-center gap-8">
           <div className="flex flex-col items-center w-full">
             <h2 className="title-1 text-primary">Are you shure ?</h2>
-            <p className="paragraph-md">
-              Your account and all the related data will be removed
-            </p>
+            <p className="paragraph-md">Your account and all the related data will be removed</p>
           </div>
           <Button
             variant={"destructive"}
@@ -178,16 +169,8 @@ export function UsernameParam() {
   const id = useId();
   const { session } = useSession();
   return (
-    <SettingsParam
-      label={instance.getItem("username")}
-      id={id}
-      orientation="vertical"
-    >
-      <Input
-        className="!text-left p-2"
-        id={id}
-        defaultValue={session?.username}
-      />
+    <SettingsParam label={instance.getItem("username")} id={id} orientation="vertical">
+      <Input className="!text-left p-2" id={id} defaultValue={session?.username} />
     </SettingsParam>
   );
 }

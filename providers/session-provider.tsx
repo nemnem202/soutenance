@@ -1,13 +1,7 @@
-import {
-  createContext,
-  type Dispatch,
-  type ReactNode,
-  type SetStateAction,
-  useState,
-} from "react";
-import type { Session } from "@/types/auth";
+import { createContext, type Dispatch, type ReactNode, type SetStateAction, useState } from "react";
 import { useData } from "vike-react/useData";
 import type { Data } from "@/pages/+data";
+import type { Session } from "@/types/auth";
 export interface SessionData {
   session: Session | null;
   setSession: Dispatch<SetStateAction<Session | null>>;

@@ -10,15 +10,9 @@ const BREAKPOINTS = {
 
 export type ScreenSizeType = keyof typeof BREAKPOINTS;
 
-export const ScreenSizeContext = createContext<ScreenSizeType | undefined>(
-  undefined,
-);
+export const ScreenSizeContext = createContext<ScreenSizeType | undefined>(undefined);
 
-export default function ScreenSizeProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function ScreenSizeProvider({ children }: { children: ReactNode }) {
   const data = useData<{ screen: ScreenSizeType }>();
   const { screen } = data;
 
@@ -46,9 +40,5 @@ export default function ScreenSizeProvider({
     return () => window.removeEventListener("resize", handler);
   }, []);
 
-  return (
-    <ScreenSizeContext.Provider value={size}>
-      {children}
-    </ScreenSizeContext.Provider>
-  );
+  return <ScreenSizeContext.Provider value={size}>{children}</ScreenSizeContext.Provider>;
 }

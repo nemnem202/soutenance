@@ -23,13 +23,7 @@ const modalSizes = {
 const ModalContext = React.createContext<HTMLDivElement | null>(null);
 export const useModalContainer = () => React.useContext(ModalContext);
 
-export default function Modal({
-  isOpen,
-  onClose,
-  title,
-  children,
-  size = "md",
-}: ModalProps) {
+export default function Modal({ isOpen, onClose, title, children, size = "md" }: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -38,9 +32,7 @@ export default function Modal({
   const [mounted, setMounted] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
-  const titleId = title
-    ? `modal-title-${Math.random().toString(36).substring(2, 9)}`
-    : undefined;
+  const titleId = title ? `modal-title-${Math.random().toString(36).substring(2, 9)}` : undefined;
 
   useEffect(() => {
     setMounted(true);
@@ -72,8 +64,8 @@ export default function Modal({
       if (e.key === "Tab" && modalRef.current) {
         const focusableElements = Array.from(
           modalRef.current.querySelectorAll<HTMLElement>(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-          ),
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          )
         );
         const firstElement = focusableElements[0];
         const lastElement = focusableElements.at(-1);
@@ -135,11 +127,7 @@ export default function Modal({
                       transition: { duration: 0.15 },
                     }
               }
-              initial={
-                shouldReduceMotion
-                  ? { opacity: 1 }
-                  : { scale: 0.95, y: 10, opacity: 0 }
-              }
+              initial={shouldReduceMotion ? { opacity: 1 } : { scale: 0.95, y: 10, opacity: 0 }}
               transition={
                 shouldReduceMotion
                   ? { duration: 0 }
@@ -152,9 +140,7 @@ export default function Modal({
               }
             >
               <ModalContext.Provider value={modalRef.current}>
-                <div className="relative max-h-[90vh] overflow-y-auto p-4 sm:p-6">
-                  {children}
-                </div>
+                <div className="relative max-h-[90vh] overflow-y-auto p-4 sm:p-6">{children}</div>
               </ModalContext.Provider>
             </motion.div>
           </div>

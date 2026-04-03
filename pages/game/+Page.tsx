@@ -9,12 +9,7 @@ import Header from "@/components/features/layout/game-header";
 import MobileHeaderNavContainer from "@/components/features/layout/mobile-header-nav-container";
 import SizeAdapter from "@/components/molecules/size-adapter";
 import AnimatedTabs from "@/components/organisms/animated-tabs";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/organisms/drawer";
+import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/organisms/drawer";
 import { HistoryBackButton } from "@/components/ui/custom-buttons";
 import Headline from "@/components/ui/headline";
 import { useLanguage } from "@/hooks/use-language";
@@ -36,9 +31,7 @@ export default function Page() {
               <DrawerContent className="rounded-none border-t border-l-0 border-r-0 border-b-0">
                 <DrawerTitle className="hidden">Game controls</DrawerTitle>
                 <div className="mx-auto w-full max-w-sm h-fit py-10 pt-0">
-                  <MobileGameControlSection
-                    toggleSidebar={() => setOpen((prev) => !prev)}
-                  />
+                  <MobileGameControlSection toggleSidebar={() => setOpen((prev) => !prev)} />
                 </div>
               </DrawerContent>
             </Drawer>
@@ -97,11 +90,7 @@ function Game({ ...props }: Gameprops) {
             <div className="col-2 flex-1 justify-center hidden sm:flex">
               <AnimatedTabs
                 activeTab={activeTab}
-                onChange={(v) =>
-                  setActiveTab(
-                    v as "piano-roll" | "chords" | "sheet" | "guitar",
-                  )
-                }
+                onChange={(v) => setActiveTab(v as "piano-roll" | "chords" | "sheet" | "guitar")}
                 tabs={tabs}
                 variant="pill"
                 className="my-2"

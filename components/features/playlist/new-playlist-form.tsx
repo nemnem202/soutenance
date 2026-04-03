@@ -3,12 +3,7 @@ import { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import { useNewPlaylistForm } from "@/hooks/use-forms";
 import { useLanguage } from "@/hooks/use-language";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "../../molecules/field";
+import { Field, FieldError, FieldGroup, FieldLabel } from "../../molecules/field";
 import {
   InputGroup,
   InputGroupAddon,
@@ -25,14 +20,8 @@ export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
   const { form, formRef, handleSubmit } = useNewPlaylistForm();
   const { instance } = useLanguage();
   return (
-    <form
-      id="form-rhf-post"
-      onSubmit={form.handleSubmit(handleSubmit)}
-      ref={formRef}
-    >
-      <FieldGroup
-        className={`flex  items-center  flex-col ${axe === "x" && "md:flex-row"}`}
-      >
+    <form id="form-rhf-post" onSubmit={form.handleSubmit(handleSubmit)} ref={formRef}>
+      <FieldGroup className={`flex  items-center  flex-col ${axe === "x" && "md:flex-row"}`}>
         <Controller
           name="image.src"
           control={form.control}
@@ -66,9 +55,7 @@ export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
                   autoComplete="off"
                   className="paragraph !text-left px-2"
                 />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
@@ -87,18 +74,13 @@ export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
                     aria-invalid={fieldState.invalid}
                     maxLength={500}
                   />
-                  <InputGroupAddon
-                    align="block-end"
-                    className="w-full flex justify-end px-3"
-                  >
+                  <InputGroupAddon align="block-end" className="w-full flex justify-end px-3">
                     <InputGroupText className="tabular-nums paragraph-sm">
                       {field.value ? field.value.length : 0}/500
                     </InputGroupText>
                   </InputGroupAddon>
                 </InputGroup>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
@@ -111,9 +93,7 @@ export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
                   defaultValue={field.value}
                   onChange={(tags) => form.setValue("tags", tags)}
                 />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
@@ -123,26 +103,19 @@ export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid} className="gap-1">
                 <div className="flex gap-2 items-center">
-                  <FieldLabel htmlFor="visibility-switch">
-                    {instance.getItem("public")}
-                  </FieldLabel>
+                  <FieldLabel htmlFor="visibility-switch">{instance.getItem("public")}</FieldLabel>
 
                   <span className="inline-flex">
                     <Switch
                       id="visibility-switch"
                       defaultChecked={field.value === "public"}
                       onCheckedChange={(checked) =>
-                        form.setValue(
-                          "visibility",
-                          checked ? "public" : "private",
-                        )
+                        form.setValue("visibility", checked ? "public" : "private")
                       }
                     />
                   </span>
                 </div>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />

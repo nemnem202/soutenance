@@ -1,8 +1,8 @@
 import { apply, serve } from "@photonjs/express";
 import express from "express";
 import { generatePlaceholders } from "./placeholders";
-import { telefuncHandler } from "./telefunc-handler";
 import router from "./router";
+import { telefuncHandler } from "./telefunc-handler";
 
 const port = 3000;
 

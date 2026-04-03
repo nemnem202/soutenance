@@ -79,12 +79,7 @@ export default function EditableImage({
         />
       </div>
 
-      <Modal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        size="md"
-        title="Edit image"
-      >
+      <Modal isOpen={open} onClose={() => setOpen(false)} size="md" title="Edit image">
         <EditImageModalContent {...editImage} />
       </Modal>
       <input

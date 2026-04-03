@@ -18,18 +18,14 @@ export default function BackingTrackSettings() {
   const [backingTackActive, setBackingTrackActive] = useState(false);
   const { instance } = useLanguage();
   return (
-    <ParamsAccordion
-      title={<h3 className="title-3">{instance.getItem("backing_track")}</h3>}
-    >
+    <ParamsAccordion title={<h3 className="title-3">{instance.getItem("backing_track")}</h3>}>
       <div className="flex gap-4 w-full">
         <SwitchParam
           checked={backingTackActive}
           order="label-switch"
           setChecked={setBackingTrackActive}
         >
-          <p className="paragraph  text-foreground">
-            {instance.getItem("active")}
-          </p>
+          <p className="paragraph  text-foreground">{instance.getItem("active")}</p>
         </SwitchParam>
         <SwitchParam
           checked={true}
@@ -66,9 +62,7 @@ export default function BackingTrackSettings() {
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>{instance.getItem("styles")}</SelectLabel>
-                <SelectItem value="original">
-                  {instance.getItem("original")}
-                </SelectItem>
+                <SelectItem value="original">{instance.getItem("original")}</SelectItem>
                 <SelectItem value="swing">Bossa nova</SelectItem>
                 <SelectItem value="blues">Blues</SelectItem>
               </SelectGroup>

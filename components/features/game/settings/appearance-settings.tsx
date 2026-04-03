@@ -7,14 +7,10 @@ import { ParamsAccordion } from "../game-sidebar";
 export default function AppearanceSettings() {
   const { instance } = useLanguage();
   return (
-    <ParamsAccordion
-      title={<h3 className="title-3">{instance.getItem("appearance")}</h3>}
-    >
+    <ParamsAccordion title={<h3 className="title-3">{instance.getItem("appearance")}</h3>}>
       <div className="gap-2 flex flex-col">
         <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
-          <p className="paragraph w-45 text-foreground">
-            {instance.getItem("show_chords")}
-          </p>
+          <p className="paragraph w-45 text-foreground">{instance.getItem("show_chords")}</p>
         </SwitchParam>
         <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
           <p className="paragraph w-45 text-foreground">

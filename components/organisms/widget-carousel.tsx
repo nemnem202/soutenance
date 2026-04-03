@@ -39,7 +39,7 @@ export function MediumWidgetGroup(props: MediumWidgetGroupProps) {
       {
         root: containerRef.current,
         threshold: 1.0,
-      },
+      }
     );
 
     observer.observe(lastItem);
@@ -162,9 +162,7 @@ export function WidgetTitle({
               <ChevrontRightButton
                 disabled={isLastItemVisible}
                 onClick={() =>
-                  scrollToIndex(
-                    Math.min(widgetsRef.current.length - 1, itemIndex + 1),
-                  )
+                  scrollToIndex(Math.min(widgetsRef.current.length - 1, itemIndex + 1))
                 }
               />
             </div>

@@ -28,10 +28,7 @@ export default function DesktopGameControlsSection({ ...props }: Gameprops) {
             defaultValue={"120"}
             className="!w-15 min-w-0 p-0 text-center"
           />
-          <FieldLabel
-            htmlFor="bpm"
-            className="!w-min text-muted-foreground paragraph-small"
-          >
+          <FieldLabel htmlFor="bpm" className="!w-min text-muted-foreground paragraph-small">
             {instance.getItem("bpm").toLowerCase()}
           </FieldLabel>
         </Field>

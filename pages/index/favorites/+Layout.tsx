@@ -7,12 +7,7 @@ import useFavoritesNavigation from "@/hooks/use-favorites-navigation";
 import { useLanguage } from "@/hooks/use-language";
 
 export default function Layout({ children }: { children: ReactNode }) {
-  return (
-    <SizeAdapter
-      sm={<Mobile>{children}</Mobile>}
-      md={<Desktop>{children}</Desktop>}
-    />
-  );
+  return <SizeAdapter sm={<Mobile>{children}</Mobile>} md={<Desktop>{children}</Desktop>} />;
 }
 
 function Desktop({ children }: { children: ReactNode }) {

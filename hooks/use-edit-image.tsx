@@ -45,7 +45,7 @@ export default function useEditImage(props: EditableImageProps) {
         const file = new File(
           [blob], // ⚠️ tableau obligatoire
           "avatar.webp", // nom du fichier
-          { type: "image/webp" }, // MIME type
+          { type: "image/webp" } // MIME type
         );
 
         setImageFile(file);
@@ -53,7 +53,7 @@ export default function useEditImage(props: EditableImageProps) {
         setOpen(false);
       },
       "image/webp",
-      0.9,
+      0.9
     );
   };
 

@@ -18,7 +18,7 @@ export const playlistSchema = z.object({
       z
         .string()
         .min(1, "One of the tags is too short, min 1 caracter.")
-        .max(50, "One of the tags is too long, max 50 caracters."),
+        .max(50, "One of the tags is too long, max 50 caracters.")
     )
     .max(10, { error: "Too many tags, max 10." }),
   exercisesIds: z.array(z.number()),

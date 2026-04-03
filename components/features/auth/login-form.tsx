@@ -1,16 +1,11 @@
 import { Controller } from "react-hook-form";
+import { Spinner } from "@/components/ui/spinner";
 import { useLoginForm } from "@/hooks/use-forms";
 import { useLanguage } from "@/hooks/use-language";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "../../molecules/field";
+import { Field, FieldError, FieldGroup, FieldLabel } from "../../molecules/field";
 import { Button } from "../../ui/button";
 import { Checkbox } from "../../ui/checkbox";
 import { Input } from "../../ui/input";
-import { Spinner } from "@/components/ui/spinner";
 
 export default function LoginForm({ onSuccess }: { onSuccess: () => void }) {
   const { form, formRef, handleSubmit, submitLoading } = useLoginForm({
@@ -24,9 +19,7 @@ export default function LoginForm({ onSuccess }: { onSuccess: () => void }) {
       ref={formRef}
       className="w-full flex flex-col items-center justify-between gap-4"
     >
-      <h2 className="title-2 text-primary">
-        {instance.getItem("login_to_your_account")}
-      </h2>
+      <h2 className="title-2 text-primary">{instance.getItem("login_to_your_account")}</h2>
       <FieldGroup className="gap-3">
         <Controller
           name="email"
@@ -75,19 +68,14 @@ export default function LoginForm({ onSuccess }: { onSuccess: () => void }) {
                     id="form-rhf-remember"
                     defaultChecked={field.value}
                     onCheckedChange={(c) =>
-                      form.setValue(
-                        "remember",
-                        typeof c === "boolean" ? c : false,
-                      )
+                      form.setValue("remember", typeof c === "boolean" ? c : false)
                     }
                   />
                   <FieldLabel htmlFor="form-rhf-remember ">
                     {instance.getItem("remember_me")}
                   </FieldLabel>
                 </div>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />

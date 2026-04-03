@@ -1,12 +1,12 @@
+import { faker } from "@faker-js/faker";
+import type { Request, Response } from "express";
+import type { OAuth2Client } from "google-auth-library";
+import { nanoid } from "nanoid";
 import { ConnexionController } from "@/controllers/ConnexionController";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
 import type { Session } from "@/types/auth";
-import { faker } from "@faker-js/faker";
-import type { OAuth2Client } from "google-auth-library";
-import { nanoid } from "nanoid";
 import { Controller, type ControllerDeps } from "./Controller";
-import type { Request, Response } from "express";
 
 interface GoogleAuthDeps extends ControllerDeps {
   req: Request;
@@ -73,8 +73,7 @@ export default class GoogleAuthController extends Controller<GoogleAuthDeps> {
         picture: payload.picture,
       };
 
-      if (!user.email || !user.id)
-        throw new Error("Payload do not have email or id");
+      if (!user.email || !user.id) throw new Error("Payload do not have email or id");
 
       logger.info("Google user authentified !");
       logger.table(user);

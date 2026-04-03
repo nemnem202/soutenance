@@ -1,8 +1,8 @@
 import { useState } from "react";
-import useSession from "./use-session";
-import { onRemoveAccount } from "@/telefunc/connexion.telefunc";
-import { errorToast, successToast } from "@/lib/toaster";
 import { navigate } from "vike/client/router";
+import { errorToast, successToast } from "@/lib/toaster";
+import { onRemoveAccount } from "@/telefunc/connexion.telefunc";
+import useSession from "./use-session";
 
 export default function useRemoveAccount() {
   const { setSession } = useSession();

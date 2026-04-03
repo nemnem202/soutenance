@@ -45,19 +45,11 @@ function NavBar() {
   return (
     <nav className="flex flex-col w-full">
       <Link href="/" text={instance.getItem("homepage")} icon={<House />} />
-      <Link
-        href="/explorer"
-        text={instance.getItem("explorePageTitle")}
-        icon={<Compass />}
-      />
+      <Link href="/explorer" text={instance.getItem("explorePageTitle")} icon={<Compass />} />
 
       {session && (
         <>
-          <Link
-            href="/favorites"
-            text={instance.getItem("favoritesPageTitle")}
-            icon={<Heart />}
-          />
+          <Link href="/favorites" text={instance.getItem("favoritesPageTitle")} icon={<Heart />} />
           <Link
             href={`/account/${session.id}`}
             text={instance.getItem("dashboard")}

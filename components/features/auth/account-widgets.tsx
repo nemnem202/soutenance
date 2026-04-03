@@ -5,14 +5,9 @@ export function MediumAccountWidget() {
   const account = getRandomAccount();
   return (
     <div className="relative group w-full cursor-pointer">
-      <a
-        href={`/account/${account.id}`}
-        className="flex flex-col gap-2.5 items-center"
-      >
+      <a href={`/account/${account.id}`} className="flex flex-col gap-2.5 items-center">
         <div className="w-full aspect-square rounded-full overflow-hidden relative flex items-end justify-center">
-          <LikeButton
-            className={`opacity-0 z-1 group-hover:opacity-100 hidden md:flex`}
-          />
+          <LikeButton className={`opacity-0 z-1 group-hover:opacity-100 hidden md:flex`} />
           <div className={`absolute inset-0 transition group-hover:opacity-80`}>
             <img
               src={account.picture}

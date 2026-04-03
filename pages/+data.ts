@@ -2,19 +2,17 @@ import { faker } from "@faker-js/faker";
 import { UAParser } from "ua-parser-js";
 import type { PageContextServer } from "vike/types";
 import { CHORDS_DICTIONNARY } from "@/config/chords-dictionary";
-import { getPreferredLanguage } from "@/lib/utils";
-import type { ScreenSizeType } from "@/providers/screen-size-provider";
-import type { Account, Exercise, Playlist } from "@/types/entities";
-import { type ChordHarmony, Notes } from "@/types/music";
-import getCurrentUserFromCookie from "@/middlewares/getCurrentUser";
 import SessionController from "@/controllers/SessionController";
 import prismaClient from "@/lib/prisma-client";
+import { getPreferredLanguage } from "@/lib/utils";
+import getCurrentUserFromCookie from "@/middlewares/getCurrentUser";
+import type { ScreenSizeType } from "@/providers/screen-size-provider";
 import type { Session } from "@/types/auth";
+import type { Account, Exercise, Playlist } from "@/types/entities";
+import { type ChordHarmony, Notes } from "@/types/music";
 
 function getScreen(pageContext: PageContextServer): ScreenSizeType {
-  const ua = pageContext.headers
-    ? (pageContext.headers["user-agent"] ?? "")
-    : "";
+  const ua = pageContext.headers ? (pageContext.headers["user-agent"] ?? "") : "";
   const parser = new UAParser(ua);
   const device = parser.getDevice().type;
   if (device && ["mobile", "wearable", "embedded"].includes(device)) {
@@ -26,9 +24,7 @@ function getScreen(pageContext: PageContextServer): ScreenSizeType {
   }
 }
 
-async function getSessionCookie(
-  pageContext: PageContextServer,
-): Promise<Session | null> {
+async function getSessionCookie(pageContext: PageContextServer): Promise<Session | null> {
   const cookie = pageContext.headers["cookie"];
   const user = await getCurrentUserFromCookie(cookie);
   if (!user) return null;
@@ -45,9 +41,7 @@ const generatePlaceholders = () =>
     const root = faker.helpers.arrayElement(Notes);
     let harm: ChordHarmony | null = null;
     if (root !== "%") {
-      const randomHarm = faker.helpers.arrayElement(
-        Object.entries(CHORDS_DICTIONNARY),
-      );
+      const randomHarm = faker.helpers.arrayElement(Object.entries(CHORDS_DICTIONNARY));
       harm = randomHarm[1];
     }
 

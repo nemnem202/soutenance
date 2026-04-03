@@ -1,18 +1,14 @@
-import {
-  type ServerResponse,
-  Status,
-  type ErrorServerResponse,
-} from "@/types/server-response";
-import { Controller, type ControllerDeps } from "./Controller";
-import { logger } from "@/lib/logger";
 import argon2 from "argon2";
-import type { LoginData, RegisterData, Session } from "@/types/auth";
-import { loginSchema, registerSchema } from "@/schemas/auth.schema";
 import { SignJWT } from "jose";
-import { env } from "@/lib/env";
 import type { Telefunc } from "telefunc";
-import FileController from "./fileController";
+import { env } from "@/lib/env";
+import { logger } from "@/lib/logger";
 import prismaClient from "@/lib/prisma-client";
+import { loginSchema, registerSchema } from "@/schemas/auth.schema";
+import type { LoginData, RegisterData, Session } from "@/types/auth";
+import { type ErrorServerResponse, type ServerResponse, Status } from "@/types/server-response";
+import { Controller, type ControllerDeps } from "./Controller";
+import FileController from "./fileController";
 
 interface ConnexionDeps extends ControllerDeps {
   context: Telefunc.Context;
@@ -63,9 +59,7 @@ export class ConnexionController extends Controller<ConnexionDeps> {
 
   async login({
     ...props
-  }: LoginData): Promise<
-    ErrorServerResponse | { success: true; session: Session }
-  > {
+  }: LoginData): Promise<ErrorServerResponse | { success: true; session: Session }> {
     try {
       logger.info("Login requested");
 
@@ -108,10 +102,7 @@ export class ConnexionController extends Controller<ConnexionDeps> {
         };
       }
 
-      const isPasswordVerified = await argon2.verify(
-        user.classicAuthMethod?.password,
-        password,
-      );
+      const isPasswordVerified = await argon2.verify(user.classicAuthMethod?.password, password);
 
       if (!isPasswordVerified) {
         return {
@@ -149,9 +140,7 @@ export class ConnexionController extends Controller<ConnexionDeps> {
 
   async register({
     ...props
-  }: RegisterData): Promise<
-    ErrorServerResponse | { success: true; session: Session }
-  > {
+  }: RegisterData): Promise<ErrorServerResponse | { success: true; session: Session }> {
     try {
       logger.info("Register request");
       const registerValidation = registerSchema.safeParse(props);
@@ -166,8 +155,7 @@ export class ConnexionController extends Controller<ConnexionDeps> {
         };
       }
 
-      const { agree_terms_of_service, email, password, username, image } =
-        props;
+      const { agree_terms_of_service, email, password, username, image } = props;
 
       logger.info("Image: ", image.file);
 

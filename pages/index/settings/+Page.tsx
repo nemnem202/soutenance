@@ -1,7 +1,5 @@
-import {
-  LoginModal,
-  LoginModalContent,
-} from "@/components/features/auth/login-button";
+import { useState } from "react";
+import { LoginModal, LoginModalContent } from "@/components/features/auth/login-button";
 import LoginForm from "@/components/features/auth/login-form";
 import MobileHeader from "@/components/features/layout/mobile-header";
 import {
@@ -23,7 +21,6 @@ import { logger } from "@/lib/logger";
 import { errorToast, loadingToast, successToast } from "@/lib/toaster";
 import { onImageChange } from "@/telefunc/image-change.telefunc";
 import { Image } from "@/types/entities";
-import { useState } from "react";
 
 export default function Page() {
   return <SizeAdapter sm={<Mobile />} md={<Desktop />} />;
@@ -64,8 +61,7 @@ function Content() {
       },
       error: {
         title: "Échec de l'envoi",
-        description:
-          "Vérifiez votre connexion internet ou la taille du fichier.",
+        description: "Vérifiez votre connexion internet ou la taille du fichier.",
       },
     });
     const response = await imagePromise;

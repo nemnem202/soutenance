@@ -1,9 +1,10 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: necessary */
 /** biome-ignore-all lint/style/noNonNullAssertion: necessary */
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { ConnexionController } from "./ConnexionController";
+
 import argon2 from "argon2";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import prismaClient from "@/lib/prisma-client";
+import { ConnexionController } from "./ConnexionController";
 
 async function createContextWithUser(userId: number, remember = true) {
   const cookieStore: Record<string, { value: string; options: any }> = {};
@@ -206,10 +207,7 @@ describe("ConnexionController (integration)", () => {
     expect(user).not.toBeNull();
     expect(user?.classicAuthMethod).not.toBeNull();
 
-    const isValid = await argon2.verify(
-      user!.classicAuthMethod!.password,
-      "password",
-    );
+    const isValid = await argon2.verify(user!.classicAuthMethod!.password, "password");
 
     expect(isValid).toBe(true);
   });

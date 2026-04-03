@@ -1,6 +1,6 @@
 import type z from "zod";
+import type { imageSchema } from "@/schemas/common.schema";
 import type { playlistSchema } from "@/schemas/entities.schema";
-import { imageSchema } from "@/schemas/common.schema";
 
 export type Account = {
   id: number;

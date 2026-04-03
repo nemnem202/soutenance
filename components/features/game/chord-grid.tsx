@@ -74,29 +74,19 @@ function ChordCellGroup() {
               root={chord.root}
               harm={chord?.harm?.symbolLabel}
             />
-          ),
+          )
       )}
     </div>
   );
 }
 
-function ChordNameCell({
-  root,
-  harm,
-}: {
-  root: Note | undefined;
-  harm?: string;
-}) {
+function ChordNameCell({ root, harm }: { root: Note | undefined; harm?: string }) {
   return (
     <div className=" w-[25%] px-0.5 md:px-2 h-full overflow-hidden">
       <div className=" rounded-md h-full w-full flex items-center ">
         <p className="whitespace-nowrap font-mono semibold text-xl flex lg:gap-1">
           <span>{root}</span>
-          {harm && (
-            <span className="text-muted-foreground  paragraph-sm max-w[50%]">
-              {harm}
-            </span>
-          )}
+          {harm && <span className="text-muted-foreground  paragraph-sm max-w[50%]">{harm}</span>}
         </p>
       </div>
     </div>

@@ -2,14 +2,14 @@ import { faker } from "@faker-js/faker";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRef, useState } from "react";
 import { type Resolver, useForm } from "react-hook-form";
+import { logger } from "@/lib/logger";
+import { errorToast, successToast } from "@/lib/toaster";
 import { loginSchema, registerSchema } from "@/schemas/auth.schema";
 import { playlistSchema } from "@/schemas/entities.schema";
+import { onLogin, onRegister } from "@/telefunc/connexion.telefunc";
 import type { LoginData, RegisterData } from "@/types/auth";
 import type { PlaylistSchema } from "@/types/entities";
-import { onLogin, onRegister } from "@/telefunc/connexion.telefunc";
-import { logger } from "@/lib/logger";
 import { Status } from "@/types/server-response";
-import { errorToast, successToast } from "@/lib/toaster";
 import useSession from "./use-session";
 
 export function useNewPlaylistForm() {

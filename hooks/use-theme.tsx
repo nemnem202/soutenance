@@ -4,9 +4,7 @@ export function useTheme() {
   const [currentTheme, setCurrentTheme] = useState<"light" | "dark">("dark");
 
   useEffect(() => {
-    setCurrentTheme(
-      document.documentElement.classList.contains("dark") ? "dark" : "light",
-    );
+    setCurrentTheme(document.documentElement.classList.contains("dark") ? "dark" : "light");
   }, []);
 
   const setDark = () => {

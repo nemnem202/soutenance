@@ -1,4 +1,4 @@
-import { toast, type ExternalToast } from "sonner";
+import { type ExternalToast, toast } from "sonner";
 
 const TOAST_CONFIG: ExternalToast = {
   richColors: true,
@@ -30,7 +30,7 @@ interface LoadingToastOptions<T> {
 
 export const loadingToast = <T extends BaseResponse>(
   promise: Promise<T>,
-  options: LoadingToastOptions<T> = {},
+  options: LoadingToastOptions<T> = {}
 ) => {
   const interceptedPromise = promise.then((data) => {
     if (!data.success) {

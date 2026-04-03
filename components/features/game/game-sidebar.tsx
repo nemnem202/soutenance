@@ -51,11 +51,7 @@ export default function GameSidebar({
             <PresetSelect />
 
             <div className="md:hidden">
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                className="cursor-pointer"
-              >
+              <button type="button" onClick={() => setOpen(false)} className="cursor-pointer">
                 <X />
               </button>
             </div>
@@ -84,9 +80,7 @@ export default function GameSidebar({
             </SidebarSection>
             <Separator />
             <div className="p-4">
-              <Button className="title-2 md:w-full">
-                {instance.getItem("save_settings")}
-              </Button>
+              <Button className="title-2 md:w-full">{instance.getItem("save_settings")}</Button>
             </div>
           </div>
         </div>
@@ -106,9 +100,7 @@ function PresetSelect() {
         <SelectGroup>
           <SelectLabel>{instance.getItem("presets")}</SelectLabel>
           <SelectItem value="default">{instance.getItem("default")}</SelectItem>
-          <SelectItem value="bossa nova training">
-            Bossa nova training
-          </SelectItem>
+          <SelectItem value="bossa nova training">Bossa nova training</SelectItem>
           <SelectItem value="blues jam">Blues jam</SelectItem>
           <SelectItem value="orchestra">Orchestra</SelectItem>
         </SelectGroup>
@@ -137,13 +129,7 @@ function TabBar() {
   );
 }
 
-export function ParamsAccordion({
-  children,
-  title,
-}: {
-  children: ReactNode;
-  title: ReactNode;
-}) {
+export function ParamsAccordion({ children, title }: { children: ReactNode; title: ReactNode }) {
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1">

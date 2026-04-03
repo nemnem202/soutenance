@@ -7,21 +7,18 @@ import { cn } from "@/lib/utils";
 
 const Tabs = TabsPrimitive.Root;
 
-const tabsListVariants = cva(
-  "inline-flex items-center justify-center text-muted-foreground",
-  {
-    variants: {
-      variant: {
-        default:
-          "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
-        line: "h-auto w-full justify-start gap-4 rounded-none border-b bg-transparent p-0",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
+const tabsListVariants = cva("inline-flex items-center justify-center text-muted-foreground", {
+  variants: {
+    variant: {
+      default:
+        "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
+      line: "h-auto w-full justify-start gap-4 rounded-none border-b bg-transparent p-0",
     },
   },
-);
+  defaultVariants: {
+    variant: "default",
+  },
+});
 
 const tabsTriggerVariants = cva(
   "inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
@@ -36,7 +33,7 @@ const tabsTriggerVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  },
+  }
 );
 
 type TabsVariant = "default" | "line";
@@ -76,7 +73,7 @@ const TabsContent = React.forwardRef<
     ref={ref}
     className={cn(
       "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-      className,
+      className
     )}
     {...props}
   />

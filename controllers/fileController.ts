@@ -1,11 +1,11 @@
-import { type UploadApiResponse, v2 as cloudinary } from "cloudinary";
-import { Controller, type ControllerDeps } from "./Controller";
-import { env } from "@/lib/env";
-import { Readable } from "stream";
-import { logger } from "@/lib/logger";
-import { type ErrorServerResponse, Status } from "@/types/server-response";
-import type { Session } from "@/types/auth";
+import { v2 as cloudinary, type UploadApiResponse } from "cloudinary";
 import { useId } from "react";
+import { Readable } from "stream";
+import { env } from "@/lib/env";
+import { logger } from "@/lib/logger";
+import type { Session } from "@/types/auth";
+import { type ErrorServerResponse, Status } from "@/types/server-response";
+import { Controller, type ControllerDeps } from "./Controller";
 
 interface FileDeps extends ControllerDeps {
   file?: File;
@@ -38,7 +38,7 @@ export default class FileController extends Controller<FileDeps> {
             if (error) return reject(error);
             if (!result) return reject(new Error("No result from Cloudinary"));
             resolve(result);
-          },
+          }
         );
         // biome-ignore lint/suspicious/noTsIgnore: intentional
         // @ts-ignore
@@ -55,9 +55,7 @@ export default class FileController extends Controller<FileDeps> {
         success: false,
         status: Status.ImageUploadFail,
         title: "Upload failed",
-        description:
-          error.message ||
-          "An unexpected error occurred during the image upload.",
+        description: error.message || "An unexpected error occurred during the image upload.",
       };
     }
   }
@@ -80,7 +78,7 @@ export default class FileController extends Controller<FileDeps> {
   }
 
   async handleUserImageChange(
-    user: { id: number } | null,
+    user: { id: number } | null
   ): Promise<ErrorServerResponse | { success: true; session: Session }> {
     try {
       if (!user)
