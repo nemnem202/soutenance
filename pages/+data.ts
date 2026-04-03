@@ -8,8 +8,8 @@ import { getPreferredLanguage } from "@/lib/utils";
 import getCurrentUserFromCookie from "@/middlewares/getCurrentUser";
 import type { ScreenSizeType } from "@/providers/screen-size-provider";
 import type { Session } from "@/types/auth";
-import type { Account, Exercise, Playlist } from "@/types/entities";
 import { type ChordHarmony, Notes } from "@/types/music";
+import type { Account, Exercise, Playlist } from "@/types/entities";
 
 function getScreen(pageContext: PageContextServer): ScreenSizeType {
   const ua = pageContext.headers ? (pageContext.headers["user-agent"] ?? "") : "";
@@ -24,16 +24,12 @@ function getScreen(pageContext: PageContextServer): ScreenSizeType {
   }
 }
 
-async function getSessionCookie(pageContext: PageContextServer): Promise<Session | null> {
-  const cookie = pageContext.headers.cookie;
-  const user = await getCurrentUserFromCookie(cookie);
+async function getAuthenticatedSession(cookieHeader: string | undefined): Promise<Session | null> {
+  if (!cookieHeader) return null;
+  const user = await getCurrentUserFromCookie(cookieHeader);
   if (!user) return null;
-  const session = await new SessionController({
-    client: prismaClient,
-    user,
-  }).getSession();
 
-  return session;
+  return new SessionController({ client: prismaClient }).getSession(user.id);
 }
 
 const generatePlaceholders = () =>
@@ -58,17 +54,19 @@ const generatePlaceholders = () =>
   });
 
 export async function data(pageContext: PageContextServer) {
+  const session = await getAuthenticatedSession(pageContext.headers.cookie);
+
+  const preferredLanguage = getPreferredLanguage(pageContext.headers["accept-language"]);
+  const screen = getScreen(pageContext);
+
   try {
-    const session = await getSessionCookie(pageContext);
-    const acceptLanguage = pageContext.headers["accept-language"];
-    const screen = getScreen(pageContext);
-    const preferredLanguage = getPreferredLanguage(acceptLanguage);
     const res = await fetch("http://localhost:3000/placeholders");
     const { accounts, exercises, playlists } = (await res.json()) as {
       accounts: Account[];
       exercises: Exercise[];
       playlists: Playlist[];
     };
+
     return {
       session,
       accounts,
@@ -79,13 +77,15 @@ export async function data(pageContext: PageContextServer) {
       chordsPlaceholders: generatePlaceholders(),
     };
   } catch (err) {
-    console.error(err);
+    console.error("Failed to fetch page data:", err);
     return {
-      session: null,
+      session,
       accounts: [],
       exercises: [],
       playlists: [],
       chordsPlaceholders: generatePlaceholders(),
+      preferredLanguage,
+      screen,
     };
   }
 }

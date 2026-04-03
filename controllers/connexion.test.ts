@@ -40,7 +40,7 @@ describe("ConnexionController (integration)", () => {
   it("should fail with invalid schema", async () => {
     const res = await controller.login({} as any);
 
-    expect(res.success).toBe(false);
+    expect(res).toBe(false);
   });
 
   it("should fail if user does not exist", async () => {
