@@ -69,7 +69,10 @@ export class ConnexionController extends Controller<ConnexionDeps> {
       );
     }
 
-    const fileController = new FileController({ client: this.deps.client, file: props.image.file });
+    const fileController = new FileController({
+      client: this.deps.client,
+      file: props.image.file as File,
+    });
     const imageUpload = await fileController.uploadFileAsImage();
 
     const user = await this.deps.client.user.create({
