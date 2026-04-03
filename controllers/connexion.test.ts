@@ -6,9 +6,30 @@ import { AppError } from "@/lib/errors";
 import { Status } from "@/types/server-response";
 import { COOKIE_NAME } from "@/lib/auth-utils";
 
+vi.mock("cloudinary", () => ({
+  v2: {
+    config: vi.fn(),
+    uploader: {
+      upload_stream: vi.fn((_options, callback) => {
+        const { PassThrough } = require("node:stream");
+        const mockStream = new PassThrough();
+
+        mockStream.on("finish", () => {
+          callback(null, {
+            secure_url: "https://res.cloudinary.com/mock/image.webp",
+            public_id: "test_public_id",
+          });
+        });
+
+        return mockStream;
+      }),
+      destroy: vi.fn().mockResolvedValue({ result: "ok" }),
+    },
+  },
+}));
+
 const mockFile = new File(["content"], "avatar.webp", { type: "image/webp" });
 
-// Crée un contexte Telefunc simulé capable de suivre les cookies
 const createMockContext = (userId: number | null = null) => {
   const cookies: Record<string, { value: string; options: any }> = {};
 
@@ -17,7 +38,8 @@ const createMockContext = (userId: number | null = null) => {
     setCookie: vi.fn((name: string, value: string, options: any) => {
       cookies[name] = { value, options };
     }),
-    // Helper pour les assertions
+    request: new Request("http://localhost"),
+
     getCookie: (name: string) => cookies[name],
   };
 };
@@ -27,7 +49,6 @@ describe("ConnexionController Integration", () => {
   let context: ReturnType<typeof createMockContext>;
 
   beforeEach(async () => {
-    // Nettoyage complet de la DB (attention à l'ordre des FK)
     await prismaClient.classicAuthMethod.deleteMany();
     await prismaClient.authMethod.deleteMany();
     await prismaClient.user.deleteMany();
@@ -50,7 +71,6 @@ describe("ConnexionController Integration", () => {
 
       const result = await controller.register(data);
 
-      // Vérification DB
       const user = await prismaClient.user.findUnique({
         where: { email: data.email },
         include: { profilePicture: true, classicAuthMethod: true },
@@ -58,9 +78,8 @@ describe("ConnexionController Integration", () => {
 
       expect(user).toBeDefined();
       expect(user?.username).toBe("testuser");
-      expect(user?.profilePicture.url).toBeDefined(); // Cloudinary mocké ou réel selon votre env
+      expect(user?.profilePicture.url).toBeDefined();
 
-      // Vérification du Cookie
       expect(context.setCookie).toHaveBeenCalledWith(
         COOKIE_NAME,
         expect.any(String),
@@ -71,7 +90,6 @@ describe("ConnexionController Integration", () => {
     });
 
     it("should throw AppError if email already exists", async () => {
-      // Création d'un premier user
       await prismaClient.user.create({
         data: {
           email: "exists@test.com",
@@ -97,7 +115,6 @@ describe("ConnexionController Integration", () => {
 
   describe("Login", () => {
     it("should login successfully with correct credentials", async () => {
-      // 1. On crée un user manuellement
       const hashedPassword = await argon2.hash("securepassword");
       const _user = await prismaClient.user.create({
         data: {
@@ -108,7 +125,6 @@ describe("ConnexionController Integration", () => {
         },
       });
 
-      // 2. Tentative de login
       const result = await controller.login({
         email: "login@test.com",
         password: "securepassword",
@@ -154,7 +170,6 @@ describe("ConnexionController Integration", () => {
 
   describe("Remove Account", () => {
     it("should delete user and related images from DB", async () => {
-      // Création d'un user et simulation du contexte de session
       const user = await prismaClient.user.create({
         data: {
           email: "delete@test.com",
