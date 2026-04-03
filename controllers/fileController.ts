@@ -74,8 +74,6 @@ export default class FileController extends Controller<FileDeps> {
 
     if (!existingUser) throw new Error("Existing user not found in db");
 
-    logger.info("Remove image attempt:", existingUser.profilePicture.cloudId);
-
     if (existingUser.profilePicture.cloudId) {
       await cloudinary.uploader.destroy(existingUser.profilePicture.cloudId);
     }
@@ -114,6 +112,8 @@ export default class FileController extends Controller<FileDeps> {
           profilePicture: true,
         },
       });
+
+      logger.info(`User ${update.username} upated his profile picture`);
 
       return {
         success: true,

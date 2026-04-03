@@ -20,7 +20,9 @@ import Headline from "@/components/ui/headline";
 import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
 import { logger } from "@/lib/logger";
+import { errorToast, loadingToast, successToast } from "@/lib/toaster";
 import { onImageChange } from "@/telefunc/image-change.telefunc";
+import { Image } from "@/types/entities";
 import { useState } from "react";
 
 export default function Page() {
@@ -50,8 +52,27 @@ function Mobile() {
 
 function Content() {
   const { instance } = useLanguage();
-  const { session } = useSession();
+  const { session, setSession } = useSession();
   const [isOpen, setIsOpen] = useState(true);
+
+  const handleImageChange = async (image: File) => {
+    const imagePromise = onImageChange(image);
+    loadingToast(imagePromise, {
+      loading: "Upload de l'image en cours...",
+      success: {
+        title: "Image enregistrée !",
+      },
+      error: {
+        title: "Échec de l'envoi",
+        description:
+          "Vérifiez votre connexion internet ou la taille du fichier.",
+      },
+    });
+    const response = await imagePromise;
+
+    if (response.success) setSession(response.session);
+  };
+
   return (
     <>
       {!session && (
@@ -72,7 +93,7 @@ function Content() {
             <EditableImage
               alt={session ? session.profilePictureSource.alt : undefined}
               src={session ? session.profilePictureSource.src : undefined}
-              onImageChange={(image) => onImageChange(image)}
+              onImageChange={handleImageChange}
             />
           </div>
           <UsernameParam />
