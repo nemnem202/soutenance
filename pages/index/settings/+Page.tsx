@@ -1,3 +1,8 @@
+import {
+  LoginModal,
+  LoginModalContent,
+} from "@/components/features/auth/login-button";
+import LoginForm from "@/components/features/auth/login-form";
 import MobileHeader from "@/components/features/layout/mobile-header";
 import {
   ChangeAccountButton,
@@ -10,8 +15,13 @@ import {
 import { SettingsSection } from "@/components/features/settings/settings-assets";
 import SizeAdapter from "@/components/molecules/size-adapter";
 import EditableImage from "@/components/organisms/editable-image";
+import Modal from "@/components/organisms/modal";
 import Headline from "@/components/ui/headline";
 import { useLanguage } from "@/hooks/use-language";
+import useSession from "@/hooks/use-session";
+import { logger } from "@/lib/logger";
+import { onImageChange } from "@/telefunc/image-change.telefunc";
+import { useState } from "react";
 
 export default function Page() {
   return <SizeAdapter sm={<Mobile />} md={<Desktop />} />;
@@ -40,8 +50,18 @@ function Mobile() {
 
 function Content() {
   const { instance } = useLanguage();
+  const { session } = useSession();
+  const [isOpen, setIsOpen] = useState(true);
   return (
     <>
+      {!session && (
+        <LoginModal
+          isOpen={true}
+          setIsOpen={() => {}}
+          onSuccess={() => setIsOpen(false)}
+          initMode="login"
+        />
+      )}
       <SettingsSection title={instance.getItem("appearance")}>
         <ThemeParam />
         <LanguageParam />
@@ -49,7 +69,11 @@ function Content() {
       <SettingsSection title={instance.getItem("account")}>
         <div className="flex gap-2 md:flex-row flex-col items-center md:items-start">
           <div className="w-33 aspect-square">
-            <EditableImage alt="profile picture" onImageChange={() => {}} />
+            <EditableImage
+              alt="profile picture"
+              src={session ? session.profilePictureSource : undefined}
+              onImageChange={(image) => onImageChange(image)}
+            />
           </div>
           <UsernameParam />
         </div>

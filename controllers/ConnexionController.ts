@@ -68,33 +68,30 @@ export class ConnexionController extends Controller<ConnexionDeps> {
     }
   }
 
-  private uploadImageFromBuffer = (
-    fileBuffer: Buffer,
+  async uploadImageFile(
+    image: File,
     folder: string,
-  ): Promise<UploadApiResponse> => {
+  ): Promise<UploadApiResponse> {
     return new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
-          resource_type: "image",
           folder: folder,
+          format: "webp",
+          resource_type: "image",
           transformation: [{ width: 1000, crop: "limit", quality: "auto" }],
         },
         (error, result) => {
           if (error) return reject(error);
-          if (!result)
-            return reject(
-              new Error("Upload failed: No result from Cloudinary"),
-            );
+          if (!result) return reject(new Error("Upload failed"));
           resolve(result);
         },
       );
 
-      const readable = new Readable();
-      readable.push(fileBuffer);
-      readable.push(null);
-      readable.pipe(uploadStream);
+      // biome-ignore lint/suspicious/noTsIgnore: intentional
+      // @ts-ignore
+      Readable.fromWeb(image.stream()).pipe(uploadStream);
     });
-  };
+  }
 
   async login({
     ...props
@@ -235,7 +232,7 @@ export class ConnexionController extends Controller<ConnexionDeps> {
 
       const passwordHash = await argon2.hash(password);
 
-      const imageupload = await this.uploadImageFromBuffer(
+      const imageupload = await this.uploadImageFile(
         image.file,
         env.CLOUD_IMAGE_FOLDER_NAME,
       );

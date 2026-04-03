@@ -62,7 +62,7 @@ export function LoginModal({
   );
 }
 
-function LoginModalContent({
+export function LoginModalContent({
   setMode,
   setIsOpen,
   onSuccess = () => {},
