@@ -1,28 +1,13 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: necessary */
 /** biome-ignore-all lint/style/noNonNullAssertion: necessary */
 
+import { faker } from "@faker-js/faker";
 import argon2 from "argon2";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import prismaClient from "@/lib/prisma-client";
 import { ConnexionController } from "./ConnexionController";
 
-async function _createContextWithUser(userId: number, _remember = true) {
-  const cookieStore: Record<string, { value: string; options: any }> = {};
-
-  const context = {
-    setCookie: (name: string, value: string, options: any) => {
-      cookieStore[name] = { value, options };
-    },
-    get user() {
-      return { id: userId };
-    },
-    get cookieStore() {
-      return cookieStore;
-    },
-  };
-
-  return context;
-}
+const mockFile = new File(["dummy content"], "test-image.webp", { type: "image/webp" });
 
 function createUnauthenticatedContext() {
   return {
@@ -30,6 +15,13 @@ function createUnauthenticatedContext() {
     user: null,
   };
 }
+
+const CREATE_IMAGE = {
+  create: {
+    alt: "Image of user",
+    url: faker.image.avatar(),
+  },
+};
 
 describe("ConnexionController (integration)", () => {
   let controller: ConnexionController;
@@ -66,7 +58,7 @@ describe("ConnexionController (integration)", () => {
       data: {
         email: "google@test.com",
         username: "googleuser",
-        profilePicture: "",
+        profilePicture: CREATE_IMAGE,
       },
     });
 
@@ -86,7 +78,7 @@ describe("ConnexionController (integration)", () => {
       data: {
         email: "test@test.com",
         username: "test",
-        profilePicture: "",
+        profilePicture: CREATE_IMAGE,
         classicAuthMethod: {
           create: {
             password: hash,
@@ -112,7 +104,7 @@ describe("ConnexionController (integration)", () => {
       password_confirm: "password",
       image: {
         alt: "success image",
-        src: "http://image-succes.wepb",
+        file: mockFile,
       },
       username: "user-success",
     });
@@ -138,7 +130,10 @@ describe("ConnexionController (integration)", () => {
       username: "test",
       password: "password",
       password_confirm: "password",
-      image: { src: "", alt: "" },
+      image: {
+        alt: "success image",
+        file: mockFile,
+      },
       agree_terms_of_service: false,
     });
 
@@ -150,7 +145,7 @@ describe("ConnexionController (integration)", () => {
       data: {
         email: "existing@test.com",
         username: "duplicate",
-        profilePicture: "",
+        profilePicture: CREATE_IMAGE,
       },
     });
 
@@ -159,7 +154,10 @@ describe("ConnexionController (integration)", () => {
       username: "duplicate",
       password: "password",
       password_confirm: "password",
-      image: { src: "", alt: "" },
+      image: {
+        alt: "success image",
+        file: mockFile,
+      },
       agree_terms_of_service: true,
     });
 
@@ -171,7 +169,7 @@ describe("ConnexionController (integration)", () => {
       data: {
         email: "duplicate@test.com",
         username: "user1",
-        profilePicture: "",
+        profilePicture: CREATE_IMAGE,
       },
     });
 
@@ -180,7 +178,10 @@ describe("ConnexionController (integration)", () => {
       username: "user2",
       password: "password",
       password_confirm: "password",
-      image: { src: "", alt: "" },
+      image: {
+        alt: "success image",
+        file: mockFile,
+      },
       agree_terms_of_service: true,
     });
 
@@ -193,7 +194,10 @@ describe("ConnexionController (integration)", () => {
       username: "newuser",
       password: "password",
       password_confirm: "password",
-      image: { src: "http://image-succes.wepb", alt: "" },
+      image: {
+        alt: "success image",
+        file: mockFile,
+      },
       agree_terms_of_service: true,
     });
 
@@ -257,7 +261,7 @@ describe("removeAccount", () => {
       data: {
         email: "todelete@test.com",
         username: "todelete",
-        profilePicture: "",
+        profilePicture: CREATE_IMAGE,
       },
     });
 
