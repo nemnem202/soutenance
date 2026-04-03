@@ -5,9 +5,10 @@ import { Readable } from "stream";
 import { logger } from "@/lib/logger";
 import { type ErrorServerResponse, Status } from "@/types/server-response";
 import type { Session } from "@/types/auth";
+import { useId } from "react";
 
 interface FileDeps extends ControllerDeps {
-  file: File;
+  file?: File;
 }
 
 cloudinary.config({
@@ -24,6 +25,7 @@ export default class FileController extends Controller<FileDeps> {
     ErrorServerResponse | { success: true; url: string; imageId: string }
   > {
     try {
+      if (!this.deps.file) throw new Error("File controller init without file");
       const result = await new Promise<UploadApiResponse>((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
           {
@@ -60,6 +62,23 @@ export default class FileController extends Controller<FileDeps> {
     }
   }
 
+  async removeUserImage(userId: number) {
+    const existingUser = await this.deps.client.user.findUnique({
+      where: {
+        id: userId,
+      },
+      include: {
+        profilePicture: true,
+      },
+    });
+
+    if (!existingUser) throw new Error("Existing user not found in db");
+
+    if (existingUser.profilePicture.cloudId) {
+      await cloudinary.uploader.destroy(existingUser.profilePicture.cloudId);
+    }
+  }
+
   async handleUserImageChange(
     user: { id: number } | null,
   ): Promise<ErrorServerResponse | { success: true; session: Session }> {
@@ -71,20 +90,7 @@ export default class FileController extends Controller<FileDeps> {
           title: "You are not connected",
         };
 
-      const existingUser = await this.deps.client.user.findUnique({
-        where: {
-          id: user.id,
-        },
-        include: {
-          profilePicture: true,
-        },
-      });
-
-      if (!existingUser) throw new Error("Existing user not found in db");
-
-      if (existingUser.profilePicture.cloudId) {
-        await cloudinary.uploader.destroy(existingUser.profilePicture.cloudId);
-      }
+      await this.removeUserImage(user.id);
 
       const fileUpload = await this.uploadFileAsImage();
 

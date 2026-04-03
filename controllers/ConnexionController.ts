@@ -285,6 +285,11 @@ export class ConnexionController extends Controller<ConnexionDeps> {
           description: "You must be connected to remove your account",
         };
       }
+
+      const fileController = new FileController({ client: this.deps.client });
+
+      await fileController.removeUserImage(user.id);
+
       const removed = await this.deps.client.user.delete({
         where: {
           id: user.id,
