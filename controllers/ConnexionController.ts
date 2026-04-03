@@ -1,66 +1,22 @@
 import argon2 from "argon2";
-import { SignJWT } from "jose";
 import type { Telefunc } from "telefunc";
-import { env } from "@/lib/env";
-import { logger } from "@/lib/logger";
 import { loginSchema, registerSchema } from "@/schemas/auth.schema";
 import type { LoginData, RegisterData } from "@/types/auth";
 import { Status } from "@/types/server-response";
 import { Controller, type ControllerDeps } from "./Controller";
 import FileController from "./fileController";
 import { AppError } from "@/lib/errors";
+import { COOKIE_NAME, generateJwt, getCookieOptions } from "@/lib/auth-utils";
 
 interface ConnexionDeps extends ControllerDeps {
   context: Telefunc.Context;
 }
 
 export class ConnexionController extends Controller<ConnexionDeps> {
-  private readonly cookieSecure = false;
-
-  static async generateJwt(userId: number, remember: boolean): Promise<string> {
-    const secret = new TextEncoder().encode(env.TOKEN_SECRET);
-
-    return await new SignJWT({ id: userId })
-      .setProtectedHeader({ alg: "HS256" })
-      .setIssuedAt()
-      .setExpirationTime(remember ? "3w" : "1h")
-      .sign(secret);
-  }
-
-  private async setCookie(userId: number, remember: boolean) {
-    try {
-      const jwt = await ConnexionController.generateJwt(userId, remember);
-
-      this.deps.context.setCookie("token", jwt, {
-        httpOnly: true,
-        secure: this.cookieSecure,
-        path: "/",
-        maxAge: remember ? 365 * 24 * 3600 : 3600,
-        sameSite: "lax",
-      });
-    } catch (err) {
-      logger.error("Cookie generation failed: ", err);
-    }
-  }
-
-  private clearCookie() {
-    try {
-      this.deps.context.setCookie("token", "", {
-        httpOnly: true,
-        secure: this.cookieSecure,
-        path: "/",
-        maxAge: 0,
-        sameSite: "lax",
-      });
-    } catch (err) {
-      logger.error("Cookie clearing failed: ", err);
-    }
-  }
-
   async login(props: LoginData) {
     const loginValidation = loginSchema.safeParse(props);
     if (!loginValidation.success) {
-      throw new AppError(Status.IncorrectLoginData, "Invalid data", loginValidation.error.message);
+      throw new AppError(Status.IncorrectLoginData, "Données invalides");
     }
 
     const user = await this.deps.client.user.findFirst({
@@ -69,15 +25,16 @@ export class ConnexionController extends Controller<ConnexionDeps> {
     });
 
     if (!user?.classicAuthMethod) {
-      throw new AppError(Status.IncorrectEmail, "User not found");
+      throw new AppError(Status.IncorrectEmail, "Utilisateur non trouvé");
     }
 
     const isPasswordVerified = await argon2.verify(user.classicAuthMethod.password, props.password);
     if (!isPasswordVerified) {
-      throw new AppError(Status.IncorrectPassword, "Password incorrect");
+      throw new AppError(Status.IncorrectPassword, "Mot de passe incorrect");
     }
 
-    await this.setCookie(user.id, props.remember);
+    const token = await generateJwt(user.id, props.remember);
+    this.deps.context.setCookie(COOKIE_NAME, token, getCookieOptions(props.remember));
 
     return {
       session: {
@@ -112,27 +69,27 @@ export class ConnexionController extends Controller<ConnexionDeps> {
       );
     }
 
-    const passwordHash = await argon2.hash(password);
-    const fileController = new FileController({ client: this.deps.client, file: image.file });
+    const fileController = new FileController({ client: this.deps.client, file: props.image.file });
     const imageUpload = await fileController.uploadFileAsImage();
 
     const user = await this.deps.client.user.create({
       data: {
-        email,
-        username,
+        email: props.email,
+        username: props.username,
         profilePicture: {
           create: {
-            alt: `Avatar de ${username}`,
+            alt: props.image.alt,
             url: imageUpload.url,
             cloudId: imageUpload.imageId,
           },
         },
-        classicAuthMethod: { create: { password: passwordHash } },
+        classicAuthMethod: { create: { password: await argon2.hash(props.password) } },
       },
       include: { profilePicture: true },
     });
 
-    await this.setCookie(user.id, true);
+    const token = await generateJwt(user.id, true);
+    this.deps.context.setCookie(COOKIE_NAME, token, getCookieOptions(true));
 
     return {
       session: {
@@ -144,7 +101,7 @@ export class ConnexionController extends Controller<ConnexionDeps> {
   }
 
   async logout() {
-    this.clearCookie();
+    this.deps.context.setCookie(COOKIE_NAME, "", { ...getCookieOptions(false), maxAge: 0 });
     return { status: Status.LogoutSuccessfull };
   }
 
@@ -155,6 +112,8 @@ export class ConnexionController extends Controller<ConnexionDeps> {
     const fileController = new FileController({ client: this.deps.client });
     await fileController.removeUserImage(user.id);
     await this.deps.client.user.delete({ where: { id: user.id } });
+
+    await this.logout();
 
     return { status: Status.RemoveAccountSuccessfull };
   }
