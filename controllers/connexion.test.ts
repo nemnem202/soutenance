@@ -1,11 +1,11 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: necessary */
 /** biome-ignore-all lint/style/noNonNullAssertion: necessary */
 
-import { faker } from "@faker-js/faker";
 import argon2 from "argon2";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import prismaClient from "@/lib/prisma-client";
 import { ConnexionController } from "./ConnexionController";
+import { faker } from "@faker-js/faker";
 
 const mockFile = new File(["dummy content"], "test-image.webp", { type: "image/webp" });
 

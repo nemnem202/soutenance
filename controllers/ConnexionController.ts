@@ -9,6 +9,7 @@ import type { LoginData, RegisterData, Session } from "@/types/auth";
 import { type ErrorServerResponse, type ServerResponse, Status } from "@/types/server-response";
 import { Controller, type ControllerDeps } from "./Controller";
 import FileController from "./fileController";
+import { AppError } from "@/lib/errors";
 
 interface ConnexionDeps extends ControllerDeps {
   context: Telefunc.Context;
@@ -57,85 +58,35 @@ export class ConnexionController extends Controller<ConnexionDeps> {
     }
   }
 
-  async login({
-    ...props
-  }: LoginData): Promise<ErrorServerResponse | { success: true; session: Session }> {
-    try {
-      logger.info("Login requested");
-
-      const loginValidation = loginSchema.safeParse(props);
-
-      if (!loginValidation.success) {
-        return {
-          success: false,
-          status: Status.IncorrectLoginData,
-          title: "Incorrect data",
-          description: loginValidation.error.message,
-        };
-      }
-
-      const { email, password, remember } = props;
-
-      const user = await this.deps.client.user.findFirst({
-        where: {
-          email: email,
-        },
-        include: {
-          classicAuthMethod: true,
-          profilePicture: true,
-        },
-      });
-
-      if (!user) {
-        return {
-          success: false,
-          title: "User not found",
-          description: "Email must be incorrect",
-          status: Status.IncorrectEmail,
-        };
-      }
-      if (!user.classicAuthMethod) {
-        return {
-          success: false,
-          title: "Try to connect with google",
-          status: Status.BadAuthMethod,
-        };
-      }
-
-      const isPasswordVerified = await argon2.verify(user.classicAuthMethod?.password, password);
-
-      if (!isPasswordVerified) {
-        return {
-          success: false,
-          title: "Password incorrect",
-          status: Status.IncorrectPassword,
-        };
-      }
-
-      await this.setCookie(user.id, remember);
-
-      logger.success("Login", user.username);
-
-      return {
-        success: true,
-        session: {
-          id: user.id,
-          username: user.username,
-          profilePictureSource: {
-            alt: user.profilePicture.alt,
-            src: user.profilePicture.url,
-          },
-        },
-      };
-    } catch (err) {
-      logger.error("Failed to login", err);
-      return {
-        success: false,
-        title: "Internal server error",
-        description: "Try later",
-        status: Status.UnknownError,
-      };
+  async login(props: LoginData) {
+    const loginValidation = loginSchema.safeParse(props);
+    if (!loginValidation.success) {
+      throw new AppError(Status.IncorrectLoginData, "Invalid data", loginValidation.error.message);
     }
+
+    const user = await this.deps.client.user.findFirst({
+      where: { email: props.email },
+      include: { classicAuthMethod: true, profilePicture: true },
+    });
+
+    if (!user?.classicAuthMethod) {
+      throw new AppError(Status.IncorrectEmail, "User not found");
+    }
+
+    const isPasswordVerified = await argon2.verify(user.classicAuthMethod.password, props.password);
+    if (!isPasswordVerified) {
+      throw new AppError(Status.IncorrectPassword, "Password incorrect");
+    }
+
+    await this.setCookie(user.id, props.remember);
+
+    return {
+      session: {
+        id: user.id,
+        username: user.username,
+        profilePictureSource: { alt: user.profilePicture.alt, src: user.profilePicture.url },
+      },
+    };
   }
 
   async register({

@@ -2,12 +2,12 @@ import { getContext } from "telefunc";
 import { ConnexionController } from "@/controllers/ConnexionController";
 import prismaClient from "@/lib/prisma-client";
 import type { LoginData, RegisterData } from "@/types/auth";
+import { handleAction } from "@/lib/response-handler";
 
-export function onLogin({ ...props }: LoginData) {
+export function onLogin(props: LoginData) {
   const context = getContext();
-  return new ConnexionController({ client: prismaClient, context }).login({
-    ...props,
-  });
+  const controller = new ConnexionController({ client: prismaClient, context });
+  return handleAction("User Login", () => controller.login(props));
 }
 
 export function onRegister({ ...props }: RegisterData) {
