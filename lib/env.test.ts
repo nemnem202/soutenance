@@ -13,6 +13,11 @@ describe("Environnement variabels", () => {
       GOOGLE_CLIENT_ID,
       GOOGLE_CLIENT_SECRET,
       GOOGLE_REDIRECT_PATH,
+      APP_BASE_URL,
+      CLOUD_API_KEY,
+      CLOUD_API_SECRET,
+      CLOUD_IMAGE_FOLDER_NAME,
+      CLOUD_NAME,
     } = env;
 
     expect(APP_PORT).toBeDefined();
@@ -24,5 +29,10 @@ describe("Environnement variabels", () => {
     expect(GOOGLE_CLIENT_ID).toBeDefined();
     expect(GOOGLE_CLIENT_SECRET).toBeDefined();
     expect(GOOGLE_REDIRECT_PATH).toBeDefined();
+    expect(APP_BASE_URL).toBeDefined();
+    expect(CLOUD_API_SECRET).toBeDefined();
+    expect(CLOUD_API_KEY).toBeDefined();
+    expect(CLOUD_IMAGE_FOLDER_NAME).toBeDefined();
+    expect(CLOUD_NAME).toBeDefined();
   });
 });
