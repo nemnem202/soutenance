@@ -1,4 +1,4 @@
-import { getContext } from "telefunc";
+import { getContext, shield } from "telefunc";
 import { ConnexionController } from "@/controllers/ConnexionController";
 import prismaClient from "@/lib/prisma-client";
 import type { LoginData, RegisterData } from "@/types/auth";
@@ -27,3 +27,5 @@ export function onRemoveAccount() {
 
   return handleAction("Remove Account", () => controller.removeAccount());
 }
+
+shield(onRegister, [shield.type.any]);
