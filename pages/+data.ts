@@ -25,7 +25,7 @@ function getScreen(pageContext: PageContextServer): ScreenSizeType {
 }
 
 async function getSessionCookie(pageContext: PageContextServer): Promise<Session | null> {
-  const cookie = pageContext.headers["cookie"];
+  const cookie = pageContext.headers.cookie;
   const user = await getCurrentUserFromCookie(cookie);
   if (!user) return null;
   const session = await new SessionController({

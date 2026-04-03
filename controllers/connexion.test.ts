@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import prismaClient from "@/lib/prisma-client";
 import { ConnexionController } from "./ConnexionController";
 
-async function createContextWithUser(userId: number, remember = true) {
+async function _createContextWithUser(userId: number, _remember = true) {
   const cookieStore: Record<string, { value: string; options: any }> = {};
 
   const context = {

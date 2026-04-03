@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { LoginModal, LoginModalContent } from "@/components/features/auth/login-button";
-import LoginForm from "@/components/features/auth/login-form";
+import { LoginModal } from "@/components/features/auth/login-button";
 import MobileHeader from "@/components/features/layout/mobile-header";
 import {
   ChangeAccountButton,
@@ -13,14 +12,11 @@ import {
 import { SettingsSection } from "@/components/features/settings/settings-assets";
 import SizeAdapter from "@/components/molecules/size-adapter";
 import EditableImage from "@/components/organisms/editable-image";
-import Modal from "@/components/organisms/modal";
 import Headline from "@/components/ui/headline";
 import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
-import { logger } from "@/lib/logger";
-import { errorToast, loadingToast, successToast } from "@/lib/toaster";
+import { loadingToast } from "@/lib/toaster";
 import { onImageChange } from "@/telefunc/image-change.telefunc";
-import { Image } from "@/types/entities";
 
 export default function Page() {
   return <SizeAdapter sm={<Mobile />} md={<Desktop />} />;
@@ -50,7 +46,7 @@ function Mobile() {
 function Content() {
   const { instance } = useLanguage();
   const { session, setSession } = useSession();
-  const [isOpen, setIsOpen] = useState(true);
+  const [_isOpen, setIsOpen] = useState(true);
 
   const handleImageChange = async (image: File) => {
     const imagePromise = onImageChange(image);

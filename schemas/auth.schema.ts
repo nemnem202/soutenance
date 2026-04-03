@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { imageSchema, registerImageSchema } from "./common.schema";
+import { registerImageSchema } from "./common.schema";
 
 export const loginSchema = z.object({
   email: z

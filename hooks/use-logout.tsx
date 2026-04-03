@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { navigate } from "vike/client/router";
 import { errorToast, successToast } from "@/lib/toaster";
 import { onLogout } from "@/telefunc/connexion.telefunc";
 import useSession from "./use-session";

@@ -18,7 +18,7 @@ function parseCookie(str: string): Record<string, string> {
 export default async function getCurrentUserFromCookie(
   cookie: string
 ): Promise<{ id: number } | null> {
-  const token = parseCookie(cookie)["token"];
+  const token = parseCookie(cookie).token;
 
   let currentUser: { id: number } | null = null;
 
