@@ -1,8 +1,16 @@
 FROM node:20-alpine
 
+RUN apk add --no-cache libc6-compat bash git python3 wget tar make
+
 RUN npm install -g pnpm
 
 WORKDIR /app
+
+RUN wget https://www.mellowood.ca/mma/mma-bin-25.05.0.tar.gz && \
+    mkdir -p /opt/mma && \
+    tar -xzvf mma-bin-25.05.0.tar.gz -C /opt/mma --strip-components=1 && \
+    rm mma-bin-25.05.0.tar.gz && \
+    cd /opt/mma && python3 mma.py -G
 
 COPY package.json pnpm-lock.yaml ./
 
