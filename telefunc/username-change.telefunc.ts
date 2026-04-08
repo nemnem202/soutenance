@@ -7,7 +7,5 @@ export async function onUsernameChange(newUsername: string) {
   const context = getContext();
   const controller = new UserController({ client: prismaClient });
   const userId = context.user?.id ?? null;
-  return handleAction("Profile Picture Change", () =>
-    controller.updateUsername(userId, newUsername)
-  );
+  return handleAction("Username Change", () => controller.updateUsername(userId, newUsername));
 }

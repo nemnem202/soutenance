@@ -187,7 +187,7 @@ export function UsernameParam() {
 
     if (response.success) {
       successToast(`Success !`);
-      setSession(response);
+      setSession(response.data);
     } else {
       errorToast(response.title, response.description);
     }

@@ -14,6 +14,7 @@ export enum Status {
   RemoveAccountSuccessfull,
   NotConnected,
   ImageUploadFail,
+  Ok,
 }
 export type ErrorServerResponse = {
   success: false;
@@ -21,6 +22,10 @@ export type ErrorServerResponse = {
   description?: string;
   status: Status;
 };
-export type SuccessServerResponse = { success: true; status: Status };
+export type SuccessServerResponse<T> = {
+  success: true;
+  status: Status;
+  data: T;
+};
 
-export type ServerResponse = SuccessServerResponse | ErrorServerResponse;
+export type ServerResponse<T> = SuccessServerResponse<T> | ErrorServerResponse;

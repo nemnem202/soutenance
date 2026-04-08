@@ -2,10 +2,14 @@ import { PrismaClient } from "@/lib/generated/prisma/client";
 import { Controller } from "./Controller";
 import { Session } from "@/types/auth";
 import { usernameSchema } from "@/schemas/common.schema";
+import { ServerResponse, Status } from "@/types/server-response";
 
 export default class UserController extends Controller<{ client: PrismaClient }> {
-  async updateUsername(userId: number | null, newUsername: string): Promise<Session | null> {
-    if (!userId) return null;
+  async updateUsername(
+    userId: number | null,
+    newUsername: string
+  ): Promise<ServerResponse<Session>> {
+    if (!userId) return { success: false, status: Status.NotConnected, title: "Not connected" };
 
     usernameSchema.parse(newUsername);
 
@@ -16,7 +20,12 @@ export default class UserController extends Controller<{ client: PrismaClient }>
     });
 
     if (existingUser && existingUser.id !== userId)
-      throw new Error("This username already exists, please choose another one.");
+      return {
+        success: false,
+        status: Status.ExistingUsername,
+        title: "Username already exists",
+        description: "Please choose another one",
+      };
 
     const userData = await this.deps.client.user.update({
       where: { id: userId },
@@ -29,15 +38,24 @@ export default class UserController extends Controller<{ client: PrismaClient }>
     });
 
     if (!userData) {
-      return null;
+      return {
+        success: false,
+        status: Status.UnknownError,
+        title: "Account not found",
+        description: "Try to reconnect",
+      };
     }
 
     return {
-      id: userData.id,
-      username: userData.username,
-      profilePictureSource: {
-        alt: userData.profilePicture.alt,
-        src: userData.profilePicture.url,
+      success: true,
+      status: Status.Ok,
+      data: {
+        id: userData.id,
+        username: userData.username,
+        profilePictureSource: {
+          alt: userData.profilePicture.alt,
+          src: userData.profilePicture.url,
+        },
       },
     };
   }

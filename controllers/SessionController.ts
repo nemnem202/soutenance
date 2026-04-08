@@ -1,10 +1,11 @@
 import type { Session } from "@/types/auth";
 import { Controller } from "./Controller";
 import type { PrismaClient } from "@/lib/generated/prisma/client";
+import { ServerResponse, Status } from "@/types/server-response";
 
 export default class SessionController extends Controller<{ client: PrismaClient }> {
-  async getSession(userId: number | null): Promise<Session | null> {
-    if (!userId) return null;
+  async getSession(userId: number | null): Promise<ServerResponse<Session>> {
+    if (!userId) return { success: false, title: "No session", status: Status.BadAuthMethod };
 
     const userData = await this.deps.client.user.findUnique({
       where: { id: userId },
@@ -12,15 +13,19 @@ export default class SessionController extends Controller<{ client: PrismaClient
     });
 
     if (!userData) {
-      return null;
+      return { success: false, title: "Invalid session", status: Status.BadAuthMethod };
     }
 
     return {
-      id: userData.id,
-      username: userData.username,
-      profilePictureSource: {
-        alt: userData.profilePicture.alt,
-        src: userData.profilePicture.url,
+      success: true,
+      status: Status.Ok,
+      data: {
+        id: userData.id,
+        username: userData.username,
+        profilePictureSource: {
+          alt: userData.profilePicture.alt,
+          src: userData.profilePicture.url,
+        },
       },
     };
   }

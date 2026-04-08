@@ -56,7 +56,7 @@ export function useLoginForm({ onSuccess }: { onSuccess: () => void }) {
           errorToast(response.title, response.description);
         }
       } else {
-        const session = (response as any).session;
+        const session = response.data;
         setSession(session);
         successToast(`Welcome back, ${session.username} !`);
         onSuccess();
@@ -98,7 +98,7 @@ export function useRegisterForm({ onSuccess }: { onSuccess: () => void }) {
           errorToast(response.title, response.description);
         }
       } else {
-        const session = (response as any).session;
+        const session = response.data;
         setSession(session);
         successToast(`Welcome, ${session.username} !`);
         onSuccess();

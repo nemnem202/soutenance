@@ -28,8 +28,13 @@ async function getAuthenticatedSession(cookieHeader: string | undefined): Promis
   if (!cookieHeader) return null;
   const user = await getCurrentUserFromCookie(cookieHeader);
   if (!user) return null;
-
-  return new SessionController({ client: prismaClient }).getSession(user.id);
+  const controller = new SessionController({ client: prismaClient });
+  const response = await controller.getSession(user.id);
+  if (response.success) {
+    return response.data;
+  } else {
+    return null;
+  }
 }
 
 const generatePlaceholders = () =>

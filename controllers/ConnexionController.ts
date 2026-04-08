@@ -1,8 +1,8 @@
 import argon2 from "argon2";
 import type { Telefunc } from "telefunc";
 import { loginSchema, registerSchema } from "@/schemas/auth.schema";
-import type { LoginData, RegisterData } from "@/types/auth";
-import { Status } from "@/types/server-response";
+import type { LoginData, RegisterData, Session } from "@/types/auth";
+import { ServerResponse, Status } from "@/types/server-response";
 import { Controller, type ControllerDeps } from "./Controller";
 import FileController from "./fileController";
 import { AppError } from "@/lib/errors";
@@ -13,7 +13,7 @@ interface ConnexionDeps extends ControllerDeps {
 }
 
 export class ConnexionController extends Controller<ConnexionDeps> {
-  async login(props: LoginData) {
+  async login(props: LoginData): Promise<ServerResponse<Session>> {
     const loginValidation = loginSchema.safeParse(props);
     if (!loginValidation.success) {
       throw new AppError(Status.IncorrectLoginData, "Données invalides");
@@ -37,7 +37,9 @@ export class ConnexionController extends Controller<ConnexionDeps> {
     this.deps.context.setCookie(COOKIE_NAME, token, getCookieOptions(props.remember));
 
     return {
-      session: {
+      status: Status.Ok,
+      success: true,
+      data: {
         id: user.id,
         username: user.username,
         profilePictureSource: { alt: user.profilePicture.alt, src: user.profilePicture.url },
@@ -45,7 +47,7 @@ export class ConnexionController extends Controller<ConnexionDeps> {
     };
   }
 
-  async register(props: RegisterData) {
+  async register(props: RegisterData): Promise<ServerResponse<Session>> {
     const registerValidation = registerSchema.safeParse(props);
     if (!registerValidation.success) {
       throw new AppError(
@@ -95,7 +97,9 @@ export class ConnexionController extends Controller<ConnexionDeps> {
     this.deps.context.setCookie(COOKIE_NAME, token, getCookieOptions(true));
 
     return {
-      session: {
+      success: true,
+      status: Status.Ok,
+      data: {
         id: user.id,
         username: user.username,
         profilePictureSource: { alt: user.profilePicture.alt, src: user.profilePicture.url },
@@ -103,12 +107,12 @@ export class ConnexionController extends Controller<ConnexionDeps> {
     };
   }
 
-  async logout() {
+  async logout(): Promise<ServerResponse<{}>> {
     this.deps.context.setCookie(COOKIE_NAME, "", { ...getCookieOptions(false), maxAge: 0 });
-    return { status: Status.LogoutSuccessfull };
+    return { status: Status.LogoutSuccessfull, success: true, data: {} };
   }
 
-  async removeAccount() {
+  async removeAccount(): Promise<ServerResponse<{}>> {
     const user = this.deps.context.user;
     if (!user) throw new AppError(Status.NotConnected, "Non connecté");
 
@@ -118,6 +122,6 @@ export class ConnexionController extends Controller<ConnexionDeps> {
 
     await this.logout();
 
-    return { status: Status.RemoveAccountSuccessfull };
+    return { status: Status.RemoveAccountSuccessfull, success: true, data: {} };
   }
 }

@@ -7,7 +7,7 @@ export async function onSessionRequest() {
   const context = getContext();
   return handleAction("Fetch Session", async () => {
     const userId = context.user?.id ?? null;
-    const session = await new SessionController({ client: prismaClient }).getSession(userId);
-    return { session };
+    const controller = await new SessionController({ client: prismaClient });
+    return handleAction("Profile Picture Change", () => controller.getSession(userId));
   });
 }
