@@ -1,9 +1,10 @@
 import { Readable } from "node:stream";
 import { v2 as cloudinary, type UploadApiResponse } from "cloudinary";
 import { env } from "@/lib/env";
-import { Status } from "@/types/server-response";
-import { Controller, type ControllerDeps } from "./Controller";
 import { AppError } from "@/lib/errors";
+import type { Session } from "@/types/auth";
+import { type ServerResponse, Status } from "@/types/server-response";
+import { Controller, type ControllerDeps } from "./Controller";
 
 interface FileDeps extends ControllerDeps {
   file?: File;
@@ -37,7 +38,7 @@ export default class FileController extends Controller<FileDeps> {
     }
   }
 
-  async handleUserImageChange(user: { id: number } | null) {
+  async handleUserImageChange(user: { id: number } | null): Promise<ServerResponse<Session>> {
     if (!user) throw new AppError(Status.NotConnected, "Vous devez être connecté");
 
     await this.removeUserImage(user.id);
@@ -50,7 +51,9 @@ export default class FileController extends Controller<FileDeps> {
     });
 
     return {
-      session: {
+      success: true,
+      status: Status.Ok,
+      data: {
         id: user.id,
         username: update.username,
         profilePictureSource: { alt: update.profilePicture.alt, src: update.profilePicture.url },

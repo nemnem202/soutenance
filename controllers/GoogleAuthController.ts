@@ -2,11 +2,12 @@ import { faker } from "@faker-js/faker";
 import type { Request, Response } from "express";
 import type { OAuth2Client } from "google-auth-library";
 import { nanoid } from "nanoid";
+import { generateJwt } from "@/lib/auth-utils";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
 import type { Session } from "@/types/auth";
+import { type ServerResponse, Status } from "@/types/server-response";
 import { Controller, type ControllerDeps } from "./Controller";
-import { generateJwt } from "@/lib/auth-utils";
 
 interface GoogleAuthDeps extends ControllerDeps {
   req: Request;
@@ -18,7 +19,7 @@ export default class GoogleAuthController extends Controller<GoogleAuthDeps> {
   private generateRandomUsername(username: string): string {
     return `${username.split(" ").join("_")}_${nanoid(8)}`;
   }
-  async getAuth() {
+  async getAuth(): Promise<ServerResponse<{}>> {
     const { res, googleClient } = this.deps;
 
     const state = crypto.randomUUID();
@@ -38,14 +39,25 @@ export default class GoogleAuthController extends Controller<GoogleAuthDeps> {
     logger.info(`Redirect URL: ${url}`);
 
     res.redirect(url);
+
+    return {
+      success: true,
+      status: Status.Ok,
+      data: {},
+    };
   }
 
-  async getCallback() {
+  async getCallback(): Promise<ServerResponse<{}>> {
     const { req, res, googleClient, client } = this.deps;
     const { code, state } = req.query;
     const storedState = req.cookies.oauth_state;
     if (!state || state !== storedState) {
-      return res.status(400).send("Invalid state");
+      res.status(400).send("Invalid state");
+      return {
+        success: false,
+        status: Status.UnknownError,
+        title: "Invalid state",
+      };
     }
 
     const { tokens } = await googleClient.getToken(code as string);
@@ -145,5 +157,11 @@ export default class GoogleAuthController extends Controller<GoogleAuthDeps> {
         </body>
       </html>
     `);
+
+    return {
+      success: true,
+      status: Status.Ok,
+      data: {},
+    };
   }
 }

@@ -8,8 +8,8 @@ import { getPreferredLanguage } from "@/lib/utils";
 import getCurrentUserFromCookie from "@/middlewares/getCurrentUser";
 import type { ScreenSizeType } from "@/providers/screen-size-provider";
 import type { Session } from "@/types/auth";
-import { type ChordHarmony, Notes } from "@/types/music";
 import type { Account, Exercise, Playlist } from "@/types/entities";
+import { type ChordHarmony, Notes } from "@/types/music";
 
 function getScreen(pageContext: PageContextServer): ScreenSizeType {
   const ua = pageContext.headers ? (pageContext.headers["user-agent"] ?? "") : "";
@@ -28,8 +28,13 @@ async function getAuthenticatedSession(cookieHeader: string | undefined): Promis
   if (!cookieHeader) return null;
   const user = await getCurrentUserFromCookie(cookieHeader);
   if (!user) return null;
-
-  return new SessionController({ client: prismaClient }).getSession(user.id);
+  const controller = new SessionController({ client: prismaClient });
+  const response = await controller.getSession(user.id);
+  if (response.success) {
+    return response.data;
+  } else {
+    return null;
+  }
 }
 
 const generatePlaceholders = () =>

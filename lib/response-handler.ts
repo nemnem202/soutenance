@@ -1,15 +1,15 @@
-import { logger } from "./logger";
+import { type ServerResponse, Status } from "@/types/server-response";
 import { AppError } from "./errors";
-import { Status, type ErrorServerResponse } from "@/types/server-response";
+import { logger } from "./logger";
 
 export async function handleAction<T>(
   actionName: string,
-  fn: () => Promise<T>
-): Promise<{ success: true; data: T } | ErrorServerResponse> {
+  fn: () => Promise<ServerResponse<T>>
+): Promise<ServerResponse<T>> {
   try {
     const result = await fn();
     logger.success(`${actionName} executed successfully`);
-    return { success: true, ...(result as any) };
+    return result;
   } catch (err) {
     if (err instanceof AppError) {
       logger.warn(`${actionName} failed: ${err.title} - ${err.description ?? ""}`);

@@ -63,7 +63,7 @@ function Content() {
     const response = await imagePromise;
 
     if (response.success) {
-      const session = (response as any).session;
+      const session = response.data;
       setSession(session);
     }
   };

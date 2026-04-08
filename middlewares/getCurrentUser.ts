@@ -1,6 +1,6 @@
 import { jwtVerify } from "jose";
-import { env } from "@/lib/env";
 import { COOKIE_NAME } from "@/lib/auth-utils";
+import { env } from "@/lib/env";
 
 export default async function getCurrentUserFromCookie(
   cookieString: string | undefined

@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { registerImageSchema } from "./common.schema";
+import { registerImageSchema, usernameSchema } from "./common.schema";
 
 export const loginSchema = z.object({
   email: z
@@ -15,10 +15,7 @@ export const loginSchema = z.object({
 export const registerSchema = z
   .object({
     image: registerImageSchema,
-    username: z
-      .string({ error: "The username is required" })
-      .min(5, { error: "The username must be at least 5 characters." })
-      .max(20, { error: "The username must be 20 characters max." }),
+    username: usernameSchema,
     email: z
       .email({ message: "The email is required" })
       .max(255, { message: "The email is too long (max 255)." }),
