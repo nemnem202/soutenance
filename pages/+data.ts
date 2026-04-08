@@ -8,8 +8,8 @@ import { getPreferredLanguage } from "@/lib/utils";
 import getCurrentUserFromCookie from "@/middlewares/getCurrentUser";
 import type { ScreenSizeType } from "@/providers/screen-size-provider";
 import type { Session } from "@/types/auth";
-import { type ChordHarmony, Notes } from "@/types/music";
 import type { Account, Exercise, Playlist } from "@/types/entities";
+import { type ChordHarmony, Notes } from "@/types/music";
 
 function getScreen(pageContext: PageContextServer): ScreenSizeType {
   const ua = pageContext.headers ? (pageContext.headers["user-agent"] ?? "") : "";

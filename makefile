@@ -12,6 +12,9 @@ clear-dev:
 clear-prod:
 	docker compose -f docker-compose.prod.yml down -v
 
+clear-test:
+	docker compose -f docker-compose.test.yml down -v
+
 update-db:
 	pnpx prisma migrate deploy
 

@@ -1,5 +1,5 @@
 import { ArrowRightLeft, LogOut, RefreshCcw, X } from "lucide-react";
-import { ChangeEvent, useId, useRef, useState } from "react";
+import { type ChangeEvent, useId, useRef, useState } from "react";
 import { navigate } from "vike/client/router";
 import Modal from "@/components/organisms/modal";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/organisms/select";
@@ -13,11 +13,11 @@ import useRemoveAccount from "@/hooks/use-remove-account";
 import useSession from "@/hooks/use-session";
 import { useTheme } from "@/hooks/use-theme";
 import flags from "@/i18n/flags";
+import { errorToast, successToast } from "@/lib/toaster";
+import { onUsernameChange } from "@/telefunc/username-change.telefunc";
 import type { Language } from "@/types/i18n";
 import { LoginModal } from "../auth/login-button";
 import { SettingsParam } from "./settings-assets";
-import { onUsernameChange } from "@/telefunc/username-change.telefunc";
-import { errorToast, successToast } from "@/lib/toaster";
 
 export function ThemeParam() {
   const { instance } = useLanguage();

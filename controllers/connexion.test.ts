@@ -1,10 +1,10 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import argon2 from "argon2";
-import prismaClient from "@/lib/prisma-client";
-import { ConnexionController } from "./ConnexionController";
-import { AppError } from "@/lib/errors";
-import { Status } from "@/types/server-response";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { COOKIE_NAME } from "@/lib/auth-utils";
+import { AppError } from "@/lib/errors";
+import prismaClient from "@/lib/prisma-client";
+import { Status } from "@/types/server-response";
+import { ConnexionController } from "./ConnexionController";
 
 vi.mock("cloudinary", () => ({
   v2: {
@@ -86,7 +86,10 @@ describe("ConnexionController Integration", () => {
         expect.objectContaining({ httpOnly: true })
       );
 
-      expect(result.session.id).toBe(user?.id);
+      if (!result.success) throw new Error("Le contrôleur aurait dû réussir");
+
+      expect(result.success).toBe(true);
+      expect(result.data.id).toBe(user?.id);
     });
 
     it("should throw AppError if email already exists", async () => {
@@ -130,8 +133,8 @@ describe("ConnexionController Integration", () => {
         password: "securepassword",
         remember: true,
       });
-
-      expect(result.session.username).toBe("loginuser");
+      if (!result.success) throw new Error("Le contrôleur aurait dû réussir");
+      expect(result.data.username).toBe("loginuser");
       expect(context.setCookie).toHaveBeenCalled();
     });
 

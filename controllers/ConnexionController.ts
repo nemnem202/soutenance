@@ -1,12 +1,12 @@
 import argon2 from "argon2";
 import type { Telefunc } from "telefunc";
+import { COOKIE_NAME, generateJwt, getCookieOptions } from "@/lib/auth-utils";
+import { AppError } from "@/lib/errors";
 import { loginSchema, registerSchema } from "@/schemas/auth.schema";
 import type { LoginData, RegisterData, Session } from "@/types/auth";
-import { ServerResponse, Status } from "@/types/server-response";
+import { type ServerResponse, Status } from "@/types/server-response";
 import { Controller, type ControllerDeps } from "./Controller";
 import FileController from "./fileController";
-import { AppError } from "@/lib/errors";
-import { COOKIE_NAME, generateJwt, getCookieOptions } from "@/lib/auth-utils";
 
 interface ConnexionDeps extends ControllerDeps {
   context: Telefunc.Context;

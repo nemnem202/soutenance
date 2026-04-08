@@ -1,7 +1,7 @@
-import type { Session } from "@/types/auth";
-import { Controller } from "./Controller";
 import type { PrismaClient } from "@/lib/generated/prisma/client";
-import { ServerResponse, Status } from "@/types/server-response";
+import type { Session } from "@/types/auth";
+import { type ServerResponse, Status } from "@/types/server-response";
+import { Controller } from "./Controller";
 
 export default class SessionController extends Controller<{ client: PrismaClient }> {
   async getSession(userId: number | null): Promise<ServerResponse<Session>> {

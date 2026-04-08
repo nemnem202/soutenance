@@ -2,12 +2,12 @@ import { faker } from "@faker-js/faker";
 import type { Request, Response } from "express";
 import type { OAuth2Client } from "google-auth-library";
 import { nanoid } from "nanoid";
+import { generateJwt } from "@/lib/auth-utils";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
 import type { Session } from "@/types/auth";
+import { type ServerResponse, Status } from "@/types/server-response";
 import { Controller, type ControllerDeps } from "./Controller";
-import { generateJwt } from "@/lib/auth-utils";
-import { ServerResponse, Status } from "@/types/server-response";
 
 interface GoogleAuthDeps extends ControllerDeps {
   req: Request;

@@ -1,8 +1,8 @@
 import { getContext, shield } from "telefunc";
 import { ConnexionController } from "@/controllers/ConnexionController";
 import prismaClient from "@/lib/prisma-client";
-import type { LoginData, RegisterData } from "@/types/auth";
 import { handleAction } from "@/lib/response-handler";
+import type { LoginData, RegisterData } from "@/types/auth";
 
 export async function onLogin(props: LoginData) {
   const controller = new ConnexionController({ client: prismaClient, context: getContext() });

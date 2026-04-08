@@ -1,8 +1,8 @@
-import { PrismaClient } from "@/lib/generated/prisma/client";
-import { Controller } from "./Controller";
-import { Session } from "@/types/auth";
+import type { PrismaClient } from "@/lib/generated/prisma/client";
 import { usernameSchema } from "@/schemas/common.schema";
-import { ServerResponse, Status } from "@/types/server-response";
+import type { Session } from "@/types/auth";
+import { type ServerResponse, Status } from "@/types/server-response";
+import { Controller } from "./Controller";
 
 export default class UserController extends Controller<{ client: PrismaClient }> {
   async updateUsername(
