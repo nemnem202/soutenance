@@ -11,7 +11,18 @@ export default class UserController extends Controller<{ client: PrismaClient }>
   ): Promise<ServerResponse<Session>> {
     if (!userId) return { success: false, status: Status.NotConnected, title: "Not connected" };
 
-    usernameSchema.parse(newUsername);
+    const parse = usernameSchema.safeParse(newUsername);
+
+    if (!parse.success) {
+      const firstErrorMessage = parse.error.issues[0].message;
+
+      return {
+        success: false,
+        status: Status.IncorrectLoginData,
+        title: "Bad username",
+        description: firstErrorMessage,
+      };
+    }
 
     const existingUser = await this.deps.client.user.findUnique({
       where: {
