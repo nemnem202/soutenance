@@ -23,3 +23,8 @@ export const registerImageSchema = z.object({
     ),
   alt: z.string({ error: "The image description must be provided." }),
 });
+
+export const usernameSchema = z
+  .string({ error: "The username is required" })
+  .min(5, { error: "The username must be at least 5 characters." })
+  .max(20, { error: "The username must be 20 characters max." });

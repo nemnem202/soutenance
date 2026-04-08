@@ -18,6 +18,7 @@ export async function onLogout() {
   const controller = new ConnexionController({ client: prismaClient, context: getContext() });
   return handleAction("Logout", () => controller.logout());
 }
+
 export function onRemoveAccount() {
   const context = getContext();
   const controller = new ConnexionController({

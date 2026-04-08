@@ -1,5 +1,5 @@
-import { ArrowRightLeft, LogOut, X } from "lucide-react";
-import { useId, useState } from "react";
+import { ArrowRightLeft, LogOut, RefreshCcw, X } from "lucide-react";
+import { ChangeEvent, useId, useRef, useState } from "react";
 import { navigate } from "vike/client/router";
 import Modal from "@/components/organisms/modal";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/organisms/select";
@@ -16,6 +16,8 @@ import flags from "@/i18n/flags";
 import type { Language } from "@/types/i18n";
 import { LoginModal } from "../auth/login-button";
 import { SettingsParam } from "./settings-assets";
+import { onUsernameChange } from "@/telefunc/username-change.telefunc";
+import { errorToast, successToast } from "@/lib/toaster";
 
 export function ThemeParam() {
   const { instance } = useLanguage();
@@ -167,10 +169,47 @@ export function ChangeAccountButton() {
 export function UsernameParam() {
   const { instance } = useLanguage();
   const id = useId();
-  const { session } = useSession();
+  const { session, setSession } = useSession();
+  const [loading, setLoading] = useState(false);
+  const [inputMatch, setInputMatch] = useState(true);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const handleValueChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.currentTarget.value !== session?.username) {
+      setInputMatch(false);
+    } else {
+      setInputMatch(true);
+    }
+  };
+  const handleSubmit = async () => {
+    setLoading(true);
+    if (!inputRef.current) return setLoading(false);
+    const response = await onUsernameChange(inputRef.current.value);
+
+    if (response.success) {
+      successToast(`Success !`);
+      setSession(response);
+    } else {
+      errorToast(response.title, response.description);
+    }
+
+    setLoading(false);
+  };
   return (
     <SettingsParam label={instance.getItem("username")} id={id} orientation="vertical">
-      <Input className="!text-left p-2" id={id} defaultValue={session?.username} />
+      <div className="flex gap-3">
+        <Input
+          ref={inputRef}
+          className="!text-left p-2"
+          id={id}
+          defaultValue={session?.username}
+          onChange={handleValueChange}
+        />
+        {!inputMatch && (
+          <Button variant={"secondary"} disabled={loading} onClick={handleSubmit}>
+            {loading ? <Spinner /> : <RefreshCcw />}
+          </Button>
+        )}
+      </div>
     </SettingsParam>
   );
 }
