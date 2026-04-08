@@ -1,21 +1,29 @@
 FROM node:20-alpine
 
+RUN apk add --no-cache libc6-compat bash git python3 wget tar make
+
 RUN npm install -g pnpm
+
+
+ARG MMA_VERSION=25.05.0
+RUN wget https://www.mellowood.ca/mma/mma-bin-${MMA_VERSION}.tar.gz && \
+    mkdir -p /opt/mma && \
+    tar -xzvf mma-bin-${MMA_VERSION}.tar.gz -C /opt/mma --strip-components=1 && \
+    rm mma-bin-${MMA_VERSION}.tar.gz && \
+    cd /opt/mma && python3 mma.py -G
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
 
+COPY package.json pnpm-lock.yaml ./
 RUN pnpm install
 
-COPY . .
 
+COPY prisma ./prisma
+COPY prisma.config.ts ./  
 RUN pnpm prisma generate
 
-EXPOSE 3000
-
-EXPOSE 24678
+EXPOSE 3000 24678
 
 ENV HOST=0.0.0.0
-
 ENV NODE_OPTIONS=--max-old-space-size=4096
