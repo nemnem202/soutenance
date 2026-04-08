@@ -1,51 +1,72 @@
 import { ServerResponse, Status } from "@/types/server-response";
 import { spawn } from "child_process";
+import { randomBytes } from "crypto";
+import { readFile, unlink } from "fs/promises";
+import { logger } from "@/lib/logger";
 
 export default class MidiController {
-  public async getMidiFromChords(): Promise<ServerResponse<File>> {
-    const buffer = await this.generateMidiBuffer("Tempo 120 \n Style Basic \n 1 C / G /");
-    const uint8Array = new Uint8Array(buffer);
-    const midiFile = new File([uint8Array], "track.mid", { type: "audio/midi" });
-    return {
-      success: true,
-      status: Status.Ok,
-      data: midiFile,
-    };
+  public async getMidiFromChords(): Promise<ServerResponse<Buffer>> {
+    const start = Date.now();
+    const content = [
+      "Tempo 110",
+      "SwingMode On",
+      "Groove Ballad",
+      "SeqSize 4",
+
+      "Repeat",
+      "1 Am7",
+      "2 Dm7",
+      "3 G7",
+      "4 CM7",
+      "5 FM7",
+      "6 Bm7b5",
+      "7 E7b9",
+      "RepeatEnding 1",
+      "Groove BalladFill", // fill activé seulement au dernier passage
+      "8 Am7 / E7b9 /",
+      "Groove Ballad", // on remet le groove normal pour la suite
+      "RepeatEnd 2",
+
+      "Groove BalladEnd",
+      "9 Am7",
+      "z",
+    ].join("\n");
+    const buffer = await this.generateMidiBuffer(content);
+    logger.info(`Midi generated in ${Date.now() - start}ms`);
+    return { success: true, status: Status.Ok, data: buffer };
   }
 
-  private generateMidiBuffer(content: string) {
-    return new Promise<Buffer>((resolve, reject) => {
-      try {
-        const mma = spawn("bash", [
-          "-c",
-          `python3 /opt/mma/mma.py <(echo -e "${content}") /dev/stdout`,
-        ]);
-        const chunks: Buffer[] = [];
-        const errors: Buffer[] = [];
+  private async generateMidiBuffer(content: string): Promise<Buffer> {
+    const tempFilePath = `/tmp/mma_${randomBytes(8).toString("hex")}.mid`;
 
-        mma.on("error", (err) => {
-          reject(new Error(`Failed to start MMA process: ${err.message}`));
-        });
+    try {
+      await this.runMma(content, tempFilePath);
+      return await readFile(tempFilePath);
+    } finally {
+      await unlink(tempFilePath).catch(() => {});
+    }
+  }
 
-        mma.stdout.on("data", (chunk) => {
-          chunks.push(chunk);
-        });
+  private runMma(content: string, outputPath: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const mma = spawn("python3", ["/opt/mma/mma.py", "-", "-f", outputPath], {
+        env: { ...process.env, MMA_LIB_PATH: "/opt/mma/lib" },
+      });
 
-        mma.stderr.on("data", (chunk) => {
-          errors.push(chunk);
-        });
+      const errors: Buffer[] = [];
 
-        mma.on("close", (code) => {
-          if (code === 0) {
-            resolve(Buffer.concat(chunks));
-          } else {
-            const errorMsg = Buffer.concat(errors).toString();
-            reject(new Error(`MMA Error (Code ${code}): ${errorMsg}`));
-          }
-        });
-      } catch (e) {
-        reject(e);
-      }
+      mma.stdin.write(content + "\n");
+      mma.stdin.end();
+
+      mma.stdout.on("data", (chunk: Buffer) => errors.push(chunk));
+      mma.stderr.on("data", (chunk: Buffer) => errors.push(chunk));
+
+      mma.on("close", (code) => {
+        if (code === 0) resolve();
+        else reject(new Error(`MMA Error (Code ${code}): ${Buffer.concat(errors).toString()}`));
+      });
+
+      mma.on("error", (err) => reject(new Error(`Failed to start MMA: ${err.message}`)));
     });
   }
 }
