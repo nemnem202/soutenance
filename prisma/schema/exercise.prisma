@@ -1,6 +1,7 @@
 model Exercise {
     id            Int                       @id @default(autoincrement())
-    title         String
+    title         String                    @db.VarChar(100)
+    composer      String                    @db.VarChar(200)
     defaultConfig Config                    @relation("DefaultConfig", fields: [configId], references: [id], onDelete: Cascade)
     configId      Int                       @unique
     userConfigs   ExerciseSavesUserConfig[]
@@ -11,15 +12,14 @@ model Exercise {
 }
 
 model Config {
-    id              Int                       @id @default(autoincrement())
-    bpm             Int
-    key             String
-    groove          String
-    timeSignature   TimeSignature             @relation(fields: [timeSignatureId], references: [id])
-    exerciseDefault Exercise?                 @relation("DefaultConfig")
-    userConfigs     ExerciseSavesUserConfig[]
-
-    timeSignatureId Int
+    id                  Int                       @id @default(autoincrement())
+    bpm                 Int
+    key                 String                    @db.VarChar(50)
+    groove              String                    @db.VarChar(100)
+    timeSignatureTop    Int
+    timeSignatureBottom Int
+    exerciseDefault     Exercise?                 @relation("DefaultConfig")
+    userConfigs         ExerciseSavesUserConfig[]
 }
 
 model ExerciseSavesUserConfig {
@@ -52,7 +52,7 @@ model Section {
     id    Int         @id @default(autoincrement())
     index Int
     type  SectionType
-    label String
+    label String      @db.VarChar(50)
 
     chordsGrid   ChordsGrid @relation(fields: [chordsGridId], references: [id], onDelete: Cascade)
     chordsGridId Int
@@ -83,30 +83,21 @@ model VoltaBracket {
 }
 
 model Cell {
-    id                  Int            @id @default(autoincrement())
-    kind                CellKind
-    keychange           String?
-    measure             Measure        @relation(fields: [measureId], references: [id], onDelete: Cascade)
-    measureId           Int
-    chord               Chord?         @relation(fields: [chordId], references: [id], onDelete: Cascade)
-    chordId             Int?
-    timeSignatureChange TimeSignature? @relation("CellTS", fields: [tsChangeId], references: [id])
-    tsChangeId          Int?           @unique
-}
-
-model TimeSignature {
-    id         Int      @id @default(autoincrement())
-    top        Int
-    bottom     Int
-    cellChange Cell?    @relation("CellTS")
-    configId   Int?
-    configs    Config[]
+    id                        Int      @id @default(autoincrement())
+    kind                      CellKind
+    keychange                 String?  @db.VarChar(50)
+    measure                   Measure  @relation(fields: [measureId], references: [id], onDelete: Cascade)
+    measureId                 Int
+    chord                     Chord?   @relation(fields: [chordId], references: [id], onDelete: Cascade)
+    chordId                   Int?
+    timeSignatureChangeTop    Int?
+    timeSignatureChangeBottom Int?
 }
 
 model Chord {
     id       Int    @id @default(autoincrement())
-    note     String
-    modifier String
+    note     String @db.VarChar(3) // "C", "C#", "Db" — max 2 chars mais 3 par sécurité
+    modifier String @db.VarChar(20)
 
     overId Int?   @unique
     over   Chord? @relation("ChordOver", fields: [overId], references: [id])
