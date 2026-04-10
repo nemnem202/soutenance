@@ -2,26 +2,6 @@ import * as z from "zod";
 import { imageSchema, titleSchema } from "./common.schema";
 import { CHORDS_DICTIONNARY } from "@/config/chords-dictionary";
 
-export const playlistSchema = z.object({
-  image: imageSchema,
-  title: titleSchema,
-  description: z
-    .string()
-    .max(500, { error: "The descripition is too long, max 500 caracters." })
-    .optional(),
-  tags: z
-    .array(
-      z
-        .string()
-        .min(1, "One of the tags is too short, min 1 caracter.")
-        .max(50, "One of the tags is too long, max 50 caracters.")
-    )
-    .max(10, { error: "Too many tags, max 10." }),
-  exercisesIds: z.array(z.int()),
-  userId: z.int(),
-  visibility: z.enum(["public", "private"]),
-});
-
 export const timeSignatureSchema = z.object({
   top: z.int().min(1).max(32),
   bottom: z.int().min(1).max(32),
@@ -145,4 +125,24 @@ export const exerciseSchema = z.object({
     .max(200, "The composer name is too long"),
   defaultConfig: configSchema,
   chordsGrid: chordsGridSchema,
+});
+
+export const playlistSchema = z.object({
+  image: imageSchema,
+  title: titleSchema,
+  description: z
+    .string()
+    .max(500, { error: "The descripition is too long, max 500 caracters." })
+    .optional(),
+  tags: z
+    .array(
+      z
+        .string()
+        .min(1, "One of the tags is too short, min 1 caracter.")
+        .max(50, "One of the tags is too long, max 50 caracters.")
+    )
+    .max(10, { error: "Too many tags, max 10." }),
+  exercises: z.array(exerciseSchema),
+  userId: z.int(),
+  visibility: z.enum(["public", "private"]),
 });

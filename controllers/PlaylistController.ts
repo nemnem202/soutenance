@@ -1,4 +1,4 @@
-import type { Exercise, Playlist } from "@/types/entities";
+import type { Exercise, Playlist, PlaylistSchema } from "@/types/entities";
 import { Controller, type ControllerDeps } from "./Controller";
 
 interface PlaylistControllerDeps extends ControllerDeps {
@@ -6,7 +6,7 @@ interface PlaylistControllerDeps extends ControllerDeps {
 }
 
 export default class PlaylistController extends Controller<PlaylistControllerDeps> {
-  public createPlaylist(_playlist: Playlist) {}
+  public createPlaylist(_playlist: PlaylistSchema): Promise<Playlist> {}
   public addExerciseToPlaylist(_exercise: Exercise, _playlist_id: number) {}
   public removeExerciseFromPlaylist(_exercise: Exercise, _playlist_id: number) {}
   public changePlaylistVisibility(_playlistId: number) {}
