@@ -121,9 +121,9 @@ export default class GoogleAuthController extends Controller<GoogleAuthDeps> {
 
     const session: Session = {
       id: dbUser.id,
-      profilePictureSource: {
+      profilePicture: {
         alt: dbUser.profilePicture.alt,
-        src: dbUser.profilePicture.url,
+        url: dbUser.profilePicture.url,
       },
       username: dbUser.username,
     };

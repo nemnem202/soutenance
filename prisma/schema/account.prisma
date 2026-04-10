@@ -11,6 +11,7 @@ model User {
    classicAuthMethod        ClassicAuthMethod?
    exerciseSavesUserConfigs ExerciseSavesUserConfig[]
    playlists                Playlist[]
+   exercises                Exercise[]
 }
 
 model ClassicAuthMethod {

@@ -56,7 +56,7 @@ export default class FileController extends Controller<FileDeps> {
       data: {
         id: user.id,
         username: update.username,
-        profilePictureSource: { alt: update.profilePicture.alt, src: update.profilePicture.url },
+        profilePicture: { alt: update.profilePicture.alt, url: update.profilePicture.url },
       },
     };
   }

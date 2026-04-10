@@ -42,7 +42,7 @@ export class ConnexionController extends Controller<ConnexionDeps> {
       data: {
         id: user.id,
         username: user.username,
-        profilePictureSource: { alt: user.profilePicture.alt, src: user.profilePicture.url },
+        profilePicture: { alt: user.profilePicture.alt, url: user.profilePicture.url },
       },
     };
   }
@@ -102,7 +102,7 @@ export class ConnexionController extends Controller<ConnexionDeps> {
       data: {
         id: user.id,
         username: user.username,
-        profilePictureSource: { alt: user.profilePicture.alt, src: user.profilePicture.url },
+        profilePicture: { alt: user.profilePicture.alt, url: user.profilePicture.url },
       },
     };
   }

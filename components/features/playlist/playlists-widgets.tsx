@@ -16,8 +16,8 @@ export function SmallPlaylistWidget() {
     >
       <div className="h-12 w-12 aspect-square overflow-hidden">
         <img
-          src={playlist.image.src}
-          alt={playlist.image.alt}
+          src={playlist.cover.url}
+          alt={playlist.cover.alt}
           className="object-cover h-full w-full"
           width={48}
           loading="lazy"
@@ -26,7 +26,7 @@ export function SmallPlaylistWidget() {
       <div className="flex flex-1 flex-col min-w-0">
         <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{playlist.title}</p>
         <p className="paragraph-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
-          {instance.getItem("by")} {playlist.author}
+          {instance.getItem("by")} {playlist.author.username}
         </p>
       </div>
     </a>
@@ -73,8 +73,8 @@ export function MediumPlaylistWidget() {
         <a href={`/playlist/${playlist.id}`} className="flex flex-col rounded gap-2.5">
           <div className="w-full aspect-square rounded overflow-hidden">
             <img
-              src={playlist.image.src}
-              alt={playlist.image.alt}
+              src={playlist.cover.url}
+              alt={playlist.cover.alt}
               className="w-full h-full object-cover"
               width={185}
               loading="lazy"
@@ -88,10 +88,10 @@ export function MediumPlaylistWidget() {
 
             <div className="w-full justify-between paragraph-sm text-muted-foreground flex wrap">
               <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[80%]">
-                {instance.getItem("by")} {playlist.author}
+                {instance.getItem("by")} {playlist.author.username}
               </p>
               <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[15%]">
-                {playlist.exercisesIds.length > 99 ? ">99" : playlist.exercisesIds.length}
+                {playlist.exercises.length > 99 ? ">99" : playlist.exercises.length}
               </p>
             </div>
           </div>

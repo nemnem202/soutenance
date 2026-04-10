@@ -25,8 +25,8 @@ export default function ChordCarousel({ carouselRef, api, axis }: ChordCarouselP
             <div
               className={`flex gap-8 ${axis === "y" ? "flex-col touch-pan-x h-full" : "flex-row touch-pan-y"}`}
             >
-              {chords.map((chord) => (
-                <div className="flex-none min-w-0 font-mono text-[5rem]" key={chord.tickStart}>
+              {chords.map((chord, index) => (
+                <div className="flex-none min-w-0 font-mono text-[5rem]" key={index}>
                   <div
                     className={`embla__slide__number rounded-[1.8rem] text-[6rem] font-semibold flex items-center justify-center h-fit select-none px-[3rem] min-w-[5ch] max-w-[20ch] flex-none min-w-0 font-mono text-[5rem] ${axis === "y" ? "w-full" : ""}`}
                     style={{ opacity: 0, transform: "scale(0)" }}

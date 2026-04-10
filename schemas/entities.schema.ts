@@ -1,6 +1,6 @@
 import * as z from "zod";
-import { imageSchema, titleSchema } from "./common.schema";
 import { CHORDS_DICTIONNARY } from "@/config/chords-dictionary";
+import { imageSchema, titleSchema } from "./common.schema";
 
 export const timeSignatureSchema = z.object({
   top: z.int().min(1).max(32),
@@ -10,10 +10,11 @@ export const timeSignatureSchema = z.object({
 export const keysSchema = z.string();
 
 export const configSchema = z.object({
-  bpm: z.int().min(10, "The bpm is too low, min 20").max(500, "the bpm is too high, max 500"),
-  key: keysSchema,
-  groove: z.string(),
-  timeSignature: timeSignatureSchema,
+  bpm: z.number().int().min(10).max(500),
+  key: z.string().max(50),
+  groove: z.string().max(100),
+  timeSignatureTop: z.number().int().min(1).max(32),
+  timeSignatureBottom: z.number().int().min(1).max(32),
 });
 
 export const sectionType = z.enum([
@@ -53,6 +54,7 @@ export const noteSchema = z.enum([
   "A#",
   "Bb",
   "B",
+  "%",
 ]);
 
 export const cellKindSchema = z.enum(["Chord", "Spacer", "Empty"]);
@@ -66,33 +68,34 @@ export const chordContentSchema = z.object({
 
 export const chordSchema = z.object({
   content: chordContentSchema,
-  over: chordContentSchema.optional().nullable(),
-  alt: chordContentSchema.optional().nullable(),
+  over: chordContentSchema.nullable().optional(),
+  alt: chordContentSchema.nullable().optional(),
 });
 
 export const cellSchema = z.discriminatedUnion("kind", [
   z.object({
     kind: z.literal("Chord"),
     chord: chordSchema,
-    keychange: keysSchema.optional(),
-    timeSignatureChange: timeSignatureSchema.optional(),
+    keychange: z.string().max(50).nullable().optional(),
+    timeSignatureChangeTop: z.number().int().nullable().optional(),
+    timeSignatureChangeBottom: z.number().int().nullable().optional(),
   }),
-
   z.object({
     kind: z.literal("Spacer"),
-    keychange: keysSchema.optional(),
-    timeSignatureChange: timeSignatureSchema.optional(),
+    keychange: z.string().max(50).nullable().optional(),
+    timeSignatureChangeTop: z.number().int().nullable().optional(),
+    timeSignatureChangeBottom: z.number().int().nullable().optional(),
   }),
-
   z.object({
     kind: z.literal("Empty"),
-    keychange: keysSchema.optional(),
-    timeSignatureChange: timeSignatureSchema.optional(),
+    keychange: z.string().max(50).nullable().optional(),
+    timeSignatureChangeTop: z.number().int().nullable().optional(),
+    timeSignatureChangeBottom: z.number().int().nullable().optional(),
   }),
 ]);
 
 export const measureSchema = z.object({
-  index: z.int(),
+  index: z.number().int(),
   cells: z.array(cellSchema),
 });
 
@@ -117,7 +120,7 @@ export const chordsGridSchema = z.object({
 });
 
 export const exerciseSchema = z.object({
-  playlistId: z.int(),
+  playlistId: z.number().int().nullable().optional(),
   title: titleSchema,
   composer: z
     .string()
@@ -125,10 +128,11 @@ export const exerciseSchema = z.object({
     .max(200, "The composer name is too long"),
   defaultConfig: configSchema,
   chordsGrid: chordsGridSchema,
+  midifileUrl: z.url(),
 });
 
 export const playlistSchema = z.object({
-  image: imageSchema,
+  cover: imageSchema,
   title: titleSchema,
   description: z
     .string()
@@ -143,6 +147,5 @@ export const playlistSchema = z.object({
     )
     .max(10, { error: "Too many tags, max 10." }),
   exercises: z.array(exerciseSchema),
-  userId: z.int(),
   visibility: z.enum(["public", "private"]),
 });

@@ -1,7 +1,5 @@
-import { faker } from "@faker-js/faker";
 import { UAParser } from "ua-parser-js";
 import type { PageContextServer } from "vike/types";
-import { CHORDS_DICTIONNARY } from "@/config/chords-dictionary";
 import SessionController from "@/controllers/SessionController";
 import prismaClient from "@/lib/prisma-client";
 import { getPreferredLanguage } from "@/lib/utils";
@@ -9,7 +7,7 @@ import getCurrentUserFromCookie from "@/middlewares/getCurrentUser";
 import type { ScreenSizeType } from "@/providers/screen-size-provider";
 import type { Session } from "@/types/auth";
 import type { Account, Exercise, Playlist } from "@/types/entities";
-import { type ChordHarmony, Notes } from "@/types/music";
+import type { Chord } from "@/types/music";
 
 function getScreen(pageContext: PageContextServer): ScreenSizeType {
   const ua = pageContext.headers ? (pageContext.headers["user-agent"] ?? "") : "";
@@ -37,24 +35,16 @@ async function getAuthenticatedSession(cookieHeader: string | undefined): Promis
   }
 }
 
-const generatePlaceholders = () =>
-  Array.from({ length: 20 }, (_, index) => {
-    const root = faker.helpers.arrayElement(Notes);
-    let harm: ChordHarmony | null = null;
-    if (root !== "%") {
-      const randomHarm = faker.helpers.arrayElement(Object.entries(CHORDS_DICTIONNARY));
-      harm = randomHarm[1];
-    }
-
-    const tickStart = index * 480;
-    const tickEnd = tickStart + faker.number.int({ min: 240, max: 960 });
+const generatePlaceholders = (): Chord[] =>
+  Array.from({ length: 20 }, (_, _index) => {
+    const root = "C";
+    const harm = "Maj";
 
     return {
-      index,
-      root,
-      harm,
-      tickStart,
-      tickEnd,
+      content: {
+        modifier: harm,
+        note: root,
+      },
     };
   });
 

@@ -63,9 +63,9 @@ export default class UserController extends Controller<{ client: PrismaClient }>
       data: {
         id: userData.id,
         username: userData.username,
-        profilePictureSource: {
+        profilePicture: {
           alt: userData.profilePicture.alt,
-          src: userData.profilePicture.url,
+          url: userData.profilePicture.url,
         },
       },
     };

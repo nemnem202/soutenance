@@ -23,7 +23,7 @@ export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
     <form id="form-rhf-post" onSubmit={form.handleSubmit(handleSubmit)} ref={formRef}>
       <FieldGroup className={`flex  items-center  flex-col ${axe === "x" && "md:flex-row"}`}>
         <Controller
-          name="image.src"
+          name="cover.url"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid} className="gap-1 w-min">

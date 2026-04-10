@@ -13,36 +13,55 @@ function generateAccount(): Account {
 }
 
 function generateExercise(accounts: Account[]): Exercise {
+  const account = faker.helpers.arrayElement(accounts);
   return {
     id: faker.number.int(),
     title: faker.music.songName(),
-    account: faker.helpers.arrayElement(accounts),
-    author: faker.person.firstName(),
-    config: {
-      bpm: faker.number.int({ min: 60, max: 200 }),
+    author: {
+      id: account.id,
+      profilePicture: {
+        alt: "sdfsf",
+        url: account.picture,
+      },
+      username: account.firstName,
     },
-    creation: faker.date.anytime(),
-    hasChords: faker.datatype.boolean(),
-    hasMelody: faker.datatype.boolean(),
-    midiFileId: faker.number.int(),
+    defaultConfig: {
+      bpm: faker.number.int({ min: 60, max: 200 }),
+      groove: "Sqdqd",
+      key: "A",
+      timeSignatureBottom: 4,
+      timeSignatureTop: 4,
+    },
+    chordsGrid: {
+      sections: [],
+    },
+    composer: faker.person.fullName(),
+    midifileUrl: "",
   };
 }
 
 function generatePlaylist(exercises: Exercise[], accounts: Account[]): Playlist {
   const nbExercises = faker.number.int({ min: 1, max: 5 });
   const selected = faker.helpers.arrayElements(exercises, nbExercises);
+  const account = faker.helpers.arrayElement(accounts);
 
   return {
     id: faker.number.int(),
-    author: faker.person.firstName() + faker.person.lastName(),
-    accountId: faker.helpers.arrayElement(accounts).id,
-    image: {
-      src: faker.image.urlPicsumPhotos({ width: 400, height: 300 }),
+    author: {
+      id: account.id,
+      profilePicture: {
+        alt: "sdfsf",
+        url: account.picture,
+      },
+      username: account.firstName,
+    },
+    cover: {
+      url: faker.image.urlPicsumPhotos({ width: 400, height: 300 }),
       alt: faker.lorem.words(3),
     },
     title: faker.music.album(),
     tags: Array.from({ length: faker.number.int({ min: 1, max: 5 }) }, () => faker.hacker.noun()),
-    exercisesIds: selected.map((e) => e.id),
+    exercises: selected,
     description: faker.lorem.sentences(faker.number.int({ min: 1, max: 3 })),
     visibility: "public",
   };

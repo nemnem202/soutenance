@@ -2,8 +2,8 @@ import * as z from "zod";
 import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from "@/config/image";
 
 export const imageSchema = z.object({
-  src: z.string({ error: "The image must be provided." }),
-  alt: z.string({ error: "The image description must be provided." }),
+  url: z.url("Invalid image URL"),
+  alt: z.string().min(1, "Alt text is required"),
 });
 
 interface FileLike {
@@ -25,13 +25,11 @@ export const registerImageSchema = z.object({
 });
 
 export const usernameSchema = z
-  .string({ error: "The username is required" })
-  .min(5, { error: "The username must be at least 5 characters." })
-  .max(20, { error: "The username must be 20 characters max." });
+  .string()
+  .min(5, "The username must be at least 5 characters.")
+  .max(20, "The username must be 20 characters max.");
 
 export const titleSchema = z
-  .string({
-    error: "The title is required.",
-  })
-  .min(1, { error: "The title is too short." })
-  .max(100, { error: "The title is too long, max 100 caracters." });
+  .string()
+  .min(1, "The title is too short.")
+  .max(100, "The title is too long (max 100).");

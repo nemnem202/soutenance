@@ -17,6 +17,7 @@ clear-test:
 
 update-db:
 	pnpx prisma migrate dev
+	pnpx prisma generate
 
 free-space:
 	docker volume prune -f

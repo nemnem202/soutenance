@@ -1,10 +1,10 @@
+import { faker } from "@faker-js/faker";
 import ExerciseController from "@/controllers/ExerciseController";
 import PlaylistController from "@/controllers/PlaylistController";
-import type { Playlist, User } from "@/lib/generated/prisma/client";
+import type { User } from "@/lib/generated/prisma/client";
 import { logger } from "@/lib/logger";
 import prismaClient from "@/lib/prisma-client";
-import type { ExerciseSchema, PlaylistSchema } from "@/types/entities";
-import { faker } from "@faker-js/faker";
+import type { ExerciseSchema, Playlist, PlaylistSchema } from "@/types/entities";
 import seedTable from "./seed.json";
 
 async function createUser(): Promise<User> {
