@@ -18,7 +18,8 @@
       "!dist/*",
       "!node_modules/*",
       "!**/.DS_Store",
-      "!**/*.css"
+      "!**/*.css",
+      "!**/*.prisma"
     ]
   },
   "formatter": {

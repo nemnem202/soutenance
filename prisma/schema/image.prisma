@@ -4,5 +4,6 @@ model Image {
     alt     String
     cloudId String?
 
-    users User[]
+    users     User[]
+    playlists Playlist[]
 }

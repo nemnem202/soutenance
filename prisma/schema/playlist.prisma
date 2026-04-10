@@ -1,0 +1,11 @@
+model Playlist {
+    id          Int        @id @default(autoincrement())
+    title       String
+    description String?
+    cover       Image      @relation(fields: [imageId], references: [id], onDelete: Cascade)
+    createdAt   DateTime   @default(now())
+    updatedAt   DateTime   @updatedAt
+    imageId     Int
+    exerciseId  Int
+    exercises   Exercise[]
+}
