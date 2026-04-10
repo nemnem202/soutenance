@@ -6,7 +6,7 @@ import { loginSchema, registerSchema } from "@/schemas/auth.schema";
 import type { LoginData, RegisterData, Session } from "@/types/auth";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Controller, type ControllerDeps } from "./Controller";
-import FileController from "./fileController";
+import FileController from "./FileController";
 
 interface ConnexionDeps extends ControllerDeps {
   context: Telefunc.Context;
