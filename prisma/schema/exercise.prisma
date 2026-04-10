@@ -104,9 +104,9 @@ model TimeSignature {
 }
 
 model Chord {
-    id        Int    @id @default(autoincrement())
-    note      String
-    modifiers String
+    id       Int    @id @default(autoincrement())
+    note     String
+    modifier String
 
     overId Int?   @unique
     over   Chord? @relation("ChordOver", fields: [overId], references: [id])

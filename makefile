@@ -16,7 +16,7 @@ clear-test:
 	docker compose -f docker-compose.test.yml down -v
 
 update-db:
-	pnpx prisma migrate deploy
+	pnpx prisma migrate dev
 
 free-space:
 	docker volume prune -f

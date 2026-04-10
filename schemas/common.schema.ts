@@ -28,3 +28,10 @@ export const usernameSchema = z
   .string({ error: "The username is required" })
   .min(5, { error: "The username must be at least 5 characters." })
   .max(20, { error: "The username must be 20 characters max." });
+
+export const titleSchema = z
+  .string({
+    error: "The title is required.",
+  })
+  .min(1, { error: "The title is too short." })
+  .max(100, { error: "The title is too long, max 100 caracters." });
