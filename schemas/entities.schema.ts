@@ -7,7 +7,7 @@ export const playlistSchema = z.object({
   title: titleSchema,
   description: z
     .string()
-    .max(500, { error: "The descripition is too long, max 100 caracters." })
+    .max(500, { error: "The descripition is too long, max 500 caracters." })
     .optional(),
   tags: z
     .array(
@@ -23,8 +23,8 @@ export const playlistSchema = z.object({
 });
 
 export const timeSignatureSchema = z.object({
-  top: z.int(),
-  bottom: z.int(),
+  top: z.int().min(1).max(32),
+  bottom: z.int().min(1).max(32),
 });
 
 export const keysSchema = z.string();
