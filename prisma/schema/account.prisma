@@ -8,6 +8,8 @@ model User {
    authMethods       AuthMethod[]
    classicAuthMethod ClassicAuthMethod?
    imageId           Int
+
+   exerciseSavesUserConfigs ExerciseSavesUserConfig[]
 }
 
 model ClassicAuthMethod {

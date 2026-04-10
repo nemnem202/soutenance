@@ -1,13 +1,37 @@
 model Exercise {
-    id         Int      @id @default(autoincrement())
-    title      String
-    composer   String
-    playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
-    playlistId Int
+    id            Int                       @id @default(autoincrement())
+    title         String
+    defaultConfig Config                    @relation("DefaultConfig", fields: [configId], references: [id], onDelete: Cascade)
+    configId      Int                       @unique
+    userConfigs   ExerciseSavesUserConfig[]
+    midifile      Midifile?
+    chordsGrid    ChordsGrid?
+    playlist      Playlist?                 @relation(fields: [playlistId], references: [id])
+    playlistId    Int?
+}
 
-    midifile   Midifile?
-    config     Config?
-    chordsGrid ChordsGrid?
+model Config {
+    id              Int                       @id @default(autoincrement())
+    bpm             Int
+    key             String
+    groove          String
+    timeSignature   TimeSignature             @relation(fields: [timeSignatureId], references: [id])
+    exerciseDefault Exercise?                 @relation("DefaultConfig")
+    userConfigs     ExerciseSavesUserConfig[]
+
+    timeSignatureId Int
+}
+
+model ExerciseSavesUserConfig {
+    id         Int      @id @default(autoincrement())
+    user       User     @relation(fields: [userId], references: [id])
+    userId     Int
+    exercise   Exercise @relation(fields: [exerciseId], references: [id])
+    exerciseId Int
+    config     Config   @relation(fields: [configId], references: [id], onDelete: Cascade)
+    configId   Int      @unique
+
+    @@unique([userId, exerciseId])
 }
 
 model Midifile {
@@ -15,28 +39,6 @@ model Midifile {
     url        String
     exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
     exerciseId Int      @unique
-}
-
-model Config {
-    id     Int    @id @default(autoincrement())
-    bpm    Int
-    key    String
-    groove String
-
-    timeSignature   TimeSignature @relation(fields: [timeSignatureId], references: [id], onDelete: Cascade)
-    timeSignatureId Int           @unique
-
-    exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
-    exerciseId Int      @unique
-}
-
-model TimeSignature {
-    id     Int @id @default(autoincrement())
-    top    Int
-    bottom Int
-
-    config     Config?
-    cellChange Cell?   @relation("CellTS")
 }
 
 model ChordsGrid {
@@ -90,6 +92,15 @@ model Cell {
     chordId             Int?
     timeSignatureChange TimeSignature? @relation("CellTS", fields: [tsChangeId], references: [id])
     tsChangeId          Int?           @unique
+}
+
+model TimeSignature {
+    id         Int      @id @default(autoincrement())
+    top        Int
+    bottom     Int
+    cellChange Cell?    @relation("CellTS")
+    configId   Int?
+    configs    Config[]
 }
 
 model Chord {
