@@ -13,6 +13,7 @@ import type {
   VoltaSchema,
 } from "@/types/entities";
 import type { Note } from "@/types/music";
+import { getLoremFlickrUrl } from "@/lib/utils";
 
 class IrealConversionError extends Error {
   constructor(context: string, message: string) {
@@ -432,10 +433,18 @@ export function convertPlaylist(playlistIreal: PlaylistIreal): {
     playlist: {
       title: playlistIreal.title,
       description: undefined,
-      coverUrl: "",
-      createdAt: new Date(),
-      lastModification: new Date(),
+      cover: {
+        alt: `The cover of the playlist ${playlistIreal.title}`,
+        url: getLoremFlickrUrl(
+          800,
+          800,
+          [playlistIreal.title, playlistIreal.songs[0].groove],
+          "all"
+        ),
+      },
       exercises,
+      tags: [],
+      visibility: "public",
     },
     failures,
   };

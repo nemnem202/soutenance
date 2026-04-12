@@ -3,6 +3,7 @@ import type { imageSchema } from "@/schemas/common.schema";
 import type {
   cellSchema,
   chordSchema,
+  chordsGridSchema,
   configSchema,
   exerciseSchema,
   measureSchema,
@@ -39,6 +40,8 @@ export type TimeSignatureSchema = z.infer<typeof timeSignatureSchema>;
 export type ConfigSchema = z.infer<typeof configSchema>;
 
 export type ChordSchema = z.infer<typeof chordSchema>;
+
+export type ChordsGridSchema = z.infer<typeof chordsGridSchema>;
 
 export type CellSchema = z.infer<typeof cellSchema>;
 
