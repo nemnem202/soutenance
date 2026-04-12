@@ -39,3 +39,17 @@ export const getPreferredLanguage = (header: string | null): Language => {
 
 export const chordToString = (chord: Chord) =>
   `${chord.content.note} ${chord.content.modifier ?? ""} ${chord.over && `${chord.over.note} ${chord.over.modifier}`}`;
+
+export const getLoremFlickrUrl = (
+  width: number,
+  height: number,
+  tags: string[] = [],
+  logic: "all" | "any" = "any"
+): string => {
+  const baseUrl = "https://loremflickr.com";
+  const tagsString = tags.length > 0 ? tags.join(",") : "all";
+  const logicSuffix = logic === "all" && tags.length > 0 ? "/all" : "";
+  const cacheBuster = `?lock=${Math.floor(Math.random() * 1000)}`;
+
+  return `${baseUrl}/${width}/${height}/${tagsString}${logicSuffix}${cacheBuster}`;
+};
