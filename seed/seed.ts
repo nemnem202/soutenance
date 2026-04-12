@@ -5,7 +5,10 @@ import type { User } from "@/lib/generated/prisma/client";
 import { logger } from "@/lib/logger";
 import prismaClient from "@/lib/prisma-client";
 import type { ExerciseSchema, Playlist, PlaylistSchema } from "@/types/entities";
-import seedTable from "./seed.json";
+import links from "./links.json";
+import { IrealChartDecoder } from "./conversion/chart_decoder";
+import { convertPlaylist } from "./conversion/converter";
+import { playlistSchema } from "@/schemas/entities.schema";
 
 async function createUser(): Promise<User> {
   const username = faker.person.fullName();
@@ -61,20 +64,44 @@ async function putPlaylistInDb(playlist: PlaylistSchema) {
   await fillPlaylist(userId, playlistId, playlist.exercises, controller);
 }
 
-async function createAll(playlists: PlaylistSchema[]) {
-  const promises = playlists.map(
-    (playlist) =>
-      new Promise(() => {
-        putPlaylistInDb(playlist);
-      })
-  );
-  await Promise.all(promises);
+export default async function convertAllPlaylists() {
+  const allLinks = links as string[];
+  let fails = 0;
+  const successPlaylists: PlaylistSchema[] = [];
+  const failedPlaylists: PlaylistSchema[] = [];
+
+  console.log("Starting Conversion...");
+  allLinks.forEach((link, index) => {
+    try {
+      const irealPlaylist = new IrealChartDecoder(link);
+      const converted = convertPlaylist(irealPlaylist);
+      if (converted.failures.length > 0) {
+        fails++;
+        failedPlaylists.push(converted.playlist);
+        console.log("FAILED", index);
+        return;
+      }
+      const verifiyPlaylist = playlistSchema.safeParse(converted.playlist);
+      if (!verifiyPlaylist.success) {
+        throw new Error(`Critical Fail: ${verifiyPlaylist.error}`);
+      }
+      putPlaylistInDb(converted.playlist);
+      successPlaylists.push(converted.playlist);
+    } catch (err) {
+      fails++;
+      console.log("ERROR", index);
+      console.error(err);
+    }
+  });
+
+  console.log("CONVERSION ENDED");
+  console.log("Success: ", successPlaylists.length, "Failed", fails);
 }
 
 async function seed() {
   try {
     logger.info("Seeding ...");
-    await createAll(seedTable as PlaylistSchema[]);
+    await convertAllPlaylists();
     logger.success("Db is seeded.");
   } catch (err) {
     logger.error("Seed Error: ", err);

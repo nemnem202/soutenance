@@ -1,10 +1,10 @@
-import type { Exercise, ExerciseSchema } from "@/types/entities";
+import type { ExerciseSchema } from "@/types/entities";
 import { Repository } from "./repository";
 import type { Cell } from "@/types/music";
 
 export default class ExerciseRepository extends Repository {
-  async create(exercise: ExerciseSchema, playlistId: number, userId: number): Promise<Exercise> {
-    return await this.client.playlist.update({
+  async create(exercise: ExerciseSchema, playlistId: number, userId: number) {
+    await this.client.playlist.update({
       where: { id: playlistId },
       data: {
         exercises: {

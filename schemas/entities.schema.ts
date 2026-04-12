@@ -59,11 +59,11 @@ export const noteSchema = z.enum([
 
 export const cellKindSchema = z.enum(["Chord", "Spacer", "Empty"]);
 
-export const chordModifierSchema = z.enum(Object.keys(CHORDS_DICTIONNARY));
+export const chordchema = z.enum(Object.keys(CHORDS_DICTIONNARY));
 
 export const chordContentSchema = z.object({
   note: noteSchema,
-  modifier: chordModifierSchema,
+  modifier: chordchema,
 });
 
 export const chordSchema = z.object({
@@ -128,7 +128,7 @@ export const exerciseSchema = z.object({
     .max(200, "The composer name is too long"),
   defaultConfig: configSchema,
   chordsGrid: chordsGridSchema,
-  midifileUrl: z.url(),
+  midifileUrl: z.url().optional().nullable(),
 });
 
 export const playlistSchema = z.object({
