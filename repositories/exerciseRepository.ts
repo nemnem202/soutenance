@@ -1,6 +1,13 @@
-import type { ExerciseSchema } from "@/types/entities";
+import type {
+  CellSchema,
+  ChordSchema,
+  ChordsGridSchema,
+  ExerciseSchema,
+  MeasureSchema,
+  VoltaSchema,
+} from "@/types/entities";
 import { Repository } from "./repository";
-import type { Cell } from "@/types/music";
+import type { Prisma } from "@/lib/generated/prisma/client";
 
 export default class ExerciseRepository extends Repository {
   async create(exercise: ExerciseSchema, playlistId: number, userId: number) {
@@ -9,99 +16,113 @@ export default class ExerciseRepository extends Repository {
       data: {
         exercises: {
           create: {
-            title: exercise.title,
-            composer: exercise.composer,
-            author: { connect: { id: userId } },
-            defaultConfig: {
-              create: {
-                bpm: exercise.defaultConfig.bpm,
-                key: exercise.defaultConfig.key,
-                groove: exercise.defaultConfig.groove,
-                timeSignatureTop: exercise.defaultConfig.timeSignatureTop,
-                timeSignatureBottom: exercise.defaultConfig.timeSignatureBottom,
-              },
-            },
-            midifile: {
-              create: { url: exercise.midifileUrl },
-            },
-
-            chordsGrid: {
-              create: {
-                sections: {
-                  create: exercise.chordsGrid.sections.map((section) => ({
-                    index: section.index,
-                    type: section.type,
-                    label: section.label,
-
-                    commonMeasures: {
-                      create: section.commonMeasures.map((measure) => ({
-                        index: measure.index,
-                        cells: {
-                          create: measure.cells.map((cell) => this.mapCellToPrisma(cell)),
-                        },
-                      })),
-                    },
-
-                    voltas: {
-                      create: section.voltas.map((volta) => ({
-                        volta: volta.volta,
-                        measures: {
-                          create: volta.measures.map((m) => ({
-                            index: m.index,
-                            cells: {
-                              create: m.cells.map((cell) => this.mapCellToPrisma(cell)),
-                            },
-                          })),
-                        },
-                      })),
-                    },
-                  })),
-                },
-              },
-            },
+            ...this.exerciseMapper(exercise, userId),
           },
         },
       },
     });
   }
 
-  private mapCellToPrisma(cell: Cell) {
-    const base = {
-      kind: cell.kind,
-      keychange: cell.keychange,
-      timeSignatureChangeTop: cell.timeSignatureChangeTop,
-      timeSignatureChangeBottom: cell.timeSignatureChangeBottom,
-    };
-
-    if (cell.kind === "Chord" && cell.chord) {
-      return {
-        ...base,
-        chord: {
-          create: {
-            note: cell.chord.content.note,
-            modifier: cell.chord.content.modifier,
-
-            over: cell.chord.over
-              ? {
-                  create: {
-                    note: cell.chord.over.note,
-                    modifier: cell.chord.over.modifier,
-                  },
-                }
-              : undefined,
-            alternate: cell.chord.alt
-              ? {
-                  create: {
-                    note: cell.chord.alt.note,
-                    modifier: cell.chord.alt.modifier,
-                  },
-                }
-              : undefined,
-          },
+  private exerciseMapper(
+    exercise: ExerciseSchema,
+    userId: number
+  ): Prisma.ExerciseCreateWithoutPlaylistInput {
+    return {
+      author: {
+        connect: {
+          id: userId,
         },
-      };
-    }
+      },
+      composer: exercise.composer,
+      title: exercise.title,
+      defaultConfig: {
+        create: {
+          ...exercise.defaultConfig,
+        },
+      },
+      chordsGrid: {
+        create: {
+          ...this.chordsGridMapper(exercise.chordsGrid),
+        },
+      },
+      midifile: exercise.midifileUrl
+        ? {
+            create: {
+              url: exercise.midifileUrl,
+            },
+          }
+        : undefined,
+    };
+  }
 
-    return base;
+  private chordsGridMapper(
+    chordsGrid: ChordsGridSchema
+  ): Prisma.ChordsGridCreateWithoutExerciseInput {
+    return {
+      sections: {
+        create: chordsGrid.sections.map((section) => ({
+          index: section.index,
+          label: section.label,
+          type: section.type,
+          commonMeasures: {
+            create: section.commonMeasures.map((measure) => this.measureMapper(measure)),
+          },
+          voltas: {
+            create: section.voltas.map((volta) => this.voltaMapper(volta)),
+          },
+        })),
+      },
+    };
+  }
+
+  private measureMapper(measure: MeasureSchema): Prisma.MeasureCreateWithoutSectionInput {
+    return {
+      index: measure.index,
+      cells: {
+        create: measure.cells.map((cell) => this.cellMapper(cell)),
+      },
+    };
+  }
+
+  private voltaMapper(volta: VoltaSchema): Prisma.VoltaBracketCreateWithoutSectionInput {
+    return {
+      volta: volta.volta,
+    };
+  }
+
+  private cellMapper(cell: CellSchema): Prisma.CellCreateWithoutMeasureInput {
+    return {
+      kind: cell.kind,
+      chord:
+        cell.kind === "Chord"
+          ? {
+              create: {
+                ...this.chordMapper(cell.chord),
+              },
+            }
+          : undefined,
+      keychange: cell.keychange,
+      timeSignatureChangeBottom: cell.timeSignatureChangeBottom,
+      timeSignatureChangeTop: cell.timeSignatureChangeTop,
+    };
+  }
+
+  private chordMapper(chord: ChordSchema): Prisma.ChordCreateInput {
+    return {
+      modifier: chord.content.modifier,
+      note: chord.content.note,
+      alternate: chord.alt
+        ? {
+            create: {
+              ...this.chordMapper({ content: chord.alt }),
+            },
+          }
+        : undefined,
+      over: chord.over
+        ? {
+            create: { ...this.chordMapper({ content: chord.over }) },
+          }
+        : undefined,
+    };
   }
 }
