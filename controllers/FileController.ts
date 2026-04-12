@@ -5,6 +5,7 @@ import { AppError } from "@/lib/errors";
 import type { Session } from "@/types/auth";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Controller, type ControllerDeps } from "./Controller";
+import UserRepository from "@/repositories/userRepository";
 
 interface FileDeps extends ControllerDeps {
   file?: File;
@@ -18,6 +19,7 @@ cloudinary.config({
 });
 
 export default class FileController extends Controller<FileDeps> {
+  private repository = new UserRepository(this.deps.client);
   private readonly image_folder = env.CLOUD_IMAGE_FOLDER_NAME;
 
   async uploadFileAsImage() {
@@ -44,11 +46,7 @@ export default class FileController extends Controller<FileDeps> {
     await this.removeUserImage(user.id);
     const fileUpload = await this.uploadFileAsImage();
 
-    const update = await this.deps.client.user.update({
-      where: { id: user.id },
-      data: { profilePicture: { update: { url: fileUpload.url, cloudId: fileUpload.imageId } } },
-      include: { profilePicture: true },
-    });
+    const update = await this.repository.updateImage(fileUpload, user.id);
 
     return {
       success: true,
