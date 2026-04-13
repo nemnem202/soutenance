@@ -6,9 +6,6 @@ import { getPreferredLanguage } from "@/lib/utils";
 import getCurrentUserFromCookie from "@/middlewares/getCurrentUser";
 import type { ScreenSizeType } from "@/providers/screen-size-provider";
 import type { Session } from "@/types/auth";
-import type { Account, Exercise, Playlist } from "@/types/entities";
-import type { Chord } from "@/types/music";
-import { logger } from "@/lib/logger";
 
 function getScreen(pageContext: PageContextServer): ScreenSizeType {
   const ua = pageContext.headers ? (pageContext.headers["user-agent"] ?? "") : "";
@@ -36,44 +33,16 @@ async function getAuthenticatedSession(cookieHeader: string | undefined): Promis
   }
 }
 
-const generatePlaceholders = (): Chord[] =>
-  Array.from({ length: 20 }, (_, _index) => {
-    const root = "C";
-    const harm = "Maj";
-
-    return {
-      content: {
-        modifier: harm,
-        note: root,
-      },
-    };
-  });
-
 export async function data(pageContext: PageContextServer) {
   const session = await getAuthenticatedSession(pageContext.headers.cookie);
 
   const preferredLanguage = getPreferredLanguage(pageContext.headers["accept-language"]);
   const screen = getScreen(pageContext);
-
-  const playlists = await prismaClient.playlist.count();
-  logger.info("Playlists:", playlists);
-
   try {
-    const res = await fetch("http://localhost:3000/placeholders");
-    const { accounts, exercises, playlists } = (await res.json()) as {
-      accounts: Account[];
-      exercises: Exercise[];
-      playlists: Playlist[];
-    };
-
     return {
       session,
-      accounts,
-      exercises,
-      playlists,
       preferredLanguage,
       screen,
-      chordsPlaceholders: generatePlaceholders(),
     };
   } catch (err) {
     console.error("Failed to fetch page data:", err);
@@ -82,7 +51,6 @@ export async function data(pageContext: PageContextServer) {
       accounts: [],
       exercises: [],
       playlists: [],
-      chordsPlaceholders: generatePlaceholders(),
       preferredLanguage,
       screen,
     };
