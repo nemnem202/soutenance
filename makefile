@@ -19,6 +19,9 @@ update-db:
 	pnpx prisma migrate dev
 	pnpx prisma generate
 
+seed-dev:
+	docker exec -it music-sandbox-app-dev pnpm prisma db seed
+
 free-space:
 	docker volume prune -f
 	docker image prune -a -f

@@ -1,5 +1,4 @@
 import * as z from "zod";
-import { CHORDS_DICTIONNARY } from "@/config/chords-dictionary";
 import { imageSchema, titleSchema } from "./common.schema";
 
 export const timeSignatureSchema = z.object({
@@ -59,7 +58,7 @@ export const noteSchema = z.enum([
 
 export const cellKindSchema = z.enum(["Chord", "Spacer", "Empty"]);
 
-export const chordchema = z.enum(Object.keys(CHORDS_DICTIONNARY));
+export const chordchema = z.string();
 
 export const chordContentSchema = z.object({
   note: noteSchema,

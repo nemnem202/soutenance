@@ -8,6 +8,7 @@ import type { ScreenSizeType } from "@/providers/screen-size-provider";
 import type { Session } from "@/types/auth";
 import type { Account, Exercise, Playlist } from "@/types/entities";
 import type { Chord } from "@/types/music";
+import { logger } from "@/lib/logger";
 
 function getScreen(pageContext: PageContextServer): ScreenSizeType {
   const ua = pageContext.headers ? (pageContext.headers["user-agent"] ?? "") : "";
@@ -53,6 +54,9 @@ export async function data(pageContext: PageContextServer) {
 
   const preferredLanguage = getPreferredLanguage(pageContext.headers["accept-language"]);
   const screen = getScreen(pageContext);
+
+  const playlists = await prismaClient.playlist.count();
+  logger.info("Playlists:", playlists);
 
   try {
     const res = await fetch("http://localhost:3000/placeholders");

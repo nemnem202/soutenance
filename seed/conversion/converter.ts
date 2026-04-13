@@ -23,7 +23,26 @@ class IrealConversionError extends Error {
 }
 
 function validateAndConvertChord(chordIreal: ChordIreal): ChordSchema {
-  const { note, modifier, over, alternate } = chordIreal;
+  let { note, modifier, over, alternate } = chordIreal;
+  note = (note || "").trim().toUpperCase();
+
+  const noteMapping: Record<string, string> = {
+    X: "%",
+    R: "%",
+    W: "%",
+    P: "%",
+    N: "C",
+    H: "B",
+    "": "C",
+    " ": "C",
+  };
+
+  if (noteMapping[note] !== undefined) {
+    note = noteMapping[note];
+  }
+  if (note.length === 2 && note.endsWith("B")) {
+    note = `${note.charAt(0)}b`;
+  }
 
   const isValid =
     modifier === "" ||
