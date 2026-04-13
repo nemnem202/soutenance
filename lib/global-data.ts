@@ -6,6 +6,7 @@ import { getPreferredLanguage } from "@/lib/utils";
 import getCurrentUserFromCookie from "@/middlewares/getCurrentUser";
 import type { ScreenSizeType } from "@/providers/screen-size-provider";
 import type { Session } from "@/types/auth";
+import { handleAction } from "./response-handler";
 
 function getScreen(pageContext: PageContextServer): ScreenSizeType {
   const ua = pageContext.headers ? (pageContext.headers["user-agent"] ?? "") : "";
@@ -33,9 +34,17 @@ async function getAuthenticatedSession(cookieHeader: string | undefined): Promis
   }
 }
 
+async function getUserPlaylists(userId: number | null) {
+  return handleAction("Get user playlist", async () => {
+    const controller = await new SessionController({ client: prismaClient });
+    return handleAction("Profile Picture Change", () => controller.getUserPlaylists(userId));
+  });
+}
+
 export async function getGlobalData(pageContext: PageContextServer) {
   const session = await getAuthenticatedSession(pageContext.headers.cookie);
   const preferredLanguage = getPreferredLanguage(pageContext.headers["accept-language"]);
+  const userPlaylists = await getUserPlaylists(session?.id ?? null);
   const screen = getScreen(pageContext);
-  return { session, preferredLanguage, screen };
+  return { session, preferredLanguage, screen, userPlaylists };
 }

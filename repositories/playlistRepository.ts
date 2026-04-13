@@ -157,4 +157,44 @@ export class PlaylistRepository extends Repository {
       })),
     };
   }
+
+  async getUserPlaylists(userId: number): Promise<ServerResponse<PlaylistCardDto[]>> {
+    const playlists = await this.client.playlist.findMany({
+      where: {
+        authorId: userId,
+      },
+      include: {
+        cover: true,
+        exercises: {
+          select: {
+            id: true,
+          },
+        },
+        author: {
+          include: {
+            profilePicture: true,
+          },
+          omit: {
+            createdAt: true,
+            updatedAt: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    return {
+      status: Status.Ok,
+      success: true,
+      data: playlists.map((playlist) => ({
+        id: playlist.id,
+        title: playlist.title,
+        author: playlist.author,
+        authorId: playlist.author.id,
+        cover: playlist.cover,
+        exercisesIds: playlist.exercises,
+        visibility: playlist.visibility,
+      })),
+    };
+  }
 }

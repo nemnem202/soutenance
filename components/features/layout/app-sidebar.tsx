@@ -8,8 +8,11 @@ import Logo from "../../ui/logo";
 import { Separator } from "../../ui/separator";
 import NewPlaylistModal from "../playlist/new-playlist-modal";
 import { SmallPlaylistWidget } from "../playlist/playlists-widgets";
+import { useData } from "vike-react/useData";
+import type { Data } from "@/pages/+data";
 
 export default function Sidebar() {
+  const { session } = useSession();
   return (
     <div className="bg-card lg:w-70 md:w-60 fixed z-20 h-screen left-0 top-0 flex flex-col border-e-[1px]">
       <div className="w-full ">
@@ -22,16 +25,18 @@ export default function Sidebar() {
 
         <Separator />
       </div>
-      <div className="flex-1 overflow-y-auto ">
-        {/* <SidebarSection>
-          <Playlists />
-        </SidebarSection> */}
-        <Separator />
-        {/* <SidebarSection>
-          <Recents />
-        </SidebarSection> */}
-        <Separator />
-      </div>
+      {session && (
+        <div className="flex-1 overflow-y-auto ">
+          <SidebarSection>
+            <Playlists />
+          </SidebarSection>
+          <Separator />
+          <SidebarSection>
+            <Recents />
+          </SidebarSection>
+          <Separator />
+        </div>
+      )}
     </div>
   );
 }
@@ -64,6 +69,7 @@ function NavBar() {
 function Playlists() {
   const { instance } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
+  const { userPlaylists } = useData<Data>();
   return (
     <div className="w-full flex flex-col gap-5">
       <div className="w-full flex justify-between items-center">
@@ -73,12 +79,13 @@ function Playlists() {
         </NewPlaylistModal>
       </div>
       <div className="flex flex-col w-full gap-2">
-        <SmallPlaylistWidget />
-        <SmallPlaylistWidget />
-        <SmallPlaylistWidget />
-        <SmallPlaylistWidget />
-        <SmallPlaylistWidget />
-        <SmallPlaylistWidget />
+        {userPlaylists.success && userPlaylists.data.length > 0 ? (
+          userPlaylists.data.map((playlist) => (
+            <SmallPlaylistWidget key={playlist.id} playlist={playlist} />
+          ))
+        ) : (
+          <p className="text-muted-foreground paragraph">No playlists yet</p>
+        )}
       </div>
     </div>
   );
@@ -86,19 +93,20 @@ function Playlists() {
 
 function Recents() {
   const { instance } = useLanguage();
+  const { userPlaylists } = useData<Data>();
   return (
     <div className="w-full flex flex-col gap-5">
       <div className="w-full flex justify-between">
         <h2 className="title-3">{instance.getItem("recents")}</h2>
       </div>
       <div className="flex flex-col w-full gap-2">
-        <SmallPlaylistWidget />
-        <SmallPlaylistWidget />
-        <SmallPlaylistWidget />
-        <SmallPlaylistWidget /> <SmallPlaylistWidget />
-        <SmallPlaylistWidget />
-        <SmallPlaylistWidget />
-        <SmallPlaylistWidget />
+        {userPlaylists.success && userPlaylists.data.length > 0 ? (
+          userPlaylists.data.map((playlist) => (
+            <SmallPlaylistWidget key={playlist.id} playlist={playlist} />
+          ))
+        ) : (
+          <p className="text-muted-foreground paragraph">No playlists yet</p>
+        )}
       </div>
     </div>
   );

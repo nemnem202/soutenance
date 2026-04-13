@@ -2,13 +2,11 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import { LikeButton } from "@/components/ui/custom-buttons";
 import { useLanguage } from "@/hooks/use-language";
-import { getRandomPlaylist } from "@/lib/utils";
 import NewPlaylistModal from "./new-playlist-modal";
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
 import AddToPlaylistButton from "./add-to-playlist-menu";
 
-export function SmallPlaylistWidget() {
-  const playlist = getRandomPlaylist();
+export function SmallPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }) {
   const { instance } = useLanguage();
   return (
     <a

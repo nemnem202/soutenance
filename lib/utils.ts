@@ -1,27 +1,12 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { useData } from "vike-react/useData";
 import { availableLanguages } from "@/config/language-pack";
-import type { Data } from "@/pages/+data";
-import type { Account, Playlist } from "@/types/entities";
 import type { Language } from "@/types/i18n";
 import type { Chord } from "@/types/music";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
-export const getRandomAccount = (): Account => {
-  const accounts = useData<Data>().accounts;
-  const randomIndex = Math.floor(Math.random() * accounts.length);
-  return accounts[randomIndex];
-};
-
-export const getRandomPlaylist = (): Playlist => {
-  const playlists = useData<Data>().playlists;
-  const randomIndex = Math.floor(Math.random() * playlists.length);
-  return playlists[randomIndex];
-};
 
 export const getPreferredLanguage = (header: string | null): Language => {
   if (!header) return availableLanguages[0];
