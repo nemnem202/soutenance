@@ -11,8 +11,9 @@ model Playlist {
 
     tags PlaylistTag[]
 
-    author   User @relation(fields: [authorId], references: [id])
-    authorId Int
+    author             User                @relation(fields: [authorId], references: [id])
+    authorId           Int
+    userLikesPlaylists UserLikesPlaylist[]
 }
 
 model PlaylistTag {
@@ -25,4 +26,16 @@ model PlaylistTag {
 enum Visibility {
     public
     private
+}
+
+model UserLikesPlaylist {
+    user   User @relation(fields: [userId], references: [id])
+    userId Int
+
+    playlist   Playlist @relation(fields: [playlistId], references: [id])
+    playlistId Int
+
+    likedAt DateTime @default(now())
+
+    @@id([userId, playlistId])
 }

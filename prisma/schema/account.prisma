@@ -12,6 +12,10 @@ model User {
    exerciseSavesUserConfigs ExerciseSavesUserConfig[]
    playlists                Playlist[]
    exercises                Exercise[]
+   likedPlaylists           UserLikesPlaylist[]
+   likedExercises           UserLikesExercise[]
+   likingUser               UserLikesUser[]           @relation("LikingUser")
+   likedByUsers             UserLikesUser[]           @relation("LikedByUsers")
 }
 
 model ClassicAuthMethod {
@@ -33,4 +37,14 @@ model AuthMethod {
 
 enum AuthProvider {
    Google
+}
+
+model UserLikesUser {
+   likedUser User @relation("LikedByUsers", fields: [likedId], references: [id])
+   likedId   Int
+
+   likingUser User @relation("LikingUser", fields: [likingId], references: [id])
+   likingId   Int
+
+   @@id([likedId, likingId])
 }
