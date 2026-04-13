@@ -11,8 +11,8 @@ import PlaylistController from "@/controllers/PlaylistController";
 import ExerciseController from "@/controllers/ExerciseController";
 
 async function createUser(): Promise<User> {
-  const username = faker.person.firstName().substring(0, 20);
-  const email = `${username}@gmail.com`;
+  const username = (faker.person.firstName() + crypto.randomUUID()).substring(0, 20);
+  const email = `${username + crypto.randomUUID()}@gmail.com`;
   const profilePicture = {
     create: {
       url: faker.image.avatar(),
