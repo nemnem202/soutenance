@@ -4,5 +4,10 @@ import { PlaylistRepository } from "@/repositories/playlistRepository";
 
 export async function getPopularPlaylists() {
   const repo = new PlaylistRepository(prismaClient);
-  return handleAction("Get popular exercise", () => repo.getSortedByPopularity());
+  return handleAction("Get popular playlists", () => repo.getSortedByPopularity());
+}
+
+export async function getDiscoverPlaylists() {
+  const repo = new PlaylistRepository(prismaClient);
+  return handleAction("Get discover playlists", () => repo.getDiscover());
 }

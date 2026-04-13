@@ -17,7 +17,7 @@ export default function Page() {
 function Desktop() {
   const { session } = useSession();
   const { instance } = useLanguage();
-  const { popular } = useData<Data>();
+  const { popular, discover } = useData<Data>();
 
   useEffect(() => logger.info("Popular", popular), [popular]);
   return (
@@ -46,10 +46,14 @@ function Desktop() {
         />
       )}
 
-      {/* <MediumWidgetCarousel
-        title={instance.getItem("discover")}
-        widgets={Array.from({ length: 20 }).map((_, index) => <MediumPlaylistWidget key={index} />)}
-      /> */}
+      {discover.success && (
+        <MediumWidgetCarousel
+          title={instance.getItem("discover")}
+          widgets={discover.data.map((data, index) => (
+            <MediumPlaylistWidget key={index} playlist={data} />
+          ))}
+        />
+      )}
     </>
   );
 }

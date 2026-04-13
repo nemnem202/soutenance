@@ -115,4 +115,46 @@ export class PlaylistRepository extends Repository {
       })),
     };
   }
+  async getDiscover(
+    start: number = 0,
+    length: number = 20
+  ): Promise<ServerResponse<PlaylistCardDto[]>> {
+    const playlists = await this.client.$queryRaw<Playlist[]>`
+    SELECT id FROM "Playlist"
+    WHERE visibility = 'public'
+    ORDER BY RANDOM()
+    LIMIT ${length} OFFSET ${start}
+  `;
+
+    const ids = playlists.map((p) => p.id);
+
+    const sliced = await this.client.playlist.findMany({
+      where: {
+        id: { in: ids },
+        visibility: "public",
+      },
+      include: {
+        cover: true,
+        exercises: { select: { id: true } },
+        author: {
+          include: { profilePicture: true },
+          omit: { createdAt: true, updatedAt: true, email: true },
+        },
+      },
+    });
+
+    return {
+      status: Status.Ok,
+      success: true,
+      data: sliced.map((playlist) => ({
+        id: playlist.id,
+        title: playlist.title,
+        author: playlist.author,
+        authorId: playlist.author.id,
+        cover: playlist.cover,
+        exercisesIds: playlist.exercises,
+        visibility: playlist.visibility,
+      })),
+    };
+  }
 }
