@@ -5,7 +5,6 @@ import type { ExerciseCardDto } from "./exercise";
 export interface PlaylistDTO {
   id: number;
   title: string;
-  authorId: number;
   exercisesIds: { id: number }[];
   visibility: "public" | "private";
 }

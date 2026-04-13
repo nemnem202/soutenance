@@ -6,10 +6,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { LikeButton } from "@/components/ui/custom-buttons";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
-import { getRandomPlaylist } from "@/lib/utils";
-import type { Exercise, Playlist } from "@/types/entities";
+import type { PlaylistDetailDto } from "@/types/dtos/playlist";
+import type { ExerciseCardDto } from "@/types/dtos/exercise";
 
-export function PlaylistItemsList({ playlist }: { playlist: Playlist }) {
+export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto }) {
   const { instance } = useLanguage();
   return (
     <div className="w-full">
@@ -34,16 +34,7 @@ export function PlaylistItemsList({ playlist }: { playlist: Playlist }) {
       <Separator orientation="horizontal" />
       <div className="w-full flex flex-col justify-between  py-0 mt-2">
         {playlist.exercises.map((exercise, index) => (
-          <PlaylistItem
-            index={index}
-            key={index}
-            playlist={playlist}
-            exercise={{
-              ...exercise,
-              id: 0,
-              author: { id: 0, profilePicture: { alt: "", url: "" }, username: "sqdqds" },
-            }}
-          />
+          <PlaylistItem index={index} key={index} playlist={playlist} exercise={exercise} />
         ))}
       </div>
     </div>
@@ -62,8 +53,8 @@ export function PlaylistItemBox({
 
 export interface PLaylistItemProps {
   index: number;
-  playlist: Playlist;
-  exercise: Exercise;
+  playlist: PlaylistDetailDto;
+  exercise: ExerciseCardDto;
 }
 
 export function PlaylistItem({ ...props }: PLaylistItemProps) {
@@ -211,7 +202,7 @@ export function SearchPlaylistItem({ ...props }: PLaylistItemProps) {
   );
 }
 
-export function SearchPlaylistItemsList({ playlist }: { playlist: Playlist }) {
+export function SearchPlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto }) {
   const { instance } = useLanguage();
   return (
     <div className="w-full">
@@ -253,16 +244,7 @@ export function SearchPlaylistItemsList({ playlist }: { playlist: Playlist }) {
 
       <div className="w-full flex flex-col justify-between py-0 mt-2">
         {playlist.exercises.map((exercise, index) => (
-          <SearchPlaylistItem
-            index={index}
-            key={index}
-            playlist={playlist}
-            exercise={{
-              ...exercise,
-              id: 0,
-              author: { id: 0, profilePicture: { alt: "", url: "" }, username: "sqdqds" },
-            }}
-          />
+          <SearchPlaylistItem index={index} key={index} playlist={playlist} exercise={exercise} />
         ))}
       </div>
     </div>
@@ -270,7 +252,6 @@ export function SearchPlaylistItemsList({ playlist }: { playlist: Playlist }) {
 }
 
 export function SearchExercisesList({ seeAllUrl = "#" }: { seeAllUrl?: string }) {
-  const playlist = getRandomPlaylist();
   return (
     <div className="flex flex-col mx-auto mb-6 container">
       <WidgetTitle title="Exercises" seeAllUrl={seeAllUrl} />

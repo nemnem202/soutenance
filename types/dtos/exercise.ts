@@ -1,16 +1,20 @@
-import type { Image } from "../entities";
+import type { Session } from "../auth";
 import type { PlaylistDTO } from "./playlist";
 
 export interface ExerciseDto {
   id: number;
-  authorId: number;
+  author: Session;
   title: string;
 }
 
 export interface ExerciseCardDto extends ExerciseDto {
   description?: string;
-  cover: Image;
   likes: number;
   likedByCurrentUser: boolean;
   inUserPlaylists: PlaylistDTO[];
+  chordsGrid: boolean;
+  midifileUrl: boolean;
+  defaultConfig: {
+    bpm: number;
+  };
 }

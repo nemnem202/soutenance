@@ -15,6 +15,7 @@ export enum Status {
   NotConnected,
   ImageUploadFail,
   Ok,
+  NotFound,
 }
 export type ErrorServerResponse = {
   success: false;
