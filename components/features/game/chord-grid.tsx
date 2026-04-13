@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import { useData } from "vike-react/useData";
 import useScreen from "@/hooks/use-screen";
 import type { Data } from "@/pages/+data";
-import type { CarouselChord, Note } from "@/types/music";
+import type { Chord, Note } from "@/types/music";
 
 export default function ChordGrid() {
   return (
@@ -45,7 +45,12 @@ function MeasureBlock() {
 function ChordCellGroup() {
   const screen = useScreen();
   const chordsPlaceholder = useData<Data>().chordsPlaceholders;
-  const chords: (CarouselChord | undefined)[] = Array(4).fill(undefined);
+  const chords: Chord[] = Array<Chord>(4).fill({
+    content: {
+      modifier: "Maj",
+      note: "C",
+    },
+  });
 
   const count = faker.number.int({ min: 0, max: 4 });
 
@@ -61,21 +66,14 @@ function ChordCellGroup() {
   if (columnCount === 0)
     return (
       <div className="w-full">
-        <ChordNameCell root={"%"} />
+        <ChordNameCell root={"C"} />
       </div>
     );
   return (
     <div className="flex w-full">
-      {chords.map(
-        (chord) =>
-          chord && (
-            <ChordNameCell
-              key={chord.tickStart}
-              root={chord.root}
-              harm={chord?.harm?.symbolLabel}
-            />
-          )
-      )}
+      {chords.map((chord, index) => (
+        <ChordNameCell key={index} root={chord.content.note} harm={chord.content.modifier} />
+      ))}
     </div>
   );
 }

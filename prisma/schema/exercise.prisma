@@ -1,0 +1,152 @@
+model Exercise {
+    id            Int                       @id @default(autoincrement())
+    author        User                      @relation(fields: [authorId], references: [id])
+    authorId      Int
+    title         String                    @db.VarChar(100)
+    composer      String                    @db.VarChar(200)
+    defaultConfig Config                    @relation("DefaultConfig", fields: [configId], references: [id], onDelete: Cascade)
+    configId      Int                       @unique
+    userConfigs   ExerciseSavesUserConfig[]
+    midifile      Midifile?
+    chordsGrid    ChordsGrid?
+    playlist      Playlist?                 @relation(fields: [playlistId], references: [id])
+    playlistId    Int?
+
+    likedByUsers UserLikesExercise[]
+}
+
+model UserLikesExercise {
+    user   User @relation(fields: [userId], references: [id])
+    userId Int
+
+    exercise   Exercise @relation(fields: [exerciseId], references: [id])
+    exerciseId Int
+
+    likedAt DateTime @default(now())
+
+    @@id([userId, exerciseId])
+}
+
+model Config {
+    id                  Int                       @id @default(autoincrement())
+    bpm                 Int
+    key                 String                    @db.VarChar(50)
+    groove              String                    @db.VarChar(100)
+    timeSignatureTop    Int
+    timeSignatureBottom Int
+    exerciseDefault     Exercise?                 @relation("DefaultConfig")
+    userConfigs         ExerciseSavesUserConfig[]
+}
+
+model ExerciseSavesUserConfig {
+    id         Int      @id @default(autoincrement())
+    user       User     @relation(fields: [userId], references: [id])
+    userId     Int
+    exercise   Exercise @relation(fields: [exerciseId], references: [id])
+    exerciseId Int
+    config     Config   @relation(fields: [configId], references: [id], onDelete: Cascade)
+    configId   Int      @unique
+
+    @@unique([userId, exerciseId])
+}
+
+model Midifile {
+    id         Int      @id @default(autoincrement())
+    url        String
+    exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+    exerciseId Int      @unique
+}
+
+model ChordsGrid {
+    id         Int       @id @default(autoincrement())
+    sections   Section[]
+    exercise   Exercise  @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+    exerciseId Int       @unique
+}
+
+model Section {
+    id    Int         @id @default(autoincrement())
+    index Int
+    type  SectionType
+    label String      @db.VarChar(50)
+
+    chordsGrid   ChordsGrid @relation(fields: [chordsGridId], references: [id], onDelete: Cascade)
+    chordsGridId Int
+
+    commonMeasures Measure[]
+    voltas         VoltaBracket[]
+}
+
+model Measure {
+    id    Int @id @default(autoincrement())
+    index Int
+
+    section   Section? @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+    sectionId Int?
+
+    volta   VoltaBracket? @relation(fields: [voltaId], references: [id], onDelete: Cascade)
+    voltaId Int?
+
+    cells Cell[]
+}
+
+model VoltaBracket {
+    id        Int       @id @default(autoincrement())
+    volta     Int
+    measures  Measure[]
+    section   Section   @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+    sectionId Int
+}
+
+model Cell {
+    id                        Int      @id @default(autoincrement())
+    kind                      CellKind
+    keychange                 String?  @db.VarChar(50)
+    measure                   Measure  @relation(fields: [measureId], references: [id], onDelete: Cascade)
+    measureId                 Int
+    chord                     Chord?   @relation(fields: [chordId], references: [id], onDelete: Cascade)
+    chordId                   Int?
+    timeSignatureChangeTop    Int?
+    timeSignatureChangeBottom Int?
+}
+
+model Chord {
+    id       Int    @id @default(autoincrement())
+    note     String @db.VarChar(3) // "C", "C#", "Db" — max 2 chars mais 3 par sécurité
+    modifier String @db.VarChar(20)
+
+    overId Int?   @unique
+    over   Chord? @relation("ChordOver", fields: [overId], references: [id])
+    overOf Chord? @relation("ChordOver")
+
+    altId     Int?   @unique
+    alternate Chord? @relation("ChordAlt", fields: [altId], references: [id])
+    altOf     Chord? @relation("ChordAlt")
+
+    cells Cell[]
+}
+
+enum SectionType {
+    Generic
+    A
+    B
+    C
+    D
+    E
+    F
+    G
+    Intro
+    Verse
+    Bridge
+    Solo
+    Refrain
+    Melody
+    Outro
+    Tacet
+}
+
+enum CellKind {
+    Chord
+    Spacer
+    Empty
+}

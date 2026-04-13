@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { useData } from "vike-react/useData";
 import SizeAdapter from "@/components/molecules/size-adapter";
 import { WidgetTitle } from "@/components/organisms/widget-carousel";
 import { Badge } from "@/components/ui/badge";
@@ -8,8 +7,7 @@ import { LikeButton } from "@/components/ui/custom-buttons";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
 import { getRandomPlaylist } from "@/lib/utils";
-import type { Data } from "@/pages/+data";
-import type { Playlist } from "@/types/entities";
+import type { Exercise, Playlist } from "@/types/entities";
 
 export function PlaylistItemsList({ playlist }: { playlist: Playlist }) {
   const { instance } = useLanguage();
@@ -35,8 +33,17 @@ export function PlaylistItemsList({ playlist }: { playlist: Playlist }) {
       </div>
       <Separator orientation="horizontal" />
       <div className="w-full flex flex-col justify-between  py-0 mt-2">
-        {playlist.exercisesIds.map((id, index) => (
-          <PlaylistItem index={index} key={id} playlist={playlist} id={id} />
+        {playlist.exercises.map((exercise, index) => (
+          <PlaylistItem
+            index={index}
+            key={index}
+            playlist={playlist}
+            exercise={{
+              ...exercise,
+              id: 0,
+              author: { id: 0, profilePicture: { alt: "", url: "" }, username: "sqdqds" },
+            }}
+          />
         ))}
       </div>
     </div>
@@ -56,12 +63,12 @@ export function PlaylistItemBox({
 export interface PLaylistItemProps {
   index: number;
   playlist: Playlist;
-  id: number;
+  exercise: Exercise;
 }
 
 export function PlaylistItem({ ...props }: PLaylistItemProps) {
   const { instance } = useLanguage();
-  const exercise = useData<Data>().exercises.find((e) => e.id === props.id);
+  const { exercise } = props;
   if (!exercise) return null;
 
   return (
@@ -74,8 +81,8 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
           className="w-15 h-15"
           width={60}
           height={60}
-          src={props.playlist.image.src}
-          alt={props.playlist.image.alt}
+          src={props.playlist.cover.url}
+          alt={props.playlist.cover.alt}
         />
 
         <div className="flex flex-1 min-w-0 h-fit gap-3">
@@ -83,19 +90,19 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
             <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">
               {exercise.title}
             </p>
-            <p className="paragraph-md text-muted-foreground">{exercise.author}</p>
+            <p className="paragraph-md text-muted-foreground">{exercise.author.username}</p>
           </div>
 
           <SizeAdapter
             md={
               <div className="flex gap-1 h-full">
-                {exercise.hasChords && (
+                {exercise.chordsGrid && (
                   <Badge variant="outline" className="text-muted-foreground paragraph-xs h-min">
                     {instance.getItem("chords")}
                   </Badge>
                 )}
 
-                {exercise.hasMelody && (
+                {exercise.midifileUrl && (
                   <Badge variant="outline" className="text-muted-foreground paragraph-xs h-min">
                     {instance.getItem("melody").toLowerCase()}
                   </Badge>
@@ -110,7 +117,7 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
           <LikeButton />
         </PlaylistItemBox>
         <PlaylistItemBox>
-          <p className="paragraph-md text-muted-foreground">{exercise.config.bpm}</p>
+          <p className="paragraph-md text-muted-foreground">{exercise.defaultConfig.bpm}</p>
         </PlaylistItemBox>
         <SizeAdapter
           md={
@@ -131,7 +138,7 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
 
 export function SearchPlaylistItem({ ...props }: PLaylistItemProps) {
   const { instance } = useLanguage();
-  const exercise = useData<Data>().exercises.find((e) => e.id === props.id);
+  const { exercise } = props;
   if (!exercise) return null;
 
   return (
@@ -144,27 +151,27 @@ export function SearchPlaylistItem({ ...props }: PLaylistItemProps) {
           className="w-15 h-15"
           width={60}
           height={60}
-          src={props.playlist.image.src}
-          alt={props.playlist.image.alt}
+          src={props.playlist.cover.url}
+          alt={props.playlist.cover.alt}
         />
         <div className="flex flex-1 min-w-0 h-fit gap-3">
           <div className="flex flex-1 flex-col min-w-0 pl-2 gap-1">
             <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">
               {exercise.title}
             </p>
-            <p className="paragraph-md text-muted-foreground">{exercise.author}</p>
+            <p className="paragraph-md text-muted-foreground">{exercise.author.username}</p>
           </div>
 
           <SizeAdapter
             md={
               <div className="flex gap-1 h-full">
-                {exercise.hasChords && (
+                {exercise.chordsGrid && (
                   <Badge variant="outline" className="text-muted-foreground paragraph-xs h-min">
                     {instance.getItem("chords")}
                   </Badge>
                 )}
 
-                {exercise.hasMelody && (
+                {exercise.midifileUrl && (
                   <Badge variant="outline" className="text-muted-foreground paragraph-xs h-min">
                     {instance.getItem("melody").toLowerCase()}
                   </Badge>
@@ -179,7 +186,7 @@ export function SearchPlaylistItem({ ...props }: PLaylistItemProps) {
         <SizeAdapter
           md={
             <PlaylistItemBox className="w-40 min-w-40 justify-start">
-              <p className="paragraph-md text-muted-foreground">{exercise.account.firstName}</p>
+              <p className="paragraph-md text-muted-foreground">{exercise.author.username}</p>
             </PlaylistItemBox>
           }
         />
@@ -189,7 +196,7 @@ export function SearchPlaylistItem({ ...props }: PLaylistItemProps) {
         </PlaylistItemBox>
 
         <PlaylistItemBox>
-          <p className="paragraph-md text-muted-foreground">{exercise.config.bpm}</p>
+          <p className="paragraph-md text-muted-foreground">{exercise.defaultConfig.bpm}</p>
         </PlaylistItemBox>
 
         <SizeAdapter
@@ -199,10 +206,6 @@ export function SearchPlaylistItem({ ...props }: PLaylistItemProps) {
             </PlaylistItemBox>
           }
         />
-
-        {/* <PlaylistItemBox>
-          <Checkbox />
-        </PlaylistItemBox> */}
       </div>
     </a>
   );
@@ -249,8 +252,17 @@ export function SearchPlaylistItemsList({ playlist }: { playlist: Playlist }) {
       <Separator orientation="horizontal" />
 
       <div className="w-full flex flex-col justify-between py-0 mt-2">
-        {playlist.exercisesIds.map((id, index) => (
-          <SearchPlaylistItem index={index} key={id} playlist={playlist} id={id} />
+        {playlist.exercises.map((exercise, index) => (
+          <SearchPlaylistItem
+            index={index}
+            key={index}
+            playlist={playlist}
+            exercise={{
+              ...exercise,
+              id: 0,
+              author: { id: 0, profilePicture: { alt: "", url: "" }, username: "sqdqds" },
+            }}
+          />
         ))}
       </div>
     </div>

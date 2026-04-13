@@ -1,6 +1,18 @@
 import type z from "zod";
 import type { imageSchema } from "@/schemas/common.schema";
-import type { playlistSchema } from "@/schemas/entities.schema";
+import type {
+  cellSchema,
+  chordSchema,
+  chordsGridSchema,
+  configSchema,
+  exerciseSchema,
+  measureSchema,
+  playlistSchema,
+  sectionSchema,
+  timeSignatureSchema,
+  voltaSchema,
+} from "@/schemas/entities.schema";
+import type { Session } from "./auth";
 
 export type Account = {
   id: number;
@@ -9,24 +21,30 @@ export type Account = {
   picture: string;
 };
 
-export type ExerciseConfig = {
-  bpm: number;
-};
+export type ExerciseSchema = z.infer<typeof exerciseSchema>;
 
-export type Exercise = {
-  id: number;
-  title: string;
-  author: string;
-  account: Account;
-  creation: Date;
-  hasChords: boolean;
-  hasMelody: boolean;
-  config: ExerciseConfig;
-  midiFileId: number;
-};
+export type Exercise = ExerciseSchema & { id: number; author: Session };
 
 export type PlaylistSchema = z.infer<typeof playlistSchema>;
 
-export type Playlist = PlaylistSchema & { id: number; author: string };
+export type Playlist = PlaylistSchema & { id: number; author: Session };
+
+export type Config = z.infer<typeof configSchema>;
 
 export type Image = z.infer<typeof imageSchema>;
+
+export type SectionSchema = z.infer<typeof sectionSchema>;
+
+export type TimeSignatureSchema = z.infer<typeof timeSignatureSchema>;
+
+export type ConfigSchema = z.infer<typeof configSchema>;
+
+export type ChordSchema = z.infer<typeof chordSchema>;
+
+export type ChordsGridSchema = z.infer<typeof chordsGridSchema>;
+
+export type CellSchema = z.infer<typeof cellSchema>;
+
+export type MeasureSchema = z.infer<typeof measureSchema>;
+
+export type VoltaSchema = z.infer<typeof voltaSchema>;

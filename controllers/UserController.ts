@@ -3,8 +3,10 @@ import { usernameSchema } from "@/schemas/common.schema";
 import type { Session } from "@/types/auth";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Controller } from "./Controller";
+import UserRepository from "@/repositories/userRepository";
 
 export default class UserController extends Controller<{ client: PrismaClient }> {
+  private repository = new UserRepository(this.deps.client);
   async updateUsername(
     userId: number | null,
     newUsername: string
@@ -38,15 +40,7 @@ export default class UserController extends Controller<{ client: PrismaClient }>
         description: "Please choose another one",
       };
 
-    const userData = await this.deps.client.user.update({
-      where: { id: userId },
-      data: {
-        username: newUsername,
-      },
-      include: {
-        profilePicture: true,
-      },
-    });
+    const userData = await this.repository.updateUsername(userId, newUsername);
 
     if (!userData) {
       return {
@@ -63,9 +57,9 @@ export default class UserController extends Controller<{ client: PrismaClient }>
       data: {
         id: userData.id,
         username: userData.username,
-        profilePictureSource: {
+        profilePicture: {
           alt: userData.profilePicture.alt,
-          src: userData.profilePicture.url,
+          url: userData.profilePicture.url,
         },
       },
     };

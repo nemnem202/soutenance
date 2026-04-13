@@ -23,13 +23,13 @@ export default function Sidebar() {
         <Separator />
       </div>
       <div className="flex-1 overflow-y-auto ">
-        <SidebarSection>
+        {/* <SidebarSection>
           <Playlists />
-        </SidebarSection>
+        </SidebarSection> */}
         <Separator />
-        <SidebarSection>
+        {/* <SidebarSection>
           <Recents />
-        </SidebarSection>
+        </SidebarSection> */}
         <Separator />
       </div>
     </div>

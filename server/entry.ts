@@ -1,7 +1,6 @@
 import { apply, serve } from "@photonjs/express";
 import cookieParser from "cookie-parser";
 import express from "express";
-import { generatePlaceholders } from "./placeholders";
 import router from "./router";
 import { telefuncHandler } from "./telefunc-handler";
 
@@ -13,16 +12,6 @@ function startApp() {
   const app = express();
 
   app.use(cookieParser());
-  const { accounts, exercises, playlists } = generatePlaceholders();
-
-  app.get("/placeholders", (_, res) => {
-    console.log("Placeholder asked");
-    return res.send({
-      accounts,
-      exercises,
-      playlists,
-    });
-  });
 
   app.use("/api", router);
 

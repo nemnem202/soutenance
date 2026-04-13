@@ -18,7 +18,8 @@
       "!dist/*",
       "!node_modules/*",
       "!**/.DS_Store",
-      "!**/*.css"
+      "!**/*.css",
+      "!**/*.prisma"
     ]
   },
   "formatter": {
@@ -42,7 +43,7 @@
       "recommended": true,
       "correctness": {
         "noUnusedImports": "error",
-        "noUnusedVariables": "warn"
+        "noUnusedVariables": "off"
       },
       "suspicious": {
         "noArrayIndexKey": "off",

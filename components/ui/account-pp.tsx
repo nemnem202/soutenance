@@ -4,7 +4,7 @@ import { Avatar, AvatarImage } from "./avatar";
 export default function AccountPP({
   image = {
     alt: "Placeholder image",
-    src: "assets/images/account-default-pic.webp",
+    url: "assets/images/account-default-pic.webp",
   },
 }: {
   image?: Image;

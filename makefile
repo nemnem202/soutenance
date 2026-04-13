@@ -16,8 +16,15 @@ clear-test:
 	docker compose -f docker-compose.test.yml down -v
 
 update-db:
-	pnpx prisma migrate deploy
+	pnpx prisma migrate dev
+	pnpx prisma generate
 
+seed-dev:
+	docker exec -it music-sandbox-app-dev pnpm prisma db seed
+
+seed-prod:
+	docker exec -it music-sandbox-app-prod node dist/seed/seed.mjs
+	
 free-space:
 	docker volume prune -f
 	docker image prune -a -f

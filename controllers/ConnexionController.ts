@@ -6,13 +6,15 @@ import { loginSchema, registerSchema } from "@/schemas/auth.schema";
 import type { LoginData, RegisterData, Session } from "@/types/auth";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Controller, type ControllerDeps } from "./Controller";
-import FileController from "./fileController";
+import FileController from "./FileController";
+import UserRepository from "@/repositories/userRepository";
 
 interface ConnexionDeps extends ControllerDeps {
   context: Telefunc.Context;
 }
 
 export class ConnexionController extends Controller<ConnexionDeps> {
+  repository = new UserRepository(this.deps.client);
   async login(props: LoginData): Promise<ServerResponse<Session>> {
     const loginValidation = loginSchema.safeParse(props);
     if (!loginValidation.success) {
@@ -42,7 +44,7 @@ export class ConnexionController extends Controller<ConnexionDeps> {
       data: {
         id: user.id,
         username: user.username,
-        profilePictureSource: { alt: user.profilePicture.alt, src: user.profilePicture.url },
+        profilePicture: { alt: user.profilePicture.alt, url: user.profilePicture.url },
       },
     };
   }
@@ -77,21 +79,14 @@ export class ConnexionController extends Controller<ConnexionDeps> {
     });
     const imageUpload = await fileController.uploadFileAsImage();
 
-    const user = await this.deps.client.user.create({
-      data: {
-        email: props.email,
-        username: props.username,
-        profilePicture: {
-          create: {
-            alt: props.image.alt,
-            url: imageUpload.url,
-            cloudId: imageUpload.imageId,
-          },
-        },
-        classicAuthMethod: { create: { password: await argon2.hash(props.password) } },
-      },
-      include: { profilePicture: true },
-    });
+    const user = await this.repository.create(
+      email,
+      username,
+      image.alt,
+      imageUpload.url,
+      imageUpload.imageId,
+      password
+    );
 
     const token = await generateJwt(user.id, true);
     this.deps.context.setCookie(COOKIE_NAME, token, getCookieOptions(true));
@@ -102,7 +97,7 @@ export class ConnexionController extends Controller<ConnexionDeps> {
       data: {
         id: user.id,
         username: user.username,
-        profilePictureSource: { alt: user.profilePicture.alt, src: user.profilePicture.url },
+        profilePicture: { alt: user.profilePicture.alt, url: user.profilePicture.url },
       },
     };
   }
@@ -118,7 +113,7 @@ export class ConnexionController extends Controller<ConnexionDeps> {
 
     const fileController = new FileController({ client: this.deps.client });
     await fileController.removeUserImage(user.id);
-    await this.deps.client.user.delete({ where: { id: user.id } });
+    await this.repository.delete(user.id);
 
     await this.logout();
 

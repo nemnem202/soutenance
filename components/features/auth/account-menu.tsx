@@ -38,7 +38,7 @@ export default function AccountMenu() {
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="rounded-full">
-          <AccountPP image={session.profilePictureSource} />
+          <AccountPP image={session.profilePicture} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

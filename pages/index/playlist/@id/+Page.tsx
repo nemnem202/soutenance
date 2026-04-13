@@ -36,7 +36,7 @@ export default function Page() {
 
 function Banner({ playlist }: { playlist: Playlist }) {
   const { instance } = useLanguage();
-  const account = useData<Data>().accounts.find((account) => account.id === playlist.accountId);
+  const account = useData<Data>().accounts.find((account) => account.id === playlist.author.id);
   return (
     <div className="flex md:flex-row gap-0 md:gap-8 flex-col w-full items-center relative">
       <SizeAdapter
@@ -51,8 +51,8 @@ function Banner({ playlist }: { playlist: Playlist }) {
 
       <div className="w-50 md:w-75 md:m-0 rounded aspect-square overflow-hidden mb-8 mt-2">
         <img
-          src={playlist.image.src}
-          alt={playlist.image.alt}
+          src={playlist.cover.url}
+          alt={playlist.cover.alt}
           width={300}
           height={300}
           loading="lazy"
@@ -69,9 +69,11 @@ function Banner({ playlist }: { playlist: Playlist }) {
               className="flex items-center gap-2 hover:opacity-80 transition cursor-pointer"
             >
               <SizeAdapter
-                md={<AccountPP image={{ alt: "Placeholder", src: account.picture }} />}
+                md={<AccountPP image={{ alt: "Placeholder", url: account.picture }} />}
               />
-              <p className="title-4 md:text-foreground text-muted-foreground ">{playlist.author}</p>
+              <p className="title-4 md:text-foreground text-muted-foreground ">
+                {playlist.author.username}
+              </p>
             </a>
           )}
 
@@ -79,7 +81,7 @@ function Banner({ playlist }: { playlist: Playlist }) {
             md={
               <div className="flex gap-2">
                 <p className="text-muted-foreground">
-                  {playlist.exercisesIds.length} {instance.getItem("exercises").toLowerCase()}
+                  {playlist.exercises.length} {instance.getItem("exercises").toLowerCase()}
                 </p>
                 <Separator orientation="vertical" />
                 <p className="text-muted-foreground">{instance.getItem("medium")}</p>

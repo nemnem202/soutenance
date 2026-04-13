@@ -1,4 +1,3 @@
-import { faker } from "@faker-js/faker";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRef, useState } from "react";
 import { type Resolver, useForm } from "react-hook-form";
@@ -18,10 +17,9 @@ export function useNewPlaylistForm() {
   const form = useForm<PlaylistSchema>({
     resolver: zodResolver(playlistSchema) as Resolver<PlaylistSchema>,
     defaultValues: {
-      image: {
+      cover: {
         alt: "The cover of the playlist",
       },
-      accountId: faker.number.int(),
       visibility: "public",
     },
   });
@@ -80,7 +78,6 @@ export function useRegisterForm({ onSuccess }: { onSuccess: () => void }) {
     resolver: zodResolver(registerSchema) as Resolver<RegisterData>,
     defaultValues: {
       image: { alt: "The profile picture" },
-      agree_terms_of_service: false,
     },
   });
 

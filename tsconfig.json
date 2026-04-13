@@ -15,5 +15,5 @@
       "@/*": ["./*"]
     }
   },
-  "exclude": ["dist", "node_modules"]
+  "exclude": ["dist", "node_modules", "prisma/generated/"]
 }

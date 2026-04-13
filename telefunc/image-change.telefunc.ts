@@ -1,5 +1,5 @@
 import { getContext } from "telefunc";
-import FileController from "@/controllers/fileController";
+import FileController from "@/controllers/FileController";
 import prismaClient from "@/lib/prisma-client";
 import { handleAction } from "@/lib/response-handler";
 

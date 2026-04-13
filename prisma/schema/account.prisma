@@ -1,18 +1,26 @@
 model User {
-   id                Int                @id @default(autoincrement())
-   email             String             @unique
-   username          String             @unique
-   createdAt         DateTime           @default(now())
-   updatedAt         DateTime           @updatedAt
-   profilePicture    Image              @relation(fields: [imageId], references: [id], onDelete: Cascade)
-   authMethods       AuthMethod[]
-   classicAuthMethod ClassicAuthMethod?
-   imageId           Int
+   id             Int      @id @default(autoincrement())
+   email          String   @unique @db.VarChar(255)
+   username       String   @unique @db.VarChar(20)
+   createdAt      DateTime @default(now())
+   updatedAt      DateTime @updatedAt
+   profilePicture Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+   imageId        Int
+
+   authMethods              AuthMethod[]
+   classicAuthMethod        ClassicAuthMethod?
+   exerciseSavesUserConfigs ExerciseSavesUserConfig[]
+   playlists                Playlist[]
+   exercises                Exercise[]
+   likedPlaylists           UserLikesPlaylist[]
+   likedExercises           UserLikesExercise[]
+   likingUser               UserLikesUser[]           @relation("LikingUser")
+   likedByUsers             UserLikesUser[]           @relation("LikedByUsers")
 }
 
 model ClassicAuthMethod {
    id        Int      @id @default(autoincrement())
-   password  String
+   password  String   @db.VarChar(128)
    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
    userId    Int      @unique
    createdAt DateTime @default(now())
@@ -21,7 +29,7 @@ model ClassicAuthMethod {
 model AuthMethod {
    id         Int          @id @default(autoincrement())
    provider   AuthProvider
-   providerId String // the user id given by the provider
+   providerId String
    user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
    userId     Int
    createdAt  DateTime     @default(now())
@@ -29,4 +37,14 @@ model AuthMethod {
 
 enum AuthProvider {
    Google
+}
+
+model UserLikesUser {
+   likedUser User @relation("LikedByUsers", fields: [likedId], references: [id])
+   likedId   Int
+
+   likingUser User @relation("LikingUser", fields: [likingId], references: [id])
+   likingId   Int
+
+   @@id([likedId, likingId])
 }

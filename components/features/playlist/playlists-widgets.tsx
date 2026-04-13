@@ -3,8 +3,9 @@ import { useState } from "react";
 import { LikeButton } from "@/components/ui/custom-buttons";
 import { useLanguage } from "@/hooks/use-language";
 import { getRandomPlaylist } from "@/lib/utils";
-import AddToPlaylistButton from "./add-to-playlist-menu";
 import NewPlaylistModal from "./new-playlist-modal";
+import type { PlaylistCardDto } from "@/types/dtos/playlist";
+import AddToPlaylistButton from "./add-to-playlist-menu";
 
 export function SmallPlaylistWidget() {
   const playlist = getRandomPlaylist();
@@ -16,8 +17,8 @@ export function SmallPlaylistWidget() {
     >
       <div className="h-12 w-12 aspect-square overflow-hidden">
         <img
-          src={playlist.image.src}
-          alt={playlist.image.alt}
+          src={playlist.cover.url}
+          alt={playlist.cover.alt}
           className="object-cover h-full w-full"
           width={48}
           loading="lazy"
@@ -26,7 +27,7 @@ export function SmallPlaylistWidget() {
       <div className="flex flex-1 flex-col min-w-0">
         <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{playlist.title}</p>
         <p className="paragraph-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
-          {instance.getItem("by")} {playlist.author}
+          {instance.getItem("by")} {playlist.author.username}
         </p>
       </div>
     </a>
@@ -56,8 +57,7 @@ export function SmallAddNewPlaylistWidget() {
   );
 }
 
-export function MediumPlaylistWidget() {
-  const playlist = getRandomPlaylist();
+export function MediumPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }) {
   const { instance } = useLanguage();
   return (
     <div className="relative group w-full">
@@ -73,8 +73,8 @@ export function MediumPlaylistWidget() {
         <a href={`/playlist/${playlist.id}`} className="flex flex-col rounded gap-2.5">
           <div className="w-full aspect-square rounded overflow-hidden">
             <img
-              src={playlist.image.src}
-              alt={playlist.image.alt}
+              src={playlist.cover.url}
+              alt={playlist.cover.alt}
               className="w-full h-full object-cover"
               width={185}
               loading="lazy"
@@ -88,7 +88,7 @@ export function MediumPlaylistWidget() {
 
             <div className="w-full justify-between paragraph-sm text-muted-foreground flex wrap">
               <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[80%]">
-                {instance.getItem("by")} {playlist.author}
+                {instance.getItem("by")} {playlist.author.username}
               </p>
               <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[15%]">
                 {playlist.exercisesIds.length > 99 ? ">99" : playlist.exercisesIds.length}
@@ -120,14 +120,16 @@ function MediumAddNewPlaylistWidget() {
 
 export function MediumPlaylistWrapper({
   allowToAddANewPlaylist,
+  playlists,
 }: {
   allowToAddANewPlaylist?: boolean;
+  playlists: PlaylistCardDto[];
 }) {
   return (
     <div className="grid gap-y-5 md:gap-y-4 gap-2 container grid-cols-[repeat(auto-fit,minmax(30vw,1fr))] md:grid-cols-[repeat(auto-fit,minmax(10rem,1fr))]">
       {allowToAddANewPlaylist && <MediumAddNewPlaylistWidget />}
-      {Array.from({ length: 50 }).map((_, i) => (
-        <MediumPlaylistWidget key={i} />
+      {playlists.map((playlist, i) => (
+        <MediumPlaylistWidget key={i} playlist={playlist} />
       ))}
     </div>
   );

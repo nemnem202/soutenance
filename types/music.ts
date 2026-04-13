@@ -1,25 +1,13 @@
-export const Notes = [
-  "C",
-  "C♯",
-  "D♭",
-  "D",
-  "D♯",
-  "E♭",
-  "E",
-  "F",
-  "F♯",
-  "G♭",
-  "G",
-  "G♯",
-  "A♭",
-  "A",
-  "A♯",
-  "B♭",
-  "B",
-  "%",
-] as const;
+import type z from "zod";
+import type { cellSchema, chordSchema, noteSchema, voltaSchema } from "@/schemas/entities.schema";
 
-export type Note = (typeof Notes)[number];
+export type Cell = z.infer<typeof cellSchema>;
+
+export type Chord = z.infer<typeof chordSchema>;
+
+export type Volta = z.infer<typeof voltaSchema>;
+
+export type Note = z.infer<typeof noteSchema>;
 
 export type ChordIntervals = number[];
 export type ChordLabel = string;
@@ -29,14 +17,3 @@ export type ChordHarmony = {
   symbolLabel: ChordLabel;
 };
 export type ChordDictionary = Record<string, ChordHarmony | null>;
-
-export interface Chord {
-  root: Note;
-  harm: ChordHarmony | null;
-  tickStart: number;
-  tickEnd: number;
-}
-
-export interface CarouselChord extends Chord {
-  index: number;
-}

@@ -1,8 +1,8 @@
-import { ServerResponse, Status } from "@/types/server-response";
 import { spawn } from "child_process";
 import { randomBytes } from "crypto";
 import { readFile, unlink } from "fs/promises";
 import { logger } from "@/lib/logger";
+import { type ServerResponse, Status } from "@/types/server-response";
 
 export default class MidiController {
   public async getMidiFromChords(): Promise<ServerResponse<Buffer>> {

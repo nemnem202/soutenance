@@ -5,7 +5,7 @@ import type { Image } from "./entities";
 export type Session = {
   username: string;
   id: number;
-  profilePictureSource: Image;
+  profilePicture: Image;
 };
 
 export type LoginData = z.infer<typeof loginSchema>;
