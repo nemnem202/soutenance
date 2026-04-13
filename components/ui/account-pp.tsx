@@ -11,7 +11,7 @@ export default function AccountPP({
 }) {
   return (
     <Avatar>
-      <AvatarImage {...image} />
+      <AvatarImage alt={image.alt} src={image.url} />
     </Avatar>
   );
 }
