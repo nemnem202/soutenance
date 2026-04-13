@@ -13,7 +13,7 @@ import type {
   VoltaSchema,
 } from "@/types/entities";
 import type { Note } from "@/types/music";
-import { getLoremFlickrUrl } from "@/lib/utils";
+import { faker } from "@faker-js/faker";
 
 class IrealConversionError extends Error {
   constructor(context: string, message: string) {
@@ -454,12 +454,7 @@ export function convertPlaylist(playlistIreal: PlaylistIreal): {
       description: undefined,
       cover: {
         alt: `The cover of the playlist ${playlistIreal.title}`,
-        url: getLoremFlickrUrl(
-          800,
-          800,
-          [playlistIreal.title, playlistIreal.songs[0].groove],
-          "all"
-        ),
+        url: faker.image.urlPicsumPhotos({ width: 500, height: 500 }),
       },
       exercises,
       tags: [],

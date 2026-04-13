@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { TooltipProvider } from "@/components/molecules/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import LanguagesProvider from "@/providers/language-provider";

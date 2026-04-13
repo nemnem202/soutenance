@@ -3,8 +3,9 @@ import { useState } from "react";
 import { LikeButton } from "@/components/ui/custom-buttons";
 import { useLanguage } from "@/hooks/use-language";
 import { getRandomPlaylist } from "@/lib/utils";
-import AddToPlaylistButton from "./add-to-playlist-menu";
 import NewPlaylistModal from "./new-playlist-modal";
+import type { PlaylistCardDto } from "@/types/dtos/playlist";
+import AddToPlaylistButton from "./add-to-playlist-menu";
 
 export function SmallPlaylistWidget() {
   const playlist = getRandomPlaylist();
@@ -56,8 +57,7 @@ export function SmallAddNewPlaylistWidget() {
   );
 }
 
-export function MediumPlaylistWidget() {
-  const playlist = getRandomPlaylist();
+export function MediumPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }) {
   const { instance } = useLanguage();
   return (
     <div className="relative group w-full">
@@ -91,7 +91,7 @@ export function MediumPlaylistWidget() {
                 {instance.getItem("by")} {playlist.author.username}
               </p>
               <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[15%]">
-                {playlist.exercises.length > 99 ? ">99" : playlist.exercises.length}
+                {playlist.exercisesIds.length > 99 ? ">99" : playlist.exercisesIds.length}
               </p>
             </div>
           </div>
@@ -120,14 +120,16 @@ function MediumAddNewPlaylistWidget() {
 
 export function MediumPlaylistWrapper({
   allowToAddANewPlaylist,
+  playlists,
 }: {
   allowToAddANewPlaylist?: boolean;
+  playlists: PlaylistCardDto[];
 }) {
   return (
     <div className="grid gap-y-5 md:gap-y-4 gap-2 container grid-cols-[repeat(auto-fit,minmax(30vw,1fr))] md:grid-cols-[repeat(auto-fit,minmax(10rem,1fr))]">
       {allowToAddANewPlaylist && <MediumAddNewPlaylistWidget />}
-      {Array.from({ length: 50 }).map((_, i) => (
-        <MediumPlaylistWidget key={i} />
+      {playlists.map((playlist, i) => (
+        <MediumPlaylistWidget key={i} playlist={playlist} />
       ))}
     </div>
   );

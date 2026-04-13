@@ -1,5 +1,7 @@
 import type { Playlist, PlaylistSchema } from "@/types/entities";
 import { Repository } from "./repository";
+import type { PlaylistCardDto } from "@/types/dtos/playlist";
+import { Status, type ServerResponse } from "@/types/server-response";
 
 export class PlaylistRepository extends Repository {
   async create(playlist: PlaylistSchema, userId: number): Promise<Playlist> {
@@ -61,6 +63,56 @@ export class PlaylistRepository extends Repository {
         alt: playlistDb.cover.alt,
       },
       exercises: [],
+    };
+  }
+
+  async getSortedByPopularity(
+    start: number | undefined = 0,
+    length: number | undefined = 20
+  ): Promise<ServerResponse<PlaylistCardDto[]>> {
+    const sliced = await this.client.playlist.findMany({
+      where: {
+        visibility: "public",
+      },
+      orderBy: {
+        userLikesPlaylists: {
+          _count: "desc",
+        },
+      },
+      skip: start,
+      take: length,
+      include: {
+        cover: true,
+        exercises: {
+          select: {
+            id: true,
+          },
+        },
+        author: {
+          include: {
+            profilePicture: true,
+          },
+          omit: {
+            createdAt: true,
+            updatedAt: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    return {
+      status: Status.Ok,
+      success: true,
+      data: sliced.map((playlist) => ({
+        id: playlist.id,
+        title: playlist.title,
+        author: playlist.author,
+        authorId: playlist.author.id,
+        cover: playlist.cover,
+        exercisesIds: playlist.exercises,
+        visibility: playlist.visibility,
+      })),
     };
   }
 }
