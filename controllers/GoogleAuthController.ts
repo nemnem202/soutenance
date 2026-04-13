@@ -17,7 +17,8 @@ interface GoogleAuthDeps extends ControllerDeps {
 
 export default class GoogleAuthController extends Controller<GoogleAuthDeps> {
   private generateRandomUsername(username: string): string {
-    return `${username.split(" ").join("_")}_${nanoid(8)}`;
+    const cleanBase = username.split(" ").join("_").substring(0, 11);
+    return `${cleanBase}_${nanoid(8)}`;
   }
   async getAuth(): Promise<ServerResponse<{}>> {
     const { res, googleClient } = this.deps;
@@ -95,17 +96,34 @@ export default class GoogleAuthController extends Controller<GoogleAuthDeps> {
     });
 
     if (!dbUser) {
-      const username = this.generateRandomUsername(user.name);
+      let username: string;
+      let isUnique = false;
+      let attempts = 0;
+      const maxAttempts = 10;
+
+      while (!isUnique && attempts < maxAttempts) {
+        username = this.generateRandomUsername(user.name);
+
+        const existingUser = await client.user.findUnique({
+          where: { username: username },
+        });
+
+        if (!existingUser) {
+          isUnique = true;
+        }
+        attempts++;
+      }
+
       dbUser = await client.user.create({
         data: {
           email: user.email,
+          username: username!,
           profilePicture: {
             create: {
-              alt: `The profile picture of ${username}`,
+              alt: `The profile picture of ${username!}`,
               url: user.picture ?? faker.image.avatar(),
             },
           },
-          username: username,
           authMethods: {
             create: {
               provider: "Google",
