@@ -18,11 +18,11 @@ export default class SearchRepository extends Repository {
   ): Promise<ServerResponse<(Session & { score: number })[]>> {
     const rawResults = await this.client.$queryRaw<{ id: number; weighted_score: number }[]>`
       SELECT u.*, 
-       similarity(u.username, ${query}) AS score,
+       similarity(u.username, ${query}) AS weighted_score,
        (SELECT COUNT(*) FROM "UserLikesUser" WHERE "likedId" = u.id) AS popularity
       FROM "User" u
       WHERE u.username % ${query}
-      ORDER BY score DESC, popularity DESC
+      ORDER BY weighted_score DESC, popularity DESC
       LIMIT ${length} OFFSET ${start};
       `;
 
@@ -124,14 +124,14 @@ export default class SearchRepository extends Repository {
   ): Promise<ServerResponse<(SoloExerciseCardDto & { score: number })[]>> {
     const rawResults = await this.client.$queryRaw<{ id: number; weighted_score: number }[]>`
         SELECT e.*, 
-          similarity(e.title, ${query}) AS score,
+          similarity(e.title, ${query}) AS weighted_score,
           (SELECT COUNT(*) FROM "UserLikesExercise" WHERE "exerciseId" = e.id) AS popularity
         FROM "Exercise" e
         JOIN "User" a ON e."authorId" = a.id
         JOIN "Playlist" p ON e."playlistId" = p.id
         WHERE p.visibility = 'public'
           AND (e.title % ${query} OR e.composer % ${query} OR a.username % ${query})
-        ORDER BY score DESC, popularity DESC
+        ORDER BY weighted_score DESC, popularity DESC
         LIMIT ${length} OFFSET ${start};
           `;
 
@@ -219,11 +219,7 @@ export default class SearchRepository extends Repository {
     ];
 
     const slice = combined
-      .sort((a, b) => {
-        if (b.score !== a.score) return b.score - a.score;
-
-        return (b.score || 0) - (a.score || 0);
-      })
+      .sort((a, b) => b.score - a.score)
       .map((item, index) => ({
         ...item,
         rank: index + 1,
@@ -231,15 +227,17 @@ export default class SearchRepository extends Repository {
       .slice(0, length);
 
     const usersArray = slice.filter(
-      (e): e is Session & { rank: number; score: number } => "username" in e && !("visibility" in e)
+      (e): e is Session & { rank: number; score: number } =>
+        "username" in e && !("visibility" in e) && !("midifileUrl" in e)
     );
+
     const playlistsArray = slice.filter(
       (e): e is PlaylistCardDto & { rank: number; score: number } => "visibility" in e
     );
+
     const exercisesArray = slice.filter(
       (e): e is SoloExerciseCardDto & { rank: number; score: number } => "midifileUrl" in e
     );
-
     return {
       success: true,
       status: Status.Ok,
