@@ -757,4 +757,11 @@ export const languagePack = {
     de: "Konto wechseln",
     zh: "切换账户",
   },
+  others_liked_them_too: {
+    en: "The others liked them too",
+    fr: "D'autres utilisateurs ont aussi aimé",
+    es: "A otros también les gustó",
+    de: "Andere mochten es auch",
+    zh: "其他人也喜欢了它",
+  },
 } as const;

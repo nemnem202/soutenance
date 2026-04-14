@@ -54,12 +54,19 @@ function Desktop() {
 
       {recommendedUsers.success && (
         <MediumWidgetCarousel
-          title={instance.getItem("moreOfThem")}
+          title={instance.getItem("others_liked_them_too")}
           widgets={recommendedUsers.data.map((account, index) => (
             <MediumAccountWidget key={index} account={account} />
           ))}
         />
       )}
+
+      {/* <MediumWidgetCarousel
+          title={instance.getItem("moreOfThem")}
+          widgets={recommendedUsers.data.map((account, index) => (
+            <MediumAccountWidget key={index} account={account} />
+          ))}
+        /> */}
     </>
   );
 }
