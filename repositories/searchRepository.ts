@@ -4,6 +4,12 @@ import type { Session } from "@/types/auth";
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
 import type { SoloExerciseCardDto } from "@/types/dtos/exercise";
 
+export interface AnySearch {
+  exercises: (SoloExerciseCardDto & { rank: number })[];
+  playlists: (PlaylistCardDto & { rank: number })[];
+  users: (Session & { rank: number })[];
+}
+
 export default class SearchRepository extends Repository {
   async getUsers(
     query: string,
@@ -199,13 +205,7 @@ export default class SearchRepository extends Repository {
     query: string,
     start: number | undefined = 0,
     length: number | undefined = 20
-  ): Promise<
-    ServerResponse<{
-      exercises: (SoloExerciseCardDto & { rank: number })[];
-      playlists: (PlaylistCardDto & { rank: number })[];
-      users: (Session & { rank: number })[];
-    }>
-  > {
+  ): Promise<ServerResponse<AnySearch>> {
     const [users, playlists, exercises] = await Promise.all([
       this.getUsers(query, start, length),
       this.getPlaylists(query, start, length),
