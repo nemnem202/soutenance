@@ -1,4 +1,5 @@
 import type { Session } from "../auth";
+import { Image } from "../entities";
 import type { PlaylistDTO } from "./playlist";
 
 export interface ExerciseDto {
@@ -17,4 +18,8 @@ export interface ExerciseCardDto extends ExerciseDto {
   defaultConfig: {
     bpm: number;
   };
+}
+
+export interface SoloExerciseCardDto extends ExerciseCardDto {
+  cover: Image;
 }

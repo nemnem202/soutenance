@@ -165,4 +165,12 @@ export default class UserRepository extends Repository {
       },
     };
   }
+
+  async getFromSearch(query: string): Promise<ServerResponse<Session[]>> {
+    return {
+      success: true,
+      status: Status.Ok,
+      data: [],
+    };
+  }
 }

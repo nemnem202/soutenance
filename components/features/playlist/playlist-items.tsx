@@ -7,7 +7,7 @@ import { LikeButton } from "@/components/ui/custom-buttons";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
 import type { PlaylistDetailDto } from "@/types/dtos/playlist";
-import type { ExerciseCardDto } from "@/types/dtos/exercise";
+import type { ExerciseCardDto, SoloExerciseCardDto } from "@/types/dtos/exercise";
 
 export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto }) {
   const { instance } = useLanguage();
@@ -127,7 +127,12 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
   );
 }
 
-export function SearchPlaylistItem({ ...props }: PLaylistItemProps) {
+interface SearchPLaylistItemProps {
+  index: number;
+  exercise: SoloExerciseCardDto;
+}
+
+export function SearchPlaylistItem({ ...props }: SearchPLaylistItemProps) {
   const { instance } = useLanguage();
   const { exercise } = props;
   if (!exercise) return null;
@@ -142,8 +147,8 @@ export function SearchPlaylistItem({ ...props }: PLaylistItemProps) {
           className="w-15 h-15"
           width={60}
           height={60}
-          src={props.playlist.cover.url}
-          alt={props.playlist.cover.alt}
+          src={exercise.cover.url}
+          alt={exercise.cover.alt}
         />
         <div className="flex flex-1 min-w-0 h-fit gap-3">
           <div className="flex flex-1 flex-col min-w-0 pl-2 gap-1">
@@ -202,7 +207,7 @@ export function SearchPlaylistItem({ ...props }: PLaylistItemProps) {
   );
 }
 
-export function SearchPlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto }) {
+export function SearchPlaylistItemsList({ exercises }: { exercises: SoloExerciseCardDto[] }) {
   const { instance } = useLanguage();
   return (
     <div className="w-full">
@@ -243,19 +248,25 @@ export function SearchPlaylistItemsList({ playlist }: { playlist: PlaylistDetail
       <Separator orientation="horizontal" />
 
       <div className="w-full flex flex-col justify-between py-0 mt-2">
-        {playlist.exercises.map((exercise, index) => (
-          <SearchPlaylistItem index={index} key={index} playlist={playlist} exercise={exercise} />
+        {exercises.map((exercise, index) => (
+          <SearchPlaylistItem index={index} key={index} exercise={exercise} />
         ))}
       </div>
     </div>
   );
 }
 
-export function SearchExercisesList({ seeAllUrl = "#" }: { seeAllUrl?: string }) {
+export function SearchExercisesList({
+  seeAllUrl = "#",
+  exercises,
+}: {
+  seeAllUrl?: string;
+  exercises: SoloExerciseCardDto[];
+}) {
   return (
     <div className="flex flex-col mx-auto mb-6 container">
       <WidgetTitle title="Exercises" seeAllUrl={seeAllUrl} />
-      <SearchPlaylistItemsList playlist={playlist} />
+      <SearchPlaylistItemsList exercises={exercises} />
     </div>
   );
 }

@@ -1,0 +1,35 @@
+import { getGlobalData } from "@/lib/global-data";
+import prismaClient from "@/lib/prisma-client";
+import { handleAction } from "@/lib/response-handler";
+import ExerciseRepository from "@/repositories/exerciseRepository";
+import { PlaylistRepository } from "@/repositories/playlistRepository";
+import UserRepository from "@/repositories/userRepository";
+import type { PageContextServer } from "vike/types";
+
+async function getSearchedPlaylists(query: string) {
+  const repo = new PlaylistRepository(prismaClient);
+  return handleAction("Get searched playlists", () => repo.getFromSearch(query));
+}
+
+async function getSearchedExercises(query: string) {
+  const repo = new ExerciseRepository(prismaClient);
+  return handleAction("Get searched exercises", () => repo.getFromSearch(query));
+}
+
+async function getSearchedUsers(query: string) {
+  const repo = new UserRepository(prismaClient);
+  return handleAction("Get searched users", () => repo.getFromSearch(query));
+}
+
+export default async function data(pageContext: PageContextServer) {
+  const query = pageContext.routeParams.searchParam;
+  const [globalData, playlists, exercises, users] = await Promise.all([
+    getGlobalData(pageContext),
+    getSearchedPlaylists(query),
+    getSearchedExercises(query),
+    getSearchedUsers(query),
+  ]);
+
+  return { ...globalData, playlists, exercises, users };
+}
+export type Data = Awaited<ReturnType<typeof data>>;

@@ -8,6 +8,8 @@ import type {
 } from "@/types/entities";
 import { Repository } from "./repository";
 import type { Prisma } from "@/lib/generated/prisma/client";
+import { ServerResponse, Status } from "@/types/server-response";
+import { SoloExerciseCardDto } from "@/types/dtos/exercise";
 
 export default class ExerciseRepository extends Repository {
   async create(exercise: ExerciseSchema, playlistId: number, userId: number) {
@@ -123,6 +125,14 @@ export default class ExerciseRepository extends Repository {
             create: { ...this.chordMapper({ content: chord.over }) },
           }
         : undefined,
+    };
+  }
+
+  async getFromSearch(query: string): Promise<ServerResponse<SoloExerciseCardDto[]>> {
+    return {
+      success: true,
+      status: Status.Ok,
+      data: [],
     };
   }
 }

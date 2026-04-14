@@ -4,23 +4,41 @@ import { SearchExercisesList } from "@/components/features/playlist/playlist-ite
 import { MediumPlaylistWidget } from "@/components/features/playlist/playlists-widgets";
 import { MediumWidgetCarousel } from "@/components/organisms/widget-carousel";
 import { useLanguage } from "@/hooks/use-language";
+import { useData } from "vike-react/useData";
+import { Data } from "../+data";
 
 export default function Page() {
   const { routeParams } = usePageContext();
   const { instance } = useLanguage();
+  const { exercises, playlists, users } = useData<Data>();
   return (
     <>
-      <SearchExercisesList seeAllUrl={`/search/${routeParams.searchParam}/exercises`} />
-      <MediumWidgetCarousel
-        title={instance.getItem("users")}
-        seeAllUrl={`/search/${routeParams.searchParam}/users`}
-        widgets={Array.from({ length: 20 }).map((_, index) => <MediumAccountWidget key={index} />)}
-      />
-      <MediumWidgetCarousel
-        title="Playlists"
-        seeAllUrl={`/search/${routeParams.searchParam}/playlists`}
-        widgets={Array.from({ length: 20 }).map((_, index) => <MediumPlaylistWidget key={index} />)}
-      />
+      {exercises.success && (
+        <SearchExercisesList
+          seeAllUrl={`/search/${routeParams.searchParam}/exercises`}
+          exercises={exercises.data}
+        />
+      )}
+
+      {users.success && (
+        <MediumWidgetCarousel
+          title={instance.getItem("users")}
+          seeAllUrl={`/search/${routeParams.searchParam}/users`}
+          widgets={users.data.map((user, index) => (
+            <MediumAccountWidget key={index} account={user} />
+          ))}
+        />
+      )}
+
+      {playlists.success && (
+        <MediumWidgetCarousel
+          title="Playlists"
+          seeAllUrl={`/search/${routeParams.searchParam}/playlists`}
+          widgets={playlists.data.map((playlist, index) => (
+            <MediumPlaylistWidget key={index} playlist={playlist} />
+          ))}
+        />
+      )}
     </>
   );
 }

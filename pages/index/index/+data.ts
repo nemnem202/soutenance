@@ -17,7 +17,7 @@ async function getDiscoverPlaylists() {
 
 async function getRecommendedUsers() {
   const repo = new UserRepository(prismaClient);
-  return handleAction("Get discover playlists", () => repo.getRecommended());
+  return handleAction("Get recommended users", () => repo.getRecommended());
 }
 
 export default async function data(pageContext: PageContextServer) {

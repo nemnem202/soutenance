@@ -274,4 +274,12 @@ export class PlaylistRepository extends Repository {
       },
     };
   }
+
+  async getFromSearch(query: string): Promise<ServerResponse<PlaylistCardDto[]>> {
+    return {
+      success: true,
+      status: Status.Ok,
+      data: [],
+    };
+  }
 }
