@@ -306,7 +306,6 @@ export class PlaylistRepository extends Repository {
     const sliced = await this.client.playlist.findMany({
       where: {
         id: { in: ids },
-        visibility: "public",
       },
       include: {
         cover: true,

@@ -3,6 +3,7 @@ import { Repository } from "./repository";
 import argon2 from "argon2";
 import { Session } from "@/types/auth";
 import { UserDetailsDto } from "@/types/dtos/user";
+import { User } from "@/lib/generated/prisma/client";
 
 export default class UserRepository extends Repository {
   async create(
@@ -166,11 +167,49 @@ export default class UserRepository extends Repository {
     };
   }
 
-  async getFromSearch(query: string): Promise<ServerResponse<Session[]>> {
+  async getFromSearch(
+    query: string,
+    start: number | undefined = 0,
+    length: number | undefined = 20
+  ): Promise<ServerResponse<Session[]>> {
+    const users = await this.client.$queryRaw<User[]>`
+      SELECT u.*, 
+       similarity(u.username, ${query}) AS score,
+       (SELECT COUNT(*) FROM "UserLikesUser" WHERE "likedId" = u.id) AS popularity
+      FROM "User" u
+      WHERE u.username % ${query}
+      ORDER BY score DESC, popularity DESC
+      LIMIT ${length} OFFSET ${start};
+      `;
+
+    const ids = users.map((p) => p.id);
+
+    const sliced = await this.client.user.findMany({
+      where: {
+        id: { in: ids },
+      },
+      select: {
+        id: true,
+        username: true,
+        profilePicture: {
+          select: {
+            url: true,
+            alt: true,
+          },
+        },
+      },
+      skip: start,
+      take: length,
+    });
+
     return {
-      success: true,
       status: Status.Ok,
-      data: [],
+      success: true,
+      data: sliced.map((user) => ({
+        id: user.id,
+        profilePicture: user.profilePicture,
+        username: user.username,
+      })),
     };
   }
 }

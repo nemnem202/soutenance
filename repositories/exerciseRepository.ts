@@ -10,6 +10,7 @@ import { Repository } from "./repository";
 import type { Prisma } from "@/lib/generated/prisma/client";
 import { ServerResponse, Status } from "@/types/server-response";
 import { SoloExerciseCardDto } from "@/types/dtos/exercise";
+import type { Exercise } from "@/lib/generated/prisma/client";
 
 export default class ExerciseRepository extends Repository {
   async create(exercise: ExerciseSchema, playlistId: number, userId: number) {
@@ -128,11 +129,85 @@ export default class ExerciseRepository extends Repository {
     };
   }
 
-  async getFromSearch(query: string): Promise<ServerResponse<SoloExerciseCardDto[]>> {
+  async getFromSearch(
+    query: string,
+    start: number | undefined = 0,
+    length: number | undefined = 20
+  ): Promise<ServerResponse<SoloExerciseCardDto[]>> {
+    const exercises = await this.client.$queryRaw<Exercise[]>`
+        SELECT e.*, 
+          similarity(e.title, ${query}) AS score,
+          (SELECT COUNT(*) FROM "UserLikesExercise" WHERE "exerciseId" = e.id) AS popularity
+        FROM "Exercise" e
+        JOIN "User" a ON e."authorId" = a.id
+        JOIN "Playlist" p ON e."playlistId" = p.id
+        WHERE p.visibility = 'public'
+          AND (e.title % ${query} OR e.composer % ${query} OR a.username % ${query})
+        ORDER BY score DESC, popularity DESC
+        LIMIT ${length} OFFSET ${start};
+          `;
+
+    const ids = exercises.map((p) => p.id);
+
+    const sliced = await this.client.exercise.findMany({
+      where: {
+        id: { in: ids },
+      },
+      select: {
+        id: true,
+        author: {
+          select: {
+            id: true,
+            username: true,
+            profilePicture: {
+              select: {
+                alt: true,
+                url: true,
+              },
+            },
+          },
+        },
+        midifile: true,
+        chordsGrid: true,
+        playlist: {
+          select: {
+            cover: {
+              select: {
+                alt: true,
+                url: true,
+              },
+            },
+          },
+        },
+        defaultConfig: {
+          select: {
+            bpm: true,
+          },
+        },
+        title: true,
+        _count: {
+          select: {
+            likedByUsers: true,
+          },
+        },
+      },
+    });
+
     return {
       success: true,
       status: Status.Ok,
-      data: [],
+      data: sliced.map((exercise) => ({
+        id: exercise.id,
+        inUserPlaylists: [],
+        likedByCurrentUser: false,
+        midifileUrl: !!exercise.midifile,
+        likes: exercise._count.likedByUsers,
+        title: exercise.title,
+        author: exercise.author,
+        chordsGrid: !!exercise.chordsGrid,
+        cover: exercise.playlist.cover,
+        defaultConfig: exercise.defaultConfig,
+      })),
     };
   }
 }
