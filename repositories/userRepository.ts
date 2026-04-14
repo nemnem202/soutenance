@@ -59,6 +59,11 @@ export default class UserRepository extends Repository {
     length: number | undefined = 20
   ): Promise<ServerResponse<Session[]>> {
     const sliced = await this.client.user.findMany({
+      where: {
+        playlists: {
+          some: {},
+        },
+      },
       orderBy: {
         likedByUsers: {
           _count: "desc",
@@ -74,6 +79,8 @@ export default class UserRepository extends Repository {
           },
         },
       },
+      skip: start,
+      take: length,
     });
 
     return {
