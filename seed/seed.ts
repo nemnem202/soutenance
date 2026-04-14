@@ -11,19 +11,40 @@ import PlaylistController from "@/controllers/PlaylistController";
 import ExerciseController from "@/controllers/ExerciseController";
 
 async function createUser(): Promise<User> {
-  const username = (faker.person.firstName() + crypto.randomUUID()).substring(0, 20);
-  const email = `${username + crypto.randomUUID()}@gmail.com`;
+  const baseUsername = faker.person.firstName().substring(0, 20);
+  let currentUsername = baseUsername;
+  let counter = 0;
+  while (true) {
+    const existingUser = await prismaClient.user.findUnique({
+      where: { username: currentUsername },
+      select: { id: true }, // On sélectionne le minimum pour la performance
+    });
+
+    if (!existingUser) {
+      break;
+    }
+
+    // Sinon, on génère le suivant : user_0, user_1, etc.
+    currentUsername = `${baseUsername}_${counter}`;
+    counter++;
+  }
+
+  // 2. Création de l'utilisateur avec le username unique trouvé
+  const email = `${currentUsername + crypto.randomUUID()}@gmail.com`;
+
   const profilePicture = {
     create: {
       url: faker.image.avatar(),
-      alt: `The profile picture of ${username}`,
+      alt: `The profile picture of ${currentUsername}`,
     },
   };
+
   const userData = {
-    username,
+    username: currentUsername,
     email,
     profilePicture,
   };
+
   const user = await prismaClient.user.create({
     data: userData,
   });
