@@ -18,6 +18,7 @@ export default function useSearchbar({ ...props }: SearchbarProps) {
   const [searchResults, setSearchResults] = useState<AnySearch | undefined>(undefined);
   const [items, setItems] = useState<{ rank: number; item: ReactNode; text: string }[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (!searchValue || searchValue.length <= 0) {
@@ -57,19 +58,31 @@ export default function useSearchbar({ ...props }: SearchbarProps) {
     const exercisesItems = searchResults.exercises.map((exercise) => ({
       rank: exercise.rank,
       text: `${exercise.title} - ${exercise.author.username}`,
-      item: <ExerciseSearchbarItem key={exercise.id} exercise={exercise} />,
+      item: (
+        <ExerciseSearchbarItem
+          key={exercise.id}
+          exercise={exercise}
+          closeSearchbar={() => setOpen(false)}
+        />
+      ),
     }));
 
     const playlistsItems = searchResults.playlists.map((playlist) => ({
       rank: playlist.rank,
       text: `${playlist.title} - ${playlist.author.username}`,
-      item: <PlaylistSearchbarItem key={playlist.id} playlist={playlist} />,
+      item: (
+        <PlaylistSearchbarItem
+          key={playlist.id}
+          playlist={playlist}
+          closeSearchbar={() => setOpen(false)}
+        />
+      ),
     }));
 
     const usersItems = searchResults.users.map((user) => ({
       rank: user.rank,
       text: `${user.username}`,
-      item: <UserSearchbarItem key={user.id} user={user} />,
+      item: <UserSearchbarItem key={user.id} user={user} closeSearchbar={() => setOpen(false)} />,
     }));
 
     setItems(
@@ -102,5 +115,7 @@ export default function useSearchbar({ ...props }: SearchbarProps) {
     items,
     status,
     shouldRenderPopup,
+    open,
+    setOpen,
   };
 }
