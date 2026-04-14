@@ -1,6 +1,6 @@
 import { Play, Settings, Square } from "lucide-react";
 import { Field, FieldLabel } from "@/components/molecules/field";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/custom_input";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
 import type { Gameprops } from "@/pages/game/+Page";

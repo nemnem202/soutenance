@@ -4,7 +4,7 @@ import { navigate } from "vike/client/router";
 import Modal from "@/components/organisms/modal";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/organisms/select";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/custom_input";
 import { Spinner } from "@/components/ui/spinner";
 import { availableLanguages } from "@/config/language-pack";
 import { useLanguage } from "@/hooks/use-language";
