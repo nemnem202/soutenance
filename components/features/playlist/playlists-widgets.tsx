@@ -102,7 +102,7 @@ export function MediumPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }
 function MediumAddNewPlaylistWidget() {
   const { instance } = useLanguage();
   return (
-    <div className="w-full cursor-pointer hover:opacity-80 rounded-md transition">
+    <div className="w-full cursor-pointer hover:opacity-80 rounded-md transition max-w-60">
       <a href="/new-playlist" className="flex flex-col rounded gap-2.5">
         <div className="w-full aspect-square rounded overflow-hidden bg-card flex items-center justify-center">
           <Plus size={100} />
