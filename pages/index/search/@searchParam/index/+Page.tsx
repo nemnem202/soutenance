@@ -13,14 +13,14 @@ export default function Page() {
   const { exercises, playlists, users } = useData<Data>();
   return (
     <>
-      {exercises.success && (
+      {exercises.success && exercises.data.length > 0 && (
         <SearchExercisesList
           seeAllUrl={`/search/${routeParams.searchParam}/exercises`}
           exercises={exercises.data}
         />
       )}
 
-      {users.success && (
+      {users.success && users.data.length > 0 && (
         <MediumWidgetCarousel
           title={instance.getItem("users")}
           seeAllUrl={`/search/${routeParams.searchParam}/users`}
@@ -30,7 +30,7 @@ export default function Page() {
         />
       )}
 
-      {playlists.success && (
+      {playlists.success && playlists.data.length > 0 && (
         <MediumWidgetCarousel
           title="Playlists"
           seeAllUrl={`/search/${routeParams.searchParam}/playlists`}
