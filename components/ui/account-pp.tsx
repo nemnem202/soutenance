@@ -1,5 +1,6 @@
 import type { Image } from "@/types/entities";
 import { Avatar, AvatarImage } from "./avatar";
+import { logger } from "@/lib/logger";
 
 export default function AccountPP({
   image = {
@@ -9,9 +10,10 @@ export default function AccountPP({
 }: {
   image?: Image;
 }) {
+  logger.info("Profile picture: ", image);
   return (
     <Avatar>
-      <AvatarImage alt={image.alt} src={image.url} />
+      <img alt={image.alt} src={image.url} referrerPolicy="no-referrer" />
     </Avatar>
   );
 }
