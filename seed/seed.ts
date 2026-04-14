@@ -48,9 +48,7 @@ async function fillPlaylist(userId: number, playlistId: number, exercises: Exerc
   await Promise.all(promises);
 }
 
-async function putPlaylistInDb(playlist: PlaylistSchema) {
-  const user = await createUser();
-
+async function putPlaylistInDb(playlist: PlaylistSchema, user: User) {
   const controller = new PlaylistController({ client: prismaClient, userId: user.id });
   const playlistDb = await controller.createPlaylist(playlist);
 
@@ -64,8 +62,13 @@ export default async function convertAllPlaylists() {
 
   console.log("🚀 Starting Conversion...");
 
+  let currentUser: User = await createUser();
+
+  let currentUserPlaylistsLastBeforeCreateAnotherOne = Math.floor(Math.random() * 50) + 1;
+
   for (const [index, link] of allLinks.entries()) {
     try {
+      currentUserPlaylistsLastBeforeCreateAnotherOne--;
       const irealPlaylist = new IrealChartDecoder(link);
       const converted = convertPlaylist(irealPlaylist);
 
@@ -83,7 +86,11 @@ export default async function convertAllPlaylists() {
         continue;
       }
 
-      await putPlaylistInDb(converted.playlist);
+      if (currentUserPlaylistsLastBeforeCreateAnotherOne <= 0) {
+        currentUserPlaylistsLastBeforeCreateAnotherOne = Math.floor(Math.random() * 50) + 1;
+        currentUser = await createUser();
+      }
+      await putPlaylistInDb(converted.playlist, currentUser);
 
       success++;
       console.log(
