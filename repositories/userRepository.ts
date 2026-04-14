@@ -1,5 +1,7 @@
+import { ServerResponse, Status } from "@/types/server-response";
 import { Repository } from "./repository";
 import argon2 from "argon2";
+import { Session } from "@/types/auth";
 
 export default class UserRepository extends Repository {
   async create(
@@ -49,5 +51,38 @@ export default class UserRepository extends Repository {
 
   async delete(userId: number) {
     await this.client.user.delete({ where: { id: userId } });
+  }
+
+  async getRecommended(
+    start: number | undefined = 0,
+    length: number | undefined = 20
+  ): Promise<ServerResponse<Session[]>> {
+    const sliced = await this.client.user.findMany({
+      orderBy: {
+        likedByUsers: {
+          _count: "desc",
+        },
+      },
+      select: {
+        id: true,
+        username: true,
+        profilePicture: {
+          select: {
+            url: true,
+            alt: true,
+          },
+        },
+      },
+    });
+
+    return {
+      status: Status.Ok,
+      success: true,
+      data: sliced.map((user) => ({
+        id: user.id,
+        profilePicture: user.profilePicture,
+        username: user.username,
+      })),
+    };
   }
 }

@@ -1,5 +1,5 @@
 import type { Image } from "@/types/entities";
-import { Avatar, AvatarImage } from "./avatar";
+import { Avatar } from "./avatar";
 import { logger } from "@/lib/logger";
 
 export default function AccountPP({

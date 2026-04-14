@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { logger } from "@/lib/logger";
 import { MediumWidgetCarousel } from "@/components/organisms/widget-carousel";
 import { MediumPlaylistWidget } from "@/components/features/playlist/playlists-widgets";
+import { MediumAccountWidget } from "@/components/features/auth/account-widgets";
 
 export default function Page() {
   return <SizeAdapter sm={<Mobile />} md={<Desktop />} />;
@@ -17,7 +18,7 @@ export default function Page() {
 function Desktop() {
   const { session } = useSession();
   const { instance } = useLanguage();
-  const { popular, discover } = useData<Data>();
+  const { popular, discover, recommendedUsers } = useData<Data>();
 
   useEffect(() => logger.info("Popular", popular), [popular]);
   return (
@@ -32,10 +33,6 @@ function Desktop() {
       {/* <MediumWidgetCarousel
         title={instance.getItem("recentlyPlayed")}
         widgets={Array.from({ length: 20 }).map((_, index) => <MediumPlaylistWidget key={index} />)}
-      />
-      <MediumWidgetCarousel
-        title={instance.getItem("moreOfThem")}
-        widgets={Array.from({ length: 20 }).map((_, index) => <MediumAccountWidget key={index} />)}
       /> */}
       {popular.success && (
         <MediumWidgetCarousel
@@ -51,6 +48,15 @@ function Desktop() {
           title={instance.getItem("discover")}
           widgets={discover.data.map((data, index) => (
             <MediumPlaylistWidget key={index} playlist={data} />
+          ))}
+        />
+      )}
+
+      {recommendedUsers.success && (
+        <MediumWidgetCarousel
+          title={instance.getItem("moreOfThem")}
+          widgets={recommendedUsers.data.map((account, index) => (
+            <MediumAccountWidget key={index} account={account} />
           ))}
         />
       )}
