@@ -1,24 +1,22 @@
 import { getGlobalData } from "@/lib/global-data";
 import prismaClient from "@/lib/prisma-client";
 import { handleAction } from "@/lib/response-handler";
-import ExerciseRepository from "@/repositories/exerciseRepository";
-import { PlaylistRepository } from "@/repositories/playlistRepository";
-import UserRepository from "@/repositories/userRepository";
+import SearchRepository from "@/repositories/searchRepository";
 import type { PageContextServer } from "vike/types";
 
 async function getSearchedPlaylists(query: string) {
-  const repo = new PlaylistRepository(prismaClient);
-  return handleAction("Get searched playlists", () => repo.getFromSearch(query));
+  const repo = new SearchRepository(prismaClient);
+  return handleAction("Get searched playlists", () => repo.getPlaylists(query));
 }
 
 async function getSearchedExercises(query: string) {
-  const repo = new ExerciseRepository(prismaClient);
-  return handleAction("Get searched exercises", () => repo.getFromSearch(query));
+  const repo = new SearchRepository(prismaClient);
+  return handleAction("Get searched exercises", () => repo.getExercises(query));
 }
 
 async function getSearchedUsers(query: string) {
-  const repo = new UserRepository(prismaClient);
-  return handleAction("Get searched users", () => repo.getFromSearch(query));
+  const repo = new SearchRepository(prismaClient);
+  return handleAction("Get searched users", () => repo.getUsers(query));
 }
 
 export default async function data(pageContext: PageContextServer) {
