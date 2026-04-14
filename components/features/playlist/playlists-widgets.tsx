@@ -129,6 +129,10 @@ export function MediumPlaylistWrapper({
       {playlists.map((playlist, i) => (
         <MediumPlaylistWidget key={i} playlist={playlist} />
       ))}
+      {playlists.length < 5 &&
+        Array.from({ length: 5 - playlists.length }).map((_, index) => (
+          <div key={index} className="w-full max-w-60"></div>
+        ))}
     </div>
   );
 }
