@@ -13,7 +13,12 @@ export default function AccountPP({
   logger.info("Profile picture: ", image);
   return (
     <Avatar>
-      <img alt={image.alt} src={image.url} referrerPolicy="no-referrer" />
+      <img
+        alt={image.alt}
+        src={image.url}
+        referrerPolicy="no-referrer"
+        className="object-cover w-full h-full"
+      />
     </Avatar>
   );
 }

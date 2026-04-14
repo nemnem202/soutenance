@@ -17,19 +17,16 @@ async function createUser(): Promise<User> {
   while (true) {
     const existingUser = await prismaClient.user.findUnique({
       where: { username: currentUsername },
-      select: { id: true }, // On sélectionne le minimum pour la performance
+      select: { id: true },
     });
 
     if (!existingUser) {
       break;
     }
-
-    // Sinon, on génère le suivant : user_0, user_1, etc.
-    currentUsername = `${baseUsername}_${counter}`;
+    currentUsername = `${baseUsername.substring(0, 20 - 1 - String(counter).length)}_${counter}`;
     counter++;
   }
 
-  // 2. Création de l'utilisateur avec le username unique trouvé
   const email = `${currentUsername + crypto.randomUUID()}@gmail.com`;
 
   const profilePicture = {
