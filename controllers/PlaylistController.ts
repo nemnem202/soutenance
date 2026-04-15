@@ -1,7 +1,7 @@
+import { PlaylistRepository } from "@/repositories/playlistRepository";
 import { playlistSchema } from "@/schemas/entities.schema";
 import type { Exercise, PlaylistSchema } from "@/types/entities";
 import { Controller, type ControllerDeps } from "./Controller";
-import { PlaylistRepository } from "@/repositories/playlistRepository";
 
 interface PlaylistControllerDeps extends ControllerDeps {
   userId: number;

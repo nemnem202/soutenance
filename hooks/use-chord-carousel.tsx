@@ -3,16 +3,13 @@
 import type { EmblaCarouselType } from "embla-carousel";
 import { useSpring } from "motion/react";
 import { useCallback, useEffect, useRef } from "react";
-import { useData } from "vike-react/useData";
 import type { ChordCarouselProps } from "@/components/features/game/chord-carousel";
-import type { Data } from "@/pages/+data";
 
 const TWEEN_FACTOR_BASE = 0.4;
 const numberWithinRange = (number: number, min: number, max: number): number =>
   Math.min(Math.max(number, min), max);
 
 export default function useChordCarousel({ api, axis }: ChordCarouselProps) {
-  const chords = useData<Data>().chordsPlaceholders;
   const tweenFactor = useRef(0);
   const tweenNodes = useRef<HTMLElement[]>([]);
   const springWidth = useSpring(240, {
@@ -96,5 +93,5 @@ export default function useChordCarousel({ api, axis }: ChordCarouselProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [api, axis]);
 
-  return { chords, springWidth };
+  return { springWidth };
 }

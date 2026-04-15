@@ -1,8 +1,8 @@
-import { ServerResponse, Status } from "@/types/server-response";
-import { Repository } from "./repository";
 import argon2 from "argon2";
-import { Session } from "@/types/auth";
-import { UserDetailsDto } from "@/types/dtos/user";
+import type { Session } from "@/types/auth";
+import type { UserDetailsDto } from "@/types/dtos/user";
+import { type ServerResponse, Status } from "@/types/server-response";
+import { Repository } from "./repository";
 
 export default class UserRepository extends Repository {
   async create(

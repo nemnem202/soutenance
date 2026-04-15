@@ -1,8 +1,8 @@
+import type { PageContextServer } from "vike/types";
 import { getGlobalData } from "@/lib/global-data";
 import prismaClient from "@/lib/prisma-client";
 import { handleAction } from "@/lib/response-handler";
 import { PlaylistRepository } from "@/repositories/playlistRepository";
-import type { PageContextServer } from "vike/types";
 
 async function getPlaylistFromId(id: number) {
   const repository = new PlaylistRepository(prismaClient);

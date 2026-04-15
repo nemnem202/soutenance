@@ -8,9 +8,9 @@ import SizeAdapter from "@/components/molecules/size-adapter";
 import Searchbar from "@/components/organisms/searchbar";
 import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
-import { Data } from "./+data";
-import { Session } from "@/types/auth";
-import { UserDetailsDto } from "@/types/dtos/user";
+import type { Session } from "@/types/auth";
+import type { UserDetailsDto } from "@/types/dtos/user";
+import type { Data } from "./+data";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;

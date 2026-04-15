@@ -1,6 +1,6 @@
 import { useData } from "vike-react/useData";
-import { Data } from "../+data";
 import { MediumPlaylistWrapper } from "@/components/features/playlist/playlists-widgets";
+import type { Data } from "../+data";
 
 export default function Page() {
   const { playlists } = useData<Data>();

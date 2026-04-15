@@ -1,6 +1,6 @@
-import { MediumAccountWrapper } from "@/components/features/auth/account-widgets";
 import { useData } from "vike-react/useData";
-import { Data } from "../+data";
+import { MediumAccountWrapper } from "@/components/features/auth/account-widgets";
+import type { Data } from "../+data";
 
 export default function Page() {
   const { users } = useData<Data>();

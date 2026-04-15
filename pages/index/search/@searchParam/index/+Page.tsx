@@ -1,12 +1,11 @@
+import { useData } from "vike-react/useData";
 import { usePageContext } from "vike-react/usePageContext";
 import { MediumAccountWidget } from "@/components/features/auth/account-widgets";
 import { SearchExercisesList } from "@/components/features/playlist/playlist-items";
 import { MediumPlaylistWidget } from "@/components/features/playlist/playlists-widgets";
 import { MediumWidgetCarousel } from "@/components/organisms/widget-carousel";
 import { useLanguage } from "@/hooks/use-language";
-import { useData } from "vike-react/useData";
-import { Data } from "../+data";
-import Headline from "@/components/ui/headline";
+import type { Data } from "../+data";
 
 export default function Page() {
   const { routeParams } = usePageContext();

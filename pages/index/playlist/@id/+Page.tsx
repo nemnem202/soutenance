@@ -10,8 +10,8 @@ import AccountPP from "@/components/ui/account-pp";
 import { LikeButton, PlusButton } from "@/components/ui/custom-buttons";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
-import type { Data } from "./+data";
 import type { PlaylistDetailDto } from "@/types/dtos/playlist";
+import type { Data } from "./+data";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;

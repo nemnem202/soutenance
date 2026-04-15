@@ -1,14 +1,14 @@
+import { faker } from "@faker-js/faker";
+import ExerciseController from "@/controllers/ExerciseController";
+import PlaylistController from "@/controllers/PlaylistController";
+import type { User } from "@/lib/generated/prisma/client";
 import { logger } from "@/lib/logger";
-import links from "./links.json";
+import prismaClient from "@/lib/prisma-client";
+import { playlistSchema } from "@/schemas/entities.schema";
+import type { ExerciseSchema, Playlist, PlaylistSchema } from "@/types/entities";
 import { IrealChartDecoder } from "./conversion/chart_decoder";
 import { convertPlaylist } from "./conversion/converter";
-import { playlistSchema } from "@/schemas/entities.schema";
-import { faker } from "@faker-js/faker";
-import type { User } from "@/lib/generated/prisma/client";
-import prismaClient from "@/lib/prisma-client";
-import type { ExerciseSchema, Playlist, PlaylistSchema } from "@/types/entities";
-import PlaylistController from "@/controllers/PlaylistController";
-import ExerciseController from "@/controllers/ExerciseController";
+import links from "./links.json";
 
 async function createUser(): Promise<User> {
   const baseUsername = faker.person.firstName().substring(0, 20);

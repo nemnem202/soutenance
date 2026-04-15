@@ -1,15 +1,15 @@
 import { Compass, Heart, House, LayoutDashboard } from "lucide-react";
 import { type ReactNode, useState } from "react";
+import { useData } from "vike-react/useData";
 import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
+import type { Data } from "@/pages/+data";
 import { PlusButton } from "../../ui/custom-buttons";
 import Link from "../../ui/link";
 import Logo from "../../ui/logo";
 import { Separator } from "../../ui/separator";
 import NewPlaylistModal from "../playlist/new-playlist-modal";
 import { SmallPlaylistWidget } from "../playlist/playlists-widgets";
-import { useData } from "vike-react/useData";
-import type { Data } from "@/pages/+data";
 
 export default function Sidebar() {
   const { session } = useSession();

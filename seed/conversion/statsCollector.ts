@@ -1,6 +1,6 @@
+import _ from "lodash";
 import { CHORDS_DICTIONNARY } from "@/config/chords-dictionary";
 import type { SongIreal } from "./chart_decoder";
-import _ from "lodash";
 
 interface ModifierEntry {
   count: number;

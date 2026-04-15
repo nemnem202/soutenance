@@ -1,7 +1,7 @@
+import ExerciseRepository from "@/repositories/exerciseRepository";
 import { exerciseSchema } from "@/schemas/entities.schema";
 import type { Config, ExerciseSchema } from "@/types/entities";
 import { Controller, type ControllerDeps } from "./Controller";
-import ExerciseRepository from "@/repositories/exerciseRepository";
 
 interface ExerciseControllerDeps extends ControllerDeps {
   userId: number;

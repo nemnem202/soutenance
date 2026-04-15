@@ -1,8 +1,8 @@
+import type { PageContextServer } from "vike/types";
 import { getGlobalData } from "@/lib/global-data";
 import prismaClient from "@/lib/prisma-client";
 import { handleAction } from "@/lib/response-handler";
 import UserRepository from "@/repositories/userRepository";
-import type { PageContextServer } from "vike/types";
 
 async function getAccountFromId(id: number) {
   const repository = new UserRepository(prismaClient);

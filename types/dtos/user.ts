@@ -1,5 +1,5 @@
-import { Session } from "../auth";
-import { PlaylistCardDto } from "./playlist";
+import type { Session } from "../auth";
+import type { PlaylistCardDto } from "./playlist";
 
 export interface UserDetailsDto extends Session {
   publicPlaylists: PlaylistCardDto[];

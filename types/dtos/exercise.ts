@@ -1,5 +1,5 @@
 import type { Session } from "../auth";
-import { Image } from "../entities";
+import type { Image } from "../entities";
 import type { PlaylistDTO } from "./playlist";
 
 export interface ExerciseDto {

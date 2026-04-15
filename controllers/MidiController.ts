@@ -1,6 +1,6 @@
-import { spawn } from "child_process";
-import { randomBytes } from "crypto";
-import { readFile, unlink } from "fs/promises";
+import { spawn } from "node:child_process";
+import { randomBytes } from "node:crypto";
+import { readFile, unlink } from "node:fs/promises";
 import { logger } from "@/lib/logger";
 import { type ServerResponse, Status } from "@/types/server-response";
 
@@ -55,7 +55,7 @@ export default class MidiController {
 
       const errors: Buffer[] = [];
 
-      mma.stdin.write(content + "\n");
+      mma.stdin.write(`${content}\n`);
       mma.stdin.end();
 
       mma.stdout.on("data", (chunk: Buffer) => errors.push(chunk));

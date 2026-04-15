@@ -1,4 +1,4 @@
-import { Session } from "@/types/auth";
+import type { Session } from "@/types/auth";
 import { LikeButton } from "../../ui/custom-buttons";
 
 export function MediumAccountWidget({ account }: { account: Session }) {

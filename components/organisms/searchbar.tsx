@@ -1,3 +1,5 @@
+import { SearchIcon } from "lucide-react";
+import { navigate } from "vike/client/router";
 import {
   Autocomplete,
   AutocompleteInput,
@@ -6,13 +8,11 @@ import {
   AutocompletePopup,
   AutocompleteStatus,
 } from "@/components/ui/autocomplete";
-import { SearchIcon } from "lucide-react";
-import { navigate } from "vike/client/router";
+import { useLanguage } from "@/hooks/use-language";
+import useSearchbar from "@/hooks/use-searchbar";
 import type { Session } from "@/types/auth";
 import type { SoloExerciseCardDto } from "@/types/dtos/exercise";
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
-import useSearchbar from "@/hooks/use-searchbar";
-import { useLanguage } from "@/hooks/use-language";
 
 export interface SearchbarProps {
   placeholder: string;

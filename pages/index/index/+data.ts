@@ -1,9 +1,9 @@
+import type { PageContextServer } from "vike/types";
 import { getGlobalData } from "@/lib/global-data";
 import prismaClient from "@/lib/prisma-client";
 import { handleAction } from "@/lib/response-handler";
 import { PlaylistRepository } from "@/repositories/playlistRepository";
 import UserRepository from "@/repositories/userRepository";
-import type { PageContextServer } from "vike/types";
 
 async function getPopularPlaylists() {
   const repo = new PlaylistRepository(prismaClient);

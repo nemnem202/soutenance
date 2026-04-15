@@ -1,3 +1,4 @@
+import type { Prisma } from "@/lib/generated/prisma/client";
 import type {
   CellSchema,
   ChordSchema,
@@ -7,7 +8,6 @@ import type {
   VoltaSchema,
 } from "@/types/entities";
 import { Repository } from "./repository";
-import type { Prisma } from "@/lib/generated/prisma/client";
 
 export default class ExerciseRepository extends Repository {
   async create(exercise: ExerciseSchema, playlistId: number, userId: number) {

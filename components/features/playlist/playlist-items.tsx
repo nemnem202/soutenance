@@ -6,8 +6,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { LikeButton } from "@/components/ui/custom-buttons";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
-import type { PlaylistDetailDto } from "@/types/dtos/playlist";
 import type { ExerciseCardDto, SoloExerciseCardDto } from "@/types/dtos/exercise";
+import type { PlaylistDetailDto } from "@/types/dtos/playlist";
 
 export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto }) {
   const { instance } = useLanguage();

@@ -1,8 +1,8 @@
+import type { PageContextServer } from "vike/types";
 import { getGlobalData } from "@/lib/global-data";
 import prismaClient from "@/lib/prisma-client";
 import { handleAction } from "@/lib/response-handler";
 import SearchRepository from "@/repositories/searchRepository";
-import type { PageContextServer } from "vike/types";
 
 async function getSearchedPlaylists(query: string) {
   const repo = new SearchRepository(prismaClient);

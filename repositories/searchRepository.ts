@@ -1,9 +1,9 @@
+import { logger } from "@/lib/logger";
+import type { Session } from "@/types/auth";
+import type { ExerciseCardDto, SoloExerciseCardDto } from "@/types/dtos/exercise";
+import type { PlaylistCardDto } from "@/types/dtos/playlist";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Repository } from "./repository";
-import type { Session } from "@/types/auth";
-import type { PlaylistCardDto } from "@/types/dtos/playlist";
-import type { ExerciseCardDto, SoloExerciseCardDto } from "@/types/dtos/exercise";
-import { logger } from "@/lib/logger";
 
 export interface AnySearch {
   exercises: (SoloExerciseCardDto & { rank: number })[];

@@ -1,16 +1,16 @@
+import type { ReactNode } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ExerciseSearchbarItem,
   PlaylistSearchbarItem,
-  UserSearchbarItem,
   type SearchbarProps,
+  UserSearchbarItem,
 } from "@/components/organisms/searchbar";
-import type { ReactNode } from "react";
-import { useCallback, useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
+import { logger } from "@/lib/logger";
+import { errorToast } from "@/lib/toaster";
 import type { AnySearch } from "@/repositories/searchRepository";
 import onSearch from "@/telefunc/search.telefunc";
-import { errorToast } from "@/lib/toaster";
-import { logger } from "@/lib/logger";
 
 export default function useSearchbar({ ...props }: SearchbarProps) {
   const [searchValue, setSearchValue] = useState("");

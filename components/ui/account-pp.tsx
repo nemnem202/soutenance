@@ -1,6 +1,6 @@
+import { logger } from "@/lib/logger";
 import type { Image } from "@/types/entities";
 import { Avatar } from "./avatar";
-import { logger } from "@/lib/logger";
 
 export default function AccountPP({
   image = {

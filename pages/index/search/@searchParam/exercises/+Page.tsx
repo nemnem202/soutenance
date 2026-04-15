@@ -1,6 +1,6 @@
 import { useData } from "vike-react/useData";
-import { Data } from "../+data";
 import { SearchPlaylistItemsList } from "@/components/features/playlist/playlist-items";
+import type { Data } from "../+data";
 
 export default function Page() {
   const { exercises } = useData<Data>();
