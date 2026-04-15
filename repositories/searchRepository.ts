@@ -1,22 +1,23 @@
 import { logger } from "@/lib/logger";
-import type { Session } from "@/types/auth";
 import type { ExerciseCardDto, SoloExerciseCardDto } from "@/types/dtos/exercise";
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Repository } from "./repository";
+import { UserCardDto } from "@/types/dtos/user";
 
 export interface AnySearch {
   exercises: (SoloExerciseCardDto & { rank: number })[];
   playlists: (PlaylistCardDto & { rank: number })[];
-  users: (Session & { rank: number })[];
+  users: (UserCardDto & { rank: number })[];
 }
 
 export default class SearchRepository extends Repository {
   async getUsers(
     query: string,
+    userId: number | null,
     start: number | undefined = 0,
     length: number | undefined = 20
-  ): Promise<ServerResponse<(Session & { score: number })[]>> {
+  ): Promise<ServerResponse<(UserCardDto & { score: number })[]>> {
     const rawResults = await this.client.$queryRaw<{ id: number; weighted_score: number }[]>`
       SELECT u.*, 
        similarity(u.username, ${query}) AS weighted_score,
@@ -37,6 +38,7 @@ export default class SearchRepository extends Repository {
       select: {
         id: true,
         username: true,
+        likedByUsers: userId ? { where: { likingId: userId }, select: { likingId: true } } : false,
         profilePicture: {
           select: {
             url: true,
@@ -57,6 +59,7 @@ export default class SearchRepository extends Repository {
           id: user.id,
           profilePicture: user.profilePicture,
           username: user.username,
+          likedByCurrentUser: user.likedByUsers.length > 0,
         }))
         .sort((a, b) => b.score - a.score),
     };
@@ -226,7 +229,7 @@ export default class SearchRepository extends Repository {
 
     let usersPromise: Promise<
       ServerResponse<
-        (Session & {
+        (UserCardDto & {
           score: number;
         })[]
       >
@@ -306,7 +309,7 @@ export default class SearchRepository extends Repository {
     logger.info("Top ranked item :", slice[0]);
 
     const usersArray = slice.filter(
-      (e): e is Session & { rank: number; score: number } =>
+      (e): e is UserCardDto & { rank: number; score: number } =>
         "username" in e && !("visibility" in e) && !("midifileUrl" in e)
     );
 

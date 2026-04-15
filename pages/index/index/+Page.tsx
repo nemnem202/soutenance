@@ -30,10 +30,6 @@ function Desktop() {
       ) : (
         <Headline>{instance.getItem("homepageDefaultTitle")}</Headline>
       )}
-      {/* <MediumWidgetCarousel
-        title={instance.getItem("recentlyPlayed")}
-        widgets={Array.from({ length: 20 }).map((_, index) => <MediumPlaylistWidget key={index} />)}
-      /> */}
       {popular.success && (
         <MediumWidgetCarousel
           title={instance.getItem("popularExercises")}
@@ -60,13 +56,6 @@ function Desktop() {
           ))}
         />
       )}
-
-      {/* <MediumWidgetCarousel
-          title={instance.getItem("moreOfThem")}
-          widgets={recommendedUsers.data.map((account, index) => (
-            <MediumAccountWidget key={index} account={account} />
-          ))}
-        /> */}
     </>
   );
 }

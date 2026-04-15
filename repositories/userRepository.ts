@@ -1,6 +1,5 @@
 import argon2 from "argon2";
-import type { Session } from "@/types/auth";
-import type { UserDetailsDto } from "@/types/dtos/user";
+import type { UserCardDto, UserDetailsDto } from "@/types/dtos/user";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Repository } from "./repository";
 
@@ -55,9 +54,10 @@ export default class UserRepository extends Repository {
   }
 
   async getRecommended(
+    userId: number | null,
     start: number | undefined = 0,
     length: number | undefined = 20
-  ): Promise<ServerResponse<Session[]>> {
+  ): Promise<ServerResponse<UserCardDto[]>> {
     const sliced = await this.client.user.findMany({
       where: {
         playlists: {
@@ -78,6 +78,7 @@ export default class UserRepository extends Repository {
             alt: true,
           },
         },
+        likedByUsers: userId ? { where: { likingId: userId }, select: { likingId: true } } : false,
       },
       skip: start,
       take: length,
@@ -90,6 +91,7 @@ export default class UserRepository extends Repository {
         id: user.id,
         profilePicture: user.profilePicture,
         username: user.username,
+        likedByCurrentUser: user.likedByUsers.length > 0,
       })),
     };
   }
@@ -105,6 +107,7 @@ export default class UserRepository extends Repository {
       select: {
         id: true,
         username: true,
+        likedByUsers: userId ? { where: { likingId: userId }, select: { likingId: true } } : false,
         playlists: {
           where: {
             visibility: "public",
@@ -160,6 +163,7 @@ export default class UserRepository extends Repository {
         id: user.id,
         profilePicture: user.profilePicture,
         username: user.username,
+        likedByCurrentUser: user.likedByUsers.length > 0,
         publicPlaylists: user.playlists.map((playlist) => ({
           author: playlist.author,
           cover: playlist.cover,

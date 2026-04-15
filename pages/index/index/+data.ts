@@ -20,8 +20,10 @@ async function getDiscoverPlaylists(pageContext: PageContextServer) {
 }
 
 async function getRecommendedUsers(pageContext: PageContextServer) {
+  const session = await getAuthenticatedSession(pageContext.headers.cookie);
+  const userId = session?.id ?? null;
   const repo = new UserRepository(prismaClient);
-  return handleAction("Get recommended users", () => repo.getRecommended());
+  return handleAction("Get recommended users", () => repo.getRecommended(userId));
 }
 
 export default async function data(pageContext: PageContextServer) {

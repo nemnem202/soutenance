@@ -1,12 +1,41 @@
-import type { Session } from "@/types/auth";
 import { LikeButton } from "../../ui/custom-buttons";
+import { MouseEvent, useState } from "react";
+import { onUserLikesUser, onUserUnlikesUser } from "@/telefunc/like.telefunc";
+import { errorToast, successToast } from "@/lib/toaster";
+import { UserCardDto } from "@/types/dtos/user";
 
-export function MediumAccountWidget({ account }: { account: Session }) {
+export function MediumAccountWidget({ account }: { account: UserCardDto }) {
+  const [isLiked, setIsLiked] = useState(account.likedByCurrentUser);
+  const handleLikeAccount = async (e: MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (isLiked) {
+      const response = await onUserUnlikesUser(account.id);
+      if (!response.success) {
+        errorToast(response.title, response.description);
+      } else {
+        successToast(`${account.username} was removed from your likes`);
+        setIsLiked(false);
+      }
+    } else {
+      const response = await onUserLikesUser(account.id);
+      if (!response.success) {
+        errorToast(response.title, response.description);
+      } else {
+        successToast(`${account.username} was added to your likes`);
+        setIsLiked(true);
+      }
+    }
+  };
   return (
     <div className="relative group w-full cursor-pointer max-w-60">
       <a href={`/account/${account.id}`} className="flex flex-col gap-2.5 items-center">
         <div className="w-full aspect-square rounded-full overflow-hidden relative flex items-end justify-center">
-          <LikeButton className={`opacity-0 z-1 group-hover:opacity-100 hidden md:flex`} />
+          <LikeButton
+            className={`opacity-0 z-1 group-hover:opacity-100 hidden md:flex`}
+            onClick={handleLikeAccount}
+            liked={isLiked}
+          />
           <div className={`absolute inset-0 transition group-hover:opacity-80`}>
             <img
               src={account.profilePicture.url}
@@ -28,7 +57,7 @@ export function MediumAccountWidget({ account }: { account: Session }) {
   );
 }
 
-export function MediumAccountWrapper({ accounts }: { accounts: Session[] }) {
+export function MediumAccountWrapper({ accounts }: { accounts: UserCardDto[] }) {
   return (
     <div className="grid gap-y-5 md:gap-y-4 gap-2 container grid-cols-[repeat(auto-fit,minmax(30vw,1fr))] md:grid-cols-[repeat(auto-fit,minmax(10rem,1fr))]">
       {accounts.map((account, i) => (
