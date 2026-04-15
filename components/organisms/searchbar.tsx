@@ -119,7 +119,11 @@ export function ExerciseSearchbarItem({
         className="w-15 h-15 object-cover overflow-hidden rounded-[0.2rem]"
       />
       <div className="flex flex-col justify-between items-start">
-        <p className="paragraph">{exercise.title}</p>
+        <div className="flex gap-2">
+          <p className="paragraph">{exercise.title}</p>
+          <p className="paragraph text-muted-foreground">{exercise.composer}</p>
+        </div>
+
         <div className="flex gap-2">
           <p className="paragraph-sm text-muted-foreground">{exercise.author.username}</p>
           <span className="paragraph-sm text-muted-foreground">-</span>
@@ -157,7 +161,9 @@ export function PlaylistSearchbarItem({
         className="w-15 h-15 object-cover overflow-hidden rounded-[0.2rem]"
       />
       <div className="flex flex-col justify-between items-start ">
-        <p className="paragraph">{playlist.title}</p>
+        <div className="flex gap-2">
+          <p className="paragraph">{playlist.title}</p>
+        </div>
         <div className="flex gap-2">
           <p className="paragraph-sm text-muted-foreground">{playlist.author.username}</p>
           <span className="paragraph-sm text-muted-foreground">-</span>

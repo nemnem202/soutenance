@@ -9,6 +9,7 @@ export interface ExerciseDto {
 }
 
 export interface ExerciseCardDto extends ExerciseDto {
+  composer: string;
   description?: string;
   likes: number;
   likedByCurrentUser: boolean;

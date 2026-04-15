@@ -144,10 +144,12 @@ export default class SearchRepository extends Repository {
       },
       select: {
         id: true,
+        composer: true,
         author: {
           select: {
             id: true,
             username: true,
+
             profilePicture: {
               select: {
                 alt: true,
@@ -194,6 +196,7 @@ export default class SearchRepository extends Repository {
         likes: exercise._count.likedByUsers,
         title: exercise.title,
         author: exercise.author,
+        composer: exercise.composer,
         chordsGrid: !!exercise.chordsGrid,
         cover: exercise.playlist.cover,
         defaultConfig: exercise.defaultConfig,
