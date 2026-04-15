@@ -32,7 +32,7 @@ function Desktop() {
       )}
       {popular.success && (
         <MediumWidgetCarousel
-          title={instance.getItem("popularExercises")}
+          title={instance.getItem("popularPlaylists")}
           widgets={popular.data.map((data, index) => (
             <MediumPlaylistWidget key={index} playlist={data} />
           ))}
@@ -74,7 +74,7 @@ function Mobile() {
         widgets={Array.from({ length: 20 }).map((_, index) => <MediumAccountWidget key={index} />)}
       />
       <MediumWidgetCarousel
-        title={instance.getItem("popularExercises")}
+        title={instance.getItem("")}
         widgets={Array.from({ length: 20 }).map((_, index) => <MediumPlaylistWidget key={index} />)}
       />
 

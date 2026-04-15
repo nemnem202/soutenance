@@ -64,12 +64,12 @@ export const languagePack = {
     de: "Dir haben sie gefallen",
     zh: "你喜欢的",
   },
-  popularExercises: {
-    fr: "Exercices populaires",
-    en: "Popular exercises",
-    es: "Ejercicios populares",
-    de: "Beliebte Übungen",
-    zh: "热门练习",
+  popularPlaylists: {
+    fr: "Playlists populaires",
+    en: "Popular playlists",
+    es: "Listas de reproducción populares",
+    de: "Beliebte Playlists",
+    zh: "热门播放列表",
   },
   discover: {
     fr: "Découvrir",
@@ -448,6 +448,13 @@ export const languagePack = {
     es: "Nueva lista",
     de: "Neue Playlist",
     zh: "新建播放列表",
+  },
+  new_exercise: {
+    fr: "Nouvel exercice",
+    en: "New exercise",
+    es: "Nuevo ejercicio",
+    de: "Neue Übung",
+    zh: "新练习",
   },
   title: {
     fr: "Titre",

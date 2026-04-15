@@ -10,9 +10,12 @@ import type { ExerciseCardDto, SoloExerciseCardDto } from "@/types/dtos/exercise
 import type { PlaylistDetailDto } from "@/types/dtos/playlist";
 import { onUserLikesExercise, onUserUnlikesExercise } from "@/telefunc/like.telefunc";
 import { errorToast, successToast } from "@/lib/toaster";
+import useSession from "@/hooks/use-session";
+import { Plus } from "lucide-react";
 
 export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto }) {
   const { instance } = useLanguage();
+  const { session } = useSession();
   return (
     <div className="w-full">
       <div className="w-full flex justify-between px-4 py-2">
@@ -35,6 +38,7 @@ export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto })
       </div>
       <Separator orientation="horizontal" />
       <div className="w-full flex flex-col justify-between  py-0 mt-2">
+        {session?.id === playlist.author.id && <AddNewExercisePlaylistItem />}
         {playlist.exercises.map((exercise, index) => (
           <PlaylistItem index={index} key={index} playlist={playlist} exercise={exercise} />
         ))}
@@ -57,6 +61,23 @@ export interface PLaylistItemProps {
   index: number;
   playlist: PlaylistDetailDto;
   exercise: ExerciseCardDto;
+}
+
+export function AddNewExercisePlaylistItem() {
+  const { instance } = useLanguage();
+  return (
+    <a
+      className=" flex justify-between items-center py-1 pl-1 my-1 relative cursor-pointer hover:bg-popover pr-4"
+      href="/new-game"
+    >
+      <div className="flex items-center h-15 text-primary gap-4">
+        <div className="h-full aspect-square rounded-sm flex justify-center bg-popover items-center">
+          <Plus />
+        </div>
+        <p className="paragraph">{instance.getItem("new_exercise")}</p>
+      </div>
+    </a>
+  );
 }
 
 export function PlaylistItem({ ...props }: PLaylistItemProps) {
