@@ -5,7 +5,7 @@ import {
   type SearchbarProps,
 } from "@/components/organisms/searchbar";
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import type { AnySearch } from "@/repositories/searchRepository";
 import onSearch from "@/telefunc/search.telefunc";
@@ -19,9 +19,34 @@ export default function useSearchbar({ ...props }: SearchbarProps) {
   const [items, setItems] = useState<{ rank: number; item: ReactNode; text: string }[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
+  const [userInput, setUserInput] = useState("");
+
+  const handleSearchChange = (val: string) => {
+    if (!val) {
+      setSearchValue("");
+      setUserInput("");
+      setSearchResults(undefined);
+      return;
+    }
+    setSearchValue(val);
+    setUserInput(val);
+  };
+
+  const resetToUserInput = () => {
+    setSearchValue(userInput);
+  };
+
+  const previewValue = (val: string) => {
+    setSearchValue(val);
+  };
+
+  const confirmValue = useCallback((val: string) => {
+    setSearchValue(val);
+    setUserInput(val);
+  }, []);
 
   useEffect(() => {
-    if (!searchValue || searchValue.length <= 0) {
+    if (!userInput || userInput.length <= 0) {
       setSearchResults(undefined);
       setIsLoading(false);
       return;
@@ -33,9 +58,10 @@ export default function useSearchbar({ ...props }: SearchbarProps) {
 
     const timeoutId = setTimeout(async () => {
       try {
-        const results = await onSearch(searchValue, 0, 10);
+        const results = await onSearch(userInput, 0, 10);
         if (!results.success) return errorToast(results.title, results.description);
-        setSearchResults(results.data);
+
+        if (!ignore) setSearchResults(results.data);
       } catch {
         if (!ignore) {
           setError("Failed to get suggestions. Please try again.");
@@ -50,47 +76,71 @@ export default function useSearchbar({ ...props }: SearchbarProps) {
       clearTimeout(timeoutId);
       ignore = true;
     };
-  }, [searchValue]);
+  }, [userInput]);
 
   useEffect(() => {
     logger.info("results", searchResults);
     if (!searchResults) return;
-    const exercisesItems = searchResults.exercises.map((exercise) => ({
-      rank: exercise.rank,
-      text: `${exercise.title} - ${exercise.author.username}`,
-      item: (
-        <ExerciseSearchbarItem
-          key={exercise.id}
-          exercise={exercise}
-          closeSearchbar={() => setOpen(false)}
-        />
-      ),
-    }));
+    const exercisesItems = searchResults.exercises.map((exercise) => {
+      const text = `${exercise.title} - ${exercise.author.username}`;
+      return {
+        rank: exercise.rank,
+        text,
+        item: (
+          <ExerciseSearchbarItem
+            key={exercise.id}
+            exercise={exercise}
+            closeSearchbar={() => {
+              confirmValue(text);
+              setOpen(false);
+            }}
+          />
+        ),
+      };
+    });
 
-    const playlistsItems = searchResults.playlists.map((playlist) => ({
-      rank: playlist.rank,
-      text: `${playlist.title} - ${playlist.author.username}`,
-      item: (
-        <PlaylistSearchbarItem
-          key={playlist.id}
-          playlist={playlist}
-          closeSearchbar={() => setOpen(false)}
-        />
-      ),
-    }));
+    const playlistsItems = searchResults.playlists.map((playlist) => {
+      const text = `${playlist.title} - ${playlist.author.username}`;
+      return {
+        rank: playlist.rank,
+        text,
+        item: (
+          <PlaylistSearchbarItem
+            key={playlist.id}
+            playlist={playlist}
+            closeSearchbar={() => {
+              confirmValue(text);
+              setOpen(false);
+            }}
+          />
+        ),
+      };
+    });
 
-    const usersItems = searchResults.users.map((user) => ({
-      rank: user.rank,
-      text: `${user.username}`,
-      item: <UserSearchbarItem key={user.id} user={user} closeSearchbar={() => setOpen(false)} />,
-    }));
+    const usersItems = searchResults.users.map((user) => {
+      const text = `${user.username}`;
+      return {
+        rank: user.rank,
+        text,
+        item: (
+          <UserSearchbarItem
+            key={user.id}
+            user={user}
+            closeSearchbar={() => {
+              confirmValue(text);
+              setOpen(false);
+            }}
+          />
+        ),
+      };
+    });
 
     setItems(
       [...exercisesItems, ...playlistsItems, ...usersItems]
         .sort((a, b) => a.rank - b.rank)
         .slice(0, 5)
     );
-  }, [searchResults]);
+  }, [searchResults, confirmValue]);
 
   let status: ReactNode = `${items.length} result${items.length === 1 ? "" : "s"} found`;
   if (isLoading) {
@@ -110,7 +160,11 @@ export default function useSearchbar({ ...props }: SearchbarProps) {
 
   return {
     searchValue,
-    setSearchValue,
+    setSearchValue: handleSearchChange,
+    previewValue,
+    resetToUserInput,
+    confirmValue,
+    userInput,
     isLoading,
     items,
     status,

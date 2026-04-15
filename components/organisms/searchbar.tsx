@@ -25,9 +25,13 @@ export default function Searchbar({ ...props }: SearchbarProps) {
     searchValue,
     setSearchValue,
     shouldRenderPopup,
+    confirmValue,
     status,
     setOpen,
     open,
+    previewValue,
+    resetToUserInput,
+    userInput,
   } = useSearchbar(props);
   return (
     <Autocomplete
@@ -44,16 +48,21 @@ export default function Searchbar({ ...props }: SearchbarProps) {
         startAddon={<SearchIcon />}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
+            confirmValue(searchValue);
             navigate(`/search/${searchValue}`);
           }
         }}
       />
       {shouldRenderPopup && (
-        <AutocompletePopup aria-busy={isLoading || undefined}>
+        <AutocompletePopup aria-busy={isLoading || undefined} onMouseLeave={resetToUserInput}>
           <AutocompleteStatus className="text-muted-foreground">{status}</AutocompleteStatus>
           <AutocompleteList>
             {items.map((item, index) => (
-              <AutocompleteItem key={index} value={item.text}>
+              <AutocompleteItem
+                key={index}
+                value={item.text}
+                onMouseMove={() => previewValue(item.text)}
+              >
                 {item.item}
               </AutocompleteItem>
             ))}
