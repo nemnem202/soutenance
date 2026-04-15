@@ -302,15 +302,17 @@ export function SearchPlaylistItemsList({ exercises }: { exercises: SoloExercise
 }
 
 export function SearchExercisesList({
-  seeAllUrl = "#",
+  title,
+  seeAllUrl,
   exercises,
 }: {
+  title?: string;
   seeAllUrl?: string;
   exercises: SoloExerciseCardDto[];
 }) {
   return (
     <div className="flex flex-col mx-auto mb-6 container">
-      <WidgetTitle title="Exercises" seeAllUrl={seeAllUrl} />
+      <WidgetTitle title={title} seeAllUrl={seeAllUrl} />
       <SearchPlaylistItemsList exercises={exercises} />
     </div>
   );

@@ -116,13 +116,13 @@ export function MediumWidgetCarousel({
 
 export function WidgetTitle({
   title,
-  seeAllUrl = "/see-all",
+  seeAllUrl,
   itemIndex,
   isLastItemVisible,
   scrollToIndex,
   widgetsRef,
 }: {
-  title: string;
+  title?: string;
   seeAllUrl?: string;
   itemIndex?: number;
   isLastItemVisible?: boolean;
@@ -132,10 +132,10 @@ export function WidgetTitle({
   const { instance } = useLanguage();
   const isMobile = useScreen() === "sm";
   return (
-    <div className="flex w-full justify-between items-center">
+    <div className="flex w-full justify-between items-center min-h-5">
       <div className="flex items-center gap-x-5 w-full">
-        <h2 className="title-2">{title}</h2>
-        {!isMobile && (
+        {title && <h2 className="title-2">{title}</h2>}
+        {!isMobile && seeAllUrl && (
           <Button variant="outline" size="sm" className="py-0" asChild>
             <a href={seeAllUrl} className="paragraph-md !h-min py-1">
               {instance.getItem("seeAll")}

@@ -63,6 +63,10 @@ export function MediumAccountWrapper({ accounts }: { accounts: UserCardDto[] }) 
       {accounts.map((account, i) => (
         <MediumAccountWidget key={i} account={account} />
       ))}
+      {accounts.length < 5 &&
+        Array.from({ length: 5 - accounts.length }).map((_, index) => (
+          <div key={index} className="w-full max-w-60"></div>
+        ))}
     </div>
   );
 }

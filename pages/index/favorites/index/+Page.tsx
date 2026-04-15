@@ -22,6 +22,7 @@ function Desktop({ ...data }: Data) {
       {exercises.success && exercises.data.length > 0 && (
         <SearchExercisesList
           key="exercises"
+          title={instance.getItem("exercises")}
           seeAllUrl={`/favorites/exercises`}
           exercises={exercises.data.slice(0, 5)}
         />
@@ -57,6 +58,7 @@ function Mobile({ ...data }: Data) {
       {exercises.success && exercises.data.length > 0 && (
         <SearchExercisesList
           key="exercises"
+          title={instance.getItem("exercises")}
           seeAllUrl={`/favorites/exercises`}
           exercises={exercises.data.slice(0, 5)}
         />

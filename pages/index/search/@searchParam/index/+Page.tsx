@@ -21,6 +21,7 @@ export default function Page() {
       render: () => (
         <SearchExercisesList
           key="exercises"
+          title={instance.getItem("exercises")}
           seeAllUrl={`/search/${routeParams.searchParam}/exercises`}
           exercises={exercises.success ? exercises.data.slice(0, 5) : []}
         />
