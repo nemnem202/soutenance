@@ -25,5 +25,30 @@ export async function onUserLikesUser(likedUserId: number) {
   const context = getContext();
   const userId = context.user?.id ?? null;
   const controller = new LikeController({ client: prismaClient });
-  return handleAction("User likes User", () => controller.userLikesExercise(userId, likedUserId));
+  return handleAction("User likes User", () => controller.userLikesUser(userId, likedUserId));
+}
+
+export async function onUserUnlikesPlaylist(playlistId: number) {
+  const context = getContext();
+  const userId = context.user?.id ?? null;
+  const controller = new LikeController({ client: prismaClient });
+  return handleAction("User unlikes playlist", () =>
+    controller.userUnlikesPlaylist(userId, playlistId)
+  );
+}
+
+export async function onUserUnlikesExercise(exerciseId: number) {
+  const context = getContext();
+  const userId = context.user?.id ?? null;
+  const controller = new LikeController({ client: prismaClient });
+  return handleAction("User unlikes Exercise", () =>
+    controller.userUnlikesExercise(userId, exerciseId)
+  );
+}
+
+export async function onUserUnlikesUser(likedUserId: number) {
+  const context = getContext();
+  const userId = context.user?.id ?? null;
+  const controller = new LikeController({ client: prismaClient });
+  return handleAction("User unlikes User", () => controller.userUnlikesUser(userId, likedUserId));
 }

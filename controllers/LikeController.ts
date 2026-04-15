@@ -38,6 +38,37 @@ export default class LikeController extends Controller<ControllerDeps> {
     };
   }
 
+  async userUnlikesPlaylist(
+    userId: number | null,
+    playlistId: number
+  ): Promise<ServerResponse<{}>> {
+    if (!userId) throw new AppError(Status.NotConnected, "You are not connected");
+
+    const user = await this.deps.client.user.findUnique({ where: { id: userId } });
+
+    if (!user) throw new AppError(Status.BadAuthMethod, "Unknown account", "Try to connect again.");
+
+    await this.deps.client.playlist.update({
+      where: {
+        id: playlistId,
+      },
+      data: {
+        userLikesPlaylists: {
+          deleteMany: {
+            userId: user.id,
+            playlistId: playlistId,
+          },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      status: Status.Ok,
+      data: {},
+    };
+  }
+
   async userLikesExercise(userId: number | null, exerciseId: number): Promise<ServerResponse<{}>> {
     if (!userId) throw new AppError(Status.NotConnected, "You are not connected");
 
@@ -61,6 +92,37 @@ export default class LikeController extends Controller<ControllerDeps> {
             create: {
               userId: user.id,
             },
+          },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      status: Status.Ok,
+      data: {},
+    };
+  }
+
+  async userUnlikesExercise(
+    userId: number | null,
+    exerciseId: number
+  ): Promise<ServerResponse<{}>> {
+    if (!userId) throw new AppError(Status.NotConnected, "You are not connected");
+
+    const user = await this.deps.client.user.findUnique({ where: { id: userId } });
+
+    if (!user) throw new AppError(Status.BadAuthMethod, "Unknown account", "Try to connect again.");
+
+    await this.deps.client.exercise.update({
+      where: {
+        id: exerciseId,
+      },
+      data: {
+        likedByUsers: {
+          deleteMany: {
+            userId: user.id,
+            exerciseId: exerciseId,
           },
         },
       },
@@ -99,6 +161,37 @@ export default class LikeController extends Controller<ControllerDeps> {
             create: {
               likingId: user.id,
             },
+          },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      status: Status.Ok,
+      data: {},
+    };
+  }
+
+  async userUnlikesUser(
+    likingUserId: number | null,
+    likedUserId: number
+  ): Promise<ServerResponse<{}>> {
+    if (!likingUserId) throw new AppError(Status.NotConnected, "You are not connected");
+
+    const user = await this.deps.client.user.findUnique({ where: { id: likingUserId } });
+
+    if (!user) throw new AppError(Status.BadAuthMethod, "Unknown account", "Try to connect again.");
+
+    await this.deps.client.user.update({
+      where: {
+        id: likedUserId,
+      },
+      data: {
+        likedByUsers: {
+          deleteMany: {
+            likedId: likedUserId,
+            likingId: likingUserId,
           },
         },
       },
