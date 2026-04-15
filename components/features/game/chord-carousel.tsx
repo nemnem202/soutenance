@@ -3,6 +3,7 @@ import type { EmblaViewportRefType } from "embla-carousel-react";
 import { motion } from "motion/react";
 import useChordCarousel from "@/hooks/use-chord-carousel";
 import { chordToString } from "@/lib/utils";
+import { Chord } from "@/types/music";
 
 export interface ChordCarouselProps {
   carouselRef: EmblaViewportRefType;
@@ -11,7 +12,8 @@ export interface ChordCarouselProps {
 }
 
 export default function ChordCarousel({ carouselRef, api, axis }: ChordCarouselProps) {
-  const { chords, springWidth } = useChordCarousel({ carouselRef, api, axis });
+  const { springWidth } = useChordCarousel({ carouselRef, api, axis });
+  const chords: Chord[] = [];
 
   return (
     <>

@@ -1,4 +1,3 @@
-import { MediumAccountWrapper } from "@/components/features/auth/account-widgets";
 import FavoritesSearchbarSpace from "@/components/features/layout/favorites-searchbar-space";
 import { useLanguage } from "@/hooks/use-language";
 
@@ -7,7 +6,7 @@ export default function Page() {
   return (
     <>
       <FavoritesSearchbarSpace label={instance.getItem("users")} />
-      <MediumAccountWrapper />
+      {/* <MediumAccountWrapper /> */}
     </>
   );
 }

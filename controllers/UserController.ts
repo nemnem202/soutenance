@@ -1,9 +1,9 @@
 import type { PrismaClient } from "@/lib/generated/prisma/client";
+import UserRepository from "@/repositories/userRepository";
 import { usernameSchema } from "@/schemas/common.schema";
 import type { Session } from "@/types/auth";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Controller } from "./Controller";
-import UserRepository from "@/repositories/userRepository";
 
 export default class UserController extends Controller<{ client: PrismaClient }> {
   private repository = new UserRepository(this.deps.client);

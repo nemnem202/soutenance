@@ -1,7 +1,7 @@
+import type { PlaylistCardDto, PlaylistDetailDto } from "@/types/dtos/playlist";
 import type { Playlist, PlaylistSchema } from "@/types/entities";
+import { type ServerResponse, Status } from "@/types/server-response";
 import { Repository } from "./repository";
-import type { PlaylistCardDto } from "@/types/dtos/playlist";
-import { Status, type ServerResponse } from "@/types/server-response";
 
 export class PlaylistRepository extends Repository {
   async create(playlist: PlaylistSchema, userId: number): Promise<Playlist> {
@@ -108,7 +108,6 @@ export class PlaylistRepository extends Repository {
         id: playlist.id,
         title: playlist.title,
         author: playlist.author,
-        authorId: playlist.author.id,
         cover: playlist.cover,
         exercisesIds: playlist.exercises,
         visibility: playlist.visibility,
@@ -150,11 +149,129 @@ export class PlaylistRepository extends Repository {
         id: playlist.id,
         title: playlist.title,
         author: playlist.author,
-        authorId: playlist.author.id,
         cover: playlist.cover,
         exercisesIds: playlist.exercises,
         visibility: playlist.visibility,
       })),
+    };
+  }
+
+  async getUserPlaylists(userId: number): Promise<ServerResponse<PlaylistCardDto[]>> {
+    const playlists = await this.client.playlist.findMany({
+      where: {
+        authorId: userId,
+      },
+      include: {
+        cover: true,
+        exercises: {
+          select: {
+            id: true,
+          },
+        },
+        author: {
+          include: {
+            profilePicture: true,
+          },
+          omit: {
+            createdAt: true,
+            updatedAt: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    return {
+      status: Status.Ok,
+      success: true,
+      data: playlists.map((playlist) => ({
+        id: playlist.id,
+        title: playlist.title,
+        author: playlist.author,
+        cover: playlist.cover,
+        exercisesIds: playlist.exercises,
+        visibility: playlist.visibility,
+      })),
+    };
+  }
+
+  async getSingleFromId(
+    playlistId: number,
+    mustBePublic: boolean | undefined = true
+  ): Promise<ServerResponse<PlaylistDetailDto>> {
+    const playlist = await this.client.playlist.findUnique({
+      where: {
+        id: playlistId,
+        visibility: mustBePublic ? "public" : { in: ["public", "private"] },
+      },
+      include: {
+        author: {
+          include: {
+            profilePicture: true,
+          },
+          omit: {
+            createdAt: true,
+            updatedAt: true,
+            email: true,
+          },
+        },
+        cover: true,
+        exercises: {
+          include: {
+            author: {
+              include: {
+                profilePicture: true,
+              },
+              omit: {
+                createdAt: true,
+                updatedAt: true,
+                email: true,
+              },
+            },
+            likedByUsers: true,
+            chordsGrid: true,
+            defaultConfig: {
+              select: {
+                bpm: true,
+              },
+            },
+            midifile: true,
+          },
+        },
+        userLikesPlaylists: true,
+      },
+    });
+
+    if (!playlist) {
+      return {
+        status: Status.NotFound,
+        success: false,
+        title: "The playlist is either private or has been removed by it's author.",
+      };
+    }
+
+    return {
+      status: Status.Ok,
+      success: true,
+      data: {
+        author: playlist.author,
+        cover: playlist.cover,
+        exercises: playlist.exercises.map((e) => ({
+          ...e,
+          likes: e.likedByUsers.length,
+          likedByCurrentUser: false,
+          inUserPlaylists: [],
+          defaultConfig: e.defaultConfig,
+          midifileUrl: !!e.midifile,
+          chordsGrid: !!e.chordsGrid,
+        })),
+        exercisesIds: playlist.exercises.map((e) => ({ id: e.id })),
+        id: playlist.id,
+        likes: playlist.userLikesPlaylists.length,
+        title: playlist.title,
+        visibility: playlist.visibility,
+        likedByCurrentUser: false,
+      },
     };
   }
 }

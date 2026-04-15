@@ -11,3 +11,13 @@ export async function onSessionRequest() {
     return handleAction("Profile Picture Change", () => controller.getSession(userId));
   });
 }
+
+export async function getUserPlaylists() {
+  const context = getContext();
+
+  return handleAction("Get user playlist", async () => {
+    const userId = context.user?.id ?? null;
+    const controller = await new SessionController({ client: prismaClient });
+    return handleAction("Profile Picture Change", () => controller.getUserPlaylists(userId));
+  });
+}

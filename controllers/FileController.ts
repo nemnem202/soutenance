@@ -2,10 +2,10 @@ import { Readable } from "node:stream";
 import { v2 as cloudinary, type UploadApiResponse } from "cloudinary";
 import { env } from "@/lib/env";
 import { AppError } from "@/lib/errors";
+import UserRepository from "@/repositories/userRepository";
 import type { Session } from "@/types/auth";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Controller, type ControllerDeps } from "./Controller";
-import UserRepository from "@/repositories/userRepository";
 
 interface FileDeps extends ControllerDeps {
   file?: File;

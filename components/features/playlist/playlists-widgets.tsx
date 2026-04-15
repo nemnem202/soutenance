@@ -2,13 +2,11 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import { LikeButton } from "@/components/ui/custom-buttons";
 import { useLanguage } from "@/hooks/use-language";
-import { getRandomPlaylist } from "@/lib/utils";
-import NewPlaylistModal from "./new-playlist-modal";
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
 import AddToPlaylistButton from "./add-to-playlist-menu";
+import NewPlaylistModal from "./new-playlist-modal";
 
-export function SmallPlaylistWidget() {
-  const playlist = getRandomPlaylist();
+export function SmallPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }) {
   const { instance } = useLanguage();
   return (
     <a
@@ -60,7 +58,7 @@ export function SmallAddNewPlaylistWidget() {
 export function MediumPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }) {
   const { instance } = useLanguage();
   return (
-    <div className="relative group w-full">
+    <div className="relative group w-full max-w-60">
       <div className="absolute top-0 left-0 px-2 pt-2 w-full z-1 flex justify-between  opacity-0 group-hover:opacity-100 transition pointer-events-none hidden md:flex">
         <div className="pointer-events-auto">
           <AddToPlaylistButton />
@@ -104,7 +102,7 @@ export function MediumPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }
 function MediumAddNewPlaylistWidget() {
   const { instance } = useLanguage();
   return (
-    <div className="w-full cursor-pointer hover:opacity-80 rounded-md transition">
+    <div className="w-full cursor-pointer hover:opacity-80 rounded-md transition max-w-60">
       <a href="/new-playlist" className="flex flex-col rounded gap-2.5">
         <div className="w-full aspect-square rounded overflow-hidden bg-card flex items-center justify-center">
           <Plus size={100} />
@@ -131,6 +129,10 @@ export function MediumPlaylistWrapper({
       {playlists.map((playlist, i) => (
         <MediumPlaylistWidget key={i} playlist={playlist} />
       ))}
+      {playlists.length < 5 &&
+        Array.from({ length: 5 - playlists.length }).map((_, index) => (
+          <div key={index} className="w-full max-w-60"></div>
+        ))}
     </div>
   );
 }

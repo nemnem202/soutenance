@@ -1,5 +1,5 @@
-import { IrealChartDecoder } from "./chart_decoder";
 import links from "../links.json";
+import { IrealChartDecoder } from "./chart_decoder";
 import StatsCollector from "./statsCollector";
 
 const stats = new StatsCollector(links as string[]);

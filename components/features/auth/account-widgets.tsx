@@ -1,17 +1,16 @@
-import { getRandomAccount } from "@/lib/utils";
+import type { Session } from "@/types/auth";
 import { LikeButton } from "../../ui/custom-buttons";
 
-export function MediumAccountWidget() {
-  const account = getRandomAccount();
+export function MediumAccountWidget({ account }: { account: Session }) {
   return (
-    <div className="relative group w-full cursor-pointer">
+    <div className="relative group w-full cursor-pointer max-w-60">
       <a href={`/account/${account.id}`} className="flex flex-col gap-2.5 items-center">
         <div className="w-full aspect-square rounded-full overflow-hidden relative flex items-end justify-center">
           <LikeButton className={`opacity-0 z-1 group-hover:opacity-100 hidden md:flex`} />
           <div className={`absolute inset-0 transition group-hover:opacity-80`}>
             <img
-              src={account.picture}
-              alt={account.picture}
+              src={account.profilePicture.url}
+              alt={account.profilePicture.alt}
               className="w-full h-full object-cover"
               width={185}
               loading="lazy"
@@ -22,18 +21,18 @@ export function MediumAccountWidget() {
         <h3
           className={`title-4 whitespace-nowrap overflow-hidden text-ellipsis transition group-hover:opacity-80}`}
         >
-          {account.firstName} {account.lastName}
+          {account.username}
         </h3>
       </a>
     </div>
   );
 }
 
-export function MediumAccountWrapper() {
+export function MediumAccountWrapper({ accounts }: { accounts: Session[] }) {
   return (
     <div className="grid gap-y-5 md:gap-y-4 gap-2 container grid-cols-[repeat(auto-fit,minmax(30vw,1fr))] md:grid-cols-[repeat(auto-fit,minmax(10rem,1fr))]">
-      {Array.from({ length: 50 }).map((_, i) => (
-        <MediumAccountWidget key={i} />
+      {accounts.map((account, i) => (
+        <MediumAccountWidget key={i} account={account} />
       ))}
     </div>
   );

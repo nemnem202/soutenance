@@ -1,7 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { useData } from "vike-react/useData";
 import useScreen from "@/hooks/use-screen";
-import type { Data } from "@/pages/+data";
 import type { Chord, Note } from "@/types/music";
 
 export default function ChordGrid() {
@@ -44,7 +42,6 @@ function MeasureBlock() {
 
 function ChordCellGroup() {
   const screen = useScreen();
-  const chordsPlaceholder = useData<Data>().chordsPlaceholders;
   const chords: Chord[] = Array<Chord>(4).fill({
     content: {
       modifier: "Maj",
@@ -54,7 +51,7 @@ function ChordCellGroup() {
 
   const count = faker.number.int({ min: 0, max: 4 });
 
-  const randomChords = faker.helpers.arrayElements(chordsPlaceholder, count);
+  const randomChords = faker.helpers.arrayElements(chords, count);
   const indices = faker.helpers.arrayElements([0, 1, 2, 3], count);
 
   indices.forEach((index, i) => {

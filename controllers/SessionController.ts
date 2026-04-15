@@ -1,9 +1,13 @@
 import type { PrismaClient } from "@/lib/generated/prisma/client";
+import { PlaylistRepository } from "@/repositories/playlistRepository";
 import type { Session } from "@/types/auth";
+import type { PlaylistCardDto } from "@/types/dtos/playlist";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Controller } from "./Controller";
 
 export default class SessionController extends Controller<{ client: PrismaClient }> {
+  private playlistRepository = new PlaylistRepository(this.deps.client);
+
   async getSession(userId: number | null): Promise<ServerResponse<Session>> {
     if (!userId) return { success: false, title: "No session", status: Status.BadAuthMethod };
 
@@ -28,5 +32,11 @@ export default class SessionController extends Controller<{ client: PrismaClient
         },
       },
     };
+  }
+
+  async getUserPlaylists(userId: number | null): Promise<ServerResponse<PlaylistCardDto[]>> {
+    if (!userId) return { success: false, title: "No session", status: Status.BadAuthMethod };
+
+    return await this.playlistRepository.getUserPlaylists(userId);
   }
 }

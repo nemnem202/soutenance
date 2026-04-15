@@ -8,16 +8,21 @@ import SizeAdapter from "@/components/molecules/size-adapter";
 import Searchbar from "@/components/organisms/searchbar";
 import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
-import type { Data } from "@/pages/+data";
-import type { Account } from "@/types/entities";
+import type { Session } from "@/types/auth";
+import type { UserDetailsDto } from "@/types/dtos/user";
+import type { Data } from "./+data";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
-  const account = useData<Data>().accounts.find((e) => String(e.id) === id);
+  const { currentAccount } = useData<Data>();
 
   useEffect(() => {
-    if (!account) navigate("/404");
-  }, [account]);
+    if (!currentAccount.success) navigate("/404");
+  }, [currentAccount.success]);
+
+  const account = currentAccount.success ? currentAccount.data : null;
+
+  if (!account) return null;
 
   if (!account) return null;
   return (
@@ -27,18 +32,18 @@ export default function Page() {
         <Banner account={account} />
       </section>
       <section>
-        <Content />
+        <Content user={account} />
       </section>
     </div>
   );
 }
-function Banner({ account }: { account: Account }) {
+function Banner({ account }: { account: Session }) {
   return (
     <div className="flex w-full md:flex-row flex-col gap-8 items-center">
       <div className="w-50 md:w-75 rounded-full aspect-square overflow-hidden">
         <img
-          src={account.picture}
-          alt={`${account.firstName} ${account.lastName}`}
+          src={account.profilePicture.url}
+          alt={account.profilePicture.alt}
           width={300}
           height={300}
           loading="lazy"
@@ -47,16 +52,13 @@ function Banner({ account }: { account: Account }) {
       </div>
 
       <div className="flex flex-col justify-center flex-1">
-        <h1 className="headline h-min">
-          {account.firstName} {account.lastName}
-        </h1>
+        <h1 className="headline h-min">{account.username}</h1>
       </div>
     </div>
   );
 }
 
-function Content() {
-  const { id } = usePageContext().routeParams;
+function Content({ user }: { user: UserDetailsDto }) {
   const { session } = useSession();
   const { instance } = useLanguage();
   return (
@@ -65,7 +67,10 @@ function Content() {
         <Searchbar placeholder={instance.getItem("search")} />
       </div>
       <div className="flex  gap-x-auto gap-y-5 flex-wrap container">
-        <MediumPlaylistWrapper allowToAddANewPlaylist={id === String(session?.id)} />
+        <MediumPlaylistWrapper
+          allowToAddANewPlaylist={user.id === session?.id}
+          playlists={user.publicPlaylists}
+        />
       </div>
     </div>
   );

@@ -1,29 +1,47 @@
+import { faker } from "@faker-js/faker";
+import ExerciseController from "@/controllers/ExerciseController";
+import PlaylistController from "@/controllers/PlaylistController";
+import type { User } from "@/lib/generated/prisma/client";
 import { logger } from "@/lib/logger";
-import links from "./links.json";
+import prismaClient from "@/lib/prisma-client";
+import { playlistSchema } from "@/schemas/entities.schema";
+import type { ExerciseSchema, Playlist, PlaylistSchema } from "@/types/entities";
 import { IrealChartDecoder } from "./conversion/chart_decoder";
 import { convertPlaylist } from "./conversion/converter";
-import { playlistSchema } from "@/schemas/entities.schema";
-import { faker } from "@faker-js/faker";
-import type { User } from "@/lib/generated/prisma/client";
-import prismaClient from "@/lib/prisma-client";
-import type { ExerciseSchema, Playlist, PlaylistSchema } from "@/types/entities";
-import PlaylistController from "@/controllers/PlaylistController";
-import ExerciseController from "@/controllers/ExerciseController";
+import links from "./links.json";
 
 async function createUser(): Promise<User> {
-  const username = (faker.person.firstName() + crypto.randomUUID()).substring(0, 20);
-  const email = `${username + crypto.randomUUID()}@gmail.com`;
+  const baseUsername = faker.person.firstName().substring(0, 20);
+  let currentUsername = baseUsername;
+  let counter = 0;
+  while (true) {
+    const existingUser = await prismaClient.user.findUnique({
+      where: { username: currentUsername },
+      select: { id: true },
+    });
+
+    if (!existingUser) {
+      break;
+    }
+    currentUsername = `${baseUsername.substring(0, 20 - 1 - String(counter).length)}_${counter}`;
+    counter++;
+  }
+
+  const email = `${currentUsername + crypto.randomUUID()}@gmail.com`;
+
   const profilePicture = {
     create: {
       url: faker.image.avatar(),
-      alt: `The profile picture of ${username}`,
+      alt: `The profile picture of ${currentUsername}`,
     },
   };
+
   const userData = {
-    username,
+    username: currentUsername,
     email,
     profilePicture,
   };
+
   const user = await prismaClient.user.create({
     data: userData,
   });
@@ -48,9 +66,7 @@ async function fillPlaylist(userId: number, playlistId: number, exercises: Exerc
   await Promise.all(promises);
 }
 
-async function putPlaylistInDb(playlist: PlaylistSchema) {
-  const user = await createUser();
-
+async function putPlaylistInDb(playlist: PlaylistSchema, user: User) {
   const controller = new PlaylistController({ client: prismaClient, userId: user.id });
   const playlistDb = await controller.createPlaylist(playlist);
 
@@ -64,8 +80,13 @@ export default async function convertAllPlaylists() {
 
   console.log("🚀 Starting Conversion...");
 
+  let currentUser: User = await createUser();
+
+  let currentUserPlaylistsLastBeforeCreateAnotherOne = Math.floor(Math.random() * 50) + 1;
+
   for (const [index, link] of allLinks.entries()) {
     try {
+      currentUserPlaylistsLastBeforeCreateAnotherOne--;
       const irealPlaylist = new IrealChartDecoder(link);
       const converted = convertPlaylist(irealPlaylist);
 
@@ -83,7 +104,11 @@ export default async function convertAllPlaylists() {
         continue;
       }
 
-      await putPlaylistInDb(converted.playlist);
+      if (currentUserPlaylistsLastBeforeCreateAnotherOne <= 0) {
+        currentUserPlaylistsLastBeforeCreateAnotherOne = Math.floor(Math.random() * 50) + 1;
+        currentUser = await createUser();
+      }
+      await putPlaylistInDb(converted.playlist, currentUser);
 
       success++;
       console.log(

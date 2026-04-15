@@ -1,5 +1,5 @@
+import { faker } from "@faker-js/faker";
 import { CHORDS_DICTIONNARY } from "@/config/chords-dictionary";
-import type { CellIreal, ChordIreal, PlaylistIreal, SongIreal } from "./chart_decoder";
 import { SectionType } from "@/lib/generated/prisma/enums";
 import type {
   CellSchema,
@@ -13,7 +13,7 @@ import type {
   VoltaSchema,
 } from "@/types/entities";
 import type { Note } from "@/types/music";
-import { faker } from "@faker-js/faker";
+import type { CellIreal, ChordIreal, PlaylistIreal, SongIreal } from "./chart_decoder";
 
 class IrealConversionError extends Error {
   constructor(context: string, message: string) {

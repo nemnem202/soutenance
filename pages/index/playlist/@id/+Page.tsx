@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { navigate } from "vike/client/router";
 import { useData } from "vike-react/useData";
 import { usePageContext } from "vike-react/usePageContext";
@@ -10,18 +10,21 @@ import AccountPP from "@/components/ui/account-pp";
 import { LikeButton, PlusButton } from "@/components/ui/custom-buttons";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
-import type { Data } from "@/pages/+data";
-import type { Playlist } from "@/types/entities";
+import type { PlaylistDetailDto } from "@/types/dtos/playlist";
+import type { Data } from "./+data";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
-  const [playlist] = useState(useData<Data>().playlists.find((e) => String(e.id) === id));
+  const { currentPlaylist } = useData<Data>();
 
   useEffect(() => {
-    if (!playlist) navigate("/404");
-  }, [playlist]);
+    if (!currentPlaylist.success) navigate("/404");
+  }, [currentPlaylist.success]);
+
+  const playlist = currentPlaylist.success ? currentPlaylist.data : null;
 
   if (!playlist) return null;
+
   return (
     <div className="flex flex-col ">
       <section>
@@ -34,9 +37,8 @@ export default function Page() {
   );
 }
 
-function Banner({ playlist }: { playlist: Playlist }) {
+function Banner({ playlist }: { playlist: PlaylistDetailDto }) {
   const { instance } = useLanguage();
-  const account = useData<Data>().accounts.find((account) => account.id === playlist.author.id);
   return (
     <div className="flex md:flex-row gap-0 md:gap-8 flex-col w-full items-center relative">
       <SizeAdapter
@@ -63,14 +65,12 @@ function Banner({ playlist }: { playlist: Playlist }) {
       <div className="flex flex-col justify-center md:items-start w-full md:items-center gap-0 md:gap-2 flex-1">
         <h1 className="headline h-min">{playlist.title}</h1>
         <div className="flex flex-col gap-3">
-          {account && (
+          {playlist.author && (
             <a
-              href={`/account/${account.id}`}
+              href={`/account/${playlist.author.id}`}
               className="flex items-center gap-2 hover:opacity-80 transition cursor-pointer"
             >
-              <SizeAdapter
-                md={<AccountPP image={{ alt: "Placeholder", url: account.picture }} />}
-              />
+              <SizeAdapter md={<AccountPP image={playlist.author.profilePicture} />} />
               <p className="title-4 md:text-foreground text-muted-foreground ">
                 {playlist.author.username}
               </p>
@@ -96,7 +96,7 @@ function Banner({ playlist }: { playlist: Playlist }) {
   );
 }
 
-function Content({ playlist }: { playlist: Playlist }) {
+function Content({ playlist }: { playlist: PlaylistDetailDto }) {
   const { instance } = useLanguage();
   return (
     <div className="w-full">

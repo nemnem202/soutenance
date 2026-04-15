@@ -1,5 +1,4 @@
 import MobileHeader from "@/components/features/layout/mobile-header";
-import { MediumPlaylistWrapper } from "@/components/features/playlist/playlists-widgets";
 import SizeAdapter from "@/components/molecules/size-adapter";
 import Headline from "@/components/ui/headline";
 import { useLanguage } from "@/hooks/use-language";
@@ -13,7 +12,7 @@ function Desktop() {
   return (
     <>
       <Headline>{instance.getItem("recentlyPlayed")}</Headline>
-      <MediumPlaylistWrapper />
+      {/* <MediumPlaylistWrapper /> */}
     </>
   );
 }
@@ -23,7 +22,7 @@ function Mobile() {
   return (
     <>
       <MobileHeader title={instance.getItem("seeAll")} />
-      <MediumPlaylistWrapper />
+      {/* <MediumPlaylistWrapper /> */}
     </>
   );
 }
