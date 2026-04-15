@@ -156,8 +156,8 @@ export class PlaylistRepository extends Repository {
 
   async getSingleFromId(
     playlistId: number,
-    mustBePublic: boolean = true,
-    userId: number | null
+    userId: number | null,
+    mustBePublic: boolean = true
   ): Promise<ServerResponse<PlaylistDetailDto>> {
     const playlist = await this.client.playlist.findUnique({
       where: {
@@ -173,9 +173,6 @@ export class PlaylistRepository extends Repository {
         cover: true,
         exercises: {
           include: {
-            userLikesPlaylists: userId
-              ? { where: { userId: userId }, select: { userId: true } }
-              : false,
             author: {
               include: { profilePicture: true },
               omit: { createdAt: true, updatedAt: true, email: true },
@@ -217,7 +214,7 @@ export class PlaylistRepository extends Repository {
         likes: (playlist as any)._count?.userLikesPlaylists || 0,
         title: playlist.title,
         visibility: playlist.visibility,
-        likedByCurrentUser: userId ? (playlist as any).userLikesPlaylists?.length > 0 : false,
+        likedByCurrentUser: userId ? playlist.userLikesPlaylists?.length > 0 : false,
       },
     };
   }

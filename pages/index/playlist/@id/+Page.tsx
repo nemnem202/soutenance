@@ -1,7 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { navigate } from "vike/client/router";
 import { useData } from "vike-react/useData";
-import { usePageContext } from "vike-react/usePageContext";
 import ArrowElipsisTopMenu from "@/components/features/layout/arrow-elipsis-top-menu";
 import { PlaylistItemsList } from "@/components/features/playlist/playlist-items";
 import SizeAdapter from "@/components/molecules/size-adapter";
@@ -12,9 +11,10 @@ import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
 import type { PlaylistDetailDto } from "@/types/dtos/playlist";
 import type { Data } from "./+data";
+import { onUserLikesPlaylist, onUserUnlikesPlaylist } from "@/telefunc/like.telefunc";
+import { errorToast, successToast } from "@/lib/toaster";
 
 export default function Page() {
-  const { id } = usePageContext().routeParams;
   const { currentPlaylist } = useData<Data>();
 
   useEffect(() => {
@@ -39,13 +39,33 @@ export default function Page() {
 
 function Banner({ playlist }: { playlist: PlaylistDetailDto }) {
   const { instance } = useLanguage();
+  const [isLiked, setIsLiked] = useState(playlist.likedByCurrentUser);
+  const handleLikePlaylist = async () => {
+    if (isLiked) {
+      const response = await onUserUnlikesPlaylist(playlist.id);
+      if (!response.success) {
+        errorToast(response.title, response.description);
+      } else {
+        successToast(`${playlist.title} was removed from your likes`);
+        setIsLiked(false);
+      }
+    } else {
+      const response = await onUserLikesPlaylist(playlist.id);
+      if (!response.success) {
+        errorToast(response.title, response.description);
+      } else {
+        successToast(`${playlist.title} was added to your likes`);
+        setIsLiked(true);
+      }
+    }
+  };
   return (
     <div className="flex md:flex-row gap-0 md:gap-8 flex-col w-full items-center relative">
       <SizeAdapter
         md={
           <div className="absolute right-2 top-2 z-1">
             <PlusButton />
-            <LikeButton />
+            <LikeButton onClick={handleLikePlaylist} liked={isLiked} />
           </div>
         }
         sm={<ArrowElipsisTopMenu />}

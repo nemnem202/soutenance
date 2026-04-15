@@ -1,18 +1,20 @@
 import type { PageContextServer } from "vike/types";
-import { getGlobalData } from "@/lib/global-data";
+import { getAuthenticatedSession, getGlobalData } from "@/lib/global-data";
 import prismaClient from "@/lib/prisma-client";
 import { handleAction } from "@/lib/response-handler";
 import { PlaylistRepository } from "@/repositories/playlistRepository";
 
-async function getPlaylistFromId(id: number) {
+async function getPlaylistFromId(playlistId: number, pageContext: PageContextServer) {
+  const session = await getAuthenticatedSession(pageContext.headers.cookie);
+  const userId = session?.id ?? null;
   const repository = new PlaylistRepository(prismaClient);
-  return handleAction("get Playlist from id", () => repository.getSingleFromId(id));
+  return handleAction("get Playlist from id", () => repository.getSingleFromId(playlistId, userId));
 }
 
 export default async function data(pageContext: PageContextServer) {
   const [globalData, currentPlaylist] = await Promise.all([
     getGlobalData(pageContext),
-    getPlaylistFromId(parseInt(pageContext.routeParams.id, 10)),
+    getPlaylistFromId(parseInt(pageContext.routeParams.id, 10), pageContext),
   ]);
 
   return { ...globalData, currentPlaylist };
