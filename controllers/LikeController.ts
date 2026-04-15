@@ -1,6 +1,9 @@
 import { ServerResponse, Status } from "@/types/server-response";
 import { Controller, ControllerDeps } from "./Controller";
 import { AppError } from "@/lib/errors";
+import { PlaylistCardDto } from "@/types/dtos/playlist";
+import { SoloExerciseCardDto } from "@/types/dtos/exercise";
+import { UserCardDto } from "@/types/dtos/user";
 
 export default class LikeController extends Controller<ControllerDeps> {
   async userLikesPlaylist(userId: number | null, playlistId: number): Promise<ServerResponse<{}>> {
@@ -201,6 +204,188 @@ export default class LikeController extends Controller<ControllerDeps> {
       success: true,
       status: Status.Ok,
       data: {},
+    };
+  }
+
+  async getPlaylists(userId: number | null): Promise<ServerResponse<PlaylistCardDto[]>> {
+    if (!userId) throw new AppError(Status.NotConnected, "You are not connected");
+
+    const user = await this.deps.client.user.findUnique({ where: { id: userId } });
+
+    if (!user) throw new AppError(Status.BadAuthMethod, "Unknown account", "Try to connect again.");
+
+    const playlists = await this.deps.client.playlist.findMany({
+      where: {
+        userLikesPlaylists: {
+          some: {
+            userId: userId,
+          },
+        },
+        visibility: "public",
+      },
+      select: {
+        id: true,
+        author: {
+          select: {
+            id: true,
+            username: true,
+            profilePicture: {
+              select: {
+                url: true,
+                alt: true,
+              },
+            },
+          },
+        },
+        cover: {
+          select: {
+            url: true,
+            alt: true,
+          },
+        },
+        exercises: {
+          select: {
+            id: true,
+          },
+        },
+        title: true,
+      },
+    });
+
+    return {
+      success: true,
+      status: Status.Ok,
+      data: playlists.map((playlist) => ({
+        author: playlist.author,
+        cover: playlist.cover,
+        exercisesIds: playlist.exercises,
+        likedByCurrentUser: true,
+        id: playlist.id,
+        title: playlist.title,
+        visibility: "public",
+      })),
+    };
+  }
+
+  async getExercises(userId: number | null): Promise<ServerResponse<SoloExerciseCardDto[]>> {
+    if (!userId) throw new AppError(Status.NotConnected, "You are not connected");
+
+    const user = await this.deps.client.user.findUnique({ where: { id: userId } });
+
+    if (!user) throw new AppError(Status.BadAuthMethod, "Unknown account", "Try to connect again.");
+
+    const exercises = await this.deps.client.exercise.findMany({
+      where: {
+        likedByUsers: {
+          some: {
+            userId: userId,
+          },
+        },
+        playlist: {
+          visibility: "public",
+        },
+      },
+      select: {
+        id: true,
+        title: true,
+        composer: true,
+        author: {
+          select: {
+            id: true,
+            username: true,
+            profilePicture: {
+              select: {
+                url: true,
+                alt: true,
+              },
+            },
+          },
+        },
+        playlist: {
+          select: {
+            cover: {
+              select: {
+                url: true,
+                alt: true,
+              },
+            },
+          },
+        },
+        defaultConfig: {
+          select: {
+            bpm: true,
+          },
+        },
+        chordsGrid: {
+          select: {
+            id: true,
+          },
+        },
+        _count: {
+          select: {
+            likedByUsers: true,
+          },
+        },
+        midifile: true,
+      },
+    });
+
+    return {
+      success: true,
+      status: Status.Ok,
+      data: exercises.map((e) => ({
+        author: e.author,
+        id: e.id,
+        title: e.title,
+        composer: e.composer,
+        cover: e.playlist.cover,
+        defaultConfig: e.defaultConfig,
+        chordsGrid: !!e.chordsGrid,
+        inUserPlaylists: [],
+        likedByCurrentUser: true,
+        likes: e._count.likedByUsers,
+        midifileUrl: !!e.midifile,
+      })),
+    };
+  }
+
+  async getUsers(userId: number | null): Promise<ServerResponse<UserCardDto[]>> {
+    if (!userId) throw new AppError(Status.NotConnected, "You are not connected");
+
+    const user = await this.deps.client.user.findUnique({ where: { id: userId } });
+
+    if (!user) throw new AppError(Status.BadAuthMethod, "Unknown account", "Try to connect again.");
+
+    const users = await this.deps.client.user.findMany({
+      where: {
+        likedByUsers: {
+          some: {
+            likingUser: {
+              id: userId,
+            },
+          },
+        },
+      },
+      select: {
+        id: true,
+        username: true,
+        profilePicture: {
+          select: {
+            url: true,
+            alt: true,
+          },
+        },
+      },
+    });
+    return {
+      success: true,
+      status: Status.Ok,
+      data: users.map((e) => ({
+        id: e.id,
+        likedByCurrentUser: true,
+        profilePicture: e.profilePicture,
+        username: e.username,
+      })),
     };
   }
 }
