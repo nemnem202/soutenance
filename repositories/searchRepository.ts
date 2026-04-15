@@ -64,6 +64,7 @@ export default class SearchRepository extends Repository {
 
   async getPlaylists(
     query: string,
+    userId: number | null,
     start: number | undefined = 0,
     length: number | undefined = 20
   ): Promise<ServerResponse<(PlaylistCardDto & { score: number })[]>> {
@@ -102,6 +103,9 @@ export default class SearchRepository extends Repository {
           include: { profilePicture: true },
           omit: { createdAt: true, updatedAt: true, email: true },
         },
+        userLikesPlaylists: userId
+          ? { where: { userId: userId }, select: { userId: true } }
+          : false,
       },
     });
 
@@ -117,6 +121,7 @@ export default class SearchRepository extends Repository {
           cover: playlist.cover,
           exercisesIds: playlist.exercises,
           visibility: playlist.visibility,
+          likedByCurrentUser: playlist.userLikesPlaylists.length > 0,
         }))
         .sort((a, b) => b.score - a.score),
     };

@@ -94,7 +94,10 @@ export default class UserRepository extends Repository {
     };
   }
 
-  async getSingleFromId(id: number): Promise<ServerResponse<UserDetailsDto>> {
+  async getSingleFromId(
+    id: number,
+    userId: number | null
+  ): Promise<ServerResponse<UserDetailsDto>> {
     const user = await this.client.user.findUnique({
       where: {
         id: id,
@@ -134,6 +137,9 @@ export default class UserRepository extends Repository {
                 url: true,
               },
             },
+            userLikesPlaylists: userId
+              ? { where: { userId: userId }, select: { userId: true } }
+              : false,
           },
         },
         profilePicture: {
@@ -161,6 +167,7 @@ export default class UserRepository extends Repository {
           title: playlist.title,
           visibility: playlist.visibility,
           exercisesIds: playlist.exercises,
+          likedByCurrentUser: playlist.userLikesPlaylists.length > 0,
         })),
       },
     };

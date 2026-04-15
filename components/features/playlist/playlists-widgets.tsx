@@ -5,6 +5,8 @@ import { useLanguage } from "@/hooks/use-language";
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
 import AddToPlaylistButton from "./add-to-playlist-menu";
 import NewPlaylistModal from "./new-playlist-modal";
+import { onUserLikesPlaylist, onUserUnlikesPlaylist } from "@/telefunc/like.telefunc";
+import { errorToast, successToast } from "@/lib/toaster";
 
 export function SmallPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }) {
   const { instance } = useLanguage();
@@ -56,7 +58,27 @@ export function SmallAddNewPlaylistWidget() {
 }
 
 export function MediumPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }) {
+  const [isLiked, setIsLiked] = useState(playlist.likedByCurrentUser);
   const { instance } = useLanguage();
+  const handleLikePlaylist = async () => {
+    if (isLiked) {
+      const response = await onUserUnlikesPlaylist(playlist.id);
+      if (!response.success) {
+        errorToast(response.title, response.description);
+      } else {
+        successToast(`${playlist.title} was removed from your likes`);
+        setIsLiked(false);
+      }
+    } else {
+      const response = await onUserLikesPlaylist(playlist.id);
+      if (!response.success) {
+        errorToast(response.title, response.description);
+      } else {
+        successToast(`${playlist.title} was added to your likes`);
+        setIsLiked(true);
+      }
+    }
+  };
   return (
     <div className="relative group w-full max-w-60">
       <div className="absolute top-0 left-0 px-2 pt-2 w-full z-1 flex justify-between  opacity-0 group-hover:opacity-100 transition pointer-events-none hidden md:flex">
@@ -64,7 +86,7 @@ export function MediumPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }
           <AddToPlaylistButton />
         </div>
         <div className="pointer-events-auto ">
-          <LikeButton />
+          <LikeButton onClick={handleLikePlaylist} liked={isLiked} />
         </div>
       </div>
       <div className="cursor-pointer rounded-md transition group-hover:opacity-80">

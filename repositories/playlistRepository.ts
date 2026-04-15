@@ -21,32 +21,9 @@ export class PlaylistRepository extends Repository {
       include: {
         tags: true,
         cover: true,
-        exercises: {
-          include: {
-            defaultConfig: true,
-            midifile: true,
-            chordsGrid: {
-              include: {
-                sections: {
-                  include: {
-                    commonMeasures: true,
-                    voltas: true,
-                  },
-                },
-              },
-            },
-          },
-        },
         author: {
-          omit: {
-            createdAt: true,
-            email: true,
-            imageId: true,
-            updatedAt: true,
-          },
-          include: {
-            profilePicture: true,
-          },
+          omit: { createdAt: true, email: true, imageId: true, updatedAt: true },
+          include: { profilePicture: true },
         },
       },
     });
@@ -67,71 +44,15 @@ export class PlaylistRepository extends Repository {
   }
 
   async getSortedByPopularity(
-    start: number | undefined = 0,
-    length: number | undefined = 20
-  ): Promise<ServerResponse<PlaylistCardDto[]>> {
-    const sliced = await this.client.playlist.findMany({
-      where: {
-        visibility: "public",
-      },
-      orderBy: {
-        userLikesPlaylists: {
-          _count: "desc",
-        },
-      },
-      skip: start,
-      take: length,
-      include: {
-        cover: true,
-        exercises: {
-          select: {
-            id: true,
-          },
-        },
-        author: {
-          include: {
-            profilePicture: true,
-          },
-          omit: {
-            createdAt: true,
-            updatedAt: true,
-            email: true,
-          },
-        },
-      },
-    });
-
-    return {
-      status: Status.Ok,
-      success: true,
-      data: sliced.map((playlist) => ({
-        id: playlist.id,
-        title: playlist.title,
-        author: playlist.author,
-        cover: playlist.cover,
-        exercisesIds: playlist.exercises,
-        visibility: playlist.visibility,
-      })),
-    };
-  }
-  async getDiscover(
+    userId: number | null,
     start: number = 0,
     length: number = 20
   ): Promise<ServerResponse<PlaylistCardDto[]>> {
-    const playlists = await this.client.$queryRaw<Playlist[]>`
-    SELECT id FROM "Playlist"
-    WHERE visibility = 'public'
-    ORDER BY RANDOM()
-    LIMIT ${length} OFFSET ${start}
-  `;
-
-    const ids = playlists.map((p) => p.id);
-
     const sliced = await this.client.playlist.findMany({
-      where: {
-        id: { in: ids },
-        visibility: "public",
-      },
+      where: { visibility: "public" },
+      orderBy: { userLikesPlaylists: { _count: "desc" } },
+      skip: start,
+      take: length,
       include: {
         cover: true,
         exercises: { select: { id: true } },
@@ -139,6 +60,9 @@ export class PlaylistRepository extends Repository {
           include: { profilePicture: true },
           omit: { createdAt: true, updatedAt: true, email: true },
         },
+        userLikesPlaylists: userId
+          ? { where: { userId: userId }, select: { userId: true } }
+          : false,
       },
     });
 
@@ -152,31 +76,65 @@ export class PlaylistRepository extends Repository {
         cover: playlist.cover,
         exercisesIds: playlist.exercises,
         visibility: playlist.visibility,
+        likedByCurrentUser: (playlist as any).userLikesPlaylists?.length > 0,
+      })),
+    };
+  }
+
+  async getDiscover(
+    userId: number | null,
+    start: number = 0,
+    length: number = 20
+  ): Promise<ServerResponse<PlaylistCardDto[]>> {
+    const playlistsIds = await this.client.$queryRaw<{ id: number }[]>`
+      SELECT id FROM "Playlist"
+      WHERE visibility = 'public'
+      ORDER BY RANDOM()
+      LIMIT ${length} OFFSET ${start}
+    `;
+
+    const ids = playlistsIds.map((p) => p.id);
+
+    const sliced = await this.client.playlist.findMany({
+      where: { id: { in: ids } },
+      include: {
+        cover: true,
+        exercises: { select: { id: true } },
+        author: {
+          include: { profilePicture: true },
+          omit: { createdAt: true, updatedAt: true, email: true },
+        },
+        userLikesPlaylists: userId
+          ? { where: { userId: userId }, select: { userId: true } }
+          : false,
+      },
+    });
+
+    return {
+      status: Status.Ok,
+      success: true,
+      data: sliced.map((playlist) => ({
+        id: playlist.id,
+        title: playlist.title,
+        author: playlist.author,
+        cover: playlist.cover,
+        exercisesIds: playlist.exercises,
+        visibility: playlist.visibility,
+        likedByCurrentUser: (playlist as any).userLikesPlaylists?.length > 0,
       })),
     };
   }
 
   async getUserPlaylists(userId: number): Promise<ServerResponse<PlaylistCardDto[]>> {
     const playlists = await this.client.playlist.findMany({
-      where: {
-        authorId: userId,
-      },
+      where: { authorId: userId },
       include: {
+        userLikesPlaylists: { where: { userId: userId }, select: { userId: true } },
         cover: true,
-        exercises: {
-          select: {
-            id: true,
-          },
-        },
+        exercises: { select: { id: true } },
         author: {
-          include: {
-            profilePicture: true,
-          },
-          omit: {
-            createdAt: true,
-            updatedAt: true,
-            email: true,
-          },
+          include: { profilePicture: true },
+          omit: { createdAt: true, updatedAt: true, email: true },
         },
       },
     });
@@ -191,13 +149,15 @@ export class PlaylistRepository extends Repository {
         cover: playlist.cover,
         exercisesIds: playlist.exercises,
         visibility: playlist.visibility,
+        likedByCurrentUser: playlist.userLikesPlaylists.length > 0,
       })),
     };
   }
 
   async getSingleFromId(
     playlistId: number,
-    mustBePublic: boolean | undefined = true
+    mustBePublic: boolean = true,
+    userId: number | null
   ): Promise<ServerResponse<PlaylistDetailDto>> {
     const playlist = await this.client.playlist.findUnique({
       where: {
@@ -205,40 +165,27 @@ export class PlaylistRepository extends Repository {
         visibility: mustBePublic ? "public" : { in: ["public", "private"] },
       },
       include: {
+        userLikesPlaylists: userId ? { where: { userId: userId } } : false,
         author: {
-          include: {
-            profilePicture: true,
-          },
-          omit: {
-            createdAt: true,
-            updatedAt: true,
-            email: true,
-          },
+          include: { profilePicture: true },
+          omit: { createdAt: true, updatedAt: true, email: true },
         },
         cover: true,
         exercises: {
           include: {
+            userLikesPlaylists: userId
+              ? { where: { userId: userId }, select: { userId: true } }
+              : false,
             author: {
-              include: {
-                profilePicture: true,
-              },
-              omit: {
-                createdAt: true,
-                updatedAt: true,
-                email: true,
-              },
+              include: { profilePicture: true },
+              omit: { createdAt: true, updatedAt: true, email: true },
             },
             likedByUsers: true,
             chordsGrid: true,
-            defaultConfig: {
-              select: {
-                bpm: true,
-              },
-            },
+            defaultConfig: { select: { bpm: true } },
             midifile: true,
           },
         },
-        userLikesPlaylists: true,
       },
     });
 
@@ -246,7 +193,7 @@ export class PlaylistRepository extends Repository {
       return {
         status: Status.NotFound,
         success: false,
-        title: "The playlist is either private or has been removed by it's author.",
+        title: "The playlist is either private or has been removed by its author.",
       };
     }
 
@@ -259,7 +206,7 @@ export class PlaylistRepository extends Repository {
         exercises: playlist.exercises.map((e) => ({
           ...e,
           likes: e.likedByUsers.length,
-          likedByCurrentUser: false,
+          likedByCurrentUser: userId ? (e as any).userLikesPlaylists?.length > 0 : false,
           inUserPlaylists: [],
           defaultConfig: e.defaultConfig,
           midifileUrl: !!e.midifile,
@@ -267,10 +214,10 @@ export class PlaylistRepository extends Repository {
         })),
         exercisesIds: playlist.exercises.map((e) => ({ id: e.id })),
         id: playlist.id,
-        likes: playlist.userLikesPlaylists.length,
+        likes: (playlist as any)._count?.userLikesPlaylists || 0,
         title: playlist.title,
         visibility: playlist.visibility,
-        likedByCurrentUser: false,
+        likedByCurrentUser: userId ? (playlist as any).userLikesPlaylists?.length > 0 : false,
       },
     };
   }

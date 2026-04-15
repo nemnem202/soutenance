@@ -1,7 +1,7 @@
 import { ArrowLeft, ChevronLeft, ChevronRight, Heart, Plus } from "lucide-react";
 import { Button, type ButtonProps } from "./button";
 
-export function LikeButton({ ...props }: ButtonProps) {
+export function LikeButton({ liked = false, ...props }: ButtonProps & { liked?: boolean }) {
   return (
     <Button
       variant={"ghost"}
@@ -9,7 +9,7 @@ export function LikeButton({ ...props }: ButtonProps) {
       {...props}
       className={`rounded-full ${props.className}`}
     >
-      <Heart />
+      <Heart className={`${liked && "stroke-destructive fill-destructive"}`} />
     </Button>
   );
 }
