@@ -4,7 +4,7 @@ import { type ServerResponse, Status } from "@/types/server-response";
 import { Repository } from "./repository";
 
 export class PlaylistRepository extends Repository {
-  async create(playlist: PlaylistSchema, userId: number): Promise<Playlist> {
+  async create(playlist: PlaylistSchema & { imageId?: string }, userId: number): Promise<Playlist> {
     const playlistDb = await this.client.playlist.create({
       data: {
         title: playlist.title,
@@ -15,6 +15,7 @@ export class PlaylistRepository extends Repository {
           create: {
             alt: playlist.cover.alt,
             url: playlist.cover.url,
+            cloudId: playlist.imageId,
           },
         },
       },

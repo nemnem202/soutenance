@@ -2,20 +2,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRef, useState } from "react";
 import { type Resolver, useForm } from "react-hook-form";
 import { logger } from "@/lib/logger";
-import { errorToast, successToast } from "@/lib/toaster";
-import { loginSchema, registerSchema } from "@/schemas/auth.schema";
-import { playlistSchema } from "@/schemas/entities.schema";
+import { errorToast, loadingToast, successToast } from "@/lib/toaster";
+import { loginSchema, playlistRegisterSchema, registerSchema } from "@/schemas/auth.schema";
 import { onLogin, onRegister } from "@/telefunc/connexion.telefunc";
 import type { LoginData, RegisterData } from "@/types/auth";
-import type { PlaylistSchema } from "@/types/entities";
 import { Status } from "@/types/server-response";
 import useSession from "./use-session";
+import { PlaylistRegisterData } from "@/types/playlist";
+import { onPlaylistCreation } from "@/telefunc/playlist.telefunc";
 
 export function useNewPlaylistForm() {
   const formRef = useRef<HTMLFormElement>(null);
 
-  const form = useForm<PlaylistSchema>({
-    resolver: zodResolver(playlistSchema) as Resolver<PlaylistSchema>,
+  const form = useForm<PlaylistRegisterData>({
+    resolver: zodResolver(playlistRegisterSchema) as Resolver<PlaylistRegisterData>,
     defaultValues: {
       cover: {
         alt: "The cover of the playlist",
@@ -24,8 +24,18 @@ export function useNewPlaylistForm() {
     },
   });
 
-  const handleSubmit = (form: PlaylistSchema) => {
-    console.log(form);
+  const handleSubmit = async (form: PlaylistRegisterData) => {
+    const responsePromise = onPlaylistCreation(form);
+    loadingToast(responsePromise, {
+      loading: "Upload de la playlist en cours...",
+      success: {
+        title: "Playlist enregistrée !",
+      },
+      error: {
+        title: "Échec de l'envoi",
+        description: "Vérifiez votre connexion internet.",
+      },
+    });
   };
 
   return { formRef, form, handleSubmit };

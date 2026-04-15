@@ -34,3 +34,20 @@ export const registerSchema = z
     error: "You must agree with terms of service",
     path: ["agree_terms_of_service"],
   });
+
+export const playlistRegisterSchema = z.object({
+  cover: registerImageSchema,
+  title: z
+    .string("The title is provided")
+    .min(1, "The title of the playlist is too short")
+    .max(100, "The title of the playlist is too long. Max 100 caracters"),
+  description: z
+    .string()
+    .max(500, "The description of the playlist is too long. Max 500 caracters")
+    .optional()
+    .nullable(),
+  tags: z
+    .array(z.string().max(50, "One of the tags provided is too long, max 50 caracters."))
+    .max(10, "Too much tags provided, max 10"),
+  visibility: z.enum(["private", "public"]),
+});
