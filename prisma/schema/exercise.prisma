@@ -9,10 +9,11 @@ model Exercise {
     userConfigs   ExerciseSavesUserConfig[]
     midifile      Midifile?
     chordsGrid    ChordsGrid?
-    playlist      Playlist                  @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+    fromPlaylist  Playlist                  @relation("PlaylistSource", fields: [playlistId], references: [id], onDelete: Cascade)
     playlistId    Int
 
     likedByUsers UserLikesExercise[]
+    inPlaylists  Playlist[]          @relation("PlaylistCollections")
 }
 
 model UserLikesExercise {

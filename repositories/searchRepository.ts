@@ -175,7 +175,7 @@ export default class SearchRepository extends Repository {
         },
         midifile: true,
         chordsGrid: true,
-        playlist: {
+        fromPlaylist: {
           select: {
             cover: {
               select: {
@@ -214,7 +214,7 @@ export default class SearchRepository extends Repository {
           author: exercise.author,
           composer: exercise.composer,
           chordsGrid: !!exercise.chordsGrid,
-          cover: exercise.playlist.cover,
+          cover: exercise.fromPlaylist.cover,
           defaultConfig: exercise.defaultConfig,
         }))
         .sort((a, b) => b.score - a.score),

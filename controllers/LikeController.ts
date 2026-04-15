@@ -281,7 +281,7 @@ export default class LikeController extends Controller<ControllerDeps> {
             userId: userId,
           },
         },
-        playlist: {
+        fromPlaylist: {
           visibility: "public",
         },
       },
@@ -289,6 +289,7 @@ export default class LikeController extends Controller<ControllerDeps> {
         id: true,
         title: true,
         composer: true,
+
         author: {
           select: {
             id: true,
@@ -301,7 +302,7 @@ export default class LikeController extends Controller<ControllerDeps> {
             },
           },
         },
-        playlist: {
+        fromPlaylist: {
           select: {
             cover: {
               select: {
@@ -338,7 +339,7 @@ export default class LikeController extends Controller<ControllerDeps> {
         id: e.id,
         title: e.title,
         composer: e.composer,
-        cover: e.playlist.cover,
+        cover: e.fromPlaylist.cover,
         defaultConfig: e.defaultConfig,
         chordsGrid: !!e.chordsGrid,
         inUserPlaylists: [],

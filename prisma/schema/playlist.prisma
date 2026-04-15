@@ -1,13 +1,14 @@
 model Playlist {
-    id          Int        @id @default(autoincrement())
-    title       String     @db.VarChar(100)
-    description String?    @db.VarChar(500)
-    visibility  Visibility @default(private)
-    cover       Image      @relation(fields: [imageId], references: [id], onDelete: Cascade)
-    imageId     Int
-    createdAt   DateTime   @default(now())
-    updatedAt   DateTime   @updatedAt
-    exercises   Exercise[]
+    id               Int        @id @default(autoincrement())
+    title            String     @db.VarChar(100)
+    description      String?    @db.VarChar(500)
+    visibility       Visibility @default(private)
+    cover            Image      @relation(fields: [imageId], references: [id], onDelete: Cascade)
+    imageId          Int
+    createdAt        DateTime   @default(now())
+    updatedAt        DateTime   @updatedAt
+    createdExercises Exercise[] @relation("PlaylistSource")
+    exercises        Exercise[] @relation("PlaylistCollections")
 
     tags PlaylistTag[]
 

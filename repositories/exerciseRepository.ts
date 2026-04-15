@@ -17,6 +17,7 @@ export default class ExerciseRepository extends Repository {
         exercises: {
           create: {
             ...this.exerciseMapper(exercise, userId),
+            fromPlaylist: { connect: { id: playlistId } },
           },
         },
       },
@@ -26,7 +27,7 @@ export default class ExerciseRepository extends Repository {
   private exerciseMapper(
     exercise: ExerciseSchema,
     userId: number
-  ): Prisma.ExerciseCreateWithoutPlaylistInput {
+  ): Prisma.ExerciseCreateWithoutFromPlaylistInput {
     return {
       author: {
         connect: {
@@ -45,6 +46,7 @@ export default class ExerciseRepository extends Repository {
           ...this.chordsGridMapper(exercise.chordsGrid),
         },
       },
+
       midifile: exercise.midifileUrl
         ? {
             create: {
