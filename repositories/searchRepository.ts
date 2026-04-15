@@ -2,7 +2,8 @@ import { type ServerResponse, Status } from "@/types/server-response";
 import { Repository } from "./repository";
 import type { Session } from "@/types/auth";
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
-import type { SoloExerciseCardDto } from "@/types/dtos/exercise";
+import type { ExerciseCardDto, SoloExerciseCardDto } from "@/types/dtos/exercise";
+import { logger } from "@/lib/logger";
 
 export interface AnySearch {
   exercises: (SoloExerciseCardDto & { rank: number })[];
@@ -50,12 +51,14 @@ export default class SearchRepository extends Repository {
     return {
       status: Status.Ok,
       success: true,
-      data: sliced.map((user) => ({
-        score: scoreMap.get(user.id) ?? 0,
-        id: user.id,
-        profilePicture: user.profilePicture,
-        username: user.username,
-      })),
+      data: sliced
+        .map((user) => ({
+          score: scoreMap.get(user.id) ?? 0,
+          id: user.id,
+          profilePicture: user.profilePicture,
+          username: user.username,
+        }))
+        .sort((a, b) => b.score - a.score),
     };
   }
 
@@ -105,15 +108,17 @@ export default class SearchRepository extends Repository {
     return {
       success: true,
       status: Status.Ok,
-      data: sliced.map((playlist) => ({
-        score: scoreMap.get(playlist.id) ?? 0,
-        id: playlist.id,
-        title: playlist.title,
-        author: playlist.author,
-        cover: playlist.cover,
-        exercisesIds: playlist.exercises,
-        visibility: playlist.visibility,
-      })),
+      data: sliced
+        .map((playlist) => ({
+          score: scoreMap.get(playlist.id) ?? 0,
+          id: playlist.id,
+          title: playlist.title,
+          author: playlist.author,
+          cover: playlist.cover,
+          exercisesIds: playlist.exercises,
+          visibility: playlist.visibility,
+        }))
+        .sort((a, b) => b.score - a.score),
     };
   }
 
@@ -187,20 +192,22 @@ export default class SearchRepository extends Repository {
     return {
       success: true,
       status: Status.Ok,
-      data: sliced.map((exercise) => ({
-        score: scoreMap.get(exercise.id) ?? 0,
-        id: exercise.id,
-        inUserPlaylists: [],
-        likedByCurrentUser: false,
-        midifileUrl: !!exercise.midifile,
-        likes: exercise._count.likedByUsers,
-        title: exercise.title,
-        author: exercise.author,
-        composer: exercise.composer,
-        chordsGrid: !!exercise.chordsGrid,
-        cover: exercise.playlist.cover,
-        defaultConfig: exercise.defaultConfig,
-      })),
+      data: sliced
+        .map((exercise) => ({
+          score: scoreMap.get(exercise.id) ?? 0,
+          id: exercise.id,
+          inUserPlaylists: [],
+          likedByCurrentUser: false,
+          midifileUrl: !!exercise.midifile,
+          likes: exercise._count.likedByUsers,
+          title: exercise.title,
+          author: exercise.author,
+          composer: exercise.composer,
+          chordsGrid: !!exercise.chordsGrid,
+          cover: exercise.playlist.cover,
+          defaultConfig: exercise.defaultConfig,
+        }))
+        .sort((a, b) => b.score - a.score),
     };
   }
 
@@ -209,25 +216,89 @@ export default class SearchRepository extends Repository {
     start: number | undefined = 0,
     length: number | undefined = 20
   ): Promise<ServerResponse<AnySearch>> {
+    const specificSearchPattern = /^(.*?)\s+-\s+(.*)$/; // describe: "title - username"
+    const match = query.match(specificSearchPattern);
+
+    let usersPromise: Promise<
+      ServerResponse<
+        (Session & {
+          score: number;
+        })[]
+      >
+    >;
+    let playlistsPromise: Promise<
+      ServerResponse<
+        (PlaylistCardDto & {
+          score: number;
+        })[]
+      >
+    >;
+    let exercisesPromise: Promise<
+      ServerResponse<
+        (ExerciseCardDto & {
+          score: number;
+        })[]
+      >
+    >;
+
+    if (match) {
+      const [_, titlePart, authorPart] = match;
+
+      logger.info("Specific query string: ");
+      logger.table({ titlePart, authorPart });
+
+      [usersPromise, playlistsPromise, exercisesPromise] = [
+        this.getUsers(authorPart, start, length),
+        this.getPlaylists(titlePart, start, length),
+        this.getExercises(titlePart, start, length),
+      ];
+    } else {
+      [usersPromise, playlistsPromise, exercisesPromise] = [
+        this.getUsers(query, start, length),
+        this.getPlaylists(query, start, length),
+        this.getExercises(query, start, length),
+      ];
+    }
+
     const [users, playlists, exercises] = await Promise.all([
-      this.getUsers(query, start, length),
-      this.getPlaylists(query, start, length),
-      this.getExercises(query, start, length),
+      usersPromise,
+      playlistsPromise,
+      exercisesPromise,
     ]);
 
-    const combined = [
+    let combined = [
       ...(users.success ? users.data : []),
       ...(playlists.success ? playlists.data : []),
       ...(exercises.success ? exercises.data : []),
     ];
 
+    if (match) {
+      const [_, titlePart, authorPart] = match;
+      const tPart = titlePart.toLowerCase().trim();
+      const aPart = authorPart.toLowerCase().trim();
+
+      combined = combined.map((item) => {
+        let boost = 0;
+        if ("title" in item && item.author?.username) {
+          const itemTitle = item.title.toLowerCase();
+          const itemAuthor = item.author.username.toLowerCase();
+          if (itemTitle.includes(tPart) && itemAuthor.includes(aPart)) {
+            boost = 10;
+          }
+        }
+        return { ...item, score: (item.score || 0) + boost };
+      });
+    }
+
     const slice = combined
       .sort((a, b) => b.score - a.score)
+      .slice(0, length)
       .map((item, index) => ({
         ...item,
         rank: index + 1,
-      }))
-      .slice(0, length);
+      }));
+
+    logger.info("Top ranked item :", slice[0]);
 
     const usersArray = slice.filter(
       (e): e is Session & { rank: number; score: number } =>
@@ -241,6 +312,7 @@ export default class SearchRepository extends Repository {
     const exercisesArray = slice.filter(
       (e): e is SoloExerciseCardDto & { rank: number; score: number } => "midifileUrl" in e
     );
+
     return {
       success: true,
       status: Status.Ok,
