@@ -132,6 +132,7 @@ export default class SearchRepository extends Repository {
 
   async getExercises(
     query: string,
+    userId: number | null,
     start: number | undefined = 0,
     length: number | undefined = 20
   ): Promise<ServerResponse<(SoloExerciseCardDto & { score: number })[]>> {
@@ -158,6 +159,7 @@ export default class SearchRepository extends Repository {
       select: {
         id: true,
         composer: true,
+        likedByUsers: userId ? { where: { userId: userId }, select: { userId: true } } : false,
         author: {
           select: {
             id: true,
@@ -205,7 +207,7 @@ export default class SearchRepository extends Repository {
           score: scoreMap.get(exercise.id) ?? 0,
           id: exercise.id,
           inUserPlaylists: [],
-          likedByCurrentUser: false,
+          likedByCurrentUser: exercise.likedByUsers && exercise.likedByUsers.length > 0,
           midifileUrl: !!exercise.midifile,
           likes: exercise._count.likedByUsers,
           title: exercise.title,

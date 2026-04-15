@@ -11,9 +11,11 @@ async function getSearchedPlaylists(query: string, pageContext: PageContextServe
   return handleAction("Get searched playlists", () => repo.getPlaylists(query, userId));
 }
 
-async function getSearchedExercises(query: string) {
+async function getSearchedExercises(query: string, pageContext: PageContextServer) {
+  const session = await getAuthenticatedSession(pageContext.headers.cookie);
+  const userId = session?.id ?? null;
   const repo = new SearchRepository(prismaClient);
-  return handleAction("Get searched exercises", () => repo.getExercises(query));
+  return handleAction("Get searched exercises", () => repo.getExercises(query, userId));
 }
 
 async function getSearchedUsers(query: string, pageContext: PageContextServer) {
@@ -28,7 +30,7 @@ export default async function data(pageContext: PageContextServer) {
   const [globalData, playlists, exercises, users] = await Promise.all([
     getGlobalData(pageContext),
     getSearchedPlaylists(query, pageContext),
-    getSearchedExercises(query),
+    getSearchedExercises(query, pageContext),
     getSearchedUsers(query, pageContext),
   ]);
 

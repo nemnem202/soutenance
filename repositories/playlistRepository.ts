@@ -177,10 +177,15 @@ export class PlaylistRepository extends Repository {
               include: { profilePicture: true },
               omit: { createdAt: true, updatedAt: true, email: true },
             },
-            likedByUsers: true,
+            likedByUsers: userId ? { where: { userId: userId }, select: { userId: true } } : false,
             chordsGrid: true,
             defaultConfig: { select: { bpm: true } },
             midifile: true,
+            _count: {
+              select: {
+                likedByUsers: true,
+              },
+            },
           },
         },
       },
@@ -202,8 +207,8 @@ export class PlaylistRepository extends Repository {
         cover: playlist.cover,
         exercises: playlist.exercises.map((e) => ({
           ...e,
-          likes: e.likedByUsers.length,
-          likedByCurrentUser: userId ? (e as any).userLikesPlaylists?.length > 0 : false,
+          likes: e._count.likedByUsers,
+          likedByCurrentUser: e.likedByUsers.length > 0,
           inUserPlaylists: [],
           defaultConfig: e.defaultConfig,
           midifileUrl: !!e.midifile,
