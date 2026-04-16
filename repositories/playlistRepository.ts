@@ -292,9 +292,21 @@ export class PlaylistRepository extends Repository {
             playlistId: playlistToAddId,
           },
         },
-        fromPlaylist: {
-          visibility: "public",
-        },
+        OR: [
+          {
+            fromPlaylist: {
+              visibility: "public",
+            },
+          },
+          userId
+            ? {
+                fromPlaylist: {
+                  visibility: "private",
+                  authorId: userId,
+                },
+              }
+            : {},
+        ],
       },
       select: {
         id: true,
@@ -319,6 +331,72 @@ export class PlaylistRepository extends Repository {
               exerciseId: e.id,
             },
           })),
+        },
+      },
+    });
+
+    return {
+      success: true,
+      status: Status.Ok,
+      data: null,
+    };
+  }
+
+  async addExerciseToPlaylist(
+    targetPlaylistId: number,
+    exerciseToAddId: number,
+    userId: number
+  ): Promise<ServerResponse<null>> {
+    const exercise = await this.client.exercise.findUnique({
+      where: {
+        OR: [
+          {
+            fromPlaylist: {
+              visibility: "public",
+            },
+          },
+          userId
+            ? {
+                fromPlaylist: {
+                  visibility: "private",
+                  authorId: userId,
+                },
+              }
+            : {},
+        ],
+        id: exerciseToAddId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!exercise)
+      return {
+        success: false,
+        status: Status.NotFound,
+        title: "Cannot add this exercise to the playlist",
+        description: "This can happen because the exercise come from a private playlist",
+      };
+
+    await this.client.playlist.update({
+      where: {
+        id: targetPlaylistId,
+        authorId: userId,
+      },
+      data: {
+        includesExercises: {
+          connectOrCreate: {
+            where: {
+              exerciseId_playlistId: {
+                playlistId: targetPlaylistId,
+                exerciseId: exercise.id,
+              },
+            },
+            create: {
+              exerciseId: exercise.id,
+            },
+          },
         },
       },
     });

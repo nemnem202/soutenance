@@ -1,4 +1,4 @@
-import { MouseEvent, useState, type ReactNode } from "react";
+import { type MouseEvent, useState, type ReactNode } from "react";
 import SizeAdapter from "@/components/molecules/size-adapter";
 import { WidgetTitle } from "@/components/organisms/widget-carousel";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,7 @@ import { onUserLikesExercise, onUserUnlikesExercise } from "@/telefunc/like.tele
 import { errorToast, successToast } from "@/lib/toaster";
 import useSession from "@/hooks/use-session";
 import { Plus } from "lucide-react";
+import ExerciseContextMenuButton from "./exercise-menu";
 
 export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto }) {
   const { instance } = useLanguage();
@@ -113,7 +114,7 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
     >
       <div className="flex items-center h-15">
         <img
-          className="w-15 h-15"
+          className="w-15 h-15 object-cover "
           width={60}
           height={60}
           src={props.playlist.cover.url}
@@ -163,8 +164,11 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
             </PlaylistItemBox>
           }
         />
-        <PlaylistItemBox>
-          <Checkbox />
+        <PlaylistItemBox className="pl-2">
+          <div className="flex items-center gap-2 justify-center">
+            <ExerciseContextMenuButton exercise={exercise} />
+            <Checkbox />
+          </div>
         </PlaylistItemBox>
       </div>
     </a>
@@ -210,7 +214,7 @@ export function SearchPlaylistItem({ ...props }: SearchPLaylistItemProps) {
     >
       <div className="flex items-center h-15">
         <img
-          className="w-15 h-15"
+          className="w-15 h-15 object-cover"
           width={60}
           height={60}
           src={exercise.cover.url}

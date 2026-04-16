@@ -6,9 +6,7 @@ import type { PlaylistCardDto } from "@/types/dtos/playlist";
 import AddToPlaylistButton from "./add-to-playlist-menu";
 import NewPlaylistModal from "./new-playlist-modal";
 import { onUserLikesPlaylist, onUserUnlikesPlaylist } from "@/telefunc/like.telefunc";
-import { errorToast, loadingToast, successToast } from "@/lib/toaster";
-import { onAddPlaylistToPlaylist } from "@/telefunc/add-to-playlist.telefunc";
-import { reload } from "vike/client/router";
+import { errorToast, successToast } from "@/lib/toaster";
 
 export function SmallPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }) {
   const { instance } = useLanguage();
@@ -36,25 +34,20 @@ export function SmallPlaylistWidget({ playlist }: { playlist: PlaylistCardDto })
   );
 }
 
-export function SmallAddPlaylistToPlaylistWidget({
+export function SmallAddToPlaylistWidget({
   playlist,
-  playlistToAddId,
+  callBack,
 }: {
   playlist: PlaylistCardDto;
-  playlistToAddId: number;
+  callBack: () => Promise<void>;
 }) {
   const { instance } = useLanguage();
-  const addPlaylistToPlaylist = async () => {
-    const responsePromise = onAddPlaylistToPlaylist(playlist.id, playlistToAddId);
-    loadingToast(responsePromise);
-    await responsePromise;
-    reload();
-  };
+
   return (
     <button
       type="button"
       className="all-unset w-full hover:bg-popover rounded flex gap-2 cursor-pointer text-left transition p-1.5"
-      onClick={addPlaylistToPlaylist}
+      onClick={callBack}
     >
       <div className="h-12 w-12 aspect-square overflow-hidden">
         <img
@@ -124,7 +117,7 @@ export function MediumPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }
     <div className="relative group w-full max-w-60">
       <div className="absolute top-0 left-0 px-2 pt-2 w-full z-1 flex justify-between  opacity-0 group-hover:opacity-100 transition pointer-events-none hidden md:flex">
         <div className="pointer-events-auto">
-          <AddToPlaylistButton targetId={playlist.id} />
+          <AddToPlaylistButton playlistToAddId={playlist.id} />
         </div>
         <div className="pointer-events-auto ">
           <LikeButton onClick={handleLikePlaylist} liked={isLiked} />
