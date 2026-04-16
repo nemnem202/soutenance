@@ -59,7 +59,7 @@ export default class SearchRepository extends Repository {
           id: user.id,
           profilePicture: user.profilePicture,
           username: user.username,
-          likedByCurrentUser: user.likedByUsers.length > 0,
+          likedByCurrentUser: !!(user as any).likedByUsers?.length,
         }))
         .sort((a, b) => b.score - a.score),
     };
@@ -110,9 +110,7 @@ export default class SearchRepository extends Repository {
           include: { profilePicture: true },
           omit: { createdAt: true, updatedAt: true, email: true },
         },
-        userLikesPlaylists: userId
-          ? { where: { userId: userId }, select: { userId: true } }
-          : false,
+        userLikesPlaylists: userId ? { where: { userId: userId } } : false,
       },
     });
 
@@ -128,7 +126,7 @@ export default class SearchRepository extends Repository {
           cover: playlist.cover,
           exercises: playlist.includesExercises.map((include) => include.exercise),
           visibility: playlist.visibility,
-          likedByCurrentUser: playlist.userLikesPlaylists.length > 0,
+          likedByCurrentUser: !!(playlist as any).userLikesPlaylists?.length,
         }))
         .sort((a, b) => b.score - a.score),
     };
@@ -146,7 +144,7 @@ export default class SearchRepository extends Repository {
           (SELECT COUNT(*) FROM "UserLikesExercise" WHERE "exerciseId" = e.id) AS popularity
         FROM "Exercise" e
         JOIN "User" a ON e."authorId" = a.id
-        JOIN "Playlist" p ON e."playlistId" = p.id
+        JOIN "Playlist" p ON e."originPlaylistId" = p.id
         WHERE p.visibility = 'public'
           AND (e.title % ${query} OR e.composer % ${query} OR a.username % ${query})
         ORDER BY weighted_score DESC, popularity DESC
@@ -163,7 +161,7 @@ export default class SearchRepository extends Repository {
       select: {
         id: true,
         composer: true,
-        likedByUsers: userId ? { where: { userId: userId }, select: { userId: true } } : false,
+        likedByUsers: userId ? { where: { userId: userId } } : false,
         author: {
           select: {
             id: true,
@@ -211,7 +209,7 @@ export default class SearchRepository extends Repository {
           score: scoreMap.get(exercise.id) ?? 0,
           id: exercise.id,
           inUserPlaylists: [],
-          likedByCurrentUser: exercise.likedByUsers && exercise.likedByUsers.length > 0,
+          likedByCurrentUser: !!(exercise as any).likedByUsers?.length,
           midifileUrl: !!exercise.midifile,
           likes: exercise._count.likedByUsers,
           title: exercise.title,
@@ -227,10 +225,11 @@ export default class SearchRepository extends Repository {
 
   async getAny(
     query: string,
+    userId: number | null,
     start: number | undefined = 0,
     length: number | undefined = 20
   ): Promise<ServerResponse<AnySearch>> {
-    const specificSearchPattern = /^(.*?)\s+-\s+(.*)$/; // describe: "title - username"
+    const specificSearchPattern = /^(.*?)\s+-\s+(.*)$/;
     const match = query.match(specificSearchPattern);
 
     let usersPromise: Promise<
@@ -257,21 +256,13 @@ export default class SearchRepository extends Repository {
 
     if (match) {
       const [_, titlePart, authorPart] = match;
-
-      logger.info("Specific query string: ");
-      logger.table({ titlePart, authorPart });
-
-      [usersPromise, playlistsPromise, exercisesPromise] = [
-        this.getUsers(authorPart, start, length),
-        this.getPlaylists(titlePart, start, length),
-        this.getExercises(titlePart, start, length),
-      ];
+      usersPromise = this.getUsers(authorPart, userId, start, length);
+      playlistsPromise = this.getPlaylists(titlePart, userId, start, length);
+      exercisesPromise = this.getExercises(titlePart, userId, start, length);
     } else {
-      [usersPromise, playlistsPromise, exercisesPromise] = [
-        this.getUsers(query, start, length),
-        this.getPlaylists(query, start, length),
-        this.getExercises(query, start, length),
-      ];
+      usersPromise = this.getUsers(query, userId, start, length);
+      playlistsPromise = this.getPlaylists(query, userId, start, length);
+      exercisesPromise = this.getExercises(query, userId, start, length);
     }
 
     const [users, playlists, exercises] = await Promise.all([
