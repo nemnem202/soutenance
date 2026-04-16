@@ -418,4 +418,35 @@ export class PlaylistRepository extends Repository {
       data: null,
     };
   }
+
+  async removeExerciseFromPlaylist(
+    targetPlaylistId: number,
+    exerciseToRemoveId: number,
+    userId: number
+  ): Promise<ServerResponse<null>> {
+    await this.client.playlist.update({
+      where: {
+        authorId: userId,
+        id: targetPlaylistId,
+      },
+      data: {
+        includesExercises: {
+          deleteMany: {
+            exerciseId: exerciseToRemoveId,
+          },
+        },
+        createdExercises: {
+          deleteMany: {
+            id: exerciseToRemoveId,
+          },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      status: Status.Ok,
+      data: null,
+    };
+  }
 }

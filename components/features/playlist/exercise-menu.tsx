@@ -22,6 +22,7 @@ import { reload } from "vike/client/router";
 import { onAddExerciseToPlaylist } from "@/telefunc/add-to-playlist.telefunc";
 import useSession from "@/hooks/use-session";
 import type { PlaylistDetailDto } from "@/types/dtos/playlist";
+import { onRemoveExerciseFromPlaylist } from "@/telefunc/remove-from-playlist.telefunc";
 
 export default function ExerciseContextMenuButton({
   exercise,
@@ -33,6 +34,14 @@ export default function ExerciseContextMenuButton({
   const [isOpen, setIsOpen] = useState(false);
   const { instance } = useLanguage();
   const { session } = useSession();
+
+  const removeExerciseFromPlaylist = async () => {
+    if (playlistContext.author.id !== session?.id) return;
+    const responsePromise = onRemoveExerciseFromPlaylist(playlistContext.id, exercise.id);
+    loadingToast(responsePromise);
+    await responsePromise;
+    reload();
+  };
   return (
     <DropdownMenu modal={false} open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger>
@@ -42,13 +51,15 @@ export default function ExerciseContextMenuButton({
       <DropdownMenuContent className="bg-background p-0 z-1" side="right" align="start">
         <DropdownMenuGroup className="p-3">
           <DropdownSubMenuAddToPlaylist exercise={exercise} />
-          <DropdownMenuItem
-            variant="destructive"
-            disabled={playlistContext.author.id !== session?.id}
-          >
-            <Trash />
-            {instance.getItem("remove_from_playlist")}
-          </DropdownMenuItem>
+          <button type="button" className="all-unset" onClick={removeExerciseFromPlaylist}>
+            <DropdownMenuItem
+              variant="destructive"
+              disabled={playlistContext.author.id !== session?.id}
+            >
+              <Trash />
+              {instance.getItem("remove_from_playlist")}
+            </DropdownMenuItem>
+          </button>
         </DropdownMenuGroup>
         <Separator />
         <DropdownMenuGroup className="p-3">
