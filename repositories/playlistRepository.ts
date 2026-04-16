@@ -166,7 +166,7 @@ export class PlaylistRepository extends Repository {
     const playlist = await this.client.playlist.findUnique({
       where: {
         id: playlistId,
-        OR: [{ visibility: "public" }, { visibility: "private", authorId: userId ?? undefined }],
+        OR: [{ visibility: "public" }, userId ? { visibility: "private", authorId: userId } : {}],
       },
       select: {
         id: true,
