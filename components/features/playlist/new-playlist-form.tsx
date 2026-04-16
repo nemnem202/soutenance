@@ -16,8 +16,14 @@ import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import { Switch } from "../../ui/switch";
 
-export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
-  const { form, formRef, handleSubmit } = useNewPlaylistForm();
+export default function NewPlaylistForm({
+  axe = "x",
+  onSubmit,
+}: {
+  axe?: "x" | "y";
+  onSubmit?: () => void;
+}) {
+  const { form, formRef, handleSubmit } = useNewPlaylistForm({ onSubmit });
   const { instance } = useLanguage();
   return (
     <form id="form-rhf-post" onSubmit={form.handleSubmit(handleSubmit)} ref={formRef}>

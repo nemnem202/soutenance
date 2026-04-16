@@ -8,10 +8,11 @@ import { onLogin, onRegister } from "@/telefunc/connexion.telefunc";
 import type { LoginData, RegisterData } from "@/types/auth";
 import { Status } from "@/types/server-response";
 import useSession from "./use-session";
-import { PlaylistRegisterData } from "@/types/playlist";
+import type { PlaylistRegisterData } from "@/types/playlist";
 import { onPlaylistCreation } from "@/telefunc/playlist.telefunc";
+import { reload } from "vike/client/router";
 
-export function useNewPlaylistForm() {
+export function useNewPlaylistForm({ onSubmit }: { onSubmit?: () => void }) {
   const formRef = useRef<HTMLFormElement>(null);
 
   const form = useForm<PlaylistRegisterData>({
@@ -24,8 +25,8 @@ export function useNewPlaylistForm() {
     },
   });
 
-  const handleSubmit = async (form: PlaylistRegisterData) => {
-    const responsePromise = onPlaylistCreation(form);
+  const handleSubmit = async (playlistRegisterForm: PlaylistRegisterData) => {
+    const responsePromise = onPlaylistCreation(playlistRegisterForm);
     loadingToast(responsePromise, {
       loading: "Upload de la playlist en cours...",
       success: {
@@ -36,6 +37,11 @@ export function useNewPlaylistForm() {
         description: "Vérifiez votre connexion internet.",
       },
     });
+    await responsePromise;
+    logger.info("reload");
+    reload();
+    form.reset();
+    onSubmit?.();
   };
 
   return { formRef, form, handleSubmit };

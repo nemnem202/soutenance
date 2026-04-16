@@ -19,7 +19,7 @@ export default function NewPlaylistModal({
 
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <h2 className="headline text-center p-4">{instance.getItem("new_playlist")}</h2>
-        <NewPlaylistForm axe="y" />
+        <NewPlaylistForm axe="y" onSubmit={() => setIsOpen(false)} />
       </Modal>
     </>
   );
