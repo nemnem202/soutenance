@@ -127,9 +127,13 @@ export default class UserRepository extends Repository {
               },
             },
             authorId: true,
-            exercises: {
+            includesExercises: {
               select: {
-                id: true,
+                exercise: {
+                  select: {
+                    id: true,
+                  },
+                },
               },
             },
             visibility: true,
@@ -170,7 +174,7 @@ export default class UserRepository extends Repository {
           id: playlist.id,
           title: playlist.title,
           visibility: playlist.visibility,
-          exercises: playlist.exercises,
+          exercises: playlist.includesExercises.map((include) => include.exercise),
           likedByCurrentUser: playlist.userLikesPlaylists.length > 0,
         })),
       },

@@ -101,7 +101,11 @@ export default class SearchRepository extends Repository {
       },
       include: {
         cover: true,
-        exercises: { select: { id: true } },
+        includesExercises: {
+          select: {
+            exercise: { select: { id: true } },
+          },
+        },
         author: {
           include: { profilePicture: true },
           omit: { createdAt: true, updatedAt: true, email: true },
@@ -122,7 +126,7 @@ export default class SearchRepository extends Repository {
           title: playlist.title,
           author: playlist.author,
           cover: playlist.cover,
-          exercises: playlist.exercises,
+          exercises: playlist.includesExercises.map((include) => include.exercise),
           visibility: playlist.visibility,
           likedByCurrentUser: playlist.userLikesPlaylists.length > 0,
         }))

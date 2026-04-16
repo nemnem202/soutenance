@@ -17,7 +17,11 @@ export default class ExerciseRepository extends Repository {
         createdExercises: {
           create: {
             ...this.exerciseMapper(exercise, userId),
-            fromPlaylist: { connect: { id: playlistId } },
+            inPlaylists: {
+              create: {
+                playlistId: playlistId,
+              },
+            },
           },
         },
       },

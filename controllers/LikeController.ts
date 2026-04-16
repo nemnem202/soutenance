@@ -243,9 +243,11 @@ export default class LikeController extends Controller<ControllerDeps> {
             alt: true,
           },
         },
-        exercises: {
+        includesExercises: {
           select: {
-            id: true,
+            exercise: {
+              select: { id: true },
+            },
           },
         },
         title: true,
@@ -258,7 +260,7 @@ export default class LikeController extends Controller<ControllerDeps> {
       data: playlists.map((playlist) => ({
         author: playlist.author,
         cover: playlist.cover,
-        exercises: playlist.exercises,
+        exercises: playlist.includesExercises.map((include) => include.exercise),
         likedByCurrentUser: true,
         id: playlist.id,
         title: playlist.title,

@@ -56,7 +56,11 @@ export class PlaylistRepository extends Repository {
       take: length,
       include: {
         cover: true,
-        exercises: { select: { id: true } },
+        includesExercises: {
+          select: {
+            exercise: { select: { id: true } },
+          },
+        },
         author: {
           include: { profilePicture: true },
           omit: { createdAt: true, updatedAt: true, email: true },
@@ -75,7 +79,7 @@ export class PlaylistRepository extends Repository {
         title: playlist.title,
         author: playlist.author,
         cover: playlist.cover,
-        exercises: playlist.exercises,
+        exercises: playlist.includesExercises.map((include) => include.exercise),
         visibility: playlist.visibility,
         likedByCurrentUser: (playlist as any).userLikesPlaylists?.length > 0,
       })),
@@ -100,7 +104,7 @@ export class PlaylistRepository extends Repository {
       where: { id: { in: ids } },
       include: {
         cover: true,
-        exercises: { select: { id: true } },
+        includesExercises: { select: { exercise: { select: { id: true } } } },
         author: {
           include: { profilePicture: true },
           omit: { createdAt: true, updatedAt: true, email: true },
@@ -119,7 +123,7 @@ export class PlaylistRepository extends Repository {
         title: playlist.title,
         author: playlist.author,
         cover: playlist.cover,
-        exercises: playlist.exercises,
+        exercises: playlist.includesExercises.map((include) => include.exercise),
         visibility: playlist.visibility,
         likedByCurrentUser: (playlist as any).userLikesPlaylists?.length > 0,
       })),
@@ -132,7 +136,7 @@ export class PlaylistRepository extends Repository {
       include: {
         userLikesPlaylists: { where: { userId: userId }, select: { userId: true } },
         cover: true,
-        exercises: { select: { id: true } },
+        includesExercises: { select: { exercise: { select: { id: true } } } },
         author: {
           include: { profilePicture: true },
           omit: { createdAt: true, updatedAt: true, email: true },
@@ -148,7 +152,7 @@ export class PlaylistRepository extends Repository {
         title: playlist.title,
         author: playlist.author,
         cover: playlist.cover,
-        exercises: playlist.exercises,
+        exercises: playlist.includesExercises.map((include) => include.exercise),
         visibility: playlist.visibility,
         likedByCurrentUser: playlist.userLikesPlaylists.length > 0,
       })),
