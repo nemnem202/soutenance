@@ -17,6 +17,16 @@ model Playlist {
     userLikesPlaylists UserLikesPlaylist[]
 }
 
+model PlaylistIncludesExercise {
+    exercise   Exercise @relation(fields: [exerciseId], references: [id])
+    exerciseId Int
+
+    playlist   Playlist @relation(fields: [playlistId], references: [id])
+    playlistId Int
+
+    @@id([exerciseId, playlistId])
+}
+
 model PlaylistTag {
     id         Int      @id @default(autoincrement())
     label      String   @db.VarChar(50)
@@ -39,14 +49,4 @@ model UserLikesPlaylist {
     likedAt DateTime @default(now())
 
     @@id([userId, playlistId])
-}
-
-model PlaylistIncludesExercise {
-    exercise   Exercise @relation(fields: [exerciseId], references: [id])
-    exerciseId Int
-
-    playlist   Playlist @relation(fields: [playlistId], references: [id])
-    playlistId Int
-
-    @@id([exerciseId, playlistId])
 }

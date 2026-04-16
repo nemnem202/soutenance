@@ -279,4 +279,51 @@ export class PlaylistRepository extends Repository {
       },
     };
   }
+
+  async addPlaylistToPlaylist(
+    targetPlaylistId: number,
+    playlistToAddId: number,
+    userId: number
+  ): Promise<ServerResponse<null>> {
+    const exercisesIds = await this.client.exercise.findMany({
+      where: {
+        inPlaylists: {
+          some: {
+            playlistId: playlistToAddId,
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    await this.client.playlist.update({
+      where: {
+        id: targetPlaylistId,
+        authorId: userId,
+      },
+      data: {
+        includesExercises: {
+          connectOrCreate: exercisesIds.map((e) => ({
+            where: {
+              exerciseId_playlistId: {
+                playlistId: targetPlaylistId,
+                exerciseId: e.id,
+              },
+            },
+            create: {
+              exerciseId: e.id,
+            },
+          })),
+        },
+      },
+    });
+
+    return {
+      success: true,
+      status: Status.Ok,
+      data: null,
+    };
+  }
 }

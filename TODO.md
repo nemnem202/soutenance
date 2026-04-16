@@ -1,1 +1,2 @@
 - token csrf
+- implementer websocket avec socket.io
