@@ -3,7 +3,7 @@ import SizeAdapter from "@/components/molecules/size-adapter";
 import { WidgetTitle } from "@/components/organisms/widget-carousel";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { LikeButton } from "@/components/ui/custom-buttons";
+import { LikeButton, MenuButton } from "@/components/ui/custom-buttons";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
 import type { ExerciseCardDto } from "@/types/dtos/exercise";
@@ -32,6 +32,9 @@ export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto })
               </PlaylistItemBox>
             }
           />
+          <PlaylistItemBox>
+            <MenuButton />
+          </PlaylistItemBox>
           <PlaylistItemBox>
             <Checkbox />
           </PlaylistItemBox>
@@ -72,7 +75,7 @@ export function AddNewExercisePlaylistItem() {
       href="/new-game"
     >
       <div className="flex items-center h-15 text-primary gap-4">
-        <div className="h-full aspect-square rounded-sm flex justify-center bg-popover items-center">
+        <div className="h-full aspect-square  flex justify-center bg-popover items-center">
           <Plus />
         </div>
         <p className="paragraph">{instance.getItem("new_exercise")}</p>
@@ -164,11 +167,11 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
             </PlaylistItemBox>
           }
         />
-        <PlaylistItemBox className="pl-2">
-          <div className="flex items-center gap-2 justify-center">
-            <ExerciseContextMenuButton exercise={exercise} playlistContext={props.playlist} />
-            <Checkbox />
-          </div>
+        <PlaylistItemBox>
+          <ExerciseContextMenuButton exercise={exercise} playlistContext={props.playlist} />
+        </PlaylistItemBox>
+        <PlaylistItemBox>
+          <Checkbox />
         </PlaylistItemBox>
       </div>
     </a>

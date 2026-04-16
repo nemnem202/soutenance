@@ -1,4 +1,4 @@
-import { ArrowLeft, ChevronLeft, ChevronRight, Heart, Plus } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Ellipsis, Heart, Plus } from "lucide-react";
 import { Button, type ButtonProps } from "./button";
 
 export function LikeButton({ liked = false, ...props }: ButtonProps & { liked?: boolean }) {
@@ -10,6 +10,19 @@ export function LikeButton({ liked = false, ...props }: ButtonProps & { liked?: 
       className={`rounded-full ${props.className}`}
     >
       <Heart className={`${liked && "stroke-destructive fill-destructive"}`} />
+    </Button>
+  );
+}
+
+export function MenuButton({ ...props }: ButtonProps) {
+  return (
+    <Button
+      variant={"ghost"}
+      size={"icon"}
+      {...props}
+      className={`rounded-full ${props.className}`}
+    >
+      <Ellipsis className="h-4 w-4" />
     </Button>
   );
 }
