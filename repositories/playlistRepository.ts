@@ -292,6 +292,9 @@ export class PlaylistRepository extends Repository {
             playlistId: playlistToAddId,
           },
         },
+        fromPlaylist: {
+          visibility: "public",
+        },
       },
       select: {
         id: true,
