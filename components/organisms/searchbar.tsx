@@ -177,7 +177,7 @@ export function PlaylistSearchbarItem({
           <p className="paragraph-sm text-muted-foreground">{playlist.author.username}</p>
           <span className="paragraph-sm text-muted-foreground">-</span>
           <p className="paragraph-sm text-muted-foreground">
-            {playlist.exercisesIds.length} {instance.getItem("exercises")}
+            {playlist.exercises.length} {instance.getItem("exercises")}
           </p>
         </div>
       </div>

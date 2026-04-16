@@ -14,7 +14,7 @@ export default class ExerciseRepository extends Repository {
     await this.client.playlist.update({
       where: { id: playlistId },
       data: {
-        exercises: {
+        createdExercises: {
           create: {
             ...this.exerciseMapper(exercise, userId),
             fromPlaylist: { connect: { id: playlistId } },

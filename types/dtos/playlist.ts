@@ -5,7 +5,7 @@ import type { ExerciseCardDto } from "./exercise";
 export interface PlaylistDTO {
   id: number;
   title: string;
-  exercisesIds: { id: number }[];
+  exercises: { id: number }[];
   visibility: "public" | "private";
 }
 
@@ -17,6 +17,5 @@ export interface PlaylistCardDto extends PlaylistDTO {
 
 export interface PlaylistDetailDto extends PlaylistCardDto {
   likes: number;
-
   exercises: ExerciseCardDto[];
 }

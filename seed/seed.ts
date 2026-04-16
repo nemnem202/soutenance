@@ -5,7 +5,7 @@ import type { User } from "@/lib/generated/prisma/client";
 import { logger } from "@/lib/logger";
 import prismaClient from "@/lib/prisma-client";
 import { playlistSchema } from "@/schemas/entities.schema";
-import type { ExerciseSchema, Playlist, PlaylistSchema } from "@/types/entities";
+import type { ExerciseSchema, PlaylistSchema } from "@/types/entities";
 import { IrealChartDecoder } from "./conversion/chart_decoder";
 import { convertPlaylist } from "./conversion/converter";
 import links from "./links.json";
@@ -47,14 +47,6 @@ async function createUser(): Promise<User> {
   });
 
   return user;
-}
-
-async function _createPlaylist(
-  playlist: PlaylistSchema,
-  controller: PlaylistController
-): Promise<Playlist> {
-  const playlistDb = await controller.createPlaylist(playlist);
-  return playlistDb;
 }
 
 async function fillPlaylist(userId: number, playlistId: number, exercises: ExerciseSchema[]) {

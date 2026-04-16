@@ -111,7 +111,7 @@ export function MediumPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }
                 {instance.getItem("by")} {playlist.author.username}
               </p>
               <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[15%]">
-                {playlist.exercisesIds.length > 99 ? ">99" : playlist.exercisesIds.length}
+                {playlist.exercises.length > 99 ? ">99" : playlist.exercises.length}
               </p>
             </div>
           </div>

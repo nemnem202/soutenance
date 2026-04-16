@@ -170,7 +170,7 @@ export default class UserRepository extends Repository {
           id: playlist.id,
           title: playlist.title,
           visibility: playlist.visibility,
-          exercisesIds: playlist.exercises,
+          exercises: playlist.exercises,
           likedByCurrentUser: playlist.userLikesPlaylists.length > 0,
         })),
       },

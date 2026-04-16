@@ -3,7 +3,7 @@ import type { ExerciseCardDto, SoloExerciseCardDto } from "@/types/dtos/exercise
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Repository } from "./repository";
-import { UserCardDto } from "@/types/dtos/user";
+import type { UserCardDto } from "@/types/dtos/user";
 
 export interface AnySearch {
   exercises: (SoloExerciseCardDto & { rank: number })[];
@@ -122,7 +122,7 @@ export default class SearchRepository extends Repository {
           title: playlist.title,
           author: playlist.author,
           cover: playlist.cover,
-          exercisesIds: playlist.exercises,
+          exercises: playlist.exercises,
           visibility: playlist.visibility,
           likedByCurrentUser: playlist.userLikesPlaylists.length > 0,
         }))

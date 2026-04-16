@@ -75,7 +75,7 @@ export class PlaylistRepository extends Repository {
         title: playlist.title,
         author: playlist.author,
         cover: playlist.cover,
-        exercisesIds: playlist.exercises,
+        exercises: playlist.exercises,
         visibility: playlist.visibility,
         likedByCurrentUser: (playlist as any).userLikesPlaylists?.length > 0,
       })),
@@ -119,7 +119,7 @@ export class PlaylistRepository extends Repository {
         title: playlist.title,
         author: playlist.author,
         cover: playlist.cover,
-        exercisesIds: playlist.exercises,
+        exercises: playlist.exercises,
         visibility: playlist.visibility,
         likedByCurrentUser: (playlist as any).userLikesPlaylists?.length > 0,
       })),
@@ -148,7 +148,7 @@ export class PlaylistRepository extends Repository {
         title: playlist.title,
         author: playlist.author,
         cover: playlist.cover,
-        exercisesIds: playlist.exercises,
+        exercises: playlist.exercises,
         visibility: playlist.visibility,
         likedByCurrentUser: playlist.userLikesPlaylists.length > 0,
       })),
@@ -165,28 +165,82 @@ export class PlaylistRepository extends Repository {
         id: playlistId,
         visibility: mustBePublic ? "public" : { in: ["public", "private"] },
       },
-      include: {
-        userLikesPlaylists: userId ? { where: { userId: userId } } : false,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        visibility: true,
+        userLikesPlaylists: { where: { userId: userId ?? undefined }, select: { userId: true } },
         author: {
-          include: { profilePicture: true },
-          omit: { createdAt: true, updatedAt: true, email: true },
-        },
-        cover: true,
-        exercises: {
-          include: {
-            author: {
-              include: { profilePicture: true },
-              omit: { createdAt: true, updatedAt: true, email: true },
-            },
-            likedByUsers: userId ? { where: { userId: userId }, select: { userId: true } } : false,
-            chordsGrid: true,
-            defaultConfig: { select: { bpm: true } },
-            midifile: true,
-            _count: {
+          select: {
+            id: true,
+            username: true,
+            profilePicture: {
               select: {
-                likedByUsers: true,
+                alt: true,
+                url: true,
               },
             },
+          },
+        },
+        cover: {
+          select: {
+            url: true,
+            alt: true,
+          },
+        },
+        includesExercises: {
+          select: {
+            exercise: {
+              select: {
+                id: true,
+                composer: true,
+                likedByUsers: userId
+                  ? { where: { userId: userId }, select: { userId: true } }
+                  : false,
+                author: {
+                  select: {
+                    id: true,
+                    username: true,
+
+                    profilePicture: {
+                      select: {
+                        alt: true,
+                        url: true,
+                      },
+                    },
+                  },
+                },
+                midifile: true,
+                chordsGrid: true,
+                fromPlaylist: {
+                  select: {
+                    cover: {
+                      select: {
+                        alt: true,
+                        url: true,
+                      },
+                    },
+                  },
+                },
+                defaultConfig: {
+                  select: {
+                    bpm: true,
+                  },
+                },
+                title: true,
+                _count: {
+                  select: {
+                    likedByUsers: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        _count: {
+          select: {
+            userLikesPlaylists: true,
           },
         },
       },
@@ -204,23 +258,21 @@ export class PlaylistRepository extends Repository {
       status: Status.Ok,
       success: true,
       data: {
+        id: playlist.id,
+        title: playlist.title,
         author: playlist.author,
         cover: playlist.cover,
-        exercises: playlist.exercises.map((e) => ({
-          ...e,
-          likes: e._count.likedByUsers,
-          likedByCurrentUser: e.likedByUsers.length > 0,
-          inUserPlaylists: [],
-          defaultConfig: e.defaultConfig,
-          midifileUrl: !!e.midifile,
-          chordsGrid: !!e.chordsGrid,
-        })),
-        exercisesIds: playlist.exercises.map((e) => ({ id: e.id })),
-        id: playlist.id,
-        likes: (playlist as any)._count?.userLikesPlaylists || 0,
-        title: playlist.title,
+        likes: playlist._count.userLikesPlaylists,
         visibility: playlist.visibility,
         likedByCurrentUser: userId ? playlist.userLikesPlaylists?.length > 0 : false,
+        exercises: playlist.includesExercises.map((includeExercise) => ({
+          ...includeExercise.exercise,
+          likes: includeExercise.exercise._count.likedByUsers,
+          chordsGrid: !!includeExercise.exercise.chordsGrid,
+          likedByCurrentUser: userId ? includeExercise.exercise.likedByUsers.length > 0 : false,
+          inUserPlaylists: [],
+          midifileUrl: !!includeExercise.exercise.midifile,
+        })),
       },
     };
   }

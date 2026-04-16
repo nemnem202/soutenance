@@ -30,7 +30,7 @@ function Desktop() {
       ) : (
         <Headline>{instance.getItem("homepageDefaultTitle")}</Headline>
       )}
-      {popular.success && (
+      {popular.success && popular.data.length > 0 && (
         <MediumWidgetCarousel
           title={instance.getItem("popularPlaylists")}
           widgets={popular.data.map((data, index) => (
@@ -39,7 +39,7 @@ function Desktop() {
         />
       )}
 
-      {discover.success && (
+      {discover.success && discover.data.length > 0 && (
         <MediumWidgetCarousel
           title={instance.getItem("discover")}
           widgets={discover.data.map((data, index) => (
@@ -48,7 +48,7 @@ function Desktop() {
         />
       )}
 
-      {recommendedUsers.success && (
+      {recommendedUsers.success && recommendedUsers.data.length > 0 && (
         <MediumWidgetCarousel
           title={instance.getItem("others_liked_them_too")}
           widgets={recommendedUsers.data.map((account, index) => (

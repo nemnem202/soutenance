@@ -119,7 +119,6 @@ export const chordsGridSchema = z.object({
 });
 
 export const exerciseSchema = z.object({
-  playlistId: z.number().int().nullable().optional(),
   title: titleSchema,
   composer: z
     .string()

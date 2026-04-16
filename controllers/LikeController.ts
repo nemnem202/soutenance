@@ -1,9 +1,9 @@
-import { ServerResponse, Status } from "@/types/server-response";
-import { Controller, ControllerDeps } from "./Controller";
+import { type ServerResponse, Status } from "@/types/server-response";
+import { Controller, type ControllerDeps } from "./Controller";
 import { AppError } from "@/lib/errors";
-import { PlaylistCardDto } from "@/types/dtos/playlist";
-import { SoloExerciseCardDto } from "@/types/dtos/exercise";
-import { UserCardDto } from "@/types/dtos/user";
+import type { PlaylistCardDto } from "@/types/dtos/playlist";
+import type { SoloExerciseCardDto } from "@/types/dtos/exercise";
+import type { UserCardDto } from "@/types/dtos/user";
 
 export default class LikeController extends Controller<ControllerDeps> {
   async userLikesPlaylist(userId: number | null, playlistId: number): Promise<ServerResponse<{}>> {
@@ -258,7 +258,7 @@ export default class LikeController extends Controller<ControllerDeps> {
       data: playlists.map((playlist) => ({
         author: playlist.author,
         cover: playlist.cover,
-        exercisesIds: playlist.exercises,
+        exercises: playlist.exercises,
         likedByCurrentUser: true,
         id: playlist.id,
         title: playlist.title,
