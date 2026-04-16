@@ -161,13 +161,12 @@ export class PlaylistRepository extends Repository {
 
   async getSingleFromId(
     playlistId: number,
-    userId: number | null,
-    mustBePublic: boolean = true
+    userId: number | null
   ): Promise<ServerResponse<PlaylistDetailDto>> {
     const playlist = await this.client.playlist.findUnique({
       where: {
         id: playlistId,
-        visibility: mustBePublic ? "public" : { in: ["public", "private"] },
+        OR: [{ visibility: "public" }, { visibility: "private", authorId: userId ?? undefined }],
       },
       select: {
         id: true,
