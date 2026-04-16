@@ -11,7 +11,7 @@ import {
 import { useLanguage } from "@/hooks/use-language";
 import useSearchbar from "@/hooks/use-searchbar";
 import type { Session } from "@/types/auth";
-import type { SoloExerciseCardDto } from "@/types/dtos/exercise";
+import type { ExerciseCardDto } from "@/types/dtos/exercise";
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
 
 export interface SearchbarProps {
@@ -107,7 +107,7 @@ export function ExerciseSearchbarItem({
   exercise,
   closeSearchbar,
 }: {
-  exercise: SoloExerciseCardDto;
+  exercise: ExerciseCardDto;
   closeSearchbar: () => void;
 }) {
   const { instance } = useLanguage();

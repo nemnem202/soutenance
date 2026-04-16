@@ -1,12 +1,12 @@
 import { logger } from "@/lib/logger";
-import type { ExerciseCardDto, SoloExerciseCardDto } from "@/types/dtos/exercise";
+import type { ExerciseCardDto } from "@/types/dtos/exercise";
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Repository } from "./repository";
 import type { UserCardDto } from "@/types/dtos/user";
 
 export interface AnySearch {
-  exercises: (SoloExerciseCardDto & { rank: number })[];
+  exercises: (ExerciseCardDto & { rank: number })[];
   playlists: (PlaylistCardDto & { rank: number })[];
   users: (UserCardDto & { rank: number })[];
 }
@@ -137,7 +137,7 @@ export default class SearchRepository extends Repository {
     userId: number | null,
     start: number | undefined = 0,
     length: number | undefined = 20
-  ): Promise<ServerResponse<(SoloExerciseCardDto & { score: number })[]>> {
+  ): Promise<ServerResponse<(ExerciseCardDto & { score: number })[]>> {
     const rawResults = await this.client.$queryRaw<{ id: number; weighted_score: number }[]>`
         SELECT e.*, 
           similarity(e.title, ${query}) AS weighted_score,
@@ -320,7 +320,7 @@ export default class SearchRepository extends Repository {
     );
 
     const exercisesArray = slice.filter(
-      (e): e is SoloExerciseCardDto & { rank: number; score: number } => "midifileUrl" in e
+      (e): e is ExerciseCardDto & { rank: number; score: number } => "midifileUrl" in e
     );
 
     return {

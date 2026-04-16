@@ -2,7 +2,7 @@ import { type ServerResponse, Status } from "@/types/server-response";
 import { Controller, type ControllerDeps } from "./Controller";
 import { AppError } from "@/lib/errors";
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
-import type { SoloExerciseCardDto } from "@/types/dtos/exercise";
+import type { ExerciseCardDto } from "@/types/dtos/exercise";
 import type { UserCardDto } from "@/types/dtos/user";
 
 export default class LikeController extends Controller<ControllerDeps> {
@@ -269,7 +269,7 @@ export default class LikeController extends Controller<ControllerDeps> {
     };
   }
 
-  async getExercises(userId: number | null): Promise<ServerResponse<SoloExerciseCardDto[]>> {
+  async getExercises(userId: number | null): Promise<ServerResponse<ExerciseCardDto[]>> {
     if (!userId) throw new AppError(Status.NotConnected, "You are not connected");
 
     const user = await this.deps.client.user.findUnique({ where: { id: userId } });

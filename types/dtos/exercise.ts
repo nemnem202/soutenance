@@ -16,11 +16,8 @@ export interface ExerciseCardDto extends ExerciseDto {
   originPlaylist: PlaylistDTO;
   chordsGrid: boolean;
   midifileUrl: boolean;
+  cover: Image;
   defaultConfig: {
     bpm: number;
   };
-}
-
-export interface SoloExerciseCardDto extends ExerciseCardDto {
-  cover: Image;
 }

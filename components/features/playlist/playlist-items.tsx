@@ -6,7 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { LikeButton } from "@/components/ui/custom-buttons";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
-import type { ExerciseCardDto, SoloExerciseCardDto } from "@/types/dtos/exercise";
+import type { ExerciseCardDto } from "@/types/dtos/exercise";
 import type { PlaylistDetailDto } from "@/types/dtos/playlist";
 import { onUserLikesExercise, onUserUnlikesExercise } from "@/telefunc/like.telefunc";
 import { errorToast, successToast } from "@/lib/toaster";
@@ -117,8 +117,8 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
           className="w-15 h-15 object-cover "
           width={60}
           height={60}
-          src={props.playlist.cover.url}
-          alt={props.playlist.cover.alt}
+          src={props.exercise.cover.url}
+          alt={props.exercise.cover.alt}
         />
 
         <div className="flex flex-1 min-w-0 h-fit gap-3">
@@ -177,7 +177,7 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
 
 interface SearchPLaylistItemProps {
   index: number;
-  exercise: SoloExerciseCardDto;
+  exercise: ExerciseCardDto;
 }
 
 export function SearchPlaylistItem({ ...props }: SearchPLaylistItemProps) {
@@ -277,7 +277,7 @@ export function SearchPlaylistItem({ ...props }: SearchPLaylistItemProps) {
   );
 }
 
-export function SearchPlaylistItemsList({ exercises }: { exercises: SoloExerciseCardDto[] }) {
+export function SearchPlaylistItemsList({ exercises }: { exercises: ExerciseCardDto[] }) {
   const { instance } = useLanguage();
   return (
     <div className="w-full">
@@ -333,7 +333,7 @@ export function SearchExercisesList({
 }: {
   title?: string;
   seeAllUrl?: string;
-  exercises: SoloExerciseCardDto[];
+  exercises: ExerciseCardDto[];
 }) {
   return (
     <div className="flex flex-col mx-auto mb-6 container">

@@ -279,6 +279,7 @@ export class PlaylistRepository extends Repository {
           likedByCurrentUser: userId ? includeExercise.exercise.likedByUsers.length > 0 : false,
           inUserPlaylists: [],
           midifileUrl: !!includeExercise.exercise.midifile,
+          cover: includeExercise.exercise.fromPlaylist.cover,
           originPlaylist: {
             ...includeExercise.exercise.fromPlaylist,
             exercises: includeExercise.exercise.fromPlaylist.includesExercises.map(
