@@ -306,6 +306,10 @@ export default class LikeController extends Controller<ControllerDeps> {
         },
         fromPlaylist: {
           select: {
+            id: true,
+            visibility: true,
+            title: true,
+            includesExercises: { select: { exercise: { select: { id: true } } } },
             cover: {
               select: {
                 url: true,
@@ -341,6 +345,10 @@ export default class LikeController extends Controller<ControllerDeps> {
         id: e.id,
         title: e.title,
         composer: e.composer,
+        originPlaylist: {
+          ...e.fromPlaylist,
+          exercises: e.fromPlaylist.includesExercises.map((include) => include.exercise),
+        },
         cover: e.fromPlaylist.cover,
         defaultConfig: e.defaultConfig,
         chordsGrid: !!e.chordsGrid,

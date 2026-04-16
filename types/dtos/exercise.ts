@@ -13,6 +13,7 @@ export interface ExerciseCardDto extends ExerciseDto {
   likes: number;
   likedByCurrentUser: boolean;
   inUserPlaylists: PlaylistDTO[];
+  originPlaylist: PlaylistDTO;
   chordsGrid: boolean;
   midifileUrl: boolean;
   defaultConfig: {

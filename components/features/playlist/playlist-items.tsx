@@ -68,7 +68,7 @@ export function AddNewExercisePlaylistItem() {
   const { instance } = useLanguage();
   return (
     <a
-      className=" flex justify-between items-center py-1 pl-1 my-1 relative cursor-pointer hover:bg-popover pr-4"
+      className=" flex justify-between items-center py-1 pl-1 my-1 relative cursor-pointer hover:bg-popover pr-4 transition"
       href="/new-game"
     >
       <div className="flex items-center h-15 text-primary gap-4">
@@ -109,7 +109,7 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
   };
   return (
     <a
-      className=" flex justify-between items-center py-1 pl-1 my-1 relative cursor-pointer hover:bg-popover pr-4"
+      className=" flex justify-between items-center py-1 pl-1 my-1 relative cursor-pointer hover:bg-popover pr-4 transition"
       href="/game"
     >
       <div className="flex items-center h-15">
@@ -166,7 +166,7 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
         />
         <PlaylistItemBox className="pl-2">
           <div className="flex items-center gap-2 justify-center">
-            <ExerciseContextMenuButton exercise={exercise} />
+            <ExerciseContextMenuButton exercise={exercise} playlistContext={props.playlist} />
             <Checkbox />
           </div>
         </PlaylistItemBox>

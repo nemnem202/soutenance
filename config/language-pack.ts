@@ -722,6 +722,27 @@ export const languagePack = {
     de: "Zur Playlist hinzufügen",
     zh: "添加到播放列表",
   },
+  remove_from_playlist: {
+    fr: "Supprimer de la playlist",
+    en: "Remove from playlist",
+    es: "Eliminar de la lista de reproducción",
+    de: "Aus der Playlist entfernen",
+    zh: "从播放列表删除",
+  },
+  author: {
+    fr: "Auteur",
+    en: "Author",
+    es: "Autor",
+    de: "Autor",
+    zh: "作者",
+  },
+  original_playlist: {
+    fr: "Playlist originelle",
+    en: "Original playlist",
+    es: "Lista de reproducción original",
+    de: "Originale Playlist",
+    zh: "原始播放列表",
+  },
   visibility: {
     fr: "Visibilité",
     en: "Visibility",

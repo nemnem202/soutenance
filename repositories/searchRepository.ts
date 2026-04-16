@@ -179,10 +179,14 @@ export default class SearchRepository extends Repository {
         chordsGrid: true,
         fromPlaylist: {
           select: {
+            id: true,
+            visibility: true,
+            title: true,
+            includesExercises: { select: { exercise: { select: { id: true } } } },
             cover: {
               select: {
-                alt: true,
                 url: true,
+                alt: true,
               },
             },
           },
@@ -207,17 +211,18 @@ export default class SearchRepository extends Repository {
       data: sliced
         .map((exercise) => ({
           score: scoreMap.get(exercise.id) ?? 0,
-          id: exercise.id,
+          ...exercise,
           inUserPlaylists: [],
           likedByCurrentUser: !!(exercise as any).likedByUsers?.length,
           midifileUrl: !!exercise.midifile,
           likes: exercise._count.likedByUsers,
-          title: exercise.title,
-          author: exercise.author,
-          composer: exercise.composer,
           chordsGrid: !!exercise.chordsGrid,
           cover: exercise.fromPlaylist.cover,
-          defaultConfig: exercise.defaultConfig,
+
+          originPlaylist: {
+            ...exercise.fromPlaylist,
+            exercises: exercise.fromPlaylist.includesExercises.map((include) => include.exercise),
+          },
         }))
         .sort((a, b) => b.score - a.score),
     };

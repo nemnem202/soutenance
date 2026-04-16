@@ -218,10 +218,14 @@ export class PlaylistRepository extends Repository {
                 chordsGrid: true,
                 fromPlaylist: {
                   select: {
+                    id: true,
+                    visibility: true,
+                    title: true,
+                    includesExercises: { select: { exercise: { select: { id: true } } } },
                     cover: {
                       select: {
-                        alt: true,
                         url: true,
+                        alt: true,
                       },
                     },
                   },
@@ -275,6 +279,12 @@ export class PlaylistRepository extends Repository {
           likedByCurrentUser: userId ? includeExercise.exercise.likedByUsers.length > 0 : false,
           inUserPlaylists: [],
           midifileUrl: !!includeExercise.exercise.midifile,
+          originPlaylist: {
+            ...includeExercise.exercise.fromPlaylist,
+            exercises: includeExercise.exercise.fromPlaylist.includesExercises.map(
+              (include) => include.exercise
+            ),
+          },
         })),
       },
     };
