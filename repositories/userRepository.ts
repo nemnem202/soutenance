@@ -97,12 +97,12 @@ export default class UserRepository extends Repository {
   }
 
   async getSingleFromId(
-    id: number,
-    userId: number | null
+    userId: number,
+    currentUserId: number | null
   ): Promise<ServerResponse<UserDetailsDto>> {
     const user = await this.client.user.findUnique({
       where: {
-        id: id,
+        id: userId,
       },
       select: {
         id: true,
@@ -110,7 +110,10 @@ export default class UserRepository extends Repository {
         likedByUsers: userId ? { where: { likingId: userId }, select: { likingId: true } } : false,
         playlists: {
           where: {
-            visibility: "public",
+            OR: [
+              { visibility: "public" },
+              currentUserId ? { visibility: "private", authorId: currentUserId } : {},
+            ],
           },
           select: {
             id: true,

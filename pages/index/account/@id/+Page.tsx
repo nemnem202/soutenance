@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useState } from "react";
+import { type MouseEvent, useEffect, useState } from "react";
 import { navigate } from "vike/client/router";
 import { useData } from "vike-react/useData";
 import { usePageContext } from "vike-react/usePageContext";
@@ -105,10 +105,7 @@ function Content({ user }: { user: UserDetailsDto }) {
         <Searchbar placeholder={instance.getItem("search")} />
       </div>
       <div className="flex  gap-x-auto gap-y-5 flex-wrap container">
-        <MediumPlaylistWrapper
-          allowToAddANewPlaylist={user.id === session?.id}
-          playlists={user.publicPlaylists}
-        />
+        <MediumPlaylistWrapper playlists={user.publicPlaylists} />
       </div>
     </div>
   );

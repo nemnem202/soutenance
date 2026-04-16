@@ -56,7 +56,7 @@ function NavBar() {
         <>
           <Link href="/favorites" text={instance.getItem("favoritesPageTitle")} icon={<Heart />} />
           <Link
-            href={`/account/${session.id}`}
+            href={`/dashboard`}
             text={instance.getItem("dashboard")}
             icon={<LayoutDashboard />}
           />
