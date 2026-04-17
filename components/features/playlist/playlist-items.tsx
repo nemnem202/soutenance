@@ -17,11 +17,32 @@ import ExerciseContextMenuButton from "./exercise-menu";
 export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto }) {
   const { instance } = useLanguage();
   const { session } = useSession();
+  const [selected, setSelected] = useState<ExerciseCardDto[]>([]);
+
+  const handleExerciseSelectChange = (exercise: ExerciseCardDto, isSelected: boolean) => {
+    if (!isSelected) {
+      setSelected((prev) => prev.filter((e) => e.id !== exercise.id));
+    } else if (!selected.find((e) => e.id === exercise.id)) {
+      setSelected((prev) => {
+        if (prev.find((e) => e.id === exercise.id)) return prev;
+        return [...prev, exercise];
+      });
+    }
+  };
+
+  const handleSelectChangeForAll = (select: boolean) => {
+    if (select) {
+      setSelected(playlist.exercises);
+    } else {
+      setSelected([]);
+    }
+  };
+
   return (
     <div className="w-full">
       <div className="w-full flex justify-between px-4 py-2">
         <p className="paragramh-md text-muted-foreground">{instance.getItem("exercise")}</p>
-        <div className="flex items-center">
+        <div className="flex items-center max-h-6">
           <PlaylistItemBox>
             <p className="paragraph-md text-muted-foreground">{instance.getItem("bpm")}</p>
           </PlaylistItemBox>
@@ -33,10 +54,15 @@ export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto })
             }
           />
           <PlaylistItemBox>
-            <MenuButton />
+            <MenuButton
+              className={`${selected.length !== playlist.exercises.length && "hidden"}`}
+            />
           </PlaylistItemBox>
-          <PlaylistItemBox>
-            <Checkbox />
+          <PlaylistItemBox className="!min-w-8">
+            <Checkbox
+              onCheckedChange={handleSelectChangeForAll}
+              checked={selected.length === playlist.exercises.length}
+            />
           </PlaylistItemBox>
         </div>
       </div>
@@ -44,7 +70,14 @@ export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto })
       <div className="w-full flex flex-col justify-between  py-0 mt-2">
         {session?.id === playlist.author.id && <AddNewExercisePlaylistItem />}
         {playlist.exercises.map((exercise, index) => (
-          <PlaylistItem index={index} key={index} playlist={playlist} exercise={exercise} />
+          <PlaylistItem
+            index={index}
+            key={index}
+            playlist={playlist}
+            exercise={exercise}
+            selected={!!selected.find((e) => e.id === exercise.id)}
+            onSelectChange={(isSelected) => handleExerciseSelectChange(exercise, isSelected)}
+          />
         ))}
       </div>
     </div>
@@ -65,6 +98,8 @@ export interface PLaylistItemProps {
   index: number;
   playlist: PlaylistDetailDto;
   exercise: ExerciseCardDto;
+  onSelectChange?: (select: boolean) => void;
+  selected?: boolean;
 }
 
 export function AddNewExercisePlaylistItem() {
@@ -170,8 +205,8 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
         <PlaylistItemBox>
           <ExerciseContextMenuButton exercise={exercise} playlistContext={props.playlist} />
         </PlaylistItemBox>
-        <PlaylistItemBox>
-          <Checkbox />
+        <PlaylistItemBox className="!min-w-8">
+          <Checkbox onCheckedChange={props.onSelectChange} checked={props.selected} />
         </PlaylistItemBox>
       </div>
     </a>
