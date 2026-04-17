@@ -1,8 +1,8 @@
 import { LikeButton } from "../../ui/custom-buttons";
-import { MouseEvent, useState } from "react";
+import { type MouseEvent, useState } from "react";
 import { onUserLikesUser, onUserUnlikesUser } from "@/telefunc/like.telefunc";
 import { errorToast, successToast } from "@/lib/toaster";
-import { UserCardDto } from "@/types/dtos/user";
+import type { UserCardDto } from "@/types/dtos/user";
 
 export function MediumAccountWidget({ account }: { account: UserCardDto }) {
   const [isLiked, setIsLiked] = useState(account.likedByCurrentUser);

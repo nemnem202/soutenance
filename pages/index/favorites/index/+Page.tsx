@@ -5,7 +5,7 @@ import SizeAdapter from "@/components/molecules/size-adapter";
 import { MediumWidgetCarousel } from "@/components/organisms/widget-carousel";
 import { useLanguage } from "@/hooks/use-language";
 import { useData } from "vike-react/useData";
-import { Data } from "../+data";
+import type { Data } from "../+data";
 import { logger } from "@/lib/logger";
 
 export default function Page() {

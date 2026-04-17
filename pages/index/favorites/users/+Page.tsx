@@ -1,7 +1,7 @@
 import FavoritesSearchbarSpace from "@/components/features/layout/favorites-searchbar-space";
 import { useLanguage } from "@/hooks/use-language";
 import { useData } from "vike-react/useData";
-import { Data } from "../+data";
+import type { Data } from "../+data";
 import { MediumAccountWrapper } from "@/components/features/auth/account-widgets";
 
 export default function Page() {

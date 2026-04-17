@@ -1,6 +1,6 @@
 import FavoritesSearchbarSpace from "@/components/features/layout/favorites-searchbar-space";
 import { useLanguage } from "@/hooks/use-language";
-import { Data } from "../+data";
+import type { Data } from "../+data";
 import { useData } from "vike-react/useData";
 import { SearchExercisesList } from "@/components/features/playlist/playlist-items";
 
