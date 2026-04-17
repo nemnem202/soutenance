@@ -11,10 +11,15 @@ export default function Link({
   icon?: ReactNode;
 }) {
   const { urlPathname } = usePageContext();
+  const isActive =
+    href === "/" ? urlPathname === "/" : urlPathname === href || urlPathname.startsWith(href + "/");
+
   return (
     <a
       href={href}
-      className={`title-3 h-12 flex items-center gap-2 hover:bg-popover p-2 rounded ${urlPathname === href && "text-primary fill-primary transition"}`}
+      className={`title-3 h-12 flex items-center gap-2 hover:bg-popover p-2 rounded ${
+        isActive ? "text-primary fill-primary transition" : ""
+      }`}
     >
       {icon}
       <span>{text}</span>

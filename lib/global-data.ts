@@ -21,7 +21,9 @@ function getScreen(pageContext: PageContextServer): ScreenSizeType {
   }
 }
 
-async function getAuthenticatedSession(cookieHeader: string | undefined): Promise<Session | null> {
+export async function getAuthenticatedSession(
+  cookieHeader: string | undefined
+): Promise<Session | null> {
   if (!cookieHeader) return null;
   const user = await getCurrentUserFromCookie(cookieHeader);
   if (!user) return null;

@@ -3,16 +3,22 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "../../organisms/dropdown-menu";
 import Searchbar from "../../organisms/searchbar";
 import { PlusButton } from "../../ui/custom-buttons";
 import { Separator } from "../../ui/separator";
-import { SmallAddNewPlaylistWidget } from "./playlists-widgets";
+import { SmallAddNewPlaylistWidget, SmallAddToPlaylistWidget } from "./playlists-widgets";
+import { useData } from "vike-react/useData";
+import type { Data } from "@/pages/+data";
+import { addPlaylistToPlaylist } from "@/lib/utils";
 
-export default function AddToPlaylistButton() {
+export default function AddToPlaylistButton({ playlistToAddId }: { playlistToAddId: number }) {
   const { instance } = useLanguage();
+  const { userPlaylists } = useData<Data>();
+
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -30,11 +36,15 @@ export default function AddToPlaylistButton() {
         </DropdownMenuGroup>
         <DropdownMenuGroup className="p-3 pt-0 overflow-y-auto  max-h-80 flex flex-col">
           <SmallAddNewPlaylistWidget />
-          {/* {playlists.map((playlist) => (
-            <DropdownMenuItem className="p-0" key={playlist.id}>
-              <SmallPlaylistWidget />
-            </DropdownMenuItem>
-          ))} */}
+          {userPlaylists.success &&
+            userPlaylists.data.map((playlist) => (
+              <DropdownMenuItem className="p-0" key={playlist.id}>
+                <SmallAddToPlaylistWidget
+                  playlist={playlist}
+                  callBack={() => addPlaylistToPlaylist(playlist.id, playlistToAddId)}
+                />
+              </DropdownMenuItem>
+            ))}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

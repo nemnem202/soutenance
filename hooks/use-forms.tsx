@@ -2,20 +2,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRef, useState } from "react";
 import { type Resolver, useForm } from "react-hook-form";
 import { logger } from "@/lib/logger";
-import { errorToast, successToast } from "@/lib/toaster";
-import { loginSchema, registerSchema } from "@/schemas/auth.schema";
-import { playlistSchema } from "@/schemas/entities.schema";
+import { errorToast, loadingToast, successToast } from "@/lib/toaster";
+import { loginSchema, playlistRegisterSchema, registerSchema } from "@/schemas/auth.schema";
 import { onLogin, onRegister } from "@/telefunc/connexion.telefunc";
 import type { LoginData, RegisterData } from "@/types/auth";
-import type { PlaylistSchema } from "@/types/entities";
 import { Status } from "@/types/server-response";
 import useSession from "./use-session";
+import type { PlaylistRegisterData } from "@/types/playlist";
+import { onPlaylistCreation } from "@/telefunc/playlist.telefunc";
+import { reload } from "vike/client/router";
 
-export function useNewPlaylistForm() {
+export function useNewPlaylistForm({ onSubmit }: { onSubmit?: () => void }) {
   const formRef = useRef<HTMLFormElement>(null);
 
-  const form = useForm<PlaylistSchema>({
-    resolver: zodResolver(playlistSchema) as Resolver<PlaylistSchema>,
+  const form = useForm<PlaylistRegisterData>({
+    resolver: zodResolver(playlistRegisterSchema) as Resolver<PlaylistRegisterData>,
     defaultValues: {
       cover: {
         alt: "The cover of the playlist",
@@ -24,8 +25,23 @@ export function useNewPlaylistForm() {
     },
   });
 
-  const handleSubmit = (form: PlaylistSchema) => {
-    console.log(form);
+  const handleSubmit = async (playlistRegisterForm: PlaylistRegisterData) => {
+    const responsePromise = onPlaylistCreation(playlistRegisterForm);
+    loadingToast(responsePromise, {
+      loading: "Upload de la playlist en cours...",
+      success: {
+        title: "Playlist enregistrée !",
+      },
+      error: {
+        title: "Échec de l'envoi",
+        description: "Vérifiez votre connexion internet.",
+      },
+    });
+    await responsePromise;
+    logger.info("reload");
+    reload();
+    form.reset();
+    onSubmit?.();
   };
 
   return { formRef, form, handleSubmit };
@@ -56,6 +72,7 @@ export function useLoginForm({ onSuccess }: { onSuccess: () => void }) {
       } else {
         const session = response.data;
         setSession(session);
+        reload();
         successToast(`Welcome back, ${session.username} !`);
         onSuccess();
       }
@@ -97,6 +114,7 @@ export function useRegisterForm({ onSuccess }: { onSuccess: () => void }) {
       } else {
         const session = response.data;
         setSession(session);
+        reload();
         successToast(`Welcome, ${session.username} !`);
         onSuccess();
       }

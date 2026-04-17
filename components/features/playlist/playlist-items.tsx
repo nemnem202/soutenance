@@ -1,21 +1,48 @@
-import type { ReactNode } from "react";
+import { type MouseEvent, useState, type ReactNode } from "react";
 import SizeAdapter from "@/components/molecules/size-adapter";
 import { WidgetTitle } from "@/components/organisms/widget-carousel";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { LikeButton } from "@/components/ui/custom-buttons";
+import { LikeButton, MenuButton } from "@/components/ui/custom-buttons";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
-import type { ExerciseCardDto, SoloExerciseCardDto } from "@/types/dtos/exercise";
+import type { ExerciseCardDto } from "@/types/dtos/exercise";
 import type { PlaylistDetailDto } from "@/types/dtos/playlist";
+import { onUserLikesExercise, onUserUnlikesExercise } from "@/telefunc/like.telefunc";
+import { errorToast, successToast } from "@/lib/toaster";
+import useSession from "@/hooks/use-session";
+import { Plus } from "lucide-react";
+import ExerciseContextMenuButton from "./exercise-menu";
 
 export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto }) {
   const { instance } = useLanguage();
+  const { session } = useSession();
+  const [selected, setSelected] = useState<ExerciseCardDto[]>([]);
+
+  const handleExerciseSelectChange = (exercise: ExerciseCardDto, isSelected: boolean) => {
+    if (!isSelected) {
+      setSelected((prev) => prev.filter((e) => e.id !== exercise.id));
+    } else if (!selected.find((e) => e.id === exercise.id)) {
+      setSelected((prev) => {
+        if (prev.find((e) => e.id === exercise.id)) return prev;
+        return [...prev, exercise];
+      });
+    }
+  };
+
+  const handleSelectChangeForAll = (select: boolean) => {
+    if (select) {
+      setSelected(playlist.exercises);
+    } else {
+      setSelected([]);
+    }
+  };
+
   return (
     <div className="w-full">
       <div className="w-full flex justify-between px-4 py-2">
         <p className="paragramh-md text-muted-foreground">{instance.getItem("exercise")}</p>
-        <div className="flex items-center">
+        <div className="flex items-center max-h-6">
           <PlaylistItemBox>
             <p className="paragraph-md text-muted-foreground">{instance.getItem("bpm")}</p>
           </PlaylistItemBox>
@@ -27,14 +54,30 @@ export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto })
             }
           />
           <PlaylistItemBox>
-            <Checkbox />
+            <MenuButton
+              className={`${selected.length !== playlist.exercises.length && "hidden"}`}
+            />
+          </PlaylistItemBox>
+          <PlaylistItemBox className="!min-w-8">
+            <Checkbox
+              onCheckedChange={handleSelectChangeForAll}
+              checked={selected.length === playlist.exercises.length}
+            />
           </PlaylistItemBox>
         </div>
       </div>
       <Separator orientation="horizontal" />
       <div className="w-full flex flex-col justify-between  py-0 mt-2">
+        {session?.id === playlist.author.id && <AddNewExercisePlaylistItem />}
         {playlist.exercises.map((exercise, index) => (
-          <PlaylistItem index={index} key={index} playlist={playlist} exercise={exercise} />
+          <PlaylistItem
+            index={index}
+            key={index}
+            playlist={playlist}
+            exercise={exercise}
+            selected={!!selected.find((e) => e.id === exercise.id)}
+            onSelectChange={(isSelected) => handleExerciseSelectChange(exercise, isSelected)}
+          />
         ))}
       </div>
     </div>
@@ -55,25 +98,65 @@ export interface PLaylistItemProps {
   index: number;
   playlist: PlaylistDetailDto;
   exercise: ExerciseCardDto;
+  onSelectChange?: (select: boolean) => void;
+  selected?: boolean;
+}
+
+export function AddNewExercisePlaylistItem() {
+  const { instance } = useLanguage();
+  return (
+    <a
+      className=" flex justify-between items-center py-1 pl-1 my-1 relative cursor-pointer hover:bg-popover pr-4 transition"
+      href="/new-game"
+    >
+      <div className="flex items-center h-15 text-primary gap-4">
+        <div className="h-full aspect-square  flex justify-center bg-popover items-center">
+          <Plus />
+        </div>
+        <p className="paragraph">{instance.getItem("new_exercise")}</p>
+      </div>
+    </a>
+  );
 }
 
 export function PlaylistItem({ ...props }: PLaylistItemProps) {
   const { instance } = useLanguage();
   const { exercise } = props;
+  const [isLiked, setIsLiked] = useState(exercise.likedByCurrentUser);
   if (!exercise) return null;
-
+  const handleLikeExercise = async (e: MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isLiked) {
+      const response = await onUserUnlikesExercise(exercise.id);
+      if (!response.success) {
+        errorToast(response.title, response.description);
+      } else {
+        successToast(`${exercise.title} was removed from your likes`);
+        setIsLiked(false);
+      }
+    } else {
+      const response = await onUserLikesExercise(exercise.id);
+      if (!response.success) {
+        errorToast(response.title, response.description);
+      } else {
+        successToast(`${exercise.title} was added to your likes`);
+        setIsLiked(true);
+      }
+    }
+  };
   return (
     <a
-      className=" flex justify-between items-center py-1 pl-1 my-1 relative cursor-pointer hover:bg-popover pr-4"
+      className=" flex justify-between items-center py-1 pl-1 my-1 relative cursor-pointer hover:bg-popover pr-4 transition"
       href="/game"
     >
       <div className="flex items-center h-15">
         <img
-          className="w-15 h-15"
+          className="w-15 h-15 object-cover "
           width={60}
           height={60}
-          src={props.playlist.cover.url}
-          alt={props.playlist.cover.alt}
+          src={props.exercise.cover.url}
+          alt={props.exercise.cover.alt}
         />
 
         <div className="flex flex-1 min-w-0 h-fit gap-3">
@@ -105,7 +188,7 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
       </div>
       <div className="flex items-center">
         <PlaylistItemBox>
-          <LikeButton />
+          <LikeButton onClick={handleLikeExercise} liked={isLiked} />
         </PlaylistItemBox>
         <PlaylistItemBox>
           <p className="paragraph-md text-muted-foreground">{exercise.defaultConfig.bpm}</p>
@@ -120,7 +203,10 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
           }
         />
         <PlaylistItemBox>
-          <Checkbox />
+          <ExerciseContextMenuButton exercise={exercise} playlistContext={props.playlist} />
+        </PlaylistItemBox>
+        <PlaylistItemBox className="!min-w-8">
+          <Checkbox onCheckedChange={props.onSelectChange} checked={props.selected} />
         </PlaylistItemBox>
       </div>
     </a>
@@ -129,13 +215,35 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
 
 interface SearchPLaylistItemProps {
   index: number;
-  exercise: SoloExerciseCardDto;
+  exercise: ExerciseCardDto;
 }
 
 export function SearchPlaylistItem({ ...props }: SearchPLaylistItemProps) {
   const { instance } = useLanguage();
   const { exercise } = props;
+  const [isLiked, setIsLiked] = useState(exercise.likedByCurrentUser);
   if (!exercise) return null;
+  const handleLikeExercise = async (e: MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isLiked) {
+      const response = await onUserUnlikesExercise(exercise.id);
+      if (!response.success) {
+        errorToast(response.title, response.description);
+      } else {
+        successToast(`${exercise.title} was removed from your likes`);
+        setIsLiked(false);
+      }
+    } else {
+      const response = await onUserLikesExercise(exercise.id);
+      if (!response.success) {
+        errorToast(response.title, response.description);
+      } else {
+        successToast(`${exercise.title} was added to your likes`);
+        setIsLiked(true);
+      }
+    }
+  };
 
   return (
     <a
@@ -144,7 +252,7 @@ export function SearchPlaylistItem({ ...props }: SearchPLaylistItemProps) {
     >
       <div className="flex items-center h-15">
         <img
-          className="w-15 h-15"
+          className="w-15 h-15 object-cover"
           width={60}
           height={60}
           src={exercise.cover.url}
@@ -188,7 +296,7 @@ export function SearchPlaylistItem({ ...props }: SearchPLaylistItemProps) {
         />
 
         <PlaylistItemBox>
-          <LikeButton />
+          <LikeButton onClick={handleLikeExercise} liked={isLiked} />
         </PlaylistItemBox>
 
         <PlaylistItemBox>
@@ -207,7 +315,7 @@ export function SearchPlaylistItem({ ...props }: SearchPLaylistItemProps) {
   );
 }
 
-export function SearchPlaylistItemsList({ exercises }: { exercises: SoloExerciseCardDto[] }) {
+export function SearchPlaylistItemsList({ exercises }: { exercises: ExerciseCardDto[] }) {
   const { instance } = useLanguage();
   return (
     <div className="w-full">
@@ -257,15 +365,17 @@ export function SearchPlaylistItemsList({ exercises }: { exercises: SoloExercise
 }
 
 export function SearchExercisesList({
-  seeAllUrl = "#",
+  title,
+  seeAllUrl,
   exercises,
 }: {
+  title?: string;
   seeAllUrl?: string;
-  exercises: SoloExerciseCardDto[];
+  exercises: ExerciseCardDto[];
 }) {
   return (
     <div className="flex flex-col mx-auto mb-6 container">
-      <WidgetTitle title="Exercises" seeAllUrl={seeAllUrl} />
+      <WidgetTitle title={title} seeAllUrl={seeAllUrl} />
       <SearchPlaylistItemsList exercises={exercises} />
     </div>
   );

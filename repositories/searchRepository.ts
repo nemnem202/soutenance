@@ -1,22 +1,23 @@
 import { logger } from "@/lib/logger";
-import type { Session } from "@/types/auth";
-import type { ExerciseCardDto, SoloExerciseCardDto } from "@/types/dtos/exercise";
+import type { ExerciseCardDto } from "@/types/dtos/exercise";
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Repository } from "./repository";
+import type { UserCardDto } from "@/types/dtos/user";
 
 export interface AnySearch {
-  exercises: (SoloExerciseCardDto & { rank: number })[];
+  exercises: (ExerciseCardDto & { rank: number })[];
   playlists: (PlaylistCardDto & { rank: number })[];
-  users: (Session & { rank: number })[];
+  users: (UserCardDto & { rank: number })[];
 }
 
 export default class SearchRepository extends Repository {
   async getUsers(
     query: string,
+    userId: number | null,
     start: number | undefined = 0,
     length: number | undefined = 20
-  ): Promise<ServerResponse<(Session & { score: number })[]>> {
+  ): Promise<ServerResponse<(UserCardDto & { score: number })[]>> {
     const rawResults = await this.client.$queryRaw<{ id: number; weighted_score: number }[]>`
       SELECT u.*, 
        similarity(u.username, ${query}) AS weighted_score,
@@ -37,6 +38,7 @@ export default class SearchRepository extends Repository {
       select: {
         id: true,
         username: true,
+        likedByUsers: userId ? { where: { likingId: userId }, select: { likingId: true } } : false,
         profilePicture: {
           select: {
             url: true,
@@ -57,6 +59,7 @@ export default class SearchRepository extends Repository {
           id: user.id,
           profilePicture: user.profilePicture,
           username: user.username,
+          likedByCurrentUser: !!(user as any).likedByUsers?.length,
         }))
         .sort((a, b) => b.score - a.score),
     };
@@ -64,6 +67,7 @@ export default class SearchRepository extends Repository {
 
   async getPlaylists(
     query: string,
+    userId: number | null,
     start: number | undefined = 0,
     length: number | undefined = 20
   ): Promise<ServerResponse<(PlaylistCardDto & { score: number })[]>> {
@@ -97,11 +101,16 @@ export default class SearchRepository extends Repository {
       },
       include: {
         cover: true,
-        exercises: { select: { id: true } },
+        includesExercises: {
+          select: {
+            exercise: { select: { id: true } },
+          },
+        },
         author: {
           include: { profilePicture: true },
           omit: { createdAt: true, updatedAt: true, email: true },
         },
+        userLikesPlaylists: userId ? { where: { userId: userId } } : false,
       },
     });
 
@@ -115,8 +124,9 @@ export default class SearchRepository extends Repository {
           title: playlist.title,
           author: playlist.author,
           cover: playlist.cover,
-          exercisesIds: playlist.exercises,
+          exercises: playlist.includesExercises.map((include) => include.exercise),
           visibility: playlist.visibility,
+          likedByCurrentUser: !!(playlist as any).userLikesPlaylists?.length,
         }))
         .sort((a, b) => b.score - a.score),
     };
@@ -124,16 +134,17 @@ export default class SearchRepository extends Repository {
 
   async getExercises(
     query: string,
+    userId: number | null,
     start: number | undefined = 0,
     length: number | undefined = 20
-  ): Promise<ServerResponse<(SoloExerciseCardDto & { score: number })[]>> {
+  ): Promise<ServerResponse<(ExerciseCardDto & { score: number })[]>> {
     const rawResults = await this.client.$queryRaw<{ id: number; weighted_score: number }[]>`
         SELECT e.*, 
           similarity(e.title, ${query}) AS weighted_score,
           (SELECT COUNT(*) FROM "UserLikesExercise" WHERE "exerciseId" = e.id) AS popularity
         FROM "Exercise" e
         JOIN "User" a ON e."authorId" = a.id
-        JOIN "Playlist" p ON e."playlistId" = p.id
+        JOIN "Playlist" p ON e."originPlaylistId" = p.id
         WHERE p.visibility = 'public'
           AND (e.title % ${query} OR e.composer % ${query} OR a.username % ${query})
         ORDER BY weighted_score DESC, popularity DESC
@@ -150,6 +161,7 @@ export default class SearchRepository extends Repository {
       select: {
         id: true,
         composer: true,
+        likedByUsers: userId ? { where: { userId: userId } } : false,
         author: {
           select: {
             id: true,
@@ -165,12 +177,16 @@ export default class SearchRepository extends Repository {
         },
         midifile: true,
         chordsGrid: true,
-        playlist: {
+        fromPlaylist: {
           select: {
+            id: true,
+            visibility: true,
+            title: true,
+            includesExercises: { select: { exercise: { select: { id: true } } } },
             cover: {
               select: {
-                alt: true,
                 url: true,
+                alt: true,
               },
             },
           },
@@ -195,17 +211,18 @@ export default class SearchRepository extends Repository {
       data: sliced
         .map((exercise) => ({
           score: scoreMap.get(exercise.id) ?? 0,
-          id: exercise.id,
+          ...exercise,
           inUserPlaylists: [],
-          likedByCurrentUser: false,
+          likedByCurrentUser: !!(exercise as any).likedByUsers?.length,
           midifileUrl: !!exercise.midifile,
           likes: exercise._count.likedByUsers,
-          title: exercise.title,
-          author: exercise.author,
-          composer: exercise.composer,
           chordsGrid: !!exercise.chordsGrid,
-          cover: exercise.playlist.cover,
-          defaultConfig: exercise.defaultConfig,
+          cover: exercise.fromPlaylist.cover,
+
+          originPlaylist: {
+            ...exercise.fromPlaylist,
+            exercises: exercise.fromPlaylist.includesExercises.map((include) => include.exercise),
+          },
         }))
         .sort((a, b) => b.score - a.score),
     };
@@ -213,15 +230,16 @@ export default class SearchRepository extends Repository {
 
   async getAny(
     query: string,
+    userId: number | null,
     start: number | undefined = 0,
     length: number | undefined = 20
   ): Promise<ServerResponse<AnySearch>> {
-    const specificSearchPattern = /^(.*?)\s+-\s+(.*)$/; // describe: "title - username"
+    const specificSearchPattern = /^(.*?)\s+-\s+(.*)$/;
     const match = query.match(specificSearchPattern);
 
     let usersPromise: Promise<
       ServerResponse<
-        (Session & {
+        (UserCardDto & {
           score: number;
         })[]
       >
@@ -243,21 +261,13 @@ export default class SearchRepository extends Repository {
 
     if (match) {
       const [_, titlePart, authorPart] = match;
-
-      logger.info("Specific query string: ");
-      logger.table({ titlePart, authorPart });
-
-      [usersPromise, playlistsPromise, exercisesPromise] = [
-        this.getUsers(authorPart, start, length),
-        this.getPlaylists(titlePart, start, length),
-        this.getExercises(titlePart, start, length),
-      ];
+      usersPromise = this.getUsers(authorPart, userId, start, length);
+      playlistsPromise = this.getPlaylists(titlePart, userId, start, length);
+      exercisesPromise = this.getExercises(titlePart, userId, start, length);
     } else {
-      [usersPromise, playlistsPromise, exercisesPromise] = [
-        this.getUsers(query, start, length),
-        this.getPlaylists(query, start, length),
-        this.getExercises(query, start, length),
-      ];
+      usersPromise = this.getUsers(query, userId, start, length);
+      playlistsPromise = this.getPlaylists(query, userId, start, length);
+      exercisesPromise = this.getExercises(query, userId, start, length);
     }
 
     const [users, playlists, exercises] = await Promise.all([
@@ -301,7 +311,7 @@ export default class SearchRepository extends Repository {
     logger.info("Top ranked item :", slice[0]);
 
     const usersArray = slice.filter(
-      (e): e is Session & { rank: number; score: number } =>
+      (e): e is UserCardDto & { rank: number; score: number } =>
         "username" in e && !("visibility" in e) && !("midifileUrl" in e)
     );
 
@@ -310,7 +320,7 @@ export default class SearchRepository extends Repository {
     );
 
     const exercisesArray = slice.filter(
-      (e): e is SoloExerciseCardDto & { rank: number; score: number } => "midifileUrl" in e
+      (e): e is ExerciseCardDto & { rank: number; score: number } => "midifileUrl" in e
     );
 
     return {

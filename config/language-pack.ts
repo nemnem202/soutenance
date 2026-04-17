@@ -1,6 +1,7 @@
 export const availableLanguages = ["fr", "en", "es", "de", "zh"] as const;
+type Language = "fr" | "en" | "es" | "de" | "zh";
 
-export const languagePack = {
+export const languagePack: Record<string, Record<Language, string>> = {
   homepageDefaultTitle: {
     fr: "Bienvenue sur Music Sandbox !",
     en: "Welcome to Music Sandbox!",
@@ -64,12 +65,12 @@ export const languagePack = {
     de: "Dir haben sie gefallen",
     zh: "你喜欢的",
   },
-  popularExercises: {
-    fr: "Exercices populaires",
-    en: "Popular exercises",
-    es: "Ejercicios populares",
-    de: "Beliebte Übungen",
-    zh: "热门练习",
+  popularPlaylists: {
+    fr: "Playlists populaires",
+    en: "Popular playlists",
+    es: "Listas de reproducción populares",
+    de: "Beliebte Playlists",
+    zh: "热门播放列表",
   },
   discover: {
     fr: "Découvrir",
@@ -449,6 +450,13 @@ export const languagePack = {
     de: "Neue Playlist",
     zh: "新建播放列表",
   },
+  new_exercise: {
+    fr: "Nouvel exercice",
+    en: "New exercise",
+    es: "Nuevo ejercicio",
+    de: "Neue Übung",
+    zh: "新练习",
+  },
   title: {
     fr: "Titre",
     en: "Title",
@@ -715,6 +723,34 @@ export const languagePack = {
     de: "Zur Playlist hinzufügen",
     zh: "添加到播放列表",
   },
+  remove_from_playlist: {
+    fr: "Supprimer de la playlist",
+    en: "Remove from playlist",
+    es: "Eliminar de la lista de reproducción",
+    de: "Aus der Playlist entfernen",
+    zh: "从播放列表删除",
+  },
+  delete_playlist: {
+    fr: "Supprimer la playlist",
+    en: "Delete playlist",
+    es: "Eliminar lista de reproducción",
+    de: "Playlist löschen",
+    zh: "删除播放列表",
+  },
+  author: {
+    fr: "Auteur",
+    en: "Author",
+    es: "Autor",
+    de: "Autor",
+    zh: "作者",
+  },
+  original_playlist: {
+    fr: "Playlist originelle",
+    en: "Original playlist",
+    es: "Lista de reproducción original",
+    de: "Originale Playlist",
+    zh: "原始播放列表",
+  },
   visibility: {
     fr: "Visibilité",
     en: "Visibility",
@@ -760,8 +796,22 @@ export const languagePack = {
   others_liked_them_too: {
     en: "The others liked them too",
     fr: "D'autres utilisateurs ont aussi aimé",
-    es: "A otros también les gustó",
-    de: "Andere mochten es auch",
-    zh: "其他人也喜欢了它",
+    es: "A d'autres aussi leur a plu",
+    de: "Anderen hat das auch gefallen",
+    zh: "其他人也喜欢",
+  },
+  show_all: {
+    en: "Show all",
+    fr: "Voir tout",
+    es: "Mostrar todo",
+    de: "Alle anzeigen",
+    zh: "显示全部",
+  },
+  show_less: {
+    en: "Show less",
+    fr: "Voir moins",
+    es: "Mostrar menos",
+    de: "Weniger anzeigen",
+    zh: "显示更少",
   },
 } as const;

@@ -5,19 +5,17 @@ import type { ExerciseCardDto } from "./exercise";
 export interface PlaylistDTO {
   id: number;
   title: string;
-  exercisesIds: { id: number }[];
+  exercises: { id: number }[];
   visibility: "public" | "private";
 }
 
 export interface PlaylistCardDto extends PlaylistDTO {
   author: Session;
   cover: Image;
+  likedByCurrentUser: boolean;
 }
 
-export interface PlaylistDetailDto extends PlaylistDTO {
-  author: Session;
-  cover: Image;
+export interface PlaylistDetailDto extends PlaylistCardDto {
   likes: number;
-  likedByCurrentUser: boolean;
   exercises: ExerciseCardDto[];
 }

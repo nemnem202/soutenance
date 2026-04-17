@@ -15,6 +15,7 @@ export default function GoogleLoginButton() {
 
       console.log("User connecté :", session);
       setSession(session);
+
       window.close();
     });
   };

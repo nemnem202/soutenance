@@ -2,6 +2,7 @@ import { useState } from "react";
 import { errorToast, successToast } from "@/lib/toaster";
 import { onLogout } from "@/telefunc/connexion.telefunc";
 import useSession from "./use-session";
+import { reload } from "vike/client/router";
 
 export default function useLogout() {
   const { setSession } = useSession();
@@ -15,6 +16,7 @@ export default function useLogout() {
     } else {
       successToast("Logout successful");
     }
+    reload();
     setSession(null);
     setLoading(false);
   };

@@ -7,7 +7,6 @@ import {
   useState,
 } from "react";
 import { useData } from "vike-react/useData";
-import { logger } from "@/lib/logger";
 import type { Data } from "@/pages/+data";
 import type { Session } from "@/types/auth";
 export interface SessionData {
@@ -23,7 +22,6 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!currentSession) return;
-    logger.info("Current Session: ", currentSession);
   }, [currentSession]);
 
   return (

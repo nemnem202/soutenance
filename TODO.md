@@ -1,0 +1,3 @@
+- token csrf
+- implementer websocket avec socket.io
+- reviser securite web.pdf

@@ -1,15 +1,16 @@
 import { Compass, Heart, House, LayoutDashboard } from "lucide-react";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { useData } from "vike-react/useData";
 import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
 import type { Data } from "@/pages/+data";
-import { PlusButton } from "../../ui/custom-buttons";
+import { PlusButton, ShowAllButton } from "../../ui/custom-buttons";
 import Link from "../../ui/link";
 import Logo from "../../ui/logo";
 import { Separator } from "../../ui/separator";
 import NewPlaylistModal from "../playlist/new-playlist-modal";
 import { SmallPlaylistWidget } from "../playlist/playlists-widgets";
+import type { PlaylistCardDto } from "@/types/dtos/playlist";
 
 export default function Sidebar() {
   const { session } = useSession();
@@ -56,7 +57,7 @@ function NavBar() {
         <>
           <Link href="/favorites" text={instance.getItem("favoritesPageTitle")} icon={<Heart />} />
           <Link
-            href={`/account/${session.id}`}
+            href={`/dashboard`}
             text={instance.getItem("dashboard")}
             icon={<LayoutDashboard />}
           />
@@ -70,6 +71,7 @@ function Playlists() {
   const { instance } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const { userPlaylists } = useData<Data>();
+
   return (
     <div className="w-full flex flex-col gap-5">
       <div className="w-full flex justify-between items-center">
@@ -80,14 +82,39 @@ function Playlists() {
       </div>
       <div className="flex flex-col w-full gap-2">
         {userPlaylists.success && userPlaylists.data.length > 0 ? (
-          userPlaylists.data.map((playlist) => (
-            <SmallPlaylistWidget key={playlist.id} playlist={playlist} />
-          ))
+          <PlaylistItemAccorion playlists={userPlaylists.data} />
         ) : (
           <p className="text-muted-foreground paragraph">No playlists yet</p>
         )}
       </div>
     </div>
+  );
+}
+
+function PlaylistItemAccorion({ playlists }: { playlists: PlaylistCardDto[] }) {
+  const [displayed, setDisplayed] = useState(playlists.slice(0, 5));
+  const [isFull, setIsFull] = useState(false);
+
+  useEffect(() => {
+    if (isFull) {
+      setDisplayed(playlists);
+    } else {
+      setDisplayed(playlists.slice(0, 5));
+    }
+  }, [isFull, playlists]);
+
+  return (
+    <>
+      {displayed.map((playlist) => (
+        <SmallPlaylistWidget key={playlist.id} playlist={playlist} />
+      ))}
+      {playlists.slice(0, 5).length < playlists.length &&
+        (isFull ? (
+          <ShowAllButton onClick={() => setIsFull(false)}>Show Less</ShowAllButton>
+        ) : (
+          <ShowAllButton onClick={() => setIsFull(true)} />
+        ))}
+    </>
   );
 }
 
@@ -101,9 +128,7 @@ function Recents() {
       </div>
       <div className="flex flex-col w-full gap-2">
         {userPlaylists.success && userPlaylists.data.length > 0 ? (
-          userPlaylists.data.map((playlist) => (
-            <SmallPlaylistWidget key={playlist.id} playlist={playlist} />
-          ))
+          <PlaylistItemAccorion playlists={userPlaylists.data} />
         ) : (
           <p className="text-muted-foreground paragraph">No playlists yet</p>
         )}

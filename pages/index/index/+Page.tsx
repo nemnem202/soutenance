@@ -30,21 +30,25 @@ function Desktop() {
       ) : (
         <Headline>{instance.getItem("homepageDefaultTitle")}</Headline>
       )}
-      {/* <MediumWidgetCarousel
-        title={instance.getItem("recentlyPlayed")}
-        widgets={Array.from({ length: 20 }).map((_, index) => <MediumPlaylistWidget key={index} />)}
-      /> */}
-      {popular.success && (
+      {popular.success && popular.data.length > 0 && (
         <MediumWidgetCarousel
-          title={instance.getItem("popularExercises")}
+          seeAllUrl={{
+            query: "popular",
+            type: "playlist",
+          }}
+          title={instance.getItem("popularPlaylists")}
           widgets={popular.data.map((data, index) => (
             <MediumPlaylistWidget key={index} playlist={data} />
           ))}
         />
       )}
 
-      {discover.success && (
+      {discover.success && discover.data.length > 0 && (
         <MediumWidgetCarousel
+          seeAllUrl={{
+            query: "discover",
+            type: "playlist",
+          }}
           title={instance.getItem("discover")}
           widgets={discover.data.map((data, index) => (
             <MediumPlaylistWidget key={index} playlist={data} />
@@ -52,21 +56,18 @@ function Desktop() {
         />
       )}
 
-      {recommendedUsers.success && (
+      {recommendedUsers.success && recommendedUsers.data.length > 0 && (
         <MediumWidgetCarousel
+          seeAllUrl={{
+            query: "popular",
+            type: "account",
+          }}
           title={instance.getItem("others_liked_them_too")}
           widgets={recommendedUsers.data.map((account, index) => (
             <MediumAccountWidget key={index} account={account} />
           ))}
         />
       )}
-
-      {/* <MediumWidgetCarousel
-          title={instance.getItem("moreOfThem")}
-          widgets={recommendedUsers.data.map((account, index) => (
-            <MediumAccountWidget key={index} account={account} />
-          ))}
-        /> */}
     </>
   );
 }
@@ -85,7 +86,7 @@ function Mobile() {
         widgets={Array.from({ length: 20 }).map((_, index) => <MediumAccountWidget key={index} />)}
       />
       <MediumWidgetCarousel
-        title={instance.getItem("popularExercises")}
+        title={instance.getItem("")}
         widgets={Array.from({ length: 20 }).map((_, index) => <MediumPlaylistWidget key={index} />)}
       />
 

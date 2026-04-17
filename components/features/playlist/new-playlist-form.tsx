@@ -16,14 +16,20 @@ import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import { Switch } from "../../ui/switch";
 
-export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
-  const { form, formRef, handleSubmit } = useNewPlaylistForm();
+export default function NewPlaylistForm({
+  axe = "x",
+  onSubmit,
+}: {
+  axe?: "x" | "y";
+  onSubmit?: () => void;
+}) {
+  const { form, formRef, handleSubmit } = useNewPlaylistForm({ onSubmit });
   const { instance } = useLanguage();
   return (
     <form id="form-rhf-post" onSubmit={form.handleSubmit(handleSubmit)} ref={formRef}>
       <FieldGroup className={`flex  items-center  flex-col ${axe === "x" && "md:flex-row"}`}>
         <Controller
-          name="cover.url"
+          name="cover.file"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid} className="gap-1 w-min">
@@ -31,7 +37,6 @@ export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
                 <div className="w-75 h-75 overflow-hidden">
                   <EditableImage
                     alt="playlist cover"
-                    src={field.value}
                     onImageChange={(source) => field.onChange(source)}
                   />
                 </div>
@@ -67,6 +72,7 @@ export default function NewPlaylistForm({ axe = "x" }: { axe?: "x" | "y" }) {
                 <InputGroup className="">
                   <InputGroupTextarea
                     {...field}
+                    value={field.value ?? ""}
                     id="form-rhf-post-content"
                     placeholder={instance.getItem("enter_your_description")}
                     rows={6}

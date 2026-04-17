@@ -4,7 +4,7 @@ import { type ServerResponse, Status } from "@/types/server-response";
 import { Repository } from "./repository";
 
 export class PlaylistRepository extends Repository {
-  async create(playlist: PlaylistSchema, userId: number): Promise<Playlist> {
+  async create(playlist: PlaylistSchema & { imageId?: string }, userId: number): Promise<Playlist> {
     const playlistDb = await this.client.playlist.create({
       data: {
         title: playlist.title,
@@ -15,38 +15,16 @@ export class PlaylistRepository extends Repository {
           create: {
             alt: playlist.cover.alt,
             url: playlist.cover.url,
+            cloudId: playlist.imageId,
           },
         },
       },
       include: {
         tags: true,
         cover: true,
-        exercises: {
-          include: {
-            defaultConfig: true,
-            midifile: true,
-            chordsGrid: {
-              include: {
-                sections: {
-                  include: {
-                    commonMeasures: true,
-                    voltas: true,
-                  },
-                },
-              },
-            },
-          },
-        },
         author: {
-          omit: {
-            createdAt: true,
-            email: true,
-            imageId: true,
-            updatedAt: true,
-          },
-          include: {
-            profilePicture: true,
-          },
+          omit: { createdAt: true, email: true, imageId: true, updatedAt: true },
+          include: { profilePicture: true },
         },
       },
     });
@@ -67,78 +45,29 @@ export class PlaylistRepository extends Repository {
   }
 
   async getSortedByPopularity(
-    start: number | undefined = 0,
-    length: number | undefined = 20
+    userId: number | null,
+    start: number = 0,
+    length: number = 20
   ): Promise<ServerResponse<PlaylistCardDto[]>> {
     const sliced = await this.client.playlist.findMany({
-      where: {
-        visibility: "public",
-      },
-      orderBy: {
-        userLikesPlaylists: {
-          _count: "desc",
-        },
-      },
+      where: { visibility: "public" },
+      orderBy: { userLikesPlaylists: { _count: "desc" } },
       skip: start,
       take: length,
       include: {
         cover: true,
-        exercises: {
+        includesExercises: {
           select: {
-            id: true,
+            exercise: { select: { id: true } },
           },
         },
-        author: {
-          include: {
-            profilePicture: true,
-          },
-          omit: {
-            createdAt: true,
-            updatedAt: true,
-            email: true,
-          },
-        },
-      },
-    });
-
-    return {
-      status: Status.Ok,
-      success: true,
-      data: sliced.map((playlist) => ({
-        id: playlist.id,
-        title: playlist.title,
-        author: playlist.author,
-        cover: playlist.cover,
-        exercisesIds: playlist.exercises,
-        visibility: playlist.visibility,
-      })),
-    };
-  }
-  async getDiscover(
-    start: number = 0,
-    length: number = 20
-  ): Promise<ServerResponse<PlaylistCardDto[]>> {
-    const playlists = await this.client.$queryRaw<Playlist[]>`
-    SELECT id FROM "Playlist"
-    WHERE visibility = 'public'
-    ORDER BY RANDOM()
-    LIMIT ${length} OFFSET ${start}
-  `;
-
-    const ids = playlists.map((p) => p.id);
-
-    const sliced = await this.client.playlist.findMany({
-      where: {
-        id: { in: ids },
-        visibility: "public",
-      },
-      include: {
-        cover: true,
-        exercises: { select: { id: true } },
         author: {
           include: { profilePicture: true },
           omit: { createdAt: true, updatedAt: true, email: true },
         },
+        userLikesPlaylists: userId
+          ? { where: { userId: userId }, select: { userId: true } }
+          : false,
       },
     });
 
@@ -150,33 +79,67 @@ export class PlaylistRepository extends Repository {
         title: playlist.title,
         author: playlist.author,
         cover: playlist.cover,
-        exercisesIds: playlist.exercises,
+        exercises: playlist.includesExercises.map((include) => include.exercise),
         visibility: playlist.visibility,
+        likedByCurrentUser: (playlist as any).userLikesPlaylists?.length > 0,
+      })),
+    };
+  }
+
+  async getDiscover(
+    userId: number | null,
+    start: number = 0,
+    length: number = 20
+  ): Promise<ServerResponse<PlaylistCardDto[]>> {
+    const playlistsIds = await this.client.$queryRaw<{ id: number }[]>`
+      SELECT id FROM "Playlist"
+      WHERE visibility = 'public'
+      ORDER BY RANDOM()
+      LIMIT ${length} OFFSET ${start}
+    `;
+
+    const ids = playlistsIds.map((p) => p.id);
+
+    const sliced = await this.client.playlist.findMany({
+      where: { id: { in: ids } },
+      include: {
+        cover: true,
+        includesExercises: { select: { exercise: { select: { id: true } } } },
+        author: {
+          include: { profilePicture: true },
+          omit: { createdAt: true, updatedAt: true, email: true },
+        },
+        userLikesPlaylists: userId
+          ? { where: { userId: userId }, select: { userId: true } }
+          : false,
+      },
+    });
+
+    return {
+      status: Status.Ok,
+      success: true,
+      data: sliced.map((playlist) => ({
+        id: playlist.id,
+        title: playlist.title,
+        author: playlist.author,
+        cover: playlist.cover,
+        exercises: playlist.includesExercises.map((include) => include.exercise),
+        visibility: playlist.visibility,
+        likedByCurrentUser: (playlist as any).userLikesPlaylists?.length > 0,
       })),
     };
   }
 
   async getUserPlaylists(userId: number): Promise<ServerResponse<PlaylistCardDto[]>> {
     const playlists = await this.client.playlist.findMany({
-      where: {
-        authorId: userId,
-      },
+      where: { authorId: userId },
       include: {
+        userLikesPlaylists: { where: { userId: userId }, select: { userId: true } },
         cover: true,
-        exercises: {
-          select: {
-            id: true,
-          },
-        },
+        includesExercises: { select: { exercise: { select: { id: true } } } },
         author: {
-          include: {
-            profilePicture: true,
-          },
-          omit: {
-            createdAt: true,
-            updatedAt: true,
-            email: true,
-          },
+          include: { profilePicture: true },
+          omit: { createdAt: true, updatedAt: true, email: true },
         },
       },
     });
@@ -189,56 +152,104 @@ export class PlaylistRepository extends Repository {
         title: playlist.title,
         author: playlist.author,
         cover: playlist.cover,
-        exercisesIds: playlist.exercises,
+        exercises: playlist.includesExercises.map((include) => include.exercise),
         visibility: playlist.visibility,
+        likedByCurrentUser: playlist.userLikesPlaylists.length > 0,
       })),
     };
   }
 
   async getSingleFromId(
     playlistId: number,
-    mustBePublic: boolean | undefined = true
+    userId: number | null
   ): Promise<ServerResponse<PlaylistDetailDto>> {
     const playlist = await this.client.playlist.findUnique({
       where: {
         id: playlistId,
-        visibility: mustBePublic ? "public" : { in: ["public", "private"] },
+        OR: [{ visibility: "public" }, userId ? { visibility: "private", authorId: userId } : {}],
       },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        visibility: true,
+        userLikesPlaylists: { where: { userId: userId ?? undefined }, select: { userId: true } },
         author: {
-          include: {
-            profilePicture: true,
-          },
-          omit: {
-            createdAt: true,
-            updatedAt: true,
-            email: true,
-          },
-        },
-        cover: true,
-        exercises: {
-          include: {
-            author: {
-              include: {
-                profilePicture: true,
-              },
-              omit: {
-                createdAt: true,
-                updatedAt: true,
-                email: true,
-              },
-            },
-            likedByUsers: true,
-            chordsGrid: true,
-            defaultConfig: {
+          select: {
+            id: true,
+            username: true,
+            profilePicture: {
               select: {
-                bpm: true,
+                alt: true,
+                url: true,
               },
             },
-            midifile: true,
           },
         },
-        userLikesPlaylists: true,
+        cover: {
+          select: {
+            url: true,
+            alt: true,
+          },
+        },
+        includesExercises: {
+          select: {
+            exercise: {
+              select: {
+                id: true,
+                composer: true,
+                likedByUsers: userId
+                  ? { where: { userId: userId }, select: { userId: true } }
+                  : false,
+                author: {
+                  select: {
+                    id: true,
+                    username: true,
+
+                    profilePicture: {
+                      select: {
+                        alt: true,
+                        url: true,
+                      },
+                    },
+                  },
+                },
+                midifile: true,
+                chordsGrid: true,
+                fromPlaylist: {
+                  select: {
+                    id: true,
+                    visibility: true,
+                    title: true,
+                    includesExercises: { select: { exercise: { select: { id: true } } } },
+                    cover: {
+                      select: {
+                        url: true,
+                        alt: true,
+                      },
+                    },
+                  },
+                },
+                defaultConfig: {
+                  select: {
+                    bpm: true,
+                  },
+                },
+                title: true,
+                _count: {
+                  select: {
+                    likedByUsers: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        _count: {
+          select: {
+            userLikesPlaylists: true,
+          },
+        },
       },
     });
 
@@ -246,7 +257,7 @@ export class PlaylistRepository extends Repository {
       return {
         status: Status.NotFound,
         success: false,
-        title: "The playlist is either private or has been removed by it's author.",
+        title: "The playlist is either private or has been removed by its author.",
       };
     }
 
@@ -254,24 +265,205 @@ export class PlaylistRepository extends Repository {
       status: Status.Ok,
       success: true,
       data: {
+        id: playlist.id,
+        title: playlist.title,
         author: playlist.author,
         cover: playlist.cover,
-        exercises: playlist.exercises.map((e) => ({
-          ...e,
-          likes: e.likedByUsers.length,
-          likedByCurrentUser: false,
-          inUserPlaylists: [],
-          defaultConfig: e.defaultConfig,
-          midifileUrl: !!e.midifile,
-          chordsGrid: !!e.chordsGrid,
-        })),
-        exercisesIds: playlist.exercises.map((e) => ({ id: e.id })),
-        id: playlist.id,
-        likes: playlist.userLikesPlaylists.length,
-        title: playlist.title,
+        likes: playlist._count.userLikesPlaylists,
         visibility: playlist.visibility,
-        likedByCurrentUser: false,
+        likedByCurrentUser: userId ? playlist.userLikesPlaylists?.length > 0 : false,
+        exercises: playlist.includesExercises.map((includeExercise) => ({
+          ...includeExercise.exercise,
+          likes: includeExercise.exercise._count.likedByUsers,
+          chordsGrid: !!includeExercise.exercise.chordsGrid,
+          likedByCurrentUser: userId ? includeExercise.exercise.likedByUsers.length > 0 : false,
+          inUserPlaylists: [],
+          midifileUrl: !!includeExercise.exercise.midifile,
+          cover: includeExercise.exercise.fromPlaylist.cover,
+          originPlaylist: {
+            ...includeExercise.exercise.fromPlaylist,
+            exercises: includeExercise.exercise.fromPlaylist.includesExercises.map(
+              (include) => include.exercise
+            ),
+          },
+        })),
       },
+    };
+  }
+
+  async addPlaylistToPlaylist(
+    targetPlaylistId: number,
+    playlistToAddId: number,
+    userId: number
+  ): Promise<ServerResponse<null>> {
+    const exercisesIds = await this.client.exercise.findMany({
+      where: {
+        inPlaylists: {
+          some: {
+            playlistId: playlistToAddId,
+          },
+        },
+        OR: [
+          {
+            fromPlaylist: {
+              visibility: "public",
+            },
+          },
+          userId
+            ? {
+                fromPlaylist: {
+                  visibility: "private",
+                  authorId: userId,
+                },
+              }
+            : {},
+        ],
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    await this.client.playlist.update({
+      where: {
+        id: targetPlaylistId,
+        authorId: userId,
+      },
+      data: {
+        includesExercises: {
+          connectOrCreate: exercisesIds.map((e) => ({
+            where: {
+              exerciseId_playlistId: {
+                playlistId: targetPlaylistId,
+                exerciseId: e.id,
+              },
+            },
+            create: {
+              exerciseId: e.id,
+            },
+          })),
+        },
+      },
+    });
+
+    return {
+      success: true,
+      status: Status.Ok,
+      data: null,
+    };
+  }
+
+  async addExerciseToPlaylist(
+    targetPlaylistId: number,
+    exerciseToAddId: number,
+    userId: number
+  ): Promise<ServerResponse<null>> {
+    const exercise = await this.client.exercise.findUnique({
+      where: {
+        OR: [
+          {
+            fromPlaylist: {
+              visibility: "public",
+            },
+          },
+          userId
+            ? {
+                fromPlaylist: {
+                  visibility: "private",
+                  authorId: userId,
+                },
+              }
+            : {},
+        ],
+        id: exerciseToAddId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!exercise)
+      return {
+        success: false,
+        status: Status.NotFound,
+        title: "Cannot add this exercise to the playlist",
+        description: "This can happen because the exercise come from a private playlist",
+      };
+
+    await this.client.playlist.update({
+      where: {
+        id: targetPlaylistId,
+        authorId: userId,
+      },
+      data: {
+        includesExercises: {
+          connectOrCreate: {
+            where: {
+              exerciseId_playlistId: {
+                playlistId: targetPlaylistId,
+                exerciseId: exercise.id,
+              },
+            },
+            create: {
+              exerciseId: exercise.id,
+            },
+          },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      status: Status.Ok,
+      data: null,
+    };
+  }
+
+  async removeExerciseFromPlaylist(
+    targetPlaylistId: number,
+    exerciseToRemoveId: number,
+    userId: number
+  ): Promise<ServerResponse<null>> {
+    await this.client.playlist.update({
+      where: {
+        authorId: userId,
+        id: targetPlaylistId,
+      },
+      data: {
+        includesExercises: {
+          deleteMany: {
+            exerciseId: exerciseToRemoveId,
+          },
+        },
+        createdExercises: {
+          deleteMany: {
+            id: exerciseToRemoveId,
+          },
+        },
+      },
+    });
+
+    return {
+      success: true,
+      status: Status.Ok,
+      data: null,
+    };
+  }
+
+  async removePlaylist(playlistId: number, userId: number): Promise<ServerResponse<null>> {
+    await this.client.playlist.delete({
+      where: {
+        author: {
+          id: userId,
+        },
+        id: playlistId,
+      },
+    });
+
+    return {
+      success: true,
+      status: Status.Ok,
+      data: null,
     };
   }
 }

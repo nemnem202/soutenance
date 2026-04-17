@@ -5,6 +5,8 @@ import { useLanguage } from "@/hooks/use-language";
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
 import AddToPlaylistButton from "./add-to-playlist-menu";
 import NewPlaylistModal from "./new-playlist-modal";
+import { onUserLikesPlaylist, onUserUnlikesPlaylist } from "@/telefunc/like.telefunc";
+import { errorToast, successToast } from "@/lib/toaster";
 
 export function SmallPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }) {
   const { instance } = useLanguage();
@@ -32,6 +34,40 @@ export function SmallPlaylistWidget({ playlist }: { playlist: PlaylistCardDto })
   );
 }
 
+export function SmallAddToPlaylistWidget({
+  playlist,
+  callBack,
+}: {
+  playlist: PlaylistCardDto;
+  callBack: () => Promise<void>;
+}) {
+  const { instance } = useLanguage();
+
+  return (
+    <button
+      type="button"
+      className="all-unset w-full hover:bg-popover rounded flex gap-2 cursor-pointer text-left transition p-1.5"
+      onClick={callBack}
+    >
+      <div className="h-12 w-12 aspect-square overflow-hidden">
+        <img
+          src={playlist.cover.url}
+          alt={playlist.cover.alt}
+          className="object-cover h-full w-full"
+          width={48}
+          loading="lazy"
+        />
+      </div>
+      <div className="flex flex-1 flex-col min-w-0">
+        <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">{playlist.title}</p>
+        <p className="paragraph-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
+          {instance.getItem("by")} {playlist.author.username}
+        </p>
+      </div>
+    </button>
+  );
+}
+
 export function SmallAddNewPlaylistWidget() {
   const { instance } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
@@ -56,15 +92,35 @@ export function SmallAddNewPlaylistWidget() {
 }
 
 export function MediumPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }) {
+  const [isLiked, setIsLiked] = useState(playlist.likedByCurrentUser);
   const { instance } = useLanguage();
+  const handleLikePlaylist = async () => {
+    if (isLiked) {
+      const response = await onUserUnlikesPlaylist(playlist.id);
+      if (!response.success) {
+        errorToast(response.title, response.description);
+      } else {
+        successToast(`${playlist.title} was removed from your likes`);
+        setIsLiked(false);
+      }
+    } else {
+      const response = await onUserLikesPlaylist(playlist.id);
+      if (!response.success) {
+        errorToast(response.title, response.description);
+      } else {
+        successToast(`${playlist.title} was added to your likes`);
+        setIsLiked(true);
+      }
+    }
+  };
   return (
     <div className="relative group w-full max-w-60">
       <div className="absolute top-0 left-0 px-2 pt-2 w-full z-1 flex justify-between  opacity-0 group-hover:opacity-100 transition pointer-events-none hidden md:flex">
         <div className="pointer-events-auto">
-          <AddToPlaylistButton />
+          <AddToPlaylistButton playlistToAddId={playlist.id} />
         </div>
         <div className="pointer-events-auto ">
-          <LikeButton />
+          <LikeButton onClick={handleLikePlaylist} liked={isLiked} />
         </div>
       </div>
       <div className="cursor-pointer rounded-md transition group-hover:opacity-80">
@@ -89,7 +145,7 @@ export function MediumPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }
                 {instance.getItem("by")} {playlist.author.username}
               </p>
               <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[15%]">
-                {playlist.exercisesIds.length > 99 ? ">99" : playlist.exercisesIds.length}
+                {playlist.exercises.length > 99 ? ">99" : playlist.exercises.length}
               </p>
             </div>
           </div>
