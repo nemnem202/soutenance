@@ -2,8 +2,8 @@ import { PlaylistRepository } from "@/repositories/playlistRepository";
 import { playlistSchema } from "@/schemas/entities.schema";
 import type { Exercise, PlaylistSchema } from "@/types/entities";
 import { Controller, type ControllerDeps } from "./Controller";
-import { PlaylistRegisterData } from "@/types/playlist";
-import { ServerResponse, Status } from "@/types/server-response";
+import type { PlaylistRegisterData } from "@/types/playlist";
+import { type ServerResponse, Status } from "@/types/server-response";
 import { playlistRegisterSchema } from "@/schemas/auth.schema";
 import { AppError } from "@/lib/errors";
 import FileController from "./FileController";
@@ -76,8 +76,10 @@ export default class PlaylistController extends Controller<PlaylistControllerDep
     };
   }
 
-  public addExerciseToPlaylist(_exercise: Exercise, _playlist_id: number) {}
-  public removeExerciseFromPlaylist(_exercise: Exercise, _playlist_id: number) {}
-  public changePlaylistVisibility(_playlistId: number) {}
-  public removePlaylist(_playlistId: number) {}
+  public addExerciseToPlaylist(exercise: Exercise, playlist_id: number) {}
+  public removeExerciseFromPlaylist(exercise: Exercise, playlist_id: number) {}
+  public changePlaylistVisibility(playlistId: number) {}
+  public removePlaylist(playlistId: number) {
+    return this.repository.removePlaylist(playlistId, this.deps.userId);
+  }
 }

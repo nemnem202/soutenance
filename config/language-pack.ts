@@ -729,6 +729,13 @@ export const languagePack = {
     de: "Aus der Playlist entfernen",
     zh: "从播放列表删除",
   },
+  delete_playlist: {
+    fr: "Supprimer la playlist",
+    en: "Delete playlist",
+    es: "Eliminar lista de reproducción",
+    de: "Playlist löschen",
+    zh: "删除播放列表",
+  },
   author: {
     fr: "Auteur",
     en: "Author",
@@ -788,9 +795,6 @@ export const languagePack = {
   others_liked_them_too: {
     en: "The others liked them too",
     fr: "D'autres utilisateurs ont aussi aimé",
-    es: "A otros también les gustó",
-    de: "Andere mochten es auch",
-    zh: "其他人也喜欢了它",
   },
   show_all: {
     en: "Show all",

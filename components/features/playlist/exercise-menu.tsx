@@ -19,11 +19,11 @@ import { useData } from "vike-react/useData";
 import type { Data } from "@/pages/+data";
 import { loadingToast } from "@/lib/toaster";
 import { reload } from "vike/client/router";
-import { onAddExerciseToPlaylist } from "@/telefunc/add-to-playlist.telefunc";
 import useSession from "@/hooks/use-session";
-import type { PlaylistDetailDto } from "@/types/dtos/playlist";
+import type { PlaylistCardDto, PlaylistDetailDto } from "@/types/dtos/playlist";
 import { onRemoveExerciseFromPlaylist } from "@/telefunc/remove-from-playlist.telefunc";
 import { MenuButton } from "@/components/ui/custom-buttons";
+import { addExerciseToPlaylist, addPlaylistToPlaylist } from "@/lib/utils";
 
 export default function ExerciseContextMenuButton({
   exercise,
@@ -57,7 +57,7 @@ export default function ExerciseContextMenuButton({
 
       <DropdownMenuContent className="bg-background p-0 z-1" side="right" align="start">
         <DropdownMenuGroup className="p-3">
-          <DropdownSubMenuAddToPlaylist exercise={exercise} />
+          <DropdownSubMenuAddToPlaylist currentExercise={exercise} />
           <button type="button" className="all-unset" onClick={removeExerciseFromPlaylist}>
             <DropdownMenuItem
               variant="destructive"
@@ -88,20 +88,19 @@ export default function ExerciseContextMenuButton({
   );
 }
 
-function DropdownSubMenuAddToPlaylist({ exercise }: { exercise: ExerciseCardDto }) {
+export function DropdownSubMenuAddToPlaylist({
+  currentExercise,
+  currentPlaylist,
+}: {
+  currentExercise?: ExerciseCardDto;
+  currentPlaylist?: PlaylistCardDto;
+}) {
   const { instance } = useLanguage();
   const { userPlaylists } = useData<Data>();
 
-  const addExerciseToPlaylist = async (targetId: number) => {
-    const responsePromise = onAddExerciseToPlaylist(targetId, exercise.id);
-    loadingToast(responsePromise);
-    await responsePromise;
-    reload();
-  };
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger>{instance.getItem("add_to_playlist")}</DropdownMenuSubTrigger>
-
       <DropdownMenuContent className="bg-background p-0 z-1" side="right" align="start">
         <DropdownMenuGroup className="p-3">
           <DropdownMenuLabel className="title-3">
@@ -119,7 +118,13 @@ function DropdownSubMenuAddToPlaylist({ exercise }: { exercise: ExerciseCardDto 
               <DropdownMenuItem className="p-0" key={playlist.id}>
                 <SmallAddToPlaylistWidget
                   playlist={playlist}
-                  callBack={() => addExerciseToPlaylist(playlist.id)}
+                  callBack={async () => {
+                    currentExercise
+                      ? await addExerciseToPlaylist(playlist.id, currentExercise)
+                      : currentPlaylist
+                        ? await addPlaylistToPlaylist(playlist.id, currentPlaylist.id)
+                        : null;
+                  }}
                 />
               </DropdownMenuItem>
             ))}

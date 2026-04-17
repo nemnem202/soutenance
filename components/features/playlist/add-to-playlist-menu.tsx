@@ -13,20 +13,12 @@ import { Separator } from "../../ui/separator";
 import { SmallAddNewPlaylistWidget, SmallAddToPlaylistWidget } from "./playlists-widgets";
 import { useData } from "vike-react/useData";
 import type { Data } from "@/pages/+data";
-import { loadingToast } from "@/lib/toaster";
-import { reload } from "vike/client/router";
-import { onAddPlaylistToPlaylist } from "@/telefunc/add-to-playlist.telefunc";
+import { addPlaylistToPlaylist } from "@/lib/utils";
 
 export default function AddToPlaylistButton({ playlistToAddId }: { playlistToAddId: number }) {
   const { instance } = useLanguage();
   const { userPlaylists } = useData<Data>();
 
-  const addPlaylistToPlaylist = async (targetId: number) => {
-    const responsePromise = onAddPlaylistToPlaylist(targetId, playlistToAddId);
-    loadingToast(responsePromise);
-    await responsePromise;
-    reload();
-  };
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -49,7 +41,7 @@ export default function AddToPlaylistButton({ playlistToAddId }: { playlistToAdd
               <DropdownMenuItem className="p-0" key={playlist.id}>
                 <SmallAddToPlaylistWidget
                   playlist={playlist}
-                  callBack={() => addPlaylistToPlaylist(playlist.id)}
+                  callBack={() => addPlaylistToPlaylist(playlist.id, playlistToAddId)}
                 />
               </DropdownMenuItem>
             ))}

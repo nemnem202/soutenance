@@ -6,13 +6,14 @@ import { PlaylistItemsList } from "@/components/features/playlist/playlist-items
 import SizeAdapter from "@/components/molecules/size-adapter";
 import Searchbar from "@/components/organisms/searchbar";
 import AccountPP from "@/components/ui/account-pp";
-import { LikeButton, PlusButton } from "@/components/ui/custom-buttons";
+import { LikeButton } from "@/components/ui/custom-buttons";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
 import type { PlaylistDetailDto } from "@/types/dtos/playlist";
 import type { Data } from "./+data";
 import { onUserLikesPlaylist, onUserUnlikesPlaylist } from "@/telefunc/like.telefunc";
 import { errorToast, successToast } from "@/lib/toaster";
+import PlaylistMenu from "@/components/features/playlist/playlist-menu";
 
 export default function Page() {
   const { currentPlaylist } = useData<Data>();
@@ -64,7 +65,7 @@ function Banner({ playlist }: { playlist: PlaylistDetailDto }) {
       <SizeAdapter
         md={
           <div className="absolute right-2 top-2 z-1">
-            <PlusButton />
+            <PlaylistMenu playlist={playlist} />
             <LikeButton onClick={handleLikePlaylist} liked={isLiked} />
           </div>
         }

@@ -449,4 +449,21 @@ export class PlaylistRepository extends Repository {
       data: null,
     };
   }
+
+  async removePlaylist(playlistId: number, userId: number): Promise<ServerResponse<null>> {
+    await this.client.playlist.delete({
+      where: {
+        author: {
+          id: userId,
+        },
+        id: playlistId,
+      },
+    });
+
+    return {
+      success: true,
+      status: Status.Ok,
+      data: null,
+    };
+  }
 }
