@@ -26,7 +26,7 @@ export default function PlaylistMenu({ playlist }: { playlist: PlaylistDetailDto
       <DropdownMenuContent className="bg-background p-0 z-1" side="right" align="start">
         <DropdownMenuGroup className="p-3">
           <DropdownSubMenuAddToPlaylist currentPlaylist={playlist} />
-          <button type="button" className="all-unset" onClick={() => deletePlaylist}>
+          <button type="button" className="all-unset" onClick={() => deletePlaylist(playlist.id)}>
             <DropdownMenuItem variant="destructive" disabled={playlist.author.id !== session?.id}>
               <Trash />
               {instance.getItem("delete_playlist")}

@@ -21,7 +21,7 @@ model PlaylistIncludesExercise {
     exercise   Exercise @relation(fields: [exerciseId], references: [id])
     exerciseId Int
 
-    playlist   Playlist @relation(fields: [playlistId], references: [id])
+    playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
     playlistId Int
 
     @@id([exerciseId, playlistId])
@@ -43,7 +43,7 @@ model UserLikesPlaylist {
     user   User @relation(fields: [userId], references: [id])
     userId Int
 
-    playlist   Playlist @relation(fields: [playlistId], references: [id])
+    playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
     playlistId Int
 
     likedAt DateTime @default(now())

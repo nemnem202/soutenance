@@ -4,7 +4,7 @@ import { useData } from "vike-react/useData";
 import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
 import type { Data } from "@/pages/+data";
-import { PlusButton, ShowAllButton, ShowLess } from "../../ui/custom-buttons";
+import { PlusButton, ShowAllButton } from "../../ui/custom-buttons";
 import Link from "../../ui/link";
 import Logo from "../../ui/logo";
 import { Separator } from "../../ui/separator";
@@ -92,8 +92,8 @@ function Playlists() {
 }
 
 function PlaylistItemAccorion({ playlists }: { playlists: PlaylistCardDto[] }) {
-  const [isFull, setIsFull] = useState(false);
   const [displayed, setDisplayed] = useState(playlists.slice(0, 5));
+  const [isFull, setIsFull] = useState(false);
 
   useEffect(() => {
     if (isFull) {
@@ -108,11 +108,12 @@ function PlaylistItemAccorion({ playlists }: { playlists: PlaylistCardDto[] }) {
       {displayed.map((playlist) => (
         <SmallPlaylistWidget key={playlist.id} playlist={playlist} />
       ))}
-      {isFull ? (
-        <ShowLess onClick={() => setIsFull(false)} />
-      ) : (
-        <ShowAllButton onClick={() => setIsFull(true)} />
-      )}
+      {playlists.slice(0, 5).length < playlists.length &&
+        (isFull ? (
+          <ShowAllButton onClick={() => setIsFull(false)}>Show Less</ShowAllButton>
+        ) : (
+          <ShowAllButton onClick={() => setIsFull(true)} />
+        ))}
     </>
   );
 }
