@@ -1,6 +1,7 @@
 export const availableLanguages = ["fr", "en", "es", "de", "zh"] as const;
+type Language = "fr" | "en" | "es" | "de" | "zh";
 
-export const languagePack = {
+export const languagePack: Record<string, Record<Language, string>> = {
   homepageDefaultTitle: {
     fr: "Bienvenue sur Music Sandbox !",
     en: "Welcome to Music Sandbox!",
@@ -795,6 +796,9 @@ export const languagePack = {
   others_liked_them_too: {
     en: "The others liked them too",
     fr: "D'autres utilisateurs ont aussi aimé",
+    es: "A d'autres aussi leur a plu",
+    de: "Anderen hat das auch gefallen",
+    zh: "其他人也喜欢",
   },
   show_all: {
     en: "Show all",

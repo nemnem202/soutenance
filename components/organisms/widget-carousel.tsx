@@ -8,6 +8,7 @@ import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
 import SizeAdapter from "../molecules/size-adapter";
 import { ChevronLeftButton, ChevrontRightButton } from "../ui/custom-buttons";
+import type { PlaylistSeeAllQUery, UserSeeAllQUery } from "@/types/navigation";
 
 interface MediumWidgetGroupProps {
   widgets: ReactNode[];
@@ -72,14 +73,19 @@ export function MediumWidgetGroup(props: MediumWidgetGroupProps) {
 export interface MediumWidgetCarouselProps {
   title: string;
   widgets: ReactNode[];
-  seeAllUrl?: string;
+  seeAllUrl:
+    | {
+        type: "account";
+        query: UserSeeAllQUery;
+      }
+    | {
+        type: "playlist";
+        query: PlaylistSeeAllQUery;
+      }
+    | string;
 }
 
-export function MediumWidgetCarousel({
-  title,
-  widgets,
-  seeAllUrl = "/see-all",
-}: MediumWidgetCarouselProps) {
+export function MediumWidgetCarousel({ title, widgets, seeAllUrl }: MediumWidgetCarouselProps) {
   const {
     isLastItemVisible,
     itemIndex,
@@ -95,7 +101,11 @@ export function MediumWidgetCarousel({
     <section className="flex flex-col md:gap-6 gap-1 mx-auto mb-6 container">
       <WidgetTitle
         title={title}
-        seeAllUrl={seeAllUrl}
+        seeAllUrl={
+          typeof seeAllUrl !== "string"
+            ? `/see-all/${seeAllUrl.type}?search=${seeAllUrl.query}`
+            : seeAllUrl
+        }
         isLastItemVisible={isLastItemVisible}
         itemIndex={itemIndex}
         scrollToIndex={scrollToIndex}
