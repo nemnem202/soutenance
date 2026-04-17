@@ -1,5 +1,15 @@
-import { ArrowLeft, ChevronLeft, ChevronRight, Ellipsis, Heart, Plus } from "lucide-react";
+import {
+  ArrowLeft,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  Ellipsis,
+  Heart,
+  Plus,
+} from "lucide-react";
 import { Button, type ButtonProps } from "./button";
+import { useLanguage } from "@/hooks/use-language";
 
 export function LikeButton({ liked = false, ...props }: ButtonProps & { liked?: boolean }) {
   return (
@@ -70,6 +80,32 @@ export function HistoryBackButton() {
   return (
     <button type="button" onClick={() => window.history.back()} className="cursor-pointer">
       <ArrowLeft />
+    </button>
+  );
+}
+
+export function ShowAllButton({ ...props }: ButtonProps) {
+  const { instance } = useLanguage();
+  return (
+    <button
+      type="button"
+      className="text-muted-foreground flex flex-row justify-center transition hover:text-foreground cursor-pointer"
+      {...props}
+    >
+      {instance.getItem("show_all")} <ChevronDown />
+    </button>
+  );
+}
+
+export function ShowLess({ ...props }: ButtonProps) {
+  const { instance } = useLanguage();
+  return (
+    <button
+      type="button"
+      className="text-muted-foreground flex flex-row justify-center transition hover:text-foreground cursor-pointer"
+      {...props}
+    >
+      {instance.getItem("show_less")} <ChevronUp />
     </button>
   );
 }

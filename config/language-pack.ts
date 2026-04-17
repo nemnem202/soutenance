@@ -792,4 +792,18 @@ export const languagePack = {
     de: "Andere mochten es auch",
     zh: "其他人也喜欢了它",
   },
+  show_all: {
+    en: "Show all",
+    fr: "Voir tout",
+    es: "Mostrar todo",
+    de: "Alle anzeigen",
+    zh: "显示全部",
+  },
+  show_less: {
+    en: "Show less",
+    fr: "Voir moins",
+    es: "Mostrar menos",
+    de: "Weniger anzeigen",
+    zh: "显示更少",
+  },
 } as const;
