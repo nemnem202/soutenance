@@ -466,4 +466,60 @@ export class PlaylistRepository extends Repository {
       data: null,
     };
   }
+
+  async getRecent(
+    userId: number | null,
+    start: number = 0,
+    length: number = 20
+  ): Promise<ServerResponse<PlaylistCardDto[]>> {
+    if (!userId)
+      return {
+        success: false,
+        status: Status.NotConnected,
+        title: "Try to connect",
+      };
+
+    const sliced = await this.client.playlist.findMany({
+      where: {
+        visibility: "public",
+        userLikesPlaylists: {
+          every: {
+            userId: userId,
+          },
+        },
+      },
+      orderBy: { userLikesPlaylists: { _count: "desc" } },
+      skip: start,
+      take: length,
+      include: {
+        cover: true,
+        includesExercises: {
+          select: {
+            exercise: { select: { id: true } },
+          },
+        },
+        author: {
+          include: { profilePicture: true },
+          omit: { createdAt: true, updatedAt: true, email: true },
+        },
+        userLikesPlaylists: userId
+          ? { where: { userId: userId }, select: { userId: true } }
+          : false,
+      },
+    });
+
+    return {
+      status: Status.Ok,
+      success: true,
+      data: sliced.map((playlist) => ({
+        id: playlist.id,
+        title: playlist.title,
+        author: playlist.author,
+        cover: playlist.cover,
+        exercises: playlist.includesExercises.map((include) => include.exercise),
+        visibility: playlist.visibility,
+        likedByCurrentUser: (playlist as any).userLikesPlaylists?.length > 0,
+      })),
+    };
+  }
 }

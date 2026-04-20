@@ -73,27 +73,49 @@ function Desktop() {
 }
 
 function Mobile() {
+  const { popular, discover, recommendedUsers } = useData<Data>();
   const { instance } = useLanguage();
   return (
     <>
       <MobileHeader title={instance.getItem("homepage")} />
-      {/* <MediumWidgetCarousel
-        title={instance.getItem("recentlyPlayed")}
-        widgets={Array.from({ length: 20 }).map((_, index) => <MediumPlaylistWidget key={index} />)}
-      />
-      <MediumWidgetCarousel
-        title={instance.getItem("moreOfThem")}
-        widgets={Array.from({ length: 20 }).map((_, index) => <MediumAccountWidget key={index} />)}
-      />
-      <MediumWidgetCarousel
-        title={instance.getItem("")}
-        widgets={Array.from({ length: 20 }).map((_, index) => <MediumPlaylistWidget key={index} />)}
-      />
+      {popular.success && popular.data.length > 0 && (
+        <MediumWidgetCarousel
+          seeAllUrl={{
+            query: "popular",
+            type: "playlist",
+          }}
+          title={instance.getItem("popularPlaylists")}
+          widgets={popular.data.map((data, index) => (
+            <MediumPlaylistWidget key={index} playlist={data} />
+          ))}
+        />
+      )}
 
-      <MediumWidgetCarousel
-        title={instance.getItem("discover")}
-        widgets={Array.from({ length: 20 }).map((_, index) => <MediumPlaylistWidget key={index} />)}
-      /> */}
+      {discover.success && discover.data.length > 0 && (
+        <MediumWidgetCarousel
+          seeAllUrl={{
+            query: "discover",
+            type: "playlist",
+          }}
+          title={instance.getItem("discover")}
+          widgets={discover.data.map((data, index) => (
+            <MediumPlaylistWidget key={index} playlist={data} />
+          ))}
+        />
+      )}
+
+      {recommendedUsers.success && recommendedUsers.data.length > 0 && (
+        <MediumWidgetCarousel
+          seeAllUrl={{
+            query: "popular",
+            type: "account",
+          }}
+          title={instance.getItem("others_liked_them_too")}
+          widgets={recommendedUsers.data.map((account, index) => (
+            <MediumAccountWidget key={index} account={account} />
+          ))}
+        />
+      )}
     </>
   );
 }
