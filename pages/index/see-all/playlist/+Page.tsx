@@ -1,4 +1,4 @@
-import { MediumPlaylistWrapper } from "@/components/features/playlist/playlists-widgets";
+import { MediumDynamicPlaylistWrapper } from "@/components/features/playlist/playlists-widgets";
 import { Data } from "./+data";
 import { useData } from "vike-react/useData";
 import { navigate } from "vike/client/router";
@@ -17,7 +17,7 @@ export default function Page() {
   if (!playlists.success) return null;
 
   return (
-    <MediumPlaylistWrapper
+    <MediumDynamicPlaylistWrapper
       initialPlaylists={playlists.data}
       searchParam={searchParam as PlaylistSeeAllQUery}
     />

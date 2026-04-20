@@ -176,6 +176,28 @@ function MediumAddNewPlaylistWidget() {
 }
 
 export function MediumPlaylistWrapper({
+  playlists,
+  allowToAddANewPlaylist,
+}: {
+  playlists: PlaylistCardDto[];
+  allowToAddANewPlaylist?: boolean;
+}) {
+  return (
+    <div className="grid gap-y-5 md:gap-y-4 gap-2 container grid-cols-[repeat(auto-fit,minmax(30vw,1fr))] md:grid-cols-[repeat(auto-fit,minmax(10rem,1fr))]">
+      {allowToAddANewPlaylist && <MediumAddNewPlaylistWidget />}
+      {playlists &&
+        playlists.length > 0 &&
+        playlists.map((playlist, i) => <MediumPlaylistWidget key={i} playlist={playlist} />)}
+      {playlists.length < 5 &&
+        Array.from({ length: 5 - playlists.length }).map((_, index) => (
+          <div key={index} className="w-full max-w-60"></div>
+        ))}
+      <div className="w-full max-w-60 aspect-square flex justify-center items-center" />
+    </div>
+  );
+}
+
+export function MediumDynamicPlaylistWrapper({
   allowToAddANewPlaylist,
   initialPlaylists,
   searchParam,
@@ -226,9 +248,9 @@ export function MediumPlaylistWrapper({
       className="grid gap-y-5 md:gap-y-4 gap-2 container grid-cols-[repeat(auto-fit,minmax(30vw,1fr))] md:grid-cols-[repeat(auto-fit,minmax(10rem,1fr))]"
     >
       {allowToAddANewPlaylist && <MediumAddNewPlaylistWidget />}
-      {playlists.map((playlist, i) => (
-        <MediumPlaylistWidget key={i} playlist={playlist} />
-      ))}
+      {playlists &&
+        playlists.length > 0 &&
+        playlists.map((playlist, i) => <MediumPlaylistWidget key={i} playlist={playlist} />)}
       {playlists.length < 5 &&
         Array.from({ length: 5 - playlists.length }).map((_, index) => (
           <div key={index} className="w-full max-w-60"></div>

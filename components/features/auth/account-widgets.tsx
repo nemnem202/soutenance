@@ -60,7 +60,7 @@ export function MediumAccountWidget({ account }: { account: UserCardDto }) {
   );
 }
 
-export function MediumAccountWrapper({
+export function MediumAccountDynamicWrapper({
   initialAccounts,
   searchParam,
 }: {
@@ -121,6 +121,20 @@ export function MediumAccountWrapper({
         ref={loaderRef}
         className="w-full max-w-60 aspect-square flex justify-center items-center"
       />
+    </div>
+  );
+}
+
+export function MediumAccountWrapper({ accounts }: { accounts: UserCardDto[] }) {
+  return (
+    <div className="grid gap-y-5 md:gap-y-4 gap-2 container grid-cols-[repeat(auto-fit,minmax(30vw,1fr))] md:grid-cols-[repeat(auto-fit,minmax(10rem,1fr))]">
+      {accounts.map((account, i) => (
+        <MediumAccountWidget key={i} account={account} />
+      ))}
+      {accounts.length < 5 &&
+        Array.from({ length: 5 - accounts.length }).map((_, index) => (
+          <div key={index} className="w-full max-w-60"></div>
+        ))}
     </div>
   );
 }

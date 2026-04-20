@@ -1,10 +1,10 @@
-import { MediumAccountWrapper } from "@/components/features/auth/account-widgets";
 import { useEffect } from "react";
 import { useData } from "vike-react/useData";
 import { navigate } from "vike/client/router";
 import { Data } from "./+data";
 import { usePageContext } from "vike-react/usePageContext";
 import { UserSeeAllQUery } from "@/types/navigation";
+import { MediumAccountDynamicWrapper } from "@/components/features/auth/account-widgets";
 
 export default function Page() {
   const { accounts } = useData<Data>();
@@ -18,7 +18,7 @@ export default function Page() {
   if (!accounts.success) return null;
 
   return (
-    <MediumAccountWrapper
+    <MediumAccountDynamicWrapper
       initialAccounts={accounts.data}
       searchParam={searchParam as UserSeeAllQUery}
     />
