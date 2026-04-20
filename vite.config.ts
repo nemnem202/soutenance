@@ -9,6 +9,7 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     port: 3000,
+    allowedHosts: ["192-168-38-64.nip.io"],
   },
   preview: {
     host: "0.0.0.0",

@@ -90,7 +90,7 @@ export function LoginModalContent({
   );
 }
 
-function RegisterModalContent({
+export function RegisterModalContent({
   setMode,
   setIsOpen,
   onSuccess = () => {},
