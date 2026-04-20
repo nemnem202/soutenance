@@ -13,7 +13,7 @@ import type { PlaylistDetailDto } from "@/types/dtos/playlist";
 import type { Data } from "./+data";
 import { onUserLikesPlaylist, onUserUnlikesPlaylist } from "@/telefunc/like.telefunc";
 import { errorToast, successToast } from "@/lib/toaster";
-import PlaylistMenu from "@/components/features/playlist/playlist-menu";
+import PlaylistMenu, { PlaylistMenuContent } from "@/components/features/playlist/playlist-menu";
 
 export default function Page() {
   const { currentPlaylist } = useData<Data>();
@@ -69,7 +69,7 @@ function Banner({ playlist }: { playlist: PlaylistDetailDto }) {
             <LikeButton onClick={handleLikePlaylist} liked={isLiked} />
           </div>
         }
-        sm={<ArrowElipsisTopMenu />}
+        sm={<ArrowElipsisTopMenu menuContent={<PlaylistMenuContent playlist={playlist} />} />}
       />
 
       <div className="w-50 md:w-75 md:m-0 rounded aspect-square overflow-hidden mb-8 mt-2">

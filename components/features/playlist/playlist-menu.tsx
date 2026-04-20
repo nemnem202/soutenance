@@ -23,26 +23,35 @@ export default function PlaylistMenu({ playlist }: { playlist: PlaylistDetailDto
       <DropdownMenuTrigger asChild>
         <PlusButton />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-background p-0 z-1" side="right" align="start">
-        <DropdownMenuGroup className="p-3">
-          <DropdownSubMenuAddToPlaylist currentPlaylist={playlist} />
-          <button type="button" className="all-unset" onClick={() => deletePlaylist(playlist.id)}>
-            <DropdownMenuItem variant="destructive" disabled={playlist.author.id !== session?.id}>
-              <Trash />
-              {instance.getItem("delete_playlist")}
-            </DropdownMenuItem>
-          </button>
-        </DropdownMenuGroup>
-        <Separator />
-        <DropdownMenuGroup className="p-3">
-          <a href={`/account/${playlist.author.id}`} className="all-unset">
-            <DropdownMenuItem>
-              <UserIcon />
-              {instance.getItem("author")}
-            </DropdownMenuItem>
-          </a>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
+      <PlaylistMenuContent playlist={playlist} />
     </DropdownMenu>
+  );
+}
+
+export function PlaylistMenuContent({ playlist }: { playlist: PlaylistDetailDto }) {
+  const { instance } = useLanguage();
+  const { session } = useSession();
+
+  return (
+    <DropdownMenuContent className="bg-background p-0 z-1" side="right" align="start">
+      <DropdownMenuGroup className="p-3">
+        <DropdownSubMenuAddToPlaylist currentPlaylist={playlist} />
+        <button type="button" className="all-unset" onClick={() => deletePlaylist(playlist.id)}>
+          <DropdownMenuItem variant="destructive" disabled={playlist.author.id !== session?.id}>
+            <Trash />
+            {instance.getItem("delete_playlist")}
+          </DropdownMenuItem>
+        </button>
+      </DropdownMenuGroup>
+      <Separator />
+      <DropdownMenuGroup className="p-3">
+        <a href={`/account/${playlist.author.id}`} className="all-unset">
+          <DropdownMenuItem>
+            <UserIcon />
+            {instance.getItem("author")}
+          </DropdownMenuItem>
+        </a>
+      </DropdownMenuGroup>
+    </DropdownMenuContent>
   );
 }

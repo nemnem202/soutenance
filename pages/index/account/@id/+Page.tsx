@@ -13,6 +13,7 @@ import type { Data } from "./+data";
 import { LikeButton } from "@/components/ui/custom-buttons";
 import { onUserLikesUser, onUserUnlikesUser } from "@/telefunc/like.telefunc";
 import { errorToast, successToast } from "@/lib/toaster";
+import { DropdownMenuContent } from "@/components/organisms/dropdown-menu";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
@@ -29,7 +30,13 @@ export default function Page() {
   if (!account) return null;
   return (
     <div className="flex flex-col">
-      <SizeAdapter sm={<ArrowElipsisTopMenu />} />
+      <SizeAdapter
+        sm={
+          <ArrowElipsisTopMenu
+            menuContent={<DropdownMenuContent>Account controls</DropdownMenuContent>}
+          />
+        }
+      />
       <section>
         <Banner account={account} />
       </section>
