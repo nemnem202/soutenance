@@ -10,6 +10,7 @@ import useSession from "@/hooks/use-session";
 import type { UserDetailsDto } from "@/types/dtos/user";
 import type { Data } from "./+data";
 import Headline from "@/components/ui/headline";
+import { AccountMenuContent } from "@/components/features/auth/account-menu";
 
 export default function Page() {
   const { currentAccount } = useData<Data>();
@@ -26,7 +27,7 @@ export default function Page() {
   if (!account) return null;
   return (
     <div className="flex flex-col">
-      <SizeAdapter sm={<ArrowElipsisTopMenu />} />
+      <SizeAdapter sm={<ArrowElipsisTopMenu menuContent={<AccountMenuContent />} />} />
       <Headline>{instance.getItem("dashboard")}</Headline>
       <section>
         <Content user={account} />
