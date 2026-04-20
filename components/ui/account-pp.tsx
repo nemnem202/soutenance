@@ -1,11 +1,12 @@
 import { logger } from "@/lib/logger";
 import type { Image } from "@/types/entities";
 import { Avatar } from "./avatar";
+import defaultUrl from "@/assets/images/account-default-pic.webp";
 
 export default function AccountPP({
   image = {
     alt: "Placeholder image",
-    url: "assets/images/account-default-pic.webp",
+    url: defaultUrl,
   },
 }: {
   image?: Image;
