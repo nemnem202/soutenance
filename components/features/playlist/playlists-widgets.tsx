@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { LikeButton } from "@/components/ui/custom-buttons";
 import { useLanguage } from "@/hooks/use-language";
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
@@ -7,6 +7,9 @@ import AddToPlaylistButton from "./add-to-playlist-menu";
 import NewPlaylistModal from "./new-playlist-modal";
 import { onUserLikesPlaylist, onUserUnlikesPlaylist } from "@/telefunc/like.telefunc";
 import { errorToast, successToast } from "@/lib/toaster";
+import { logger } from "@/lib/logger";
+import { PlaylistSeeAllQUery } from "@/types/navigation";
+import { onPlaylistSeeAllRequest } from "@/telefunc/see-all.telefunc";
 
 export function SmallPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }) {
   const { instance } = useLanguage();
@@ -174,13 +177,54 @@ function MediumAddNewPlaylistWidget() {
 
 export function MediumPlaylistWrapper({
   allowToAddANewPlaylist,
-  playlists,
+  initialPlaylists,
+  searchParam,
 }: {
   allowToAddANewPlaylist?: boolean;
-  playlists: PlaylistCardDto[];
+  initialPlaylists: PlaylistCardDto[];
+  searchParam: PlaylistSeeAllQUery;
 }) {
+  const [playlists, setPlaylists] = useState(initialPlaylists);
+  const [pageIndex, setPageIndex] = useState(1);
+  const loaderRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const loadMoreItems = useCallback(async () => {
+    logger.info("API CALL");
+    const response = await onPlaylistSeeAllRequest(searchParam, pageIndex * 40, 40);
+    if (!response.success) return;
+    setPlaylists((prev) => [...prev, ...response.data]);
+    setPageIndex((prev) => prev + 1);
+  }, [pageIndex, searchParam]);
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const target = entries[0];
+        if (target.isIntersecting) {
+          loadMoreItems();
+        }
+      },
+      {
+        threshold: 0.1,
+        rootMargin: "100px",
+      }
+    );
+
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [loadMoreItems, isLoading]);
   return (
-    <div className="grid gap-y-5 md:gap-y-4 gap-2 container grid-cols-[repeat(auto-fit,minmax(30vw,1fr))] md:grid-cols-[repeat(auto-fit,minmax(10rem,1fr))]">
+    <div
+      ref={containerRef}
+      className="grid gap-y-5 md:gap-y-4 gap-2 container grid-cols-[repeat(auto-fit,minmax(30vw,1fr))] md:grid-cols-[repeat(auto-fit,minmax(10rem,1fr))]"
+    >
       {allowToAddANewPlaylist && <MediumAddNewPlaylistWidget />}
       {playlists.map((playlist, i) => (
         <MediumPlaylistWidget key={i} playlist={playlist} />
@@ -189,6 +233,10 @@ export function MediumPlaylistWrapper({
         Array.from({ length: 5 - playlists.length }).map((_, index) => (
           <div key={index} className="w-full max-w-60"></div>
         ))}
+      <div
+        ref={loaderRef}
+        className="w-full max-w-60 aspect-square flex justify-center items-center"
+      />
     </div>
   );
 }
