@@ -188,8 +188,7 @@ export function LogoutButton() {
       variant={"destructive"}
       disabled={logoutLoading}
       onClick={async () => {
-        await triggerLogout();
-        navigate("/");
+        triggerLogout();
       }}
     >
       {logoutLoading ? (

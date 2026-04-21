@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { LoginModal } from "@/components/features/auth/login-button";
 import {
   ChangeAccountButton,
   LogoutButton,
@@ -16,7 +14,6 @@ import { onImageChange } from "@/telefunc/image-change.telefunc";
 export default function Page() {
   const { instance } = useLanguage();
   const { session, setSession } = useSession();
-  const [isOpen, setIsOpen] = useState(true);
 
   const handleImageChange = async (image: File) => {
     const imagePromise = onImageChange(image);
@@ -40,14 +37,6 @@ export default function Page() {
 
   return (
     <>
-      {!session && (
-        <LoginModal
-          isOpen={true}
-          setIsOpen={() => {}}
-          onSuccess={() => setIsOpen(false)}
-          initMode="login"
-        />
-      )}
       <SettingsSection
         title={instance.getItem("account")}
         description={instance.getItem("account_description")}

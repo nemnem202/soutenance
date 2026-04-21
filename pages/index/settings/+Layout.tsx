@@ -1,12 +1,16 @@
-import type { ReactNode } from "react";
+import { type ReactNode } from "react";
 import MobileHeader from "@/components/features/layout/mobile-header";
 import SizeAdapter from "@/components/molecules/size-adapter";
 import AnimatedTabs from "@/components/organisms/animated-tabs";
 import Headline from "@/components/ui/headline";
 import { useLanguage } from "@/hooks/use-language";
 import useSettingsNavigation from "@/hooks/use-settings-navigation";
+import useSession from "@/hooks/use-session";
+import { navigate } from "vike/client/router";
 
 export default function Layout({ children }: { children: ReactNode }) {
+  const { session } = useSession();
+  if (!session) navigate("/");
   return <SizeAdapter sm={<Mobile>{children}</Mobile>} md={<Desktop>{children}</Desktop>} />;
 }
 
