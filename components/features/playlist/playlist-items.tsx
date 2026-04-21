@@ -3,14 +3,14 @@ import SizeAdapter from "@/components/molecules/size-adapter";
 import { WidgetTitle } from "@/components/organisms/widget-carousel";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { LikeButton, MenuButton } from "@/components/ui/custom-buttons";
+import { LikeButton } from "@/components/ui/custom-buttons";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
 import type { ExerciseCardDto } from "@/types/dtos/exercise";
 import type { PlaylistDetailDto } from "@/types/dtos/playlist";
 import useSession from "@/hooks/use-session";
 import { Plus } from "lucide-react";
-import ExerciseContextMenuButton from "./exercise-menu";
+import ExerciseContextMenuButton, { MultiExerciseContextMenuButton } from "./exercise-menu";
 import { handleLikeExercise } from "@/lib/utils";
 
 export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto }) {
@@ -53,9 +53,9 @@ export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto })
             }
           />
           <PlaylistItemBox>
-            <MenuButton
-              className={`${selected.length !== playlist.exercises.length && "hidden"}`}
-            />
+            <div className={`${selected.length < 2 && "hidden"}`}>
+              <MultiExerciseContextMenuButton exercises={selected} playlistContext={playlist} />
+            </div>
           </PlaylistItemBox>
           <PlaylistItemBox className="!min-w-8">
             <Checkbox

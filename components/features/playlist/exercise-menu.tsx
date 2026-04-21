@@ -20,7 +20,11 @@ import useSession from "@/hooks/use-session";
 import type { PlaylistCardDto, PlaylistDetailDto } from "@/types/dtos/playlist";
 import { onRemoveExerciseFromPlaylist } from "@/telefunc/remove-from-playlist.telefunc";
 import { MenuButton } from "@/components/ui/custom-buttons";
-import { addExerciseToPlaylist, addPlaylistToPlaylist } from "@/lib/utils";
+import {
+  addExerciseToPlaylist,
+  addManyExercisesToPlaylist,
+  addPlaylistToPlaylist,
+} from "@/lib/utils";
 import { SubContentHeader } from "../auth/account-menu";
 
 export default function ExerciseContextMenuButton({
@@ -173,6 +177,123 @@ export function AddToPlaylistContent({
                     : currentPlaylist
                       ? await addPlaylistToPlaylist(playlist.id, currentPlaylist.id)
                       : null;
+                }}
+              />
+            </DropdownMenuItem>
+          ))}
+      </DropdownMenuGroup>
+    </>
+  );
+}
+
+export function MultiExerciseContextMenuButton({
+  exercises,
+  playlistContext,
+}: {
+  exercises: { id: number }[];
+  playlistContext: PlaylistDetailDto;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const { instance } = useLanguage();
+  const [currentContent, setCurrentContent] = useState<"main" | "addToPlaylist">("main");
+  return (
+    <DropdownMenu modal={false} open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger>
+        <MenuButton
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            setIsOpen(true);
+          }}
+        />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        className="bg-background p-0 z-1 max-h-[var(--radix-dropdown-menu-content-available-height)] max-w-[var(--radix-dropdown-menu-content-available-width)] overflow-y-auto"
+        side="right"
+        align="start"
+      >
+        {currentContent === "main" && (
+          <MultiExercisesMainContent
+            exercises={exercises}
+            playlistContext={playlistContext}
+            onAddToPlaylistClick={() => setCurrentContent("addToPlaylist")}
+          />
+        )}
+        {currentContent === "addToPlaylist" && (
+          <MultiAddToPlaylistContent
+            exercises={exercises}
+            currentPlaylist={playlistContext}
+            onBack={() => setCurrentContent("main")}
+          />
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+function MultiExercisesMainContent({
+  exercises,
+  playlistContext,
+  onAddToPlaylistClick,
+}: {
+  exercises: { id: number }[];
+  playlistContext: PlaylistDetailDto;
+  onAddToPlaylistClick: () => void;
+}) {
+  const { instance } = useLanguage();
+  const { session } = useSession();
+
+  return (
+    <DropdownMenuGroup className="p-3">
+      <DropdownMenuItem
+        onClick={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          onAddToPlaylistClick();
+        }}
+      >
+        <ListPlus />
+        {instance.getItem("add_to_playlist")} ({exercises.length})
+        <ChevronRight className="ml-auto" />
+      </DropdownMenuItem>
+    </DropdownMenuGroup>
+  );
+}
+
+export function MultiAddToPlaylistContent({
+  exercises,
+  currentPlaylist,
+  onBack,
+}: {
+  exercises: { id: number }[];
+  currentPlaylist: PlaylistCardDto;
+  onBack: () => void;
+}) {
+  const { instance } = useLanguage();
+  const { userPlaylists } = useData<Data>();
+
+  return (
+    <>
+      <SubContentHeader
+        action={onBack}
+        title={`${instance.getItem("add_to_playlist")} (${exercises.length})`}
+      />
+      <Separator />
+      <DropdownMenuGroup className="p-3">
+        <Searchbar placeholder={instance.getItem("search")} />
+      </DropdownMenuGroup>
+      <DropdownMenuGroup className="p-3 pt-0 overflow-y-auto max-h-80 flex flex-col">
+        <SmallAddNewPlaylistWidget />
+        {userPlaylists.success &&
+          userPlaylists.data.map((playlist) => (
+            <DropdownMenuItem className="p-0" key={playlist.id}>
+              <SmallAddToPlaylistWidget
+                playlist={playlist}
+                callBack={async () => {
+                  await addManyExercisesToPlaylist(
+                    playlist.id,
+                    exercises.map((e) => e.id)
+                  );
                 }}
               />
             </DropdownMenuItem>

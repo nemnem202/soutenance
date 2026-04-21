@@ -5,6 +5,7 @@ import type { Language } from "@/types/i18n";
 import type { Chord } from "@/types/music";
 import {
   onAddExerciseToPlaylist,
+  onAddMultiExerciseToPlaylist,
   onAddPlaylistToPlaylist,
 } from "@/telefunc/add-to-playlist.telefunc";
 import { errorToast, loadingToast, successToast } from "./toaster";
@@ -52,6 +53,13 @@ export const addPlaylistToPlaylist = async (targetId: number, playlistToAddId: n
 
 export const addExerciseToPlaylist = async (targetId: number, exercise: ExerciseCardDto) => {
   const responsePromise = onAddExerciseToPlaylist(targetId, exercise.id);
+  loadingToast(responsePromise);
+  await responsePromise;
+  reload();
+};
+
+export const addManyExercisesToPlaylist = async (targetId: number, exercisesIds: number[]) => {
+  const responsePromise = onAddMultiExerciseToPlaylist(targetId, exercisesIds);
   loadingToast(responsePromise);
   await responsePromise;
   reload();

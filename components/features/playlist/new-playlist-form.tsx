@@ -34,7 +34,7 @@ export default function NewPlaylistForm({
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid} className="gap-1 w-min">
               <div className="w-full flex justify-center">
-                <div className="w-75 h-75 overflow-hidden">
+                <div className="md:w-75 md:h-75 h-35 w-35 overflow-hidden">
                   <EditableImage
                     alt="playlist cover"
                     onImageChange={(source) => field.onChange(source)}
