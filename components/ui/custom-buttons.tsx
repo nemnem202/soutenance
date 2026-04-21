@@ -7,6 +7,7 @@ import {
   Ellipsis,
   Heart,
   Plus,
+  X,
 } from "lucide-react";
 import { Button, type ButtonProps } from "./button";
 import { useLanguage } from "@/hooks/use-language";
@@ -106,6 +107,19 @@ export function ShowLess({ ...props }: ButtonProps) {
       {...props}
     >
       {instance.getItem("show_less")} <ChevronUp />
+    </button>
+  );
+}
+
+export function CloseButton({ ...props }: ButtonProps) {
+  const { instance } = useLanguage();
+  return (
+    <button
+      type="button"
+      className="text-muted-foreground flex flex-row justify-center transition hover:text-foreground cursor-pointer"
+      {...props}
+    >
+      <X />
     </button>
   );
 }
