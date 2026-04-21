@@ -877,4 +877,11 @@ export const languagePack: Record<string, Record<Language, string>> = {
     de: "Passe die Oberfläche nach deinen Vorlieben an",
     zh: "根据您的偏好自定义界面",
   },
+  nothing_yet: {
+    fr: "Pas encore de contenu favori",
+    en: "Nothing yet",
+    es: "Nada todavía",
+    de: "Noch nichts",
+    zh: "还没有",
+  },
 } as const;

@@ -7,16 +7,15 @@ import { MediumPlaylistWrapper } from "@/components/features/playlist/playlists-
 export default function Page() {
   const { instance } = useLanguage();
   const { playlists } = useData<Data>();
-  return (
-    playlists.success &&
-    playlists.data.length > 0 && (
-      <>
-        <FavoritesSearchbarSpace
-          label={instance.getItem("playlists")}
-          numberOfItems={playlists.data.length}
-        />
-        <MediumPlaylistWrapper playlists={playlists.data} />
-      </>
-    )
+  return playlists.success && playlists.data.length > 0 ? (
+    <>
+      <FavoritesSearchbarSpace
+        label={instance.getItem("playlists")}
+        numberOfItems={playlists.data.length}
+      />
+      <MediumPlaylistWrapper playlists={playlists.data} />
+    </>
+  ) : (
+    <p className="paragraph-md text-muted-foreground">{instance.getItem("nothing_yet")}</p>
   );
 }

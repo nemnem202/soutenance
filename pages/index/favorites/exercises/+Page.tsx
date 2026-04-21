@@ -9,7 +9,7 @@ export default function Page() {
   const { exercises } = useData<Data>();
   return (
     <div className="w-full flex flex-col">
-      {exercises.success && exercises.data.length > 0 && (
+      {exercises.success && exercises.data.length > 0 ? (
         <>
           <FavoritesSearchbarSpace
             label={instance.getItem("exercises")}
@@ -17,6 +17,8 @@ export default function Page() {
           />
           <SearchExercisesList key="exercises" exercises={exercises.data} />
         </>
+      ) : (
+        <p className="paragraph-md text-muted-foreground">{instance.getItem("nothing_yet")}</p>
       )}
     </div>
   );
