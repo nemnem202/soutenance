@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import useSession from "@/hooks/use-session";
+import { navigate } from "vike/client/router";
 
 export default function GoogleLoginButton() {
   const { setSession } = useSession();
@@ -15,7 +16,7 @@ export default function GoogleLoginButton() {
 
       console.log("User connecté :", session);
       setSession(session);
-
+      navigate("/");
       window.close();
     });
   };
