@@ -139,7 +139,9 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
               }
             >
               <ModalContext.Provider value={modalRef.current}>
-                <div className="relative max-h-[90vh] overflow-y-auto p-4 sm:p-6">{children}</div>
+                <div className="relative md:max-h-[90vh] md:h-fit h-screen overflow-y-auto p-4 sm:p-6">
+                  {children}
+                </div>
               </ModalContext.Provider>
             </motion.div>
           </div>
