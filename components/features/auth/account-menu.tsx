@@ -174,7 +174,8 @@ function LanguageContent({ onBack }: { onBack: () => void }) {
           {lang.charAt(0).toUpperCase() + lang.slice(1)}
           <img
             alt={`a flag of ${lang}`}
-            style={{ width: "20px" }}
+            width={20}
+            className="w-[20px]"
             src={`https://purecatamphetamine.github.io/country-flag-icons/3x2/${flags[lang]}.svg`}
           />
         </DropdownMenuCheckboxItem>

@@ -9,6 +9,7 @@ import { logger } from "@/lib/logger";
 import type { PlaylistSeeAllQUery } from "@/types/navigation";
 import { onPlaylistSeeAllRequest } from "@/telefunc/see-all.telefunc";
 import { handleLikePlaylist } from "@/lib/utils";
+import Image from "@/components/ui/image";
 
 export function SmallPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }) {
   const { instance } = useLanguage();
@@ -18,7 +19,7 @@ export function SmallPlaylistWidget({ playlist }: { playlist: PlaylistCardDto })
       href={`/playlist/${playlist.id}`}
     >
       <div className="h-12 w-12 aspect-square overflow-hidden">
-        <img
+        <Image
           src={playlist.cover.url}
           alt={playlist.cover.alt}
           className="object-cover h-full w-full"
@@ -52,7 +53,7 @@ export function SmallAddToPlaylistWidget({
       onClick={callBack}
     >
       <div className="h-12 w-12 aspect-square overflow-hidden">
-        <img
+        <Image
           src={playlist.cover.url}
           alt={playlist.cover.alt}
           className="object-cover h-full w-full"
@@ -115,7 +116,7 @@ export function MediumPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }
       <div className="cursor-pointer rounded-md transition group-hover:opacity-80">
         <a href={`/playlist/${playlist.id}`} className="flex flex-col rounded gap-2.5">
           <div className="w-full aspect-square rounded overflow-hidden">
-            <img
+            <Image
               src={playlist.cover.url}
               alt={playlist.cover.alt}
               className="w-full h-full object-cover"

@@ -1,4 +1,3 @@
-- corriger les erreurs console
 - optimiser l'envoi d'images cote frontend
 - retirer tous les style inline inutiles
 - retirer les duplicatas d'imports de ma font zing rust
@@ -9,6 +8,5 @@
 - token csrf
 - implementer websocket avec socket.io
 - reviser securite web.pdf
-- recuperer les images google avec la bonne taille en se basant sur un regex dans l'url
 
 

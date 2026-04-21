@@ -13,6 +13,7 @@ import useSearchbar from "@/hooks/use-searchbar";
 import type { Session } from "@/types/auth";
 import type { ExerciseCardDto } from "@/types/dtos/exercise";
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
+import Image from "../ui/image";
 
 export interface SearchbarProps {
   placeholder: string;
@@ -91,7 +92,8 @@ export function UserSearchbarItem({
       }}
       type="button"
     >
-      <img
+      <Image
+        width={60}
         src={user.profilePicture.url}
         alt={user.profilePicture.alt}
         className="w-15 h-15 object-cover overflow-hidden rounded-full"
@@ -122,7 +124,8 @@ export function ExerciseSearchbarItem({
       }}
       type="button"
     >
-      <img
+      <Image
+        width={60}
         src={exercise.cover.url}
         alt={exercise.cover.alt}
         className="w-15 h-15 object-cover overflow-hidden rounded-[0.2rem]"
@@ -170,7 +173,8 @@ export function PlaylistSearchbarItem({
       }}
       type="button"
     >
-      <img
+      <Image
+        width={60}
         src={playlist.cover.url}
         alt={playlist.cover.alt}
         className="w-15 h-15 object-cover overflow-hidden rounded-[0.2rem]"

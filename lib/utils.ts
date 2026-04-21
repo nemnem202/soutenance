@@ -155,3 +155,25 @@ export const handleLikeAccount = async (
     }
   }
 };
+
+export const generateImageVariations = (url: string, resolutions: [number, number][]): string[] => {
+  const patterns = {
+    cloudinary: /(res\.cloudinary\.com\/.*\/upload\/)(v\d+\/.*)/,
+    picsum: /(picsum\.photos\/seed\/[^/]+)\/\d+\/\d+/,
+    google: /googleusercontent\.com\/[^\s=?]+/,
+  };
+
+  return resolutions.map(([width, height]) => {
+    if (patterns.cloudinary.test(url)) {
+      return url.replace(patterns.cloudinary, `$1w_${width},h_${height},c_fill/$2`);
+    }
+    if (patterns.picsum.test(url)) {
+      return url.replace(patterns.picsum, `$1/${width}/${height}`);
+    }
+    if (patterns.google.test(url)) {
+      const baseUrl = url.split(/[=?]/)[0];
+      return `${baseUrl}=w${width}-h${height}-c`;
+    }
+    return url;
+  });
+};

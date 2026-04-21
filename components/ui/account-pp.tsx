@@ -1,6 +1,7 @@
-import type { Image } from "@/types/entities";
 import { Avatar } from "./avatar";
 import defaultUrl from "@/assets/images/account-default-pic.webp";
+import Image from "./image";
+import type { Image as ImageType } from "@/types/entities";
 
 export default function AccountPP({
   image = {
@@ -8,11 +9,12 @@ export default function AccountPP({
     url: defaultUrl,
   },
 }: {
-  image?: Image;
+  image?: ImageType;
 }) {
   return (
     <Avatar>
-      <img
+      <Image
+        width={40}
         alt={image.alt}
         src={image.url}
         referrerPolicy="no-referrer"

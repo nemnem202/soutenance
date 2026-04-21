@@ -13,6 +13,7 @@ import type { Data } from "./+data";
 import { LikeButton } from "@/components/ui/custom-buttons";
 import { DropdownMenuContent } from "@/components/organisms/dropdown-menu";
 import { handleLikeAccount } from "@/lib/utils";
+import Image from "@/components/ui/image";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
@@ -64,7 +65,7 @@ function Banner({ account }: { account: UserDetailsDto }) {
         }
       />
       <div className="w-50 md:w-75 rounded-full aspect-square overflow-hidden">
-        <img
+        <Image
           src={account.profilePicture.url}
           alt={account.profilePicture.alt}
           width={300}

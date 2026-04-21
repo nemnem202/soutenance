@@ -12,6 +12,7 @@ import useSession from "@/hooks/use-session";
 import { Plus } from "lucide-react";
 import ExerciseContextMenuButton, { MultiExerciseContextMenuButton } from "./exercise-menu";
 import { handleLikeExercise } from "@/lib/utils";
+import Image from "@/components/ui/image";
 
 export function PlaylistItemsList({
   playlist,
@@ -136,7 +137,7 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
       href="/game"
     >
       <div className="flex items-center h-15">
-        <img
+        <Image
           className="w-15 h-15 object-cover "
           width={60}
           height={60}
@@ -220,7 +221,7 @@ export function SearchPlaylistItem({ ...props }: SearchPLaylistItemProps) {
       href="/game"
     >
       <div className="flex items-center h-15">
-        <img
+        <Image
           className="w-15 h-15 object-cover"
           width={60}
           height={60}

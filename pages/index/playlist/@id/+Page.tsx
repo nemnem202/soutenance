@@ -14,6 +14,7 @@ import { onUserLikesPlaylist, onUserUnlikesPlaylist } from "@/telefunc/like.tele
 import { errorToast, successToast } from "@/lib/toaster";
 import PlaylistMenu, { PlaylistMenuContent } from "@/components/features/playlist/playlist-menu";
 import FilterSearchbar from "@/components/organisms/filter-searchbar";
+import Image from "@/components/ui/image";
 
 export default function Page() {
   const { currentPlaylist } = useData<Data>();
@@ -73,7 +74,7 @@ function Banner({ playlist }: { playlist: PlaylistDetailDto }) {
       />
 
       <div className="w-50 md:w-75 md:m-0 rounded aspect-square overflow-hidden mb-8 mt-2">
-        <img
+        <Image
           src={playlist.cover.url}
           alt={playlist.cover.alt}
           width={300}
