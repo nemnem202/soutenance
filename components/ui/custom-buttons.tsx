@@ -98,7 +98,7 @@ export function ShowAllButton({ ...props }: ButtonProps) {
   );
 }
 
-export function ShowLess({ ...props }: ButtonProps) {
+export function ShowLessButton({ ...props }: ButtonProps) {
   const { instance } = useLanguage();
   return (
     <button
