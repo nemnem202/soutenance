@@ -10,9 +10,9 @@ import { useLanguage } from "@/hooks/use-language";
 import { PlusButton } from "@/components/ui/custom-buttons";
 import { Separator } from "@/components/ui/separator";
 import useSession from "@/hooks/use-session";
-import { ChevronRight, ListPlus, Trash, UserIcon } from "lucide-react";
+import { ChevronRight, Heart, HeartOff, ListPlus, Trash, UserIcon } from "lucide-react";
 import { AddToPlaylistContent } from "./exercise-menu";
-import { deletePlaylist } from "@/lib/utils";
+import { deletePlaylist, handleLikePlaylist } from "@/lib/utils";
 import { useState } from "react";
 
 export default function PlaylistMenu({ playlist }: { playlist: PlaylistDetailDto }) {
@@ -60,10 +60,31 @@ function MainContent({
 }) {
   const { instance } = useLanguage();
   const { session } = useSession();
+  const [isLiked, setIsLiked] = useState(playlist.likedByCurrentUser);
 
   return (
     <>
       <DropdownMenuGroup className="p-3">
+        {isLiked ? (
+          <DropdownMenuItem
+            onClick={(e) => {
+              handleLikePlaylist(e, isLiked, setIsLiked, playlist);
+            }}
+          >
+            <HeartOff />
+            {instance.getItem("remove_playlist_from_likes")}
+          </DropdownMenuItem>
+        ) : (
+          <DropdownMenuItem
+            onClick={(e) => {
+              handleLikePlaylist(e, isLiked, setIsLiked, playlist);
+            }}
+          >
+            <Heart />
+            {instance.getItem("add_playlist_to_likes")}
+          </DropdownMenuItem>
+        )}
+
         <DropdownMenuItem
           onClick={(e) => {
             e.stopPropagation();

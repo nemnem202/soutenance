@@ -1,4 +1,4 @@
-import { type MouseEvent, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import SizeAdapter from "@/components/molecules/size-adapter";
 import { WidgetTitle } from "@/components/organisms/widget-carousel";
 import { Badge } from "@/components/ui/badge";
@@ -8,11 +8,10 @@ import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
 import type { ExerciseCardDto } from "@/types/dtos/exercise";
 import type { PlaylistDetailDto } from "@/types/dtos/playlist";
-import { onUserLikesExercise, onUserUnlikesExercise } from "@/telefunc/like.telefunc";
-import { errorToast, successToast } from "@/lib/toaster";
 import useSession from "@/hooks/use-session";
 import { Plus } from "lucide-react";
 import ExerciseContextMenuButton from "./exercise-menu";
+import { handleLikeExercise } from "@/lib/utils";
 
 export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto }) {
   const { instance } = useLanguage();
@@ -124,27 +123,7 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
   const { exercise } = props;
   const [isLiked, setIsLiked] = useState(exercise.likedByCurrentUser);
   if (!exercise) return null;
-  const handleLikeExercise = async (e: MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (isLiked) {
-      const response = await onUserUnlikesExercise(exercise.id);
-      if (!response.success) {
-        errorToast(response.title, response.description);
-      } else {
-        successToast(`${exercise.title} was removed from your likes`);
-        setIsLiked(false);
-      }
-    } else {
-      const response = await onUserLikesExercise(exercise.id);
-      if (!response.success) {
-        errorToast(response.title, response.description);
-      } else {
-        successToast(`${exercise.title} was added to your likes`);
-        setIsLiked(true);
-      }
-    }
-  };
+
   return (
     <a
       className=" flex justify-between items-center py-1 pl-1 my-1 relative cursor-pointer hover:bg-popover pr-4 transition"
@@ -188,7 +167,12 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
       </div>
       <div className="flex items-center">
         <PlaylistItemBox>
-          <LikeButton onClick={handleLikeExercise} liked={isLiked} />
+          <LikeButton
+            onClick={(e) => {
+              handleLikeExercise(e, isLiked, setIsLiked, exercise);
+            }}
+            liked={isLiked}
+          />
         </PlaylistItemBox>
         <PlaylistItemBox>
           <p className="paragraph-md text-muted-foreground">{exercise.defaultConfig.bpm}</p>
@@ -223,27 +207,6 @@ export function SearchPlaylistItem({ ...props }: SearchPLaylistItemProps) {
   const { exercise } = props;
   const [isLiked, setIsLiked] = useState(exercise.likedByCurrentUser);
   if (!exercise) return null;
-  const handleLikeExercise = async (e: MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (isLiked) {
-      const response = await onUserUnlikesExercise(exercise.id);
-      if (!response.success) {
-        errorToast(response.title, response.description);
-      } else {
-        successToast(`${exercise.title} was removed from your likes`);
-        setIsLiked(false);
-      }
-    } else {
-      const response = await onUserLikesExercise(exercise.id);
-      if (!response.success) {
-        errorToast(response.title, response.description);
-      } else {
-        successToast(`${exercise.title} was added to your likes`);
-        setIsLiked(true);
-      }
-    }
-  };
 
   return (
     <a
@@ -298,7 +261,12 @@ export function SearchPlaylistItem({ ...props }: SearchPLaylistItemProps) {
         />
 
         <PlaylistItemBox>
-          <LikeButton onClick={handleLikeExercise} liked={isLiked} />
+          <LikeButton
+            onClick={(e) => {
+              handleLikeExercise(e, isLiked, setIsLiked, exercise);
+            }}
+            liked={isLiked}
+          />
         </PlaylistItemBox>
 
         <PlaylistItemBox>

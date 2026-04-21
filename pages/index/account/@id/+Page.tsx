@@ -1,4 +1,4 @@
-import { type MouseEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { navigate } from "vike/client/router";
 import { useData } from "vike-react/useData";
 import { usePageContext } from "vike-react/usePageContext";
@@ -11,9 +11,8 @@ import useSession from "@/hooks/use-session";
 import type { UserDetailsDto } from "@/types/dtos/user";
 import type { Data } from "./+data";
 import { LikeButton } from "@/components/ui/custom-buttons";
-import { onUserLikesUser, onUserUnlikesUser } from "@/telefunc/like.telefunc";
-import { errorToast, successToast } from "@/lib/toaster";
 import { DropdownMenuContent } from "@/components/organisms/dropdown-menu";
+import { handleLikeAccount } from "@/lib/utils";
 
 export default function Page() {
   const { id } = usePageContext().routeParams;
@@ -49,33 +48,18 @@ export default function Page() {
 function Banner({ account }: { account: UserDetailsDto }) {
   const { instance } = useLanguage();
   const [isLiked, setIsLiked] = useState(account.likedByCurrentUser);
-  const handleLikeAccount = async (e: MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    if (isLiked) {
-      const response = await onUserUnlikesUser(account.id);
-      if (!response.success) {
-        errorToast(response.title, response.description);
-      } else {
-        successToast(`${account.username} was removed from your likes`);
-        setIsLiked(false);
-      }
-    } else {
-      const response = await onUserLikesUser(account.id);
-      if (!response.success) {
-        errorToast(response.title, response.description);
-      } else {
-        successToast(`${account.username} was added to your likes`);
-        setIsLiked(true);
-      }
-    }
-  };
+
   return (
     <div className="flex w-full md:flex-row flex-col gap-8 items-center relative">
       <SizeAdapter
         md={
           <div className="absolute right-2 top-2 z-1">
-            <LikeButton onClick={handleLikeAccount} liked={isLiked} />
+            <LikeButton
+              onClick={(e) => {
+                handleLikeAccount(e, isLiked, setIsLiked, account);
+              }}
+              liked={isLiked}
+            />
           </div>
         }
       />
@@ -97,7 +81,16 @@ function Banner({ account }: { account: UserDetailsDto }) {
             {account.publicPlaylists.length} {instance.getItem("playlists")}
           </p>
         </div>
-        <SizeAdapter sm={<LikeButton onClick={handleLikeAccount} liked={isLiked} />} />
+        <SizeAdapter
+          sm={
+            <LikeButton
+              onClick={(e) => {
+                handleLikeAccount(e, isLiked, setIsLiked, account);
+              }}
+              liked={isLiked}
+            />
+          }
+        />
       </div>
     </div>
   );

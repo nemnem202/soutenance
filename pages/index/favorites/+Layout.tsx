@@ -48,10 +48,17 @@ function Desktop({ children }: { children: ReactNode }) {
 
 function Mobile({ children }: { children: ReactNode }) {
   const { instance } = useLanguage();
+  const data = useData<Data>();
   return (
     <>
       <MobileHeader title={instance.getItem("favoritesPageTitle")} />
-      {children}
+      {(data.exercises.success && data.exercises.data.length > 0) ||
+      (data.playlists.success && data.playlists.data.length > 0) ||
+      (data.users.success && data.users.data.length > 0) ? (
+        children
+      ) : (
+        <p className="paragraph-md text-muted-foreground">{instance.getItem("nothing_yet")}</p>
+      )}
     </>
   );
 }

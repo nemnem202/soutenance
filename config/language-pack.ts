@@ -884,4 +884,18 @@ export const languagePack: Record<string, Record<Language, string>> = {
     de: "Noch nichts",
     zh: "还没有",
   },
+  add_playlist_to_likes: {
+    fr: "Ajouter la playlist aux favoris",
+    en: "Add playlist to likes",
+    es: "Añadir lista de reproducción a favoritos",
+    de: "Playlist zu Favoriten hinzufügen",
+    zh: "将播放列表添加到喜欢",
+  },
+  remove_playlist_from_likes: {
+    fr: "Retirer la playlist des favoris",
+    en: "Remove playlist from likes",
+    es: "Eliminar lista de reproducción de favoritos",
+    de: "Playlist aus Favoriten entfernen",
+    zh: "从喜欢中移除播放列表",
+  },
 } as const;
