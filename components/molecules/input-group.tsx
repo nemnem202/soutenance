@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { CustomInput } from "../ui/custom_input";
 
 function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -140,6 +141,19 @@ function InputGroupInput({ className, ...props }: React.ComponentProps<"input">)
   );
 }
 
+function CustomInputGroupInput({ className, ...props }: React.ComponentProps<"input">) {
+  return (
+    <CustomInput
+      data-slot="input-group-control"
+      className={cn(
+        "flex-1 rounded-none border-0 bg-transparent shadow-none !ring-0 !ring-offset-0 !shadow-none dark:bg-transparent",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
 function InputGroupTextarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
     <Textarea
@@ -157,6 +171,7 @@ export {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
+  CustomInputGroupInput,
   InputGroupInput,
   InputGroupText,
   InputGroupTextarea,
