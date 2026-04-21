@@ -35,3 +35,14 @@ div {
 .no-scrollbar::-webkit-scrollbar {
   display: none; /* Chrome / Safari / Edge */
 }
+
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  * {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
