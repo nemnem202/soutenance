@@ -18,7 +18,7 @@ model Playlist {
 }
 
 model PlaylistIncludesExercise {
-    exercise   Exercise @relation(fields: [exerciseId], references: [id])
+    exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
     exerciseId Int
 
     playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)

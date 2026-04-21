@@ -1,6 +1,6 @@
 model Exercise {
     id               Int                        @id @default(autoincrement())
-    author           User                       @relation(fields: [authorId], references: [id])
+    author           User                       @relation(fields: [authorId], references: [id], onDelete: Cascade)
     authorId         Int
     title            String                     @db.VarChar(100)
     composer         String                     @db.VarChar(200)
@@ -16,10 +16,10 @@ model Exercise {
 }
 
 model UserLikesExercise {
-    user   User @relation(fields: [userId], references: [id])
+    user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId Int
 
-    exercise   Exercise @relation(fields: [exerciseId], references: [id])
+    exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
     exerciseId Int
 
     likedAt DateTime @default(now())
@@ -40,9 +40,9 @@ model Config {
 
 model ExerciseSavesUserConfig {
     id         Int      @id @default(autoincrement())
-    user       User     @relation(fields: [userId], references: [id])
+    user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId     Int
-    exercise   Exercise @relation(fields: [exerciseId], references: [id])
+    exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
     exerciseId Int
     config     Config   @relation(fields: [configId], references: [id], onDelete: Cascade)
     configId   Int      @unique
@@ -112,15 +112,15 @@ model Cell {
 
 model Chord {
     id       Int    @id @default(autoincrement())
-    note     String @db.VarChar(3) // "C", "C#", "Db" — max 2 chars mais 3 par sécurité
+    note     String @db.VarChar(3)
     modifier String @db.VarChar(20)
 
     overId Int?   @unique
-    over   Chord? @relation("ChordOver", fields: [overId], references: [id])
+    over   Chord? @relation("ChordOver", fields: [overId], references: [id], onDelete: Cascade)
     overOf Chord? @relation("ChordOver")
 
     altId     Int?   @unique
-    alternate Chord? @relation("ChordAlt", fields: [altId], references: [id])
+    alternate Chord? @relation("ChordAlt", fields: [altId], references: [id], onDelete: Cascade)
     altOf     Chord? @relation("ChordAlt")
 
     cells Cell[]
