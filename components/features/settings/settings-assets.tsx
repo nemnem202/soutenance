@@ -7,43 +7,82 @@ export function SettingsParam({
   description,
   tooltip,
   id,
-  orientation = "horizontal",
 }: {
   children: ReactNode;
   label: string;
   id: string;
-  orientation?: "vertical" | "horizontal";
   description?: string;
   tooltip?: string;
 }) {
-  const generateLabel = () => (
-    <label className={`flex-1 flex flex-col`} htmlFor={id}>
-      <p className="title-4 whitespace-nowrap">{label}</p>
-      {description && <p className="text-muted-foreground paragramh-md">{description}</p>}
+  const labelEl = (
+    <label htmlFor={id} className="flex flex-col cursor-pointer">
+      <span className="paragraph font-medium text-foreground">{label}</span>
+      {description && <span className="paragraph-sm text-muted-foreground">{description}</span>}
     </label>
   );
+
   return (
-    <div
-      className={`flex gap-4 w-fit h-fit items-center ${orientation === "vertical" && " flex-col !gap-0 items-start"}`}
-    >
+    <div className="flex items-center justify-between gap-6 px-5 py-3.5 border-b border-border last:border-b-0 bg-background">
       {tooltip ? (
         <Tooltip>
-          <TooltipTrigger>{generateLabel()}</TooltipTrigger>
+          <TooltipTrigger asChild>{labelEl}</TooltipTrigger>
           <TooltipContent>{tooltip}</TooltipContent>
         </Tooltip>
       ) : (
-        generateLabel()
+        labelEl
       )}
-      {children}
+      <div className="flex-shrink-0">{children}</div>
     </div>
   );
 }
 
-export function SettingsSection({ children, title }: { children: ReactNode; title: string }) {
+export function SettingsSection({
+  children,
+  title,
+  description,
+  variant = "default",
+}: {
+  children: ReactNode;
+  title: string;
+  description?: string;
+  variant?: "default" | "danger";
+}) {
+  const isDanger = variant === "danger";
   return (
-    <section className="flex flex-col w-full p-4 gap-4">
-      <h2 className="title-2">{title}</h2>
-      {children}
+    <section
+      className={`w-full rounded-lg border overflow-hidden ${
+        isDanger ? "border-destructive/40" : "border-border"
+      }`}
+    >
+      <div
+        className={`px-5 py-3.5 border-b ${
+          isDanger ? "bg-destructive/5 border-destructive/30" : "bg-card border-border"
+        }`}
+      >
+        <h2 className={`title-3 ${isDanger ? "text-destructive" : "text-foreground"}`}>{title}</h2>
+        {description && <p className="paragraph-sm text-muted-foreground mt-0.5">{description}</p>}
+      </div>
+      <div className="flex flex-col">{children}</div>
     </section>
+  );
+}
+
+export function SettingsRow({
+  children,
+  label,
+  description,
+}: {
+  children: ReactNode;
+  label: string;
+  description?: string;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-6 px-5 py-3.5 border-b border-border last:border-b-0 bg-background flex-wrap">
+      <div className="flex flex-col">
+        <span className="paragraph font-medium text-foreground whitespace-nowrap">{label}</span>
+        {description && <span className="paragraph-sm text-muted-foreground">{description}</span>}
+      </div>
+      <div>{children}</div>
+    </div>
   );
 }
