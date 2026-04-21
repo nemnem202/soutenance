@@ -13,7 +13,13 @@ import { Plus } from "lucide-react";
 import ExerciseContextMenuButton, { MultiExerciseContextMenuButton } from "./exercise-menu";
 import { handleLikeExercise } from "@/lib/utils";
 
-export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto }) {
+export function PlaylistItemsList({
+  playlist,
+  displayedExercises,
+}: {
+  playlist: PlaylistDetailDto;
+  displayedExercises: ExerciseCardDto[];
+}) {
   const { instance } = useLanguage();
   const { session } = useSession();
   const [selected, setSelected] = useState<ExerciseCardDto[]>([]);
@@ -68,7 +74,7 @@ export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto })
       <Separator orientation="horizontal" />
       <div className="w-full flex flex-col justify-between  py-0 mt-2">
         {session?.id === playlist.author.id && <AddNewExercisePlaylistItem />}
-        {playlist.exercises.map((exercise, index) => (
+        {displayedExercises.map((exercise, index) => (
           <PlaylistItem
             index={index}
             key={index}
