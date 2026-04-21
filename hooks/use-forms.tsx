@@ -38,7 +38,6 @@ export function useNewPlaylistForm({ onSubmit }: { onSubmit?: () => void }) {
       },
     });
     await responsePromise;
-    logger.info("reload");
     reload();
     form.reset();
     onSubmit?.();

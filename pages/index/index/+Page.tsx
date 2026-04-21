@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useData } from "vike-react/useData";
 import { MediumAccountWidget } from "@/components/features/auth/account-widgets";
 import MobileHeader from "@/components/features/layout/mobile-header";
@@ -8,7 +7,6 @@ import { MediumWidgetCarousel } from "@/components/organisms/widget-carousel";
 import Headline from "@/components/ui/headline";
 import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
-import { logger } from "@/lib/logger";
 import type { Data } from "./+data";
 
 export default function Page() {
@@ -19,8 +17,6 @@ function Desktop() {
   const { session } = useSession();
   const { instance } = useLanguage();
   const { popular, discover, recommendedUsers } = useData<Data>();
-
-  useEffect(() => logger.info("Popular", popular), [popular]);
   return (
     <>
       {session ? (

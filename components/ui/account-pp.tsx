@@ -1,4 +1,3 @@
-import { logger } from "@/lib/logger";
 import type { Image } from "@/types/entities";
 import { Avatar } from "./avatar";
 import defaultUrl from "@/assets/images/account-default-pic.webp";
@@ -11,7 +10,6 @@ export default function AccountPP({
 }: {
   image?: Image;
 }) {
-  logger.info("Profile picture: ", image);
   return (
     <Avatar>
       <img

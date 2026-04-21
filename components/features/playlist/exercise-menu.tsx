@@ -39,7 +39,7 @@ export default function ExerciseContextMenuButton({
 
   return (
     <DropdownMenu modal={false} open={isOpen} onOpenChange={setIsOpen}>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <MenuButton
           onClick={(e) => {
             e.stopPropagation();
@@ -198,7 +198,7 @@ export function MultiExerciseContextMenuButton({
   const [currentContent, setCurrentContent] = useState<"main" | "addToPlaylist">("main");
   return (
     <DropdownMenu modal={false} open={isOpen} onOpenChange={setIsOpen}>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <MenuButton
           onClick={(e) => {
             e.stopPropagation();

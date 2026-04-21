@@ -1,11 +1,14 @@
+- corriger les erreurs console
+- optimiser l'envoi d'images cote frontend
+- retirer tous les style inline inutiles
+- retirer les duplicatas d'imports de ma font zing rust
+- unplugin-font
+- les inputs game ne sont pas interractibles en mobile
+- tous les imports depuis le dossier public doivent se faire en mode import fichier from '/assets/nom du fichier'
+
 - token csrf
 - implementer websocket avec socket.io
 - reviser securite web.pdf
 - recuperer les images google avec la bonne taille en se basant sur un regex dans l'url
-- retirer tous les style inline inutiles
-- unplugin-font
-- retirer les duplicatas d'imports de ma font zing rust
-- tous les imports depuis le dossier public doivent se faire en mode import fichier from '/assets/nom du fichier'
-- corriger inputs game qui sopnt devenus un peu moche
-- les inputs game ne sont pas interractibles en mobile
-- les playlist items ne son pas reguliers en mobile
+
+
