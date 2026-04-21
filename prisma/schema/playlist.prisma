@@ -12,7 +12,7 @@ model Playlist {
 
     tags PlaylistTag[]
 
-    author             User                @relation(fields: [authorId], references: [id])
+    author             User                @relation(fields: [authorId], references: [id], onDelete: Cascade)
     authorId           Int
     userLikesPlaylists UserLikesPlaylist[]
 }
