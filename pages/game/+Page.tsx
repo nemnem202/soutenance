@@ -6,27 +6,42 @@ import DesktopGameControlsSection, {
 } from "@/components/features/game/game-controls-section";
 import GameSidebar from "@/components/features/game/game-sidebar";
 import Header from "@/components/features/layout/game-header";
-import MobileHeaderNavContainer from "@/components/features/layout/mobile-header-nav-container";
 import SizeAdapter from "@/components/molecules/size-adapter";
 import AnimatedTabs from "@/components/organisms/animated-tabs";
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/organisms/drawer";
-import { HistoryBackButton } from "@/components/ui/custom-buttons";
-import Headline from "@/components/ui/headline";
 import { useLanguage } from "@/hooks/use-language";
+import Headline from "@/components/ui/headline";
+import MobileHeaderNavContainer from "@/components/features/layout/mobile-header-nav-container";
+import { HistoryBackButton } from "@/components/ui/custom-buttons";
 
 export default function Page() {
   const [sidebarOpen, setOpen] = useState(false);
+  const [drawersVisible, setDrawersVisible] = useState(true);
   return (
     <div className="flex flex-row w-screen h-screen overflow-hidden">
       <GameSidebar sidebarOpen={sidebarOpen} setOpen={setOpen} />
       <div className="flex-1 min-w-0 h-screen flex flex-col overflow-auto">
         <SizeAdapter
           sm={
-            <Drawer modal={false}>
+            <Drawer
+              modal={false}
+              open={drawersVisible}
+              onOpenChange={(open) => setDrawersVisible(open)}
+            >
               <DrawerTrigger asChild>
-                <div>
+                <main className="flex-1 min-w-0 flex flex-col items-center p-4 max-w-screen">
+                  <div
+                    className={` w-full overflow-hidden transition-[height] duration-300 ease-in-out`}
+                    style={{ height: drawersVisible ? `${14 / 4 + 1}rem` : "0px" }}
+                  >
+                    <MobileHeaderNavContainer>
+                      <HistoryBackButton />
+                      <Headline>Brown Sugar</Headline>
+                      <div></div>
+                    </MobileHeaderNavContainer>
+                  </div>
                   <Game toggleSidebar={() => setOpen((prev) => !prev)} />
-                </div>
+                </main>
               </DrawerTrigger>
               <DrawerContent className="rounded-none border-t border-l-0 border-r-0 border-b-0">
                 <DrawerTitle className="hidden">Game controls</DrawerTitle>
@@ -39,7 +54,10 @@ export default function Page() {
           md={
             <>
               <Header />
-              <Game toggleSidebar={() => setOpen((prev) => !prev)} />
+              <main className="flex-1 min-w-0  flex flex-col items-center p-4 max-w-screen">
+                <Headline>Brown Sugar</Headline>
+                <Game toggleSidebar={() => setOpen((prev) => !prev)} />
+              </main>
             </>
           }
         />
@@ -68,39 +86,26 @@ function Game({ ...props }: Gameprops) {
   const [activeTab, setActiveTab] = useState<TabID>("chords");
 
   return (
-    <main className="flex-1 min-w-0  flex flex-col items-center p-4 max-w-screen">
-      <SizeAdapter
-        sm={
-          <MobileHeaderNavContainer>
-            <HistoryBackButton />
-
-            <Headline>Brown Sugar</Headline>
-            <div></div>
-          </MobileHeaderNavContainer>
-        }
-        md={<Headline>Brown Sugar</Headline>}
-      />
-      <div className="size-full lg:px-10 py-5  flex flex-col gap-2 min-w-0">
-        <div className="flex-1 flex flex-col">
-          <div className="w-full flex  gap-2 justify-between">
-            <div className="col-1 flex flex-1  items-center">
-              <DesktopGameControlsSection {...props} />
-            </div>
-
-            <div className="col-2 flex-1 justify-center hidden sm:flex">
-              <AnimatedTabs
-                activeTab={activeTab}
-                onChange={(v) => setActiveTab(v as "piano-roll" | "chords" | "sheet" | "guitar")}
-                tabs={tabs}
-                variant="pill"
-                className="my-2"
-              />
-            </div>
-            <div className="md:flex-1"></div>
+    <div className="size-full lg:px-10 md:py-5  flex flex-col gap-2 min-w-0">
+      <div className="flex-1 flex flex-col">
+        <div className="w-full flex  gap-2 justify-between">
+          <div className="col-1 flex flex-1  items-center">
+            <DesktopGameControlsSection {...props} />
           </div>
-          <Tab>{activeTab === "chords" && <ChordTab />}</Tab>
+
+          <div className="col-2 flex-1 justify-center hidden sm:flex">
+            <AnimatedTabs
+              activeTab={activeTab}
+              onChange={(v) => setActiveTab(v as "piano-roll" | "chords" | "sheet" | "guitar")}
+              tabs={tabs}
+              variant="pill"
+              className="my-2"
+            />
+          </div>
+          <div className="md:flex-1"></div>
         </div>
+        <Tab>{activeTab === "chords" && <ChordTab />}</Tab>
       </div>
-    </main>
+    </div>
   );
 }
