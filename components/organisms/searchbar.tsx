@@ -129,14 +129,20 @@ export function ExerciseSearchbarItem({
       />
       <div className="flex flex-col justify-between items-start">
         <div className="flex gap-2">
-          <p className="paragraph">{exercise.title}</p>
-          <p className="paragraph text-muted-foreground">{exercise.composer}</p>
+          <p className="paragraph whitespace-nowrap overflow-hidden text-ellipsis">
+            {exercise.title}
+          </p>
+          <p className="paragraph text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
+            {exercise.composer}
+          </p>
         </div>
 
         <div className="flex gap-2">
-          <p className="paragraph-sm text-muted-foreground">{exercise.author.username}</p>
+          <p className="paragraph-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
+            {exercise.author.username}
+          </p>
           <span className="paragraph-sm text-muted-foreground">-</span>
-          <p className="paragraph-sm text-muted-foreground">
+          <p className="paragraph-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
             {exercise.defaultConfig.bpm} {instance.getItem("bpm")}
           </p>
         </div>

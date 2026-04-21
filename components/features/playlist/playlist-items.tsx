@@ -247,7 +247,7 @@ export function SearchPlaylistItem({ ...props }: SearchPLaylistItemProps) {
 
   return (
     <a
-      className="flex justify-between items-center py-1 pl-1 my-1 relative cursor-pointer hover:bg-popover pr-4"
+      className="flex justify-between items-center py-1 pl-1 my-1 relative cursor-pointer hover:bg-popover pr-4 "
       href="/game"
     >
       <div className="flex items-center h-15">
@@ -260,7 +260,7 @@ export function SearchPlaylistItem({ ...props }: SearchPLaylistItemProps) {
         />
         <div className="flex flex-1 min-w-0 h-fit gap-3">
           <div className="flex flex-1 flex-col min-w-0 pl-2 gap-1">
-            <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">
+            <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis ">
               {exercise.title}
             </p>
             <p className="paragraph-md text-muted-foreground">{exercise.author.username}</p>
@@ -290,7 +290,9 @@ export function SearchPlaylistItem({ ...props }: SearchPLaylistItemProps) {
         <SizeAdapter
           md={
             <PlaylistItemBox className="w-40 min-w-40 justify-start">
-              <p className="paragraph-md text-muted-foreground">{exercise.author.username}</p>
+              <p className="paragraph-md text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
+                {exercise.author.username}
+              </p>
             </PlaylistItemBox>
           }
         />
