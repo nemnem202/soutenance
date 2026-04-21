@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/molecules/tooltip";
-import { Separator } from "@/components/ui/separator";
 
 export function SettingsParam({
   children,
@@ -45,7 +44,6 @@ export function SettingsSection({ children, title }: { children: ReactNode; titl
     <section className="flex flex-col w-full p-4 gap-4">
       <h2 className="title-2">{title}</h2>
       {children}
-      <Separator orientation="horizontal" className="w-full" />
     </section>
   );
 }

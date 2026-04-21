@@ -17,6 +17,7 @@ import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
 import { loadingToast } from "@/lib/toaster";
 import { onImageChange } from "@/telefunc/image-change.telefunc";
+import { Separator } from "@/components/ui/separator";
 
 export default function Page() {
   return <SizeAdapter sm={<Mobile />} md={<Desktop />} />;
@@ -78,10 +79,6 @@ function Content() {
           initMode="login"
         />
       )}
-      <SettingsSection title={instance.getItem("appearance")}>
-        <ThemeParam />
-        <LanguageParam />
-      </SettingsSection>
       <SettingsSection title={instance.getItem("account")}>
         <div className="flex gap-2 md:flex-row flex-col items-center md:items-start">
           <div className="w-33 aspect-square">
@@ -103,6 +100,13 @@ function Content() {
           <div>
             <LogoutButton />
           </div>
+        </div>
+      </SettingsSection>
+      <Separator orientation="horizontal" className="w-full" />
+      <SettingsSection title={instance.getItem("appearance")}>
+        <div className="flex flex-wrap gap-3">
+          <ThemeParam />
+          <LanguageParam />
         </div>
       </SettingsSection>
     </>

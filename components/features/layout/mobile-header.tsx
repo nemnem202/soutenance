@@ -6,7 +6,9 @@ export default function MobileHeader({ title }: { title: string }) {
   const { session } = useSession();
   return (
     <div className="w-full flex gap-2 md:p-0 items-center mb-6">
-      <AccountPP image={session?.profilePicture ?? undefined} />
+      <a href={session ? "/settings" : "/login"}>
+        <AccountPP image={session?.profilePicture ?? undefined} />
+      </a>
       <Headline>{title}</Headline>
     </div>
   );
