@@ -276,7 +276,7 @@ function getSectionLabel(type: SectionType, index: number): string {
   return LABELS[type] ?? `Section ${index}`;
 }
 
-function convertCell(cellIreal: CellIreal, parsedBars: ParsedBars): CellSchema {
+function convertCell(cellIreal: CellIreal): CellSchema {
   const { chord, spacer } = cellIreal;
 
   const { annots } = cellIreal;
@@ -285,19 +285,16 @@ function convertCell(cellIreal: CellIreal, parsedBars: ParsedBars): CellSchema {
   if (spacer > 0)
     return {
       kind: "Spacer",
-      bars: { left: parsedBars.leftBar, right: parsedBars.rightBar },
       index: cellIreal.index,
     };
   if (chord === null)
     return {
       kind: "Empty",
-      bars: { left: parsedBars.leftBar, right: parsedBars.rightBar },
       index: cellIreal.index,
     };
 
   return {
     index: cellIreal.index,
-    bars: { left: parsedBars.leftBar, right: parsedBars.rightBar },
     kind: "Chord",
     chord: validateAndConvertChord(chord),
     keychange: null,
@@ -382,7 +379,7 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
       commonMeasures: [],
       voltas: [],
     };
-    currentMeasure = { index: measureIndex++, cells: [] };
+    currentMeasure = { index: measureIndex++, cells: [], bars: { left: null, right: null } };
   }
 
   function startVolta(volta: 1 | 2 | 3) {
@@ -392,7 +389,7 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
     pushMeasure();
     currentVolta = { volta, measures: [] };
     currentSection.voltas.push(currentVolta);
-    currentMeasure = { index: measureIndex++, cells: [] };
+    currentMeasure = { index: measureIndex++, cells: [], bars: { left: null, right: null } };
   }
 
   for (const cellIreal of cells) {
@@ -409,7 +406,11 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
 
     if (parsedBars.leftBar !== null && currentMeasure && currentMeasure.cells.length > 0) {
       pushMeasure();
-      currentMeasure = { index: measureIndex++, cells: [] };
+      currentMeasure = {
+        index: measureIndex++,
+        cells: [],
+        bars: { left: parsedBars.leftBar, right: parsedBars.rightBar },
+      };
     }
 
     if (parsedAnnots.volta !== null) {
@@ -417,15 +418,19 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
     }
 
     if (parsedBars.isEmpty) {
-      currentMeasure ??= { index: measureIndex++, cells: [] };
+      currentMeasure ??= { index: measureIndex++, cells: [], bars: { left: null, right: null } };
       currentMeasure.cells.push({
         kind: "Empty",
-        bars: { left: null, right: null },
+
         index: cellIreal.index,
       });
     } else {
-      const cell = convertCell(cellIreal, parsedBars);
-      currentMeasure ??= { index: measureIndex++, cells: [] };
+      const cell = convertCell(cellIreal);
+      currentMeasure ??= {
+        index: measureIndex++,
+        cells: [],
+        bars: { left: parsedBars.leftBar, right: parsedBars.rightBar },
+      };
       currentMeasure.cells.push(cell);
     }
 

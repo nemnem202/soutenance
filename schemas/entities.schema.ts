@@ -81,7 +81,6 @@ export const cellSchema = z.discriminatedUnion("kind", [
     index: z.number().int(),
     kind: z.literal("Chord"),
     chord: chordSchema,
-    bars: barsSchema,
     keychange: z.string().max(50).nullable().optional(),
     timeSignatureChangeTop: z.number().int().nullable().optional(),
     timeSignatureChangeBottom: z.number().int().nullable().optional(),
@@ -89,7 +88,6 @@ export const cellSchema = z.discriminatedUnion("kind", [
   z.object({
     index: z.number().int(),
     kind: z.literal("Spacer"),
-    bars: barsSchema,
     keychange: z.string().max(50).nullable().optional(),
     timeSignatureChangeTop: z.number().int().nullable().optional(),
     timeSignatureChangeBottom: z.number().int().nullable().optional(),
@@ -97,7 +95,6 @@ export const cellSchema = z.discriminatedUnion("kind", [
   z.object({
     index: z.number().int(),
     kind: z.literal("Empty"),
-    bars: barsSchema,
     keychange: z.string().max(50).nullable().optional(),
     timeSignatureChangeTop: z.number().int().nullable().optional(),
     timeSignatureChangeBottom: z.number().int().nullable().optional(),
@@ -107,6 +104,7 @@ export const cellSchema = z.discriminatedUnion("kind", [
 export const measureSchema = z.object({
   index: z.number().int(),
   cells: z.array(cellSchema),
+  bars: barsSchema,
 });
 
 export const voltaSchema = z.object({

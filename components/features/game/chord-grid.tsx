@@ -1,8 +1,8 @@
 import useGame from "@/hooks/use-game";
 import { useLanguage } from "@/hooks/use-language";
-import { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
+import type { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
 import { logger } from "@/lib/logger";
-import { ReactNode, useEffect } from "react";
+import { type ReactNode, useEffect } from "react";
 
 export default function ChordGrid() {
   const { exercise } = useGame();
@@ -57,12 +57,14 @@ function Section({ section }: { section: SectionSchema }) {
 function MeasureBlock({ measure }: { measure: MeasureSchema }) {
   return (
     <div className="flex w-full h-12 relative">
+      <div id="right">{measure.bars.right && <RightBar bar={measure.bars.right} />}</div>
       {measure.cells
         .sort((a, b) => a.index - b.index)
         .map((cell, index) => (
           <CellGroup cell={cell} measure={measure} key={index} />
         ))}
       <div className="absolute -right-[0.5px] top-0 h-12 bg-muted-foreground/50 w-[2px]" />
+      {measure.bars.left && <LeftBar bar={measure.bars.left} />}
     </div>
   );
 }
@@ -97,10 +99,8 @@ function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureSchema
             bottom={cell.timeSignatureChangeBottom}
           />
         )}
-        {cell.bars.left && <LeftBar bar={cell.bars.left} />}
       </div>
       {renderCellContent()}
-      <div id="right">{cell.bars.right && <RightBar bar={cell.bars.right} />}</div>
     </div>
   );
 }

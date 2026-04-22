@@ -89,6 +89,12 @@ export default class ExerciseRepository extends Repository {
       cells: {
         create: measure.cells.map((cell) => this.cellMapper(cell)),
       },
+      bars: {
+        create: {
+          left: measure.bars.left,
+          right: measure.bars.right,
+        },
+      },
     };
   }
 
@@ -102,12 +108,6 @@ export default class ExerciseRepository extends Repository {
     return {
       kind: cell.kind,
       index: cell.index,
-      bars: {
-        create: {
-          left: cell.bars.left,
-          right: cell.bars.right,
-        },
-      },
       chord:
         cell.kind === "Chord"
           ? {

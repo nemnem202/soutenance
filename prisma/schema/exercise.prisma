@@ -87,6 +87,9 @@ model Measure {
     volta   VoltaBracket? @relation(fields: [voltaId], references: [id], onDelete: Cascade)
     voltaId Int?
 
+    bars   Bar @relation(fields: [barsId], references: [id])
+    barsId Int
+
     cells Cell[]
 }
 
@@ -102,8 +105,6 @@ model Cell {
     id                        Int      @id @default(autoincrement())
     index                     Int
     kind                      CellKind
-    bars                      Bar      @relation(fields: [barsId], references: [id])
-    barsId                    Int
     keychange                 String?  @db.VarChar(50)
     measure                   Measure  @relation(fields: [measureId], references: [id], onDelete: Cascade)
     measureId                 Int
@@ -155,10 +156,10 @@ enum CellKind {
 }
 
 model Bar {
-    id    Int           @id @default(autoincrement())
-    left  LeftBarKind?
-    right RightBarKind?
-    cells Cell[]
+    id       Int           @id @default(autoincrement())
+    left     LeftBarKind?
+    right    RightBarKind?
+    measures Measure[]
 }
 
 enum LeftBarKind {

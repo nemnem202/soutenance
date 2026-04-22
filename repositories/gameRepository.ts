@@ -1,6 +1,6 @@
-import { ServerResponse, Status } from "@/types/server-response";
+import { type ServerResponse, Status } from "@/types/server-response";
 import { Repository } from "./repository";
-import { CellSchema, ChordsGridSchema, Exercise, SectionSchema } from "@/types/entities";
+import type { CellSchema, ChordsGridSchema, Exercise, SectionSchema } from "@/types/entities";
 
 export default class GameRepository extends Repository {
   async findOne(id: number, userId: number | null): Promise<ServerResponse<Exercise>> {
@@ -59,6 +59,12 @@ export default class GameRepository extends Repository {
                     measures: {
                       select: {
                         index: true,
+                        bars: {
+                          select: {
+                            left: true,
+                            right: true,
+                          },
+                        },
                         cells: {
                           select: {
                             index: true,
@@ -99,6 +105,13 @@ export default class GameRepository extends Repository {
                 commonMeasures: {
                   select: {
                     index: true,
+
+                    bars: {
+                      select: {
+                        left: true,
+                        right: true,
+                      },
+                    },
                     cells: {
                       select: {
                         index: true,
@@ -156,11 +169,6 @@ export default class GameRepository extends Repository {
           keychange: cell.keychange,
           timeSignatureChangeTop: cell.timeSignatureChangeTop,
           timeSignatureChangeBottom: cell.timeSignatureChangeBottom,
-
-          bars: {
-            left: cell.bars?.left,
-            right: cell.bars?.right,
-          },
         };
 
         if (cell.kind === "Chord" && cell.chord) {
@@ -199,11 +207,13 @@ export default class GameRepository extends Repository {
               volta: volta.volta,
               measures: volta.measures.map((measure) => ({
                 index: measure.index,
+                bars: measure.bars,
                 cells: mapCells(measure.cells),
               })),
             })),
             commonMeasures: section.commonMeasures.map((measure) => ({
               index: measure.index,
+              bars: measure.bars,
               cells: mapCells(measure.cells),
             })),
           })),
