@@ -45,11 +45,13 @@ export default function Page() {
           label={instance.getItem("profile_picture")}
           description={instance.getItem("profile_picture_description")}
         >
-          <EditableImage
-            alt={session ? session.profilePicture.alt : undefined}
-            src={session ? session.profilePicture.url : undefined}
-            onImageChange={handleImageChange}
-          />
+          <div className="w-15 aspect-square">
+            <EditableImage
+              alt={session ? session.profilePicture.alt : undefined}
+              src={session ? session.profilePicture.url : undefined}
+              onImageChange={handleImageChange}
+            />
+          </div>
         </SettingsRow>
         <UsernameParam />
 
