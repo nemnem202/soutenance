@@ -125,7 +125,7 @@ export const exerciseSchema = z.object({
     .min(1, "The composer name is too short.")
     .max(200, "The composer name is too long"),
   defaultConfig: configSchema,
-  chordsGrid: chordsGridSchema,
+  chordsGrid: chordsGridSchema.optional().nullable(),
   midifileUrl: z.url().optional().nullable(),
 });
 
