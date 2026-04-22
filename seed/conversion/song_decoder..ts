@@ -253,7 +253,14 @@ export class SongInterpreter {
   }
 
   newCell(cells: CellIreal[]): CellIreal {
-    const obj: CellIreal = { annots: [], bars: "", chord: null, comments: [], spacer: 0 };
+    const obj: CellIreal = {
+      annots: [],
+      bars: "",
+      chord: null,
+      comments: [],
+      spacer: 0,
+      index: cells.length,
+    };
     cells.push(obj);
     return obj;
   }

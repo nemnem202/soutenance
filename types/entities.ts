@@ -1,6 +1,7 @@
 import type z from "zod";
 import type { imageSchema } from "@/schemas/common.schema";
 import type {
+  barsSchema,
   cellSchema,
   chordSchema,
   chordsGridSchema,
@@ -48,3 +49,5 @@ export type CellSchema = z.infer<typeof cellSchema>;
 export type MeasureSchema = z.infer<typeof measureSchema>;
 
 export type VoltaSchema = z.infer<typeof voltaSchema>;
+
+export type BarsSchema = z.infer<typeof barsSchema>;

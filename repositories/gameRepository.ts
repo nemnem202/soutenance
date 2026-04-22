@@ -55,16 +55,23 @@ export default class GameRepository extends Repository {
                 index: true,
                 voltas: {
                   select: {
-                    volta: true, // Added: missing in the original select
+                    volta: true,
                     measures: {
                       select: {
                         index: true,
                         cells: {
                           select: {
+                            index: true,
                             timeSignatureChangeTop: true,
                             timeSignatureChangeBottom: true,
                             keychange: true,
                             kind: true,
+                            bars: {
+                              select: {
+                                left: true,
+                                right: true,
+                              },
+                            },
                             chord: {
                               select: {
                                 modifier: true,
@@ -94,10 +101,17 @@ export default class GameRepository extends Repository {
                     index: true,
                     cells: {
                       select: {
+                        index: true,
                         timeSignatureChangeTop: true,
                         timeSignatureChangeBottom: true,
                         keychange: true,
                         kind: true,
+                        bars: {
+                          select: {
+                            left: true,
+                            right: true,
+                          },
+                        },
                         chord: {
                           select: {
                             modifier: true,
@@ -135,13 +149,18 @@ export default class GameRepository extends Repository {
         description: "It has either been removed or defined as private.",
       };
 
-    // Helper to format Prisma cells into Zod CellSchema
     const mapCells = (cells: any[]): CellSchema[] => {
       return cells.map((cell) => {
         const base = {
+          index: cell.index,
           keychange: cell.keychange,
           timeSignatureChangeTop: cell.timeSignatureChangeTop,
           timeSignatureChangeBottom: cell.timeSignatureChangeBottom,
+
+          bars: {
+            left: cell.bars?.left,
+            right: cell.bars?.right,
+          },
         };
 
         if (cell.kind === "Chord" && cell.chord) {
@@ -166,7 +185,7 @@ export default class GameRepository extends Repository {
         return {
           ...base,
           kind: cell.kind as "Spacer" | "Empty",
-        };
+        } as CellSchema;
       });
     };
 
@@ -198,7 +217,7 @@ export default class GameRepository extends Repository {
         ...exercise,
         midifileUrl: exercise.midifile?.url,
         chordsGrid: chordsGrid,
-      } as Exercise, // Cast to Exercise to satisfy standard response requirements
+      } as Exercise,
     };
   }
 }

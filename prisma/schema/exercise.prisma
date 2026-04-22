@@ -100,7 +100,10 @@ model VoltaBracket {
 
 model Cell {
     id                        Int      @id @default(autoincrement())
+    index                     Int
     kind                      CellKind
+    bars                      Bar      @relation(fields: [barsId], references: [id])
+    barsId                    Int
     keychange                 String?  @db.VarChar(50)
     measure                   Measure  @relation(fields: [measureId], references: [id], onDelete: Cascade)
     measureId                 Int
@@ -149,4 +152,24 @@ enum CellKind {
     Chord
     Spacer
     Empty
+}
+
+model Bar {
+    id    Int           @id @default(autoincrement())
+    left  LeftBarKind?
+    right RightBarKind?
+    cells Cell[]
+}
+
+enum LeftBarKind {
+    single
+    repeatOpen
+    sectionOpen
+}
+
+enum RightBarKind {
+    single
+    repeatClose
+    sectionClose
+    final
 }

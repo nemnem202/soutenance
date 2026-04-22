@@ -12,7 +12,19 @@
 
 
 
-- Chaque cell est dans l'ordre inverse
+
 - Les spacers semblent pouvoir contenir des accords
 - Les voltas sont vides alors qu'elles devraient contenir des mesures
-- pas de bars de repetition
+- les semis diminués se transforment en B7
+- formatter les cellules dans le seeding (retirer les mesures vides + supprimer les cellules vides quand on peut)
+- filtrer les playlists redondantes + retirer toutes les playlists qui ne correspondent pas à certaines regles
+- ajouter la time signature par défaut a chaque premiere cellule dans le seeding
+
+
+
+ruleset: 
+- une mesure qui contient un seul accord -> une seule cell
+- une mesure vide -> supprimer
+- A % B % -> A B
+- une mesure en 4/4 ne peut pas contenir plus de 4 accords (idem pour les autres signatures)
+

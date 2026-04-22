@@ -276,16 +276,28 @@ function getSectionLabel(type: SectionType, index: number): string {
   return LABELS[type] ?? `Section ${index}`;
 }
 
-function convertCell(cellIreal: CellIreal): CellSchema {
+function convertCell(cellIreal: CellIreal, parsedBars: ParsedBars): CellSchema {
   const { chord, spacer } = cellIreal;
-
-  if (spacer > 0) return { kind: "Spacer" };
-  if (chord === null) return { kind: "Empty" };
 
   const { annots } = cellIreal;
   const parsed = parseAnnotations(annots);
 
+  if (spacer > 0)
+    return {
+      kind: "Spacer",
+      bars: { left: parsedBars.leftBar, right: parsedBars.rightBar },
+      index: cellIreal.index,
+    };
+  if (chord === null)
+    return {
+      kind: "Empty",
+      bars: { left: parsedBars.leftBar, right: parsedBars.rightBar },
+      index: cellIreal.index,
+    };
+
   return {
+    index: cellIreal.index,
+    bars: { left: parsedBars.leftBar, right: parsedBars.rightBar },
     kind: "Chord",
     chord: validateAndConvertChord(chord),
     keychange: null,
@@ -406,9 +418,13 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
 
     if (parsedBars.isEmpty) {
       currentMeasure ??= { index: measureIndex++, cells: [] };
-      currentMeasure.cells.push({ kind: "Empty" });
+      currentMeasure.cells.push({
+        kind: "Empty",
+        bars: { left: null, right: null },
+        index: cellIreal.index,
+      });
     } else {
-      const cell = convertCell(cellIreal);
+      const cell = convertCell(cellIreal, parsedBars);
       currentMeasure ??= { index: measureIndex++, cells: [] };
       currentMeasure.cells.push(cell);
     }

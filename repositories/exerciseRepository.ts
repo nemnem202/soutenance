@@ -45,11 +45,13 @@ export default class ExerciseRepository extends Repository {
           ...exercise.defaultConfig,
         },
       },
-      chordsGrid: {
-        create: {
-          ...this.chordsGridMapper(exercise.chordsGrid),
-        },
-      },
+      chordsGrid: exercise.chordsGrid
+        ? {
+            create: {
+              ...this.chordsGridMapper(exercise.chordsGrid),
+            },
+          }
+        : undefined,
 
       midifile: exercise.midifileUrl
         ? {
@@ -99,6 +101,13 @@ export default class ExerciseRepository extends Repository {
   private cellMapper(cell: CellSchema): Prisma.CellCreateWithoutMeasureInput {
     return {
       kind: cell.kind,
+      index: cell.index,
+      bars: {
+        create: {
+          left: cell.bars.left,
+          right: cell.bars.right,
+        },
+      },
       chord:
         cell.kind === "Chord"
           ? {

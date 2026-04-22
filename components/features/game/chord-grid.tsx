@@ -1,6 +1,6 @@
 import useGame from "@/hooks/use-game";
 import { useLanguage } from "@/hooks/use-language";
-import { CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
+import { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
 import { logger } from "@/lib/logger";
 import { ReactNode, useEffect } from "react";
 
@@ -57,15 +57,17 @@ function Section({ section }: { section: SectionSchema }) {
 function MeasureBlock({ measure }: { measure: MeasureSchema }) {
   return (
     <div className="flex w-full h-12 relative">
-      {measure.cells.map((cell, index) => (
-        <ChordCellGroup cell={cell} key={index} />
-      ))}
+      {measure.cells
+        .sort((a, b) => a.index - b.index)
+        .map((cell, index) => (
+          <CellGroup cell={cell} measure={measure} key={index} />
+        ))}
       <div className="absolute -right-[0.5px] top-0 h-12 bg-muted-foreground/50 w-[2px]" />
     </div>
   );
 }
 
-function ChordCellGroup({ cell }: { cell: CellSchema }) {
+function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureSchema }) {
   useEffect(() => {
     logger.info("Cell", cell);
   }, [cell]);
@@ -75,25 +77,37 @@ function ChordCellGroup({ cell }: { cell: CellSchema }) {
       case "Chord":
         return <ChordCell cell={cell} />;
       case "Empty":
-        return <EmptyCell />;
+        return null;
       case "Spacer":
-        return <SpacerCell />;
+        return null;
       default:
         return null;
     }
   };
 
   return (
-    <div className=" w-[25%] px-0.5 md:px-2 h-full overflow-hidden flex items-center gap-1">
-      {cell.timeSignatureChangeBottom && cell.timeSignatureChangeTop && (
-        <TimeSignature top={cell.timeSignatureChangeTop} bottom={cell.timeSignatureChangeBottom} />
-      )}
+    <div
+      className=" px-0.5 md:px-2 h-full overflow-hidden flex justify-between items-center gap-1"
+      style={{ width: `${100 / measure.cells.length}%` }}
+    >
+      <div id="left" className="flex items-center">
+        {cell.timeSignatureChangeBottom && cell.timeSignatureChangeTop && (
+          <TimeSignature
+            top={cell.timeSignatureChangeTop}
+            bottom={cell.timeSignatureChangeBottom}
+          />
+        )}
+        {cell.bars.left && <LeftBar bar={cell.bars.left} />}
+      </div>
       {renderCellContent()}
+      <div id="right">{cell.bars.right && <RightBar bar={cell.bars.right} />}</div>
     </div>
   );
 }
 
 type ChordCellType = Extract<CellSchema, { kind: "Chord" }>;
+type EmptyCellType = Extract<CellSchema, { kind: "Empty" }>;
+type SpacerCellType = Extract<CellSchema, { kind: "Spacer" }>;
 
 function ChordCell({ cell }: { cell: ChordCellType }) {
   return (
@@ -110,12 +124,12 @@ function ChordCell({ cell }: { cell: ChordCellType }) {
   );
 }
 
-function EmptyCell() {
-  return <div className="w-full h-full border border-primary">@</div>;
+function EmptyCell({ cell }: { cell: EmptyCellType }) {
+  return <div className="w-full h-full border border-primary">@{cell.index}</div>;
 }
 
-function SpacerCell() {
-  return <div className="w-full h-full border border-secondary">SP</div>;
+function SpacerCell({ cell }: { cell: SpacerCellType }) {
+  return <div className="w-full h-full border border-secondary">SP{cell.index}</div>;
 }
 
 function TimeSignature({ top, bottom }: { top: number; bottom: number }) {
@@ -126,6 +140,37 @@ function TimeSignature({ top, bottom }: { top: number; bottom: number }) {
       <span>{bottom}</span>
     </div>
   );
+}
+
+function LeftBar({ bar }: { bar: BarsSchema["left"] }) {
+  const getBar = () => {
+    switch (bar) {
+      case "single":
+        return "(";
+      case "repeatOpen":
+        return "[";
+      case "sectionOpen":
+        return "{";
+    }
+  };
+
+  return <span className="text-primary">{getBar()}</span>;
+}
+
+function RightBar({ bar }: { bar: BarsSchema["right"] }) {
+  const getBar = () => {
+    switch (bar) {
+      case "single":
+        return ")";
+      case "repeatClose":
+        return "]";
+      case "sectionClose":
+        return "}";
+      case "final":
+        return "Z";
+    }
+  };
+  return <span className="text-primary">{getBar()}</span>;
 }
 
 function SectionLabel({ label }: { label: string }) {

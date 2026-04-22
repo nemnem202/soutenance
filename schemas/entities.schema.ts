@@ -58,6 +58,11 @@ export const noteSchema = z.enum([
 
 export const cellKindSchema = z.enum(["Chord", "Spacer", "Empty"]);
 
+export const barsSchema = z.object({
+  left: z.enum(["single", "repeatOpen", "sectionOpen"]).optional().nullable(),
+  right: z.enum(["single", "repeatClose", "sectionClose", "final"]).optional().nullable(),
+});
+
 export const chordchema = z.string();
 
 export const chordContentSchema = z.object({
@@ -73,20 +78,26 @@ export const chordSchema = z.object({
 
 export const cellSchema = z.discriminatedUnion("kind", [
   z.object({
+    index: z.number().int(),
     kind: z.literal("Chord"),
     chord: chordSchema,
+    bars: barsSchema,
     keychange: z.string().max(50).nullable().optional(),
     timeSignatureChangeTop: z.number().int().nullable().optional(),
     timeSignatureChangeBottom: z.number().int().nullable().optional(),
   }),
   z.object({
+    index: z.number().int(),
     kind: z.literal("Spacer"),
+    bars: barsSchema,
     keychange: z.string().max(50).nullable().optional(),
     timeSignatureChangeTop: z.number().int().nullable().optional(),
     timeSignatureChangeBottom: z.number().int().nullable().optional(),
   }),
   z.object({
+    index: z.number().int(),
     kind: z.literal("Empty"),
+    bars: barsSchema,
     keychange: z.string().max(50).nullable().optional(),
     timeSignatureChangeTop: z.number().int().nullable().optional(),
     timeSignatureChangeBottom: z.number().int().nullable().optional(),
