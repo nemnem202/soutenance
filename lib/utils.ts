@@ -5,12 +5,24 @@ import type { Language } from "@/types/i18n";
 import type { Chord } from "@/types/music";
 import {
   onAddExerciseToPlaylist,
+  onAddMultiExerciseToPlaylist,
   onAddPlaylistToPlaylist,
 } from "@/telefunc/add-to-playlist.telefunc";
-import { loadingToast } from "./toaster";
+import { errorToast, loadingToast, successToast } from "./toaster";
 import type { ExerciseCardDto } from "@/types/dtos/exercise";
 import { navigate, reload } from "vike/client/router";
 import { onPlaylistRemove } from "@/telefunc/playlist.telefunc";
+import {
+  onUserLikesExercise,
+  onUserLikesPlaylist,
+  onUserLikesUser,
+  onUserUnlikesExercise,
+  onUserUnlikesPlaylist,
+  onUserUnlikesUser,
+} from "@/telefunc/like.telefunc";
+import type { MouseEvent } from "react";
+import type { UserCardDto } from "@/types/dtos/user";
+import type { PlaylistCardDto } from "@/types/dtos/playlist";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -46,9 +58,122 @@ export const addExerciseToPlaylist = async (targetId: number, exercise: Exercise
   reload();
 };
 
+export const addManyExercisesToPlaylist = async (targetId: number, exercisesIds: number[]) => {
+  const responsePromise = onAddMultiExerciseToPlaylist(targetId, exercisesIds);
+  loadingToast(responsePromise);
+  await responsePromise;
+  reload();
+};
+
 export const deletePlaylist = async (playlistId: number) => {
   const responsePromise = onPlaylistRemove(playlistId);
   loadingToast(responsePromise);
   await responsePromise;
   navigate("/");
+};
+
+export const handleLikeExercise = async (
+  e: MouseEvent,
+  isLiked: boolean,
+  setIsLiked: (value: boolean) => void,
+  exercise: ExerciseCardDto
+) => {
+  e.preventDefault();
+  e.stopPropagation();
+  if (isLiked) {
+    const response = await onUserUnlikesExercise(exercise.id);
+    if (!response.success) {
+      errorToast(response.title, response.description);
+    } else {
+      successToast(`${exercise.title} was removed from your likes`);
+      setIsLiked(false);
+    }
+  } else {
+    const response = await onUserLikesExercise(exercise.id);
+    if (!response.success) {
+      errorToast(response.title, response.description);
+    } else {
+      successToast(`${exercise.title} was added to your likes`);
+      setIsLiked(true);
+      reload();
+    }
+  }
+};
+
+export const handleLikePlaylist = async (
+  e: MouseEvent,
+  isLiked: boolean,
+  setIsLiked: (value: boolean) => void,
+  playlist: PlaylistCardDto
+) => {
+  e.preventDefault();
+  e.stopPropagation();
+  if (isLiked) {
+    const response = await onUserUnlikesPlaylist(playlist.id);
+    if (!response.success) {
+      errorToast(response.title, response.description);
+    } else {
+      successToast(`${playlist.title} was removed from your likes`);
+      setIsLiked(false);
+    }
+  } else {
+    const response = await onUserLikesPlaylist(playlist.id);
+    if (!response.success) {
+      errorToast(response.title, response.description);
+    } else {
+      successToast(`${playlist.title} was added to your likes`);
+      setIsLiked(true);
+      reload();
+    }
+  }
+};
+
+export const handleLikeAccount = async (
+  e: MouseEvent,
+  isLiked: boolean,
+  setIsLiked: (value: boolean) => void,
+  account: UserCardDto
+) => {
+  e.stopPropagation();
+  e.preventDefault();
+  if (isLiked) {
+    const response = await onUserUnlikesUser(account.id);
+    if (!response.success) {
+      errorToast(response.title, response.description);
+    } else {
+      successToast(`${account.username} was removed from your likes`);
+      setIsLiked(false);
+    }
+  } else {
+    const response = await onUserLikesUser(account.id);
+    if (!response.success) {
+      errorToast(response.title, response.description);
+    } else {
+      successToast(`${account.username} was added to your likes`);
+      setIsLiked(true);
+      reload();
+    }
+  }
+};
+
+export const generateImageVariations = (url: string, resolutions: [number, number][]): string[] => {
+  const patterns = {
+    cloudinary: /(res\.cloudinary\.com\/.*\/upload\/)(v\d+\/.*)/,
+    picsum: /(picsum\.photos\/seed\/[^/]+)\/\d+\/\d+/,
+    google: /googleusercontent\.com\/[^\s=?]+/,
+  };
+
+  return resolutions.map(([width, height]) => {
+    if (patterns.cloudinary.test(url)) {
+      return url.replace(patterns.cloudinary, `$1w_${width},h_${height},c_fill/$2`);
+    }
+    if (patterns.picsum.test(url)) {
+      return url.replace(patterns.picsum, `$1/${width}/${height}`);
+    }
+    if (patterns.google.test(url)) {
+      const baseUrl = url.split(/[=?]/)[0];
+      return `${baseUrl}=w${width}-h${height}-c`;
+    }
+    return url;
+  });
 };

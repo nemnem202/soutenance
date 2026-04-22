@@ -13,6 +13,7 @@ import useSearchbar from "@/hooks/use-searchbar";
 import type { Session } from "@/types/auth";
 import type { ExerciseCardDto } from "@/types/dtos/exercise";
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
+import Image from "../ui/image";
 
 export interface SearchbarProps {
   placeholder: string;
@@ -91,7 +92,8 @@ export function UserSearchbarItem({
       }}
       type="button"
     >
-      <img
+      <Image
+        width={60}
         src={user.profilePicture.url}
         alt={user.profilePicture.alt}
         className="w-15 h-15 object-cover overflow-hidden rounded-full"
@@ -122,21 +124,28 @@ export function ExerciseSearchbarItem({
       }}
       type="button"
     >
-      <img
+      <Image
+        width={60}
         src={exercise.cover.url}
         alt={exercise.cover.alt}
         className="w-15 h-15 object-cover overflow-hidden rounded-[0.2rem]"
       />
       <div className="flex flex-col justify-between items-start">
         <div className="flex gap-2">
-          <p className="paragraph">{exercise.title}</p>
-          <p className="paragraph text-muted-foreground">{exercise.composer}</p>
+          <p className="paragraph whitespace-nowrap overflow-hidden text-ellipsis">
+            {exercise.title}
+          </p>
+          <p className="paragraph text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
+            {exercise.composer}
+          </p>
         </div>
 
         <div className="flex gap-2">
-          <p className="paragraph-sm text-muted-foreground">{exercise.author.username}</p>
+          <p className="paragraph-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
+            {exercise.author.username}
+          </p>
           <span className="paragraph-sm text-muted-foreground">-</span>
-          <p className="paragraph-sm text-muted-foreground">
+          <p className="paragraph-sm text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
             {exercise.defaultConfig.bpm} {instance.getItem("bpm")}
           </p>
         </div>
@@ -164,7 +173,8 @@ export function PlaylistSearchbarItem({
       }}
       type="button"
     >
-      <img
+      <Image
+        width={60}
         src={playlist.cover.url}
         alt={playlist.cover.alt}
         className="w-15 h-15 object-cover overflow-hidden rounded-[0.2rem]"

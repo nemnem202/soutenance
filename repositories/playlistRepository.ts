@@ -419,6 +419,59 @@ export class PlaylistRepository extends Repository {
     };
   }
 
+  async addManyExercisesToPlaylist(
+    targetPlaylistId: number,
+    exercisesToAddIds: number[],
+    userId: number
+  ): Promise<ServerResponse<null>> {
+    const exercises = await Promise.all(
+      exercisesToAddIds.map((exerciseId) =>
+        this.client.exercise.findUnique({
+          where: {
+            id: exerciseId,
+            OR: [
+              { fromPlaylist: { visibility: "public" } },
+              { fromPlaylist: { visibility: "private", authorId: userId } },
+            ],
+          },
+          select: { id: true },
+        })
+      )
+    );
+
+    const validExercises = exercises.filter((e): e is { id: number } => e !== null);
+
+    if (validExercises.length > 0) {
+      await this.client.playlist.update({
+        where: {
+          id: targetPlaylistId,
+          authorId: userId,
+        },
+        data: {
+          includesExercises: {
+            connectOrCreate: validExercises.map((exercise) => ({
+              where: {
+                exerciseId_playlistId: {
+                  playlistId: targetPlaylistId,
+                  exerciseId: exercise.id,
+                },
+              },
+              create: {
+                exerciseId: exercise.id,
+              },
+            })),
+          },
+        },
+      });
+    }
+
+    return {
+      success: true,
+      status: Status.Ok,
+      data: null,
+    };
+  }
+
   async removeExerciseFromPlaylist(
     targetPlaylistId: number,
     exerciseToRemoveId: number,

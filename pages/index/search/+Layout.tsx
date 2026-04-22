@@ -4,6 +4,7 @@ import AnimatedTabs from "@/components/organisms/animated-tabs";
 import Searchbar from "@/components/organisms/searchbar";
 import { useLanguage } from "@/hooks/use-language";
 import useSearchNavigation from "@/hooks/use-search-navigation";
+import MobileHeader from "@/components/features/layout/mobile-header";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return <SizeAdapter sm={<Mobile>{children}</Mobile>} md={<Desktop>{children}</Desktop>} />;
@@ -36,9 +37,12 @@ function Desktop({ children }: { children: ReactNode }) {
 function Mobile({ children }: { children: ReactNode }) {
   const { instance } = useLanguage();
   return (
-    <div className="flex flex-col gap-5">
-      <Searchbar placeholder={instance.getItem("search")} />
-      {children}
-    </div>
+    <>
+      <MobileHeader title={instance.getItem("search")} />
+      <div className="flex flex-col gap-5">
+        <Searchbar placeholder={instance.getItem("search")} />
+        {children}
+      </div>
+    </>
   );
 }

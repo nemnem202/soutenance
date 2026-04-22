@@ -10,9 +10,10 @@ import { useLanguage } from "@/hooks/use-language";
 import { PlusButton } from "@/components/ui/custom-buttons";
 import { Separator } from "@/components/ui/separator";
 import useSession from "@/hooks/use-session";
-import { Trash, UserIcon } from "lucide-react";
-import { DropdownSubMenuAddToPlaylist } from "./exercise-menu";
-import { deletePlaylist } from "@/lib/utils";
+import { ChevronRight, Heart, HeartOff, ListPlus, Trash, UserIcon } from "lucide-react";
+import { AddToPlaylistContent } from "./exercise-menu";
+import { deletePlaylist, handleLikePlaylist } from "@/lib/utils";
+import { useState } from "react";
 
 export default function PlaylistMenu({ playlist }: { playlist: PlaylistDetailDto }) {
   const { instance } = useLanguage();
@@ -23,26 +24,94 @@ export default function PlaylistMenu({ playlist }: { playlist: PlaylistDetailDto
       <DropdownMenuTrigger asChild>
         <PlusButton />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-background p-0 z-1" side="right" align="start">
-        <DropdownMenuGroup className="p-3">
-          <DropdownSubMenuAddToPlaylist currentPlaylist={playlist} />
-          <button type="button" className="all-unset" onClick={() => deletePlaylist(playlist.id)}>
-            <DropdownMenuItem variant="destructive" disabled={playlist.author.id !== session?.id}>
-              <Trash />
-              {instance.getItem("delete_playlist")}
-            </DropdownMenuItem>
-          </button>
-        </DropdownMenuGroup>
-        <Separator />
-        <DropdownMenuGroup className="p-3">
-          <a href={`/account/${playlist.author.id}`} className="all-unset">
-            <DropdownMenuItem>
-              <UserIcon />
-              {instance.getItem("author")}
-            </DropdownMenuItem>
-          </a>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
+      <PlaylistMenuContent playlist={playlist} />
     </DropdownMenu>
+  );
+}
+
+export function PlaylistMenuContent({ playlist }: { playlist: PlaylistDetailDto }) {
+  const [currentContent, setCurrentContent] = useState<"main" | "addToPlaylist">("main");
+
+  return (
+    <DropdownMenuContent
+      className="bg-background p-0 z-1 max-h-[var(--radix-dropdown-menu-content-available-height)] max-w-[var(--radix-dropdown-menu-content-available-width)] overflow-y-auto"
+      side="right"
+      align="start"
+    >
+      {currentContent === "main" && (
+        <MainContent
+          playlist={playlist}
+          onAddToPlaylistClick={() => setCurrentContent("addToPlaylist")}
+        />
+      )}
+      {currentContent === "addToPlaylist" && (
+        <AddToPlaylistContent currentPlaylist={playlist} onBack={() => setCurrentContent("main")} />
+      )}
+    </DropdownMenuContent>
+  );
+}
+
+function MainContent({
+  playlist,
+  onAddToPlaylistClick,
+}: {
+  playlist: PlaylistDetailDto;
+  onAddToPlaylistClick: () => void;
+}) {
+  const { instance } = useLanguage();
+  const { session } = useSession();
+  const [isLiked, setIsLiked] = useState(playlist.likedByCurrentUser);
+
+  return (
+    <>
+      <DropdownMenuGroup className="p-3">
+        {isLiked ? (
+          <DropdownMenuItem
+            onClick={(e) => {
+              handleLikePlaylist(e, isLiked, setIsLiked, playlist);
+            }}
+          >
+            <HeartOff />
+            {instance.getItem("remove_playlist_from_likes")}
+          </DropdownMenuItem>
+        ) : (
+          <DropdownMenuItem
+            onClick={(e) => {
+              handleLikePlaylist(e, isLiked, setIsLiked, playlist);
+            }}
+          >
+            <Heart />
+            {instance.getItem("add_playlist_to_likes")}
+          </DropdownMenuItem>
+        )}
+
+        <DropdownMenuItem
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            onAddToPlaylistClick();
+          }}
+        >
+          <ListPlus />
+          {instance.getItem("add_to_playlist")}
+          <ChevronRight className="ml-auto" />
+        </DropdownMenuItem>
+        <button type="button" className="all-unset" onClick={() => deletePlaylist(playlist.id)}>
+          <DropdownMenuItem variant="destructive" disabled={playlist.author.id !== session?.id}>
+            <Trash />
+            {instance.getItem("delete_playlist")}
+          </DropdownMenuItem>
+        </button>
+      </DropdownMenuGroup>
+      <Separator />
+      <DropdownMenuGroup className="p-3">
+        <a href={`/account/${playlist.author.id}`} className="all-unset">
+          <DropdownMenuItem>
+            <UserIcon />
+            {instance.getItem("author")}
+          </DropdownMenuItem>
+        </a>
+      </DropdownMenuGroup>
+    </>
   );
 }

@@ -7,6 +7,7 @@ import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
 import { Slider } from "../ui/slider";
 import Modal from "./modal";
+import Image from "../ui/image";
 
 export interface EditableImageProps {
   onImageChange: (image: File) => void;
@@ -71,10 +72,10 @@ export default function EditableImage({
           <Upload size={50} />
         </button>
 
-        <img
+        <Image
           className="size-full object-cover z-0"
           src={imageSource ?? PlaceholderImage}
-          alt={alt}
+          alt={alt ?? ""}
           loading="lazy"
         />
       </div>

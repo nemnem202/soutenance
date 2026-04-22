@@ -4,7 +4,6 @@ import { useData } from "vike-react/useData";
 import ArrowElipsisTopMenu from "@/components/features/layout/arrow-elipsis-top-menu";
 import { PlaylistItemsList } from "@/components/features/playlist/playlist-items";
 import SizeAdapter from "@/components/molecules/size-adapter";
-import Searchbar from "@/components/organisms/searchbar";
 import AccountPP from "@/components/ui/account-pp";
 import { LikeButton } from "@/components/ui/custom-buttons";
 import { Separator } from "@/components/ui/separator";
@@ -13,7 +12,9 @@ import type { PlaylistDetailDto } from "@/types/dtos/playlist";
 import type { Data } from "./+data";
 import { onUserLikesPlaylist, onUserUnlikesPlaylist } from "@/telefunc/like.telefunc";
 import { errorToast, successToast } from "@/lib/toaster";
-import PlaylistMenu from "@/components/features/playlist/playlist-menu";
+import PlaylistMenu, { PlaylistMenuContent } from "@/components/features/playlist/playlist-menu";
+import FilterSearchbar from "@/components/organisms/filter-searchbar";
+import Image from "@/components/ui/image";
 
 export default function Page() {
   const { currentPlaylist } = useData<Data>();
@@ -69,11 +70,11 @@ function Banner({ playlist }: { playlist: PlaylistDetailDto }) {
             <LikeButton onClick={handleLikePlaylist} liked={isLiked} />
           </div>
         }
-        sm={<ArrowElipsisTopMenu />}
+        sm={<ArrowElipsisTopMenu menuContent={<PlaylistMenuContent playlist={playlist} />} />}
       />
 
       <div className="w-50 md:w-75 md:m-0 rounded aspect-square overflow-hidden mb-8 mt-2">
-        <img
+        <Image
           src={playlist.cover.url}
           alt={playlist.cover.alt}
           width={300}
@@ -119,12 +120,18 @@ function Banner({ playlist }: { playlist: PlaylistDetailDto }) {
 
 function Content({ playlist }: { playlist: PlaylistDetailDto }) {
   const { instance } = useLanguage();
+  const [displayedExercises, setDisplayedExercises] = useState(playlist.exercises);
   return (
     <div className="w-full">
       <div className="ml-auto max-w-116 md:my-9 my-3 md:pt-9">
-        <Searchbar placeholder={instance.getItem("search_in_playlist")} />
+        <FilterSearchbar
+          placeholder={instance.getItem("search_in_playlist")}
+          type="exercises"
+          items={playlist.exercises}
+          onUpdate={setDisplayedExercises}
+        />
       </div>
-      <PlaylistItemsList playlist={playlist} />
+      <PlaylistItemsList playlist={playlist} displayedExercises={displayedExercises} />
     </div>
   );
 }

@@ -6,7 +6,6 @@ import { MediumWidgetCarousel } from "@/components/organisms/widget-carousel";
 import { useLanguage } from "@/hooks/use-language";
 import { useData } from "vike-react/useData";
 import type { Data } from "../+data";
-import { logger } from "@/lib/logger";
 
 export default function Page() {
   const data = useData<Data>();
@@ -16,7 +15,6 @@ export default function Page() {
 function Desktop({ ...data }: Data) {
   const { instance } = useLanguage();
   const { exercises, playlists, users } = data;
-  logger.info("Exercises", exercises);
   return (
     <>
       {exercises.success && exercises.data.length > 0 && (

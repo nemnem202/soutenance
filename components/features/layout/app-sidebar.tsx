@@ -4,7 +4,7 @@ import { useData } from "vike-react/useData";
 import { useLanguage } from "@/hooks/use-language";
 import useSession from "@/hooks/use-session";
 import type { Data } from "@/pages/+data";
-import { PlusButton, ShowAllButton } from "../../ui/custom-buttons";
+import { PlusButton, ShowAllButton, ShowLessButton } from "../../ui/custom-buttons";
 import Link from "../../ui/link";
 import Logo from "../../ui/logo";
 import { Separator } from "../../ui/separator";
@@ -110,7 +110,7 @@ function PlaylistItemAccorion({ playlists }: { playlists: PlaylistCardDto[] }) {
       ))}
       {playlists.slice(0, 5).length < playlists.length &&
         (isFull ? (
-          <ShowAllButton onClick={() => setIsFull(false)}>Show Less</ShowAllButton>
+          <ShowLessButton onClick={() => setIsFull(false)} />
         ) : (
           <ShowAllButton onClick={() => setIsFull(true)} />
         ))}

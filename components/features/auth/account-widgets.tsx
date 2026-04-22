@@ -4,8 +4,9 @@ import { onUserLikesUser, onUserUnlikesUser } from "@/telefunc/like.telefunc";
 import { errorToast, successToast } from "@/lib/toaster";
 import type { UserCardDto } from "@/types/dtos/user";
 import { logger } from "@/lib/logger";
-import { UserSeeAllQUery } from "@/types/navigation";
+import type { UserSeeAllQUery } from "@/types/navigation";
 import { onUserSeeAllRequest } from "@/telefunc/see-all.telefunc";
+import Image from "@/components/ui/image";
 
 export function MediumAccountWidget({ account }: { account: UserCardDto }) {
   const [isLiked, setIsLiked] = useState(account.likedByCurrentUser);
@@ -40,7 +41,7 @@ export function MediumAccountWidget({ account }: { account: UserCardDto }) {
             liked={isLiked}
           />
           <div className={`absolute inset-0 transition group-hover:opacity-80`}>
-            <img
+            <Image
               src={account.profilePicture.url}
               alt={account.profilePicture.alt}
               className="w-full h-full object-cover"

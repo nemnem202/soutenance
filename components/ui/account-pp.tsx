@@ -1,19 +1,20 @@
-import { logger } from "@/lib/logger";
-import type { Image } from "@/types/entities";
 import { Avatar } from "./avatar";
+import defaultUrl from "@/assets/images/account-default-pic.webp";
+import Image from "./image";
+import type { Image as ImageType } from "@/types/entities";
 
 export default function AccountPP({
   image = {
     alt: "Placeholder image",
-    url: "assets/images/account-default-pic.webp",
+    url: defaultUrl,
   },
 }: {
-  image?: Image;
+  image?: ImageType;
 }) {
-  logger.info("Profile picture: ", image);
   return (
     <Avatar>
-      <img
+      <Image
+        width={40}
         alt={image.alt}
         src={image.url}
         referrerPolicy="no-referrer"

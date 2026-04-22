@@ -1,17 +1,12 @@
+- optimiser l'envoi d'images cote frontend
+- retirer tous les style inline inutiles
+- retirer les duplicatas d'imports de ma font zing rust
+- unplugin-font
+- les inputs game ne sont pas interractibles en mobile
+- tous les imports depuis le dossier public doivent se faire en mode import fichier from '/assets/nom du fichier'
+- corriger l'edit de l'image
 - token csrf
 - implementer websocket avec socket.io
 - reviser securite web.pdf
-- utiliser react - virtualized
-- recuperer les images google avec la bonne taille en se basant sur un regex dans l'url
-- retirer tous les style inline inutiles
-- unplugin-font
-- retirer les duplicatas d'imports de ma font zing rust
-- tous les imports depuis le dossier public doivent se faire en mode import fichier from '/assets/nom du fichier'
-- corriger inputs game qui sopnt devenus un peu moche
-- rendre la scrollbar beaucoup moins large en mobile
-- les menus deroulants de game sont masques a cause de leur z-index
-- faire en sorte que les sous menus ne soient aps affiches a cote mais remplacent totalement le contenu du menu
-- les inputs game ne sont pas interractibles en mobile
-- les playlist items ne son pas reguliers en mobile
-- la modale pour une nouvelle playlist est trop petite en mobile, il faudrait qu'elle prenne toute la place et avoir une croix qui la ferme automatiquement
-- dvh pour le mobile
+
+

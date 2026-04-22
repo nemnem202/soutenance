@@ -1,12 +1,17 @@
 import type * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Maximize, Minimize } from "lucide-react";
 import { type ComponentProps, type ReactNode, useId, useState } from "react";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/molecules/input-group";
+import {
+  CustomInputGroupInput,
+  InputGroup,
+  InputGroupAddon,
+} from "@/components/molecules/input-group";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/molecules/tooltip";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import useScreen from "@/hooks/use-screen";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
   return (
@@ -114,7 +119,8 @@ export function SmallInput({
   tooltip?: ReactNode;
 } & ComponentProps<"input">) {
   const id = useId();
-  if (tooltip) {
+  const isMobile = useScreen() === "sm";
+  if (tooltip && !isMobile) {
     return (
       <Tooltip>
         <TooltipTrigger>
@@ -123,7 +129,7 @@ export function SmallInput({
               {label}
             </Label>
             <InputGroup className="w-full border-none !bg-popover h-full !rounded-xs">
-              <InputGroupInput
+              <CustomInputGroupInput
                 id={id}
                 {...props}
                 className={`paragraph-sm h-6 full !rounded-xs text-left! ${!icon && "pl-1"}`}
@@ -146,7 +152,7 @@ export function SmallInput({
           {label}
         </Label>
         <InputGroup className="w-full border-none !bg-popover h-full !rounded-xs">
-          <InputGroupInput
+          <CustomInputGroupInput
             id={id}
             {...props}
             className={`paragraph-sm h-6 full !rounded-xs text-left! ${!icon && "pl-1"}`}

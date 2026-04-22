@@ -1,10 +1,10 @@
 import { Play, Settings, Square } from "lucide-react";
 import { Field, FieldLabel } from "@/components/molecules/field";
-import { Input } from "@/components/ui/custom_input";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
 import type { Gameprops } from "@/pages/game/+Page";
 import { ControlsSection, IconButton } from "./game-assets";
+import { CustomInput } from "@/components/ui/custom_input";
 
 export default function DesktopGameControlsSection({ ...props }: Gameprops) {
   const { instance } = useLanguage();
@@ -22,7 +22,7 @@ export default function DesktopGameControlsSection({ ...props }: Gameprops) {
         </IconButton>
         <Separator orientation="vertical" className="!h-6" />
         <Field className="flex flex-row items-center justify-center !w-min">
-          <Input
+          <CustomInput
             id="bpm"
             type="number"
             defaultValue={"120"}

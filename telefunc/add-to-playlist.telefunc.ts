@@ -34,3 +34,21 @@ export async function onAddExerciseToPlaylist(targetPlaylistId: number, exercise
     repository.addExerciseToPlaylist(targetPlaylistId, exerciseToAddId, user.id)
   );
 }
+
+export async function onAddMultiExerciseToPlaylist(
+  targetPlaylistId: number,
+  exercisesToAddIds: number[]
+) {
+  const user = getContext().user;
+
+  if (!user)
+    return {
+      success: false,
+      status: Status.NotConnected,
+      title: "You are not connected",
+    };
+  const repository = new PlaylistRepository(prismaClient);
+  return handleAction("Add Exercise to playlist", () =>
+    repository.addManyExercisesToPlaylist(targetPlaylistId, exercisesToAddIds, user.id)
+  );
+}

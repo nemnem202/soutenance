@@ -1,20 +1,26 @@
-import { type MouseEvent, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import SizeAdapter from "@/components/molecules/size-adapter";
 import { WidgetTitle } from "@/components/organisms/widget-carousel";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { LikeButton, MenuButton } from "@/components/ui/custom-buttons";
+import { LikeButton } from "@/components/ui/custom-buttons";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
 import type { ExerciseCardDto } from "@/types/dtos/exercise";
 import type { PlaylistDetailDto } from "@/types/dtos/playlist";
-import { onUserLikesExercise, onUserUnlikesExercise } from "@/telefunc/like.telefunc";
-import { errorToast, successToast } from "@/lib/toaster";
 import useSession from "@/hooks/use-session";
 import { Plus } from "lucide-react";
-import ExerciseContextMenuButton from "./exercise-menu";
+import ExerciseContextMenuButton, { MultiExerciseContextMenuButton } from "./exercise-menu";
+import { handleLikeExercise } from "@/lib/utils";
+import Image from "@/components/ui/image";
 
-export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto }) {
+export function PlaylistItemsList({
+  playlist,
+  displayedExercises,
+}: {
+  playlist: PlaylistDetailDto;
+  displayedExercises: ExerciseCardDto[];
+}) {
   const { instance } = useLanguage();
   const { session } = useSession();
   const [selected, setSelected] = useState<ExerciseCardDto[]>([]);
@@ -54,9 +60,9 @@ export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto })
             }
           />
           <PlaylistItemBox>
-            <MenuButton
-              className={`${selected.length !== playlist.exercises.length && "hidden"}`}
-            />
+            <div className={`${selected.length < 2 && "hidden"}`}>
+              <MultiExerciseContextMenuButton exercises={selected} playlistContext={playlist} />
+            </div>
           </PlaylistItemBox>
           <PlaylistItemBox className="!min-w-8">
             <Checkbox
@@ -69,7 +75,7 @@ export function PlaylistItemsList({ playlist }: { playlist: PlaylistDetailDto })
       <Separator orientation="horizontal" />
       <div className="w-full flex flex-col justify-between  py-0 mt-2">
         {session?.id === playlist.author.id && <AddNewExercisePlaylistItem />}
-        {playlist.exercises.map((exercise, index) => (
+        {displayedExercises.map((exercise, index) => (
           <PlaylistItem
             index={index}
             key={index}
@@ -124,34 +130,14 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
   const { exercise } = props;
   const [isLiked, setIsLiked] = useState(exercise.likedByCurrentUser);
   if (!exercise) return null;
-  const handleLikeExercise = async (e: MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (isLiked) {
-      const response = await onUserUnlikesExercise(exercise.id);
-      if (!response.success) {
-        errorToast(response.title, response.description);
-      } else {
-        successToast(`${exercise.title} was removed from your likes`);
-        setIsLiked(false);
-      }
-    } else {
-      const response = await onUserLikesExercise(exercise.id);
-      if (!response.success) {
-        errorToast(response.title, response.description);
-      } else {
-        successToast(`${exercise.title} was added to your likes`);
-        setIsLiked(true);
-      }
-    }
-  };
+
   return (
     <a
       className=" flex justify-between items-center py-1 pl-1 my-1 relative cursor-pointer hover:bg-popover pr-4 transition"
       href="/game"
     >
       <div className="flex items-center h-15">
-        <img
+        <Image
           className="w-15 h-15 object-cover "
           width={60}
           height={60}
@@ -188,7 +174,12 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
       </div>
       <div className="flex items-center">
         <PlaylistItemBox>
-          <LikeButton onClick={handleLikeExercise} liked={isLiked} />
+          <LikeButton
+            onClick={(e) => {
+              handleLikeExercise(e, isLiked, setIsLiked, exercise);
+            }}
+            liked={isLiked}
+          />
         </PlaylistItemBox>
         <PlaylistItemBox>
           <p className="paragraph-md text-muted-foreground">{exercise.defaultConfig.bpm}</p>
@@ -223,35 +214,14 @@ export function SearchPlaylistItem({ ...props }: SearchPLaylistItemProps) {
   const { exercise } = props;
   const [isLiked, setIsLiked] = useState(exercise.likedByCurrentUser);
   if (!exercise) return null;
-  const handleLikeExercise = async (e: MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (isLiked) {
-      const response = await onUserUnlikesExercise(exercise.id);
-      if (!response.success) {
-        errorToast(response.title, response.description);
-      } else {
-        successToast(`${exercise.title} was removed from your likes`);
-        setIsLiked(false);
-      }
-    } else {
-      const response = await onUserLikesExercise(exercise.id);
-      if (!response.success) {
-        errorToast(response.title, response.description);
-      } else {
-        successToast(`${exercise.title} was added to your likes`);
-        setIsLiked(true);
-      }
-    }
-  };
 
   return (
     <a
-      className="flex justify-between items-center py-1 pl-1 my-1 relative cursor-pointer hover:bg-popover pr-4"
+      className="flex justify-between items-center py-1 pl-1 my-1 relative cursor-pointer hover:bg-popover pr-4 "
       href="/game"
     >
       <div className="flex items-center h-15">
-        <img
+        <Image
           className="w-15 h-15 object-cover"
           width={60}
           height={60}
@@ -260,7 +230,7 @@ export function SearchPlaylistItem({ ...props }: SearchPLaylistItemProps) {
         />
         <div className="flex flex-1 min-w-0 h-fit gap-3">
           <div className="flex flex-1 flex-col min-w-0 pl-2 gap-1">
-            <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis">
+            <p className="title-4 whitespace-nowrap overflow-hidden text-ellipsis ">
               {exercise.title}
             </p>
             <p className="paragraph-md text-muted-foreground">{exercise.author.username}</p>
@@ -290,13 +260,20 @@ export function SearchPlaylistItem({ ...props }: SearchPLaylistItemProps) {
         <SizeAdapter
           md={
             <PlaylistItemBox className="w-40 min-w-40 justify-start">
-              <p className="paragraph-md text-muted-foreground">{exercise.author.username}</p>
+              <p className="paragraph-md text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
+                {exercise.author.username}
+              </p>
             </PlaylistItemBox>
           }
         />
 
         <PlaylistItemBox>
-          <LikeButton onClick={handleLikeExercise} liked={isLiked} />
+          <LikeButton
+            onClick={(e) => {
+              handleLikeExercise(e, isLiked, setIsLiked, exercise);
+            }}
+            liked={isLiked}
+          />
         </PlaylistItemBox>
 
         <PlaylistItemBox>

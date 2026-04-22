@@ -40,10 +40,10 @@ enum AuthProvider {
 }
 
 model UserLikesUser {
-   likedUser User @relation("LikedByUsers", fields: [likedId], references: [id])
+   likedUser User @relation("LikedByUsers", fields: [likedId], references: [id], onDelete: Cascade)
    likedId   Int
 
-   likingUser User @relation("LikingUser", fields: [likingId], references: [id])
+   likingUser User @relation("LikingUser", fields: [likingId], references: [id], onDelete: Cascade)
    likingId   Int
 
    @@id([likedId, likingId])

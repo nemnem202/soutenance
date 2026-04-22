@@ -7,7 +7,6 @@ import {
   UserSearchbarItem,
 } from "@/components/organisms/searchbar";
 import { Spinner } from "@/components/ui/spinner";
-import { logger } from "@/lib/logger";
 import { errorToast } from "@/lib/toaster";
 import type { AnySearch } from "@/repositories/searchRepository";
 import onSearch from "@/telefunc/search.telefunc";
@@ -79,7 +78,6 @@ export default function useSearchbar({ ...props }: SearchbarProps) {
   }, [userInput]);
 
   useEffect(() => {
-    logger.info("results", searchResults);
     if (!searchResults) return;
     const exercisesItems = searchResults.exercises.map((exercise) => {
       const text = `${exercise.title} - ${exercise.author.username}`;

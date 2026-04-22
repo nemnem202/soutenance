@@ -28,7 +28,6 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previousActiveElementRef = useRef<HTMLElement | null>(null);
-  // useOnClickOutside(modalRef, () => onClose());
   const [mounted, setMounted] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
@@ -113,7 +112,7 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
               onClick={(e) => e.stopPropagation()}
               aria-labelledby={titleId}
               aria-modal="true"
-              className={`${modalSizes[size]} relative mx-auto w-fit overflow-hidden md:w-full rounded-xl border bg-card shadow-xl  pointer-events-auto `}
+              className={`${modalSizes[size]} relative mx-auto md:w-fit w-full overflow-hidden md:w-full md:rounded-xl md:border bg-card shadow-xl  pointer-events-auto `}
               ref={modalRef}
               role="dialog"
               animate={shouldReduceMotion ? {} : { scale: 1, y: 0, opacity: 1 }}
@@ -140,7 +139,9 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
               }
             >
               <ModalContext.Provider value={modalRef.current}>
-                <div className="relative max-h-[90vh] overflow-y-auto p-4 sm:p-6">{children}</div>
+                <div className="relative md:max-h-[90vh] md:h-fit h-screen overflow-y-auto p-4 sm:p-6">
+                  {children}
+                </div>
               </ModalContext.Provider>
             </motion.div>
           </div>

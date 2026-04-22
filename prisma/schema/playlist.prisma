@@ -12,13 +12,13 @@ model Playlist {
 
     tags PlaylistTag[]
 
-    author             User                @relation(fields: [authorId], references: [id])
+    author             User                @relation(fields: [authorId], references: [id], onDelete: Cascade)
     authorId           Int
     userLikesPlaylists UserLikesPlaylist[]
 }
 
 model PlaylistIncludesExercise {
-    exercise   Exercise @relation(fields: [exerciseId], references: [id])
+    exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
     exerciseId Int
 
     playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
