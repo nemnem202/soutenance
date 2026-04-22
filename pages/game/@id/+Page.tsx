@@ -13,8 +13,19 @@ import { useLanguage } from "@/hooks/use-language";
 import Headline from "@/components/ui/headline";
 import MobileHeaderNavContainer from "@/components/features/layout/mobile-header-nav-container";
 import { HistoryBackButton } from "@/components/ui/custom-buttons";
+import { Exercise } from "@/types/entities";
+import { useData } from "vike-react/useData";
+import { Data } from "./+data";
 
 export default function Page() {
+  const { exercise } = useData<Data>();
+
+  if (!exercise.success) return null;
+
+  return <Content exercise={exercise.data} />;
+}
+
+function Content({ exercise }: { exercise: Exercise }) {
   const [sidebarOpen, setOpen] = useState(false);
   const [drawersVisible, setDrawersVisible] = useState(true);
   return (
