@@ -25,12 +25,11 @@ export class SongInterpreter {
     /^[[\]{}||Z]/,
     /^\*[a-zA-Z]/,
     /^T\d\d/,
-    /^N./,
+    /^N[0-9]/,
     /^Y+/,
     SongInterpreter.chordRegex,
     SongInterpreter.chordRegex2,
   ];
-
   constructor(ireal: string, oldFormat: boolean = false) {
     this.cells = [];
 

@@ -222,13 +222,7 @@ type ParsedBars = {
 };
 
 function parseBars(bars: string): ParsedBars {
-  if (bars === "vide" || bars === "") {
-    return { leftBar: null, rightBar: null, isEmpty: false };
-  }
-
-  if (bars === "()") {
-    return { leftBar: null, rightBar: null, isEmpty: true };
-  }
+  if (bars === "") return { leftBar: null, rightBar: null, isEmpty: false };
 
   const LEFT_MAP: Record<string, ParsedBars["leftBar"]> = {
     "(": "single",
@@ -249,7 +243,7 @@ function parseBars(bars: string): ParsedBars {
   return {
     leftBar: LEFT_MAP[leftChar] ?? null,
     rightBar: RIGHT_MAP[rightChar] ?? null,
-    isEmpty: false,
+    isEmpty: bars === "()",
   };
 }
 
@@ -388,10 +382,6 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
 
     const section = ensureSection();
 
-    if (parsedBars.leftBar !== null && currentMeasure && currentMeasure.cells.length > 0) {
-      pushMeasure();
-    }
-
     if (parsedAnnots.volta !== null) {
       pushMeasure();
       currentVolta = {
@@ -399,6 +389,10 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
         measures: [],
       };
       section.voltas.push(currentVolta);
+    }
+
+    if (parsedBars.leftBar !== null && currentMeasure && currentMeasure.cells.length > 0) {
+      pushMeasure();
     }
 
     if (!currentMeasure) {
@@ -409,7 +403,7 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
       };
     }
 
-    if (parsedBars.isEmpty) {
+    if (parsedBars.isEmpty && !cellIreal.chord) {
       currentMeasure.cells.push({ kind: "Empty", index: cellIreal.index });
     } else {
       currentMeasure.cells.push(convertCell(cellIreal));

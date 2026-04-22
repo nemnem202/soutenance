@@ -101,6 +101,9 @@ export default class ExerciseRepository extends Repository {
   private voltaMapper(volta: VoltaSchema): Prisma.VoltaBracketCreateWithoutSectionInput {
     return {
       volta: volta.volta,
+      measures: {
+        create: volta.measures.map((measure) => this.measureMapper(measure)),
+      },
     };
   }
 
