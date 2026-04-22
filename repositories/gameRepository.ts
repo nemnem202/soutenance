@@ -72,12 +72,6 @@ export default class GameRepository extends Repository {
                             timeSignatureChangeBottom: true,
                             keychange: true,
                             kind: true,
-                            bars: {
-                              select: {
-                                left: true,
-                                right: true,
-                              },
-                            },
                             chord: {
                               select: {
                                 modifier: true,
@@ -119,12 +113,6 @@ export default class GameRepository extends Repository {
                         timeSignatureChangeBottom: true,
                         keychange: true,
                         kind: true,
-                        bars: {
-                          select: {
-                            left: true,
-                            right: true,
-                          },
-                        },
                         chord: {
                           select: {
                             modifier: true,

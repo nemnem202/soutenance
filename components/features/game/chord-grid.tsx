@@ -1,8 +1,8 @@
 import useGame from "@/hooks/use-game";
 import { useLanguage } from "@/hooks/use-language";
-import type { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
 import { logger } from "@/lib/logger";
-import { type ReactNode, useEffect } from "react";
+import type { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
+import type { ReactNode } from "react";
 
 export default function ChordGrid() {
   const { exercise } = useGame();
@@ -28,6 +28,7 @@ export default function ChordGrid() {
 }
 
 function Section({ section }: { section: SectionSchema }) {
+  logger.info("voltas", section.voltas);
   return (
     <div className="flex flex-col gap-2">
       {section.type !== "Generic" && <SectionLabel label={section.type} />}
@@ -41,7 +42,6 @@ function Section({ section }: { section: SectionSchema }) {
         {section.voltas.map((volta, index) => (
           <>
             <SectionLabel label={`Volta ${volta.volta}`} />
-
             {volta.measures
               .sort((a, b) => a.index - b.index)
               .map((measure) => (
@@ -56,32 +56,27 @@ function Section({ section }: { section: SectionSchema }) {
 
 function MeasureBlock({ measure }: { measure: MeasureSchema }) {
   return (
-    <div className="flex w-full h-12 relative">
-      <div id="right">{measure.bars.right && <RightBar bar={measure.bars.right} />}</div>
+    <div className="flex w-full h-12 relative items-center">
+      {measure.bars.left && <LeftBar bar={measure.bars.left} />}
       {measure.cells
         .sort((a, b) => a.index - b.index)
         .map((cell, index) => (
           <CellGroup cell={cell} measure={measure} key={index} />
         ))}
-      <div className="absolute -right-[0.5px] top-0 h-12 bg-muted-foreground/50 w-[2px]" />
-      {measure.bars.left && <LeftBar bar={measure.bars.left} />}
+      <div id="right">{measure.bars.right && <RightBar bar={measure.bars.right} />}</div>
     </div>
   );
 }
 
 function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureSchema }) {
-  useEffect(() => {
-    logger.info("Cell", cell);
-  }, [cell]);
-
   const renderCellContent = (): ReactNode => {
     switch (cell.kind) {
       case "Chord":
         return <ChordCell cell={cell} />;
       case "Empty":
-        return null;
+        return <EmptyCell cell={cell} />;
       case "Spacer":
-        return null;
+        return <SpacerCell cell={cell} />;
       default:
         return null;
     }

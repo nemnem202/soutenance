@@ -32,7 +32,6 @@ function validateAndConvertChord(chordIreal: ChordIreal): ChordSchema {
     W: "%",
     P: "%",
     N: "C",
-    H: "B",
     "": "C",
     " ": "C",
   };
@@ -350,46 +349,29 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
   let measureIndex = 0;
   let sectionIndex = 0;
 
+  function ensureSection(type: SectionType = SectionType.Generic) {
+    if (!currentSection) {
+      currentSection = {
+        index: sectionIndex++,
+        type,
+        label: getSectionLabel(type, sectionIndex),
+        commonMeasures: [],
+        voltas: [],
+      };
+    }
+    return currentSection;
+  }
+
   function pushMeasure() {
     if (!currentMeasure || currentMeasure.cells.length === 0) return;
-    if (!currentSection) return;
+    const section = ensureSection();
 
     if (currentVolta) {
       currentVolta.measures.push(currentMeasure);
     } else {
-      currentSection.commonMeasures.push(currentMeasure);
+      section.commonMeasures.push(currentMeasure);
     }
     currentMeasure = null;
-  }
-
-  function pushSection() {
-    if (!currentSection) return;
-    pushMeasure();
-    sections.push(currentSection);
-    currentSection = null;
-    currentVolta = null;
-  }
-
-  function startSection(type: SectionType) {
-    pushSection();
-    currentSection = {
-      index: sectionIndex++,
-      type,
-      label: getSectionLabel(type, sectionIndex),
-      commonMeasures: [],
-      voltas: [],
-    };
-    currentMeasure = { index: measureIndex++, cells: [], bars: { left: null, right: null } };
-  }
-
-  function startVolta(volta: 1 | 2 | 3) {
-    if (!currentSection) {
-      throw new IrealConversionError("buildSections", `Volta ${volta} sans section parente`);
-    }
-    pushMeasure();
-    currentVolta = { volta, measures: [] };
-    currentSection.voltas.push(currentVolta);
-    currentMeasure = { index: measureIndex++, cells: [], bars: { left: null, right: null } };
   }
 
   for (const cellIreal of cells) {
@@ -397,56 +379,50 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
     const parsedBars = parseBars(cellIreal.bars);
 
     if (parsedAnnots.sectionType !== null) {
-      startSection(parsedAnnots.sectionType);
+      pushMeasure();
+      if (currentSection) sections.push(currentSection);
+      currentSection = null;
+      ensureSection(parsedAnnots.sectionType);
+      currentVolta = null;
     }
 
-    if (!currentSection) {
-      startSection(SectionType.Generic);
-    }
+    const section = ensureSection();
 
     if (parsedBars.leftBar !== null && currentMeasure && currentMeasure.cells.length > 0) {
       pushMeasure();
-      currentMeasure = {
-        index: measureIndex++,
-        cells: [],
-        bars: { left: parsedBars.leftBar, right: parsedBars.rightBar },
-      };
     }
 
     if (parsedAnnots.volta !== null) {
-      startVolta(parsedAnnots.volta);
+      pushMeasure();
+      currentVolta = {
+        volta: parsedAnnots.volta as 1 | 2 | 3,
+        measures: [],
+      };
+      section.voltas.push(currentVolta);
+    }
+
+    if (!currentMeasure) {
+      currentMeasure = {
+        index: measureIndex++,
+        cells: [],
+        bars: { left: parsedBars.leftBar, right: null },
+      };
     }
 
     if (parsedBars.isEmpty) {
-      currentMeasure ??= { index: measureIndex++, cells: [], bars: { left: null, right: null } };
-      currentMeasure.cells.push({
-        kind: "Empty",
-
-        index: cellIreal.index,
-      });
+      currentMeasure.cells.push({ kind: "Empty", index: cellIreal.index });
     } else {
-      const cell = convertCell(cellIreal);
-      currentMeasure ??= {
-        index: measureIndex++,
-        cells: [],
-        bars: { left: parsedBars.leftBar, right: parsedBars.rightBar },
-      };
-      currentMeasure.cells.push(cell);
+      currentMeasure.cells.push(convertCell(cellIreal));
     }
 
-    if (parsedBars.rightBar === "final" || parsedBars.rightBar === "sectionClose") {
+    if (parsedBars.rightBar !== null) {
+      currentMeasure.bars.right = parsedBars.rightBar;
       pushMeasure();
-      if (parsedBars.rightBar === "final") {
-        pushSection();
-      }
     }
   }
 
-  pushSection();
-
-  if (sections.length === 0) {
-    throw new IrealConversionError("buildSections", "Aucune section trouvée dans la grille");
-  }
+  pushMeasure();
+  if (currentSection) sections.push(currentSection);
 
   return sections;
 }

@@ -113,7 +113,7 @@ export const voltaSchema = z.object({
 });
 
 export const sectionSchema = z.object({
-  index: z.int(),
+  index: z.number().int(),
   label: z.string().min(1, "The label is empty").max(50, "The label is too long"),
   type: sectionType,
   commonMeasures: z.array(measureSchema).max(200, "The section has too many measures."),

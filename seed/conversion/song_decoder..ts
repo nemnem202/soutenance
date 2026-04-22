@@ -15,7 +15,7 @@ export class SongInterpreter {
   repeats: number;
   cells: CellIreal[];
 
-  static chordRegex: RegExp = /^([A-G][b#]?|h)([abdijlmnoqrstu0-9+\-^#]{0,15})?(\/[A-G][b#]?)?/;
+  static chordRegex: RegExp = /^([A-G][b#]?)([abdijlmnoqrstu0-9+\-^#]{0,15})?(\/[A-G][b#]?)?/;
   static chordRegex2: RegExp = /^([Wpxr n])(\/[A-G][#b]?)?/;
   static alternativeChordRegex: RegExp = /^\((.+?)\)/;
 
