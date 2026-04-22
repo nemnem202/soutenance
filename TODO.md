@@ -10,3 +10,9 @@
 - reviser securite web.pdf
 
 
+
+
+- Chaque cell est dans l'ordre inverse
+- Les spacers semblent pouvoir contenir des accords
+- Les voltas sont vides alors qu'elles devraient contenir des mesures
+- pas de bars de repetition
