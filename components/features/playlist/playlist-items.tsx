@@ -134,7 +134,7 @@ export function PlaylistItem({ ...props }: PLaylistItemProps) {
   return (
     <a
       className=" flex justify-between items-center py-1 pl-1 my-1 relative cursor-pointer hover:bg-popover pr-4 transition"
-      href="/game"
+      href={`/game/${exercise.id}`}
     >
       <div className="flex items-center h-15">
         <Image
@@ -218,7 +218,7 @@ export function SearchPlaylistItem({ ...props }: SearchPLaylistItemProps) {
   return (
     <a
       className="flex justify-between items-center py-1 pl-1 my-1 relative cursor-pointer hover:bg-popover pr-4 "
-      href="/game"
+      href={`/game/${exercise.id}`}
     >
       <div className="flex items-center h-15">
         <Image
