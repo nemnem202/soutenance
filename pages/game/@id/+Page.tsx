@@ -21,12 +21,10 @@ import PianoRoll from "@/midi-editor/components/piano-roll";
 import { ClientOnly } from "vike-react/ClientOnly";
 import { MidiProvider, useMidiActions } from "@/midi-editor/providers/midi-provider";
 import type { State } from "@/midi-editor/types/instance";
-import { logger } from "@/lib/logger";
 import { convertMidiFileToState, getMidiFile } from "@/midi-editor/lib/midiconverter";
 import midiFile from "@/assets/midi/FlyMeToTheMoon.mid?url";
 
 export default function Page() {
-  logger.info("Game page");
   const { exercise } = useData<Data>();
   const [midiState, setMidiState] = useState<State | null>(null);
 
@@ -119,7 +117,10 @@ function Game({ ...props }: Gameprops) {
   const [activeTab, setActiveTab] = useState<TabID>("chords");
 
   return (
-    <div className="size-full lg:px-10 md:py-5  flex flex-col gap-2 min-w-0">
+    <div
+      className="size-full lg:px-10 md:py-5  flex flex-col gap-2 min-w-0"
+      onClickCapture={() => startAudio()}
+    >
       <div className="flex-1 flex flex-col">
         <div className="w-full flex  gap-2 justify-between">
           <div className="col-1 flex flex-1  items-center">
@@ -129,11 +130,7 @@ function Game({ ...props }: Gameprops) {
           <div className="col-2 flex-1 justify-center hidden sm:flex">
             <AnimatedTabs
               activeTab={activeTab}
-              onChange={(v) => {
-                startAudio().then(() =>
-                  setActiveTab(v as "piano-roll" | "chords" | "sheet" | "guitar")
-                );
-              }}
+              onChange={(v) => setActiveTab(v as "piano-roll" | "chords" | "sheet" | "guitar")}
               tabs={tabs}
               variant="pill"
               className="my-2"
