@@ -227,7 +227,7 @@ export function Tab({ children }: { children: ReactNode }) {
     return (
       <div
         {...interactiveProps}
-        className="size-full md:bg-card md:rounded-md relative overflow-hidden"
+        className="size-full md:bg-card md:rounded-md relative md:overflow-hidden"
       >
         <div className="hidden md:block">
           <FullScreenButton hover={hover} fullScreen={fullScreen} setFullScreen={setFullScreen} />

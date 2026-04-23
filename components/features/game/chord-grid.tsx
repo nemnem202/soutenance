@@ -39,13 +39,16 @@ function Section({ section }: { section: SectionSchema }) {
           .map((measure) => (
             <MeasureBlock measure={measure} key={measure.index} />
           ))}
-        {section.voltas.map((volta, index) => (
+        {section.voltas.map((volta) => (
           <>
-            <SectionLabel label={`Volta ${volta.volta}`} />
             {volta.measures
               .sort((a, b) => a.index - b.index)
-              .map((measure) => (
-                <MeasureBlock measure={measure} key={measure.index} />
+              .map((measure, index) => (
+                <MeasureBlock
+                  measure={measure}
+                  key={measure.index}
+                  volta={index === 0 ? volta.volta : undefined}
+                />
               ))}
           </>
         ))}
@@ -54,16 +57,17 @@ function Section({ section }: { section: SectionSchema }) {
   );
 }
 
-function MeasureBlock({ measure }: { measure: MeasureSchema }) {
+function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: number }) {
   return (
     <div className="flex w-full h-12 relative items-center">
+      {volta && <VoltaBracket volta={volta} />}
       {measure.bars.left && <LeftBar bar={measure.bars.left} />}
       {measure.cells
         .sort((a, b) => a.index - b.index)
         .map((cell, index) => (
           <CellGroup cell={cell} measure={measure} key={index} />
         ))}
-      <div id="right">{measure.bars.right && <RightBar bar={measure.bars.right} />}</div>
+      {measure.bars.right && <RightBar bar={measure.bars.right} />}
     </div>
   );
 }
@@ -84,17 +88,13 @@ function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureSchema
 
   return (
     <div
-      className=" px-0.5 md:px-2 h-full overflow-hidden flex justify-between items-center gap-1"
+      className="px-0.5 md:px-2 h-full overflow-hidden flex justify-between items-center gap-1"
       style={{ width: `${100 / measure.cells.length}%` }}
     >
-      <div id="left" className="flex items-center">
-        {cell.timeSignatureChangeBottom && cell.timeSignatureChangeTop && (
-          <TimeSignature
-            top={cell.timeSignatureChangeTop}
-            bottom={cell.timeSignatureChangeBottom}
-          />
-        )}
-      </div>
+      {cell.timeSignatureChangeBottom && cell.timeSignatureChangeTop && (
+        <TimeSignature top={cell.timeSignatureChangeTop} bottom={cell.timeSignatureChangeBottom} />
+      )}
+
       {renderCellContent()}
     </div>
   );
@@ -120,7 +120,11 @@ function ChordCell({ cell }: { cell: ChordCellType }) {
 }
 
 function EmptyCell({ cell }: { cell: EmptyCellType }) {
-  return <div className="w-full h-full border border-primary">@{cell.index}</div>;
+  return (
+    <div className="w-full h-full border flex items-center justify-center opacity-40">
+      {cell.index}
+    </div>
+  );
 }
 
 function SpacerCell({ cell }: { cell: SpacerCellType }) {
@@ -129,7 +133,7 @@ function SpacerCell({ cell }: { cell: SpacerCellType }) {
 
 function TimeSignature({ top, bottom }: { top: number; bottom: number }) {
   return (
-    <div className="flex flex-col text-xs leading-none paragraph-md">
+    <div className="flex flex-col text-xs -left-3 leading-none paragraph-md absolute">
       <span>{top}</span>
       <div className="h-[1px] w-full border border-foreground" />
       <span>{bottom}</span>
@@ -141,37 +145,58 @@ function LeftBar({ bar }: { bar: BarsSchema["left"] }) {
   const getBar = () => {
     switch (bar) {
       case "single":
-        return "(";
+        return null;
       case "repeatOpen":
-        return "[";
+        return null;
       case "sectionOpen":
-        return "{";
+        return (
+          <div className="w-3 h-full border-l-2 border-primary absolute top-0 -left-0.5 rounded-lg flex items-center text-primary text-center justify-center">
+            <span>:</span>
+          </div>
+        );
     }
   };
 
-  return <span className="text-primary">{getBar()}</span>;
+  return <div className="relative h-full">{getBar()}</div>;
 }
 
 function RightBar({ bar }: { bar: BarsSchema["right"] }) {
   const getBar = () => {
     switch (bar) {
       case "single":
-        return ")";
+        return <div className="w-px h-full bg-primary absolute top-0 right-0" />;
       case "repeatClose":
-        return "]";
+        return <div className="w-1 h-full border-x border-primary absolute top-0 -right-0.5" />;
       case "sectionClose":
-        return "}";
+        return (
+          <div className="w-3 h-full border-r-2 border-primary absolute top-0 -right-0.5 rounded-lg flex items-center text-primary text-center justify-center">
+            <span>:</span>
+          </div>
+        );
       case "final":
-        return "Z";
+        return (
+          <>
+            <span className="h-full flex items-center pr-1 text-primary">:</span>
+            <div className="w-1 h-full border-x border-primary absolute top-0 -right-0.5" />
+          </>
+        );
     }
   };
-  return <span className="text-primary">{getBar()}</span>;
+  return <div className="relative h-full">{getBar()}</div>;
 }
 
 function SectionLabel({ label }: { label: string }) {
   return (
     <div className="w-fit aspect-square border bg-popover paragraph-md rounded-xs text-secondary font-mono font-bold flex items-center justify-center">
       {label}
+    </div>
+  );
+}
+
+function VoltaBracket({ volta }: { volta?: number }) {
+  return (
+    <div className="absolute inset-0 h-[30%] w-[60%] left-1 -top-1 border-1 border-r-0 border-b-0 border-secondary text-secondary">
+      <p className="paragraph-sm px-1 font-bold">{volta}.</p>
     </div>
   );
 }
