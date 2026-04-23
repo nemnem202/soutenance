@@ -32,7 +32,7 @@ function Section({ section }: { section: SectionSchema }) {
     <div className="flex flex-col gap-2">
       {section.type !== "Generic" && <SectionLabel label={section.type} />}
 
-      <div className="w-full grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-y-2">
+      <div className="w-full grid grid-cols-4 gap-y-2">
         {section.commonMeasures
           .sort((a, b) => a.index - b.index)
           .map((measure) => (
@@ -108,8 +108,8 @@ type SpacerCellType = Extract<CellSchema, { kind: "Spacer" }>;
 
 function ChordCell({ cell }: { cell: ChordCellType }) {
   return (
-    <div className=" rounded-md h-full w-full flex items-center ">
-      <p className="whitespace-nowrap font-mono semibold text-xl flex lg:gap-1">
+    <div className="h-min w-full flex items-center p-1">
+      <p className="whitespace-nowrap font-mono semibold text-xl flex h-fit lg:gap-1">
         <span>{cell.chord.content.note}</span>
         {cell.chord.content.modifier && (
           <span className="text-muted-foreground  paragraph-sm max-w[50%]">

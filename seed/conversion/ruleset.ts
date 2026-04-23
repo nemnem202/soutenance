@@ -37,6 +37,10 @@ function filterUselessCells(cells: Cell[]): Cell[] {
     return [cells[0], cells[2]];
   }
 
+  if (matchCellsPattern([true, false, false, false, true, false, false, false], cells)) {
+    return [cells[0], cells[4]];
+  }
+
   return cells;
 }
 
