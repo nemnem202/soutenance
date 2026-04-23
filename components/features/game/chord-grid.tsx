@@ -2,7 +2,7 @@ import useGame from "@/hooks/use-game";
 import { useLanguage } from "@/hooks/use-language";
 import { logger } from "@/lib/logger";
 import type { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
 export default function ChordGrid() {
   const { exercise } = useGame();
@@ -28,7 +28,6 @@ export default function ChordGrid() {
 }
 
 function Section({ section }: { section: SectionSchema }) {
-  logger.info("voltas", section.voltas);
   return (
     <div className="flex flex-col gap-2">
       {section.type !== "Generic" && <SectionLabel label={section.type} />}
@@ -58,6 +57,9 @@ function Section({ section }: { section: SectionSchema }) {
 }
 
 function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: number }) {
+  useEffect(() => {
+    logger.info("Measure", measure);
+  }, [measure]);
   return (
     <div className="flex w-full h-12 relative items-center">
       {volta && <VoltaBracket volta={volta} />}

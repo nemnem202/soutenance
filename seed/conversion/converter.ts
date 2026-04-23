@@ -14,6 +14,7 @@ import type {
 } from "@/types/entities";
 import type { Note } from "@/types/music";
 import type { CellIreal, ChordIreal, PlaylistIreal, SongIreal } from "./chart_decoder";
+import applyRuleset from "./ruleset";
 
 class IrealConversionError extends Error {
   constructor(context: string, message: string) {
@@ -326,13 +327,15 @@ function convertSong(song: SongIreal): ExerciseSchema {
 
   const sections = buildSections(cells);
 
-  return {
+  const exercise = {
     title: song.title,
     composer: song.composer,
     chordsGrid: { sections },
     defaultConfig: config,
     midifileUrl: null,
   };
+
+  return exercise;
 }
 
 function buildSections(cells: CellIreal[]): SectionSchema[] {
@@ -430,7 +433,9 @@ export function convertPlaylist(playlistIreal: PlaylistIreal): {
 
   for (const song of playlistIreal.songs) {
     try {
-      exercises.push(convertSong(song));
+      const converted = convertSong(song);
+      applyRuleset(converted);
+      exercises.push(converted);
     } catch (err) {
       failures.push({
         title: song.title,
