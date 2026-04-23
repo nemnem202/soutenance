@@ -58,6 +58,11 @@ export const noteSchema = z.enum([
 
 export const cellKindSchema = z.enum(["Chord", "Spacer", "Empty"]);
 
+export const barsSchema = z.object({
+  left: z.enum(["single", "repeatOpen", "sectionOpen"]).optional().nullable(),
+  right: z.enum(["single", "repeatClose", "sectionClose", "final"]).optional().nullable(),
+});
+
 export const chordchema = z.string();
 
 export const chordContentSchema = z.object({
@@ -73,6 +78,7 @@ export const chordSchema = z.object({
 
 export const cellSchema = z.discriminatedUnion("kind", [
   z.object({
+    index: z.number().int(),
     kind: z.literal("Chord"),
     chord: chordSchema,
     keychange: z.string().max(50).nullable().optional(),
@@ -80,12 +86,14 @@ export const cellSchema = z.discriminatedUnion("kind", [
     timeSignatureChangeBottom: z.number().int().nullable().optional(),
   }),
   z.object({
+    index: z.number().int(),
     kind: z.literal("Spacer"),
     keychange: z.string().max(50).nullable().optional(),
     timeSignatureChangeTop: z.number().int().nullable().optional(),
     timeSignatureChangeBottom: z.number().int().nullable().optional(),
   }),
   z.object({
+    index: z.number().int(),
     kind: z.literal("Empty"),
     keychange: z.string().max(50).nullable().optional(),
     timeSignatureChangeTop: z.number().int().nullable().optional(),
@@ -96,6 +104,7 @@ export const cellSchema = z.discriminatedUnion("kind", [
 export const measureSchema = z.object({
   index: z.number().int(),
   cells: z.array(cellSchema),
+  bars: barsSchema,
 });
 
 export const voltaSchema = z.object({
@@ -104,7 +113,7 @@ export const voltaSchema = z.object({
 });
 
 export const sectionSchema = z.object({
-  index: z.int(),
+  index: z.number().int(),
   label: z.string().min(1, "The label is empty").max(50, "The label is too long"),
   type: sectionType,
   commonMeasures: z.array(measureSchema).max(200, "The section has too many measures."),
@@ -125,7 +134,7 @@ export const exerciseSchema = z.object({
     .min(1, "The composer name is too short.")
     .max(200, "The composer name is too long"),
   defaultConfig: configSchema,
-  chordsGrid: chordsGridSchema,
+  chordsGrid: chordsGridSchema.optional().nullable(),
   midifileUrl: z.url().optional().nullable(),
 });
 

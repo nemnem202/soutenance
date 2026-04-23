@@ -2,7 +2,7 @@ import { Play, Settings, Square } from "lucide-react";
 import { Field, FieldLabel } from "@/components/molecules/field";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
-import type { Gameprops } from "@/pages/game/+Page";
+import type { Gameprops } from "@/pages/game/@id/+Page";
 import { ControlsSection, IconButton } from "./game-assets";
 import { CustomInput } from "@/components/ui/custom_input";
 

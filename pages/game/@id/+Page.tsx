@@ -13,56 +13,70 @@ import { useLanguage } from "@/hooks/use-language";
 import Headline from "@/components/ui/headline";
 import MobileHeaderNavContainer from "@/components/features/layout/mobile-header-nav-container";
 import { HistoryBackButton } from "@/components/ui/custom-buttons";
+import { Exercise } from "@/types/entities";
+import { useData } from "vike-react/useData";
+import { Data } from "./+data";
+import GameProvider from "@/providers/game-provider";
 
 export default function Page() {
+  const { exercise } = useData<Data>();
+
+  if (!exercise.success) return null;
+
+  return <Content exercise={exercise.data} />;
+}
+
+function Content({ exercise }: { exercise: Exercise }) {
   const [sidebarOpen, setOpen] = useState(false);
   const [drawersVisible, setDrawersVisible] = useState(true);
   return (
-    <div className="flex flex-row w-screen h-screen overflow-hidden">
-      <GameSidebar sidebarOpen={sidebarOpen} setOpen={setOpen} />
-      <div className="flex-1 min-w-0 h-screen flex flex-col overflow-auto">
-        <SizeAdapter
-          sm={
-            <Drawer
-              modal={false}
-              open={drawersVisible}
-              onOpenChange={(open) => setDrawersVisible(open)}
-            >
-              <DrawerTrigger asChild>
-                <main className="flex-1 min-w-0 flex flex-col items-center p-4 max-w-screen">
-                  <div
-                    className={` w-full overflow-hidden transition-[height] duration-300 ease-in-out`}
-                    style={{ height: drawersVisible ? `${14 / 4 + 1}rem` : "0px" }}
-                  >
-                    <MobileHeaderNavContainer>
-                      <HistoryBackButton />
-                      <Headline>Brown Sugar</Headline>
-                      <div></div>
-                    </MobileHeaderNavContainer>
+    <GameProvider exercise={exercise}>
+      <div className="flex flex-row w-screen h-screen overflow-hidden">
+        <GameSidebar sidebarOpen={sidebarOpen} setOpen={setOpen} />
+        <div className="flex-1 min-w-0 h-screen flex flex-col overflow-auto">
+          <SizeAdapter
+            sm={
+              <Drawer
+                modal={false}
+                open={drawersVisible}
+                onOpenChange={(open) => setDrawersVisible(open)}
+              >
+                <DrawerTrigger asChild>
+                  <main className="flex-1 min-w-0 flex flex-col items-center p-4 max-w-screen">
+                    <div
+                      className={` w-full overflow-hidden transition-[height] duration-300 ease-in-out`}
+                      style={{ height: drawersVisible ? `${14 / 4 + 1}rem` : "0px" }}
+                    >
+                      <MobileHeaderNavContainer>
+                        <HistoryBackButton />
+                        <Headline>{exercise.title}</Headline>
+                        <div></div>
+                      </MobileHeaderNavContainer>
+                    </div>
+                    <Game toggleSidebar={() => setOpen((prev) => !prev)} />
+                  </main>
+                </DrawerTrigger>
+                <DrawerContent className="rounded-none border-t border-l-0 border-r-0 border-b-0">
+                  <DrawerTitle className="hidden">Game controls</DrawerTitle>
+                  <div className="mx-auto w-full max-w-sm h-fit py-10 pt-0">
+                    <MobileGameControlSection toggleSidebar={() => setOpen((prev) => !prev)} />
                   </div>
+                </DrawerContent>
+              </Drawer>
+            }
+            md={
+              <>
+                <Header />
+                <main className="flex-1 min-w-0  flex flex-col items-center p-4 max-w-screen">
+                  <Headline>{exercise.title}</Headline>
                   <Game toggleSidebar={() => setOpen((prev) => !prev)} />
                 </main>
-              </DrawerTrigger>
-              <DrawerContent className="rounded-none border-t border-l-0 border-r-0 border-b-0">
-                <DrawerTitle className="hidden">Game controls</DrawerTitle>
-                <div className="mx-auto w-full max-w-sm h-fit py-10 pt-0">
-                  <MobileGameControlSection toggleSidebar={() => setOpen((prev) => !prev)} />
-                </div>
-              </DrawerContent>
-            </Drawer>
-          }
-          md={
-            <>
-              <Header />
-              <main className="flex-1 min-w-0  flex flex-col items-center p-4 max-w-screen">
-                <Headline>Brown Sugar</Headline>
-                <Game toggleSidebar={() => setOpen((prev) => !prev)} />
-              </main>
-            </>
-          }
-        />
+              </>
+            }
+          />
+        </div>
       </div>
-    </div>
+    </GameProvider>
   );
 }
 

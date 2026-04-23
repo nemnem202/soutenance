@@ -15,7 +15,7 @@ export class SongInterpreter {
   repeats: number;
   cells: CellIreal[];
 
-  static chordRegex: RegExp = /^([A-G][b#]?|h)([abdijlmnoqrstu0-9+\-^#]{0,15})?(\/[A-G][b#]?)?/;
+  static chordRegex: RegExp = /^([A-G][b#]?)([abdijlmnoqrstu0-9+\-^#]{0,15})?(\/[A-G][b#]?)?/;
   static chordRegex2: RegExp = /^([Wpxr n])(\/[A-G][#b]?)?/;
   static alternativeChordRegex: RegExp = /^\((.+?)\)/;
 
@@ -25,12 +25,11 @@ export class SongInterpreter {
     /^[[\]{}||Z]/,
     /^\*[a-zA-Z]/,
     /^T\d\d/,
-    /^N./,
+    /^N[0-9]/,
     /^Y+/,
     SongInterpreter.chordRegex,
     SongInterpreter.chordRegex2,
   ];
-
   constructor(ireal: string, oldFormat: boolean = false) {
     this.cells = [];
 
@@ -253,7 +252,14 @@ export class SongInterpreter {
   }
 
   newCell(cells: CellIreal[]): CellIreal {
-    const obj: CellIreal = { annots: [], bars: "", chord: null, comments: [], spacer: 0 };
+    const obj: CellIreal = {
+      annots: [],
+      bars: "",
+      chord: null,
+      comments: [],
+      spacer: 0,
+      index: cells.length,
+    };
     cells.push(obj);
     return obj;
   }

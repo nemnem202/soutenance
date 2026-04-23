@@ -877,6 +877,13 @@ export const languagePack: Record<string, Record<Language, string>> = {
     de: "Passe die Oberfläche nach deinen Vorlieben an",
     zh: "根据您的偏好自定义界面",
   },
+  this_exercise_does_not_contains_chords_grid: {
+    fr: "Cet exercice ne contient pas de grille d'accords.",
+    en: "This exercise does not contain a chord grid.",
+    es: "Este ejercicio no contiene una cuadrícula de acordes.",
+    de: "Diese Übung enthält kein Akkorddiagramm.",
+    zh: "此练习不包含和弦图。",
+  },
   nothing_yet: {
     fr: "Pas encore de contenu favori",
     en: "Nothing yet",

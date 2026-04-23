@@ -19,6 +19,7 @@ export type SongIreal = {
 };
 
 export type CellIreal = {
+  index: number;
   annots: string[];
   comments: string[];
   bars: string;

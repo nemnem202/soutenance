@@ -14,6 +14,7 @@ import type {
 } from "@/types/entities";
 import type { Note } from "@/types/music";
 import type { CellIreal, ChordIreal, PlaylistIreal, SongIreal } from "./chart_decoder";
+import applyRuleset from "./ruleset";
 
 class IrealConversionError extends Error {
   constructor(context: string, message: string) {
@@ -32,7 +33,6 @@ function validateAndConvertChord(chordIreal: ChordIreal): ChordSchema {
     W: "%",
     P: "%",
     N: "C",
-    H: "B",
     "": "C",
     " ": "C",
   };
@@ -223,13 +223,7 @@ type ParsedBars = {
 };
 
 function parseBars(bars: string): ParsedBars {
-  if (bars === "vide" || bars === "") {
-    return { leftBar: null, rightBar: null, isEmpty: false };
-  }
-
-  if (bars === "()") {
-    return { leftBar: null, rightBar: null, isEmpty: true };
-  }
+  if (bars === "") return { leftBar: null, rightBar: null, isEmpty: false };
 
   const LEFT_MAP: Record<string, ParsedBars["leftBar"]> = {
     "(": "single",
@@ -250,7 +244,7 @@ function parseBars(bars: string): ParsedBars {
   return {
     leftBar: LEFT_MAP[leftChar] ?? null,
     rightBar: RIGHT_MAP[rightChar] ?? null,
-    isEmpty: false,
+    isEmpty: bars === "()",
   };
 }
 
@@ -279,13 +273,22 @@ function getSectionLabel(type: SectionType, index: number): string {
 function convertCell(cellIreal: CellIreal): CellSchema {
   const { chord, spacer } = cellIreal;
 
-  if (spacer > 0) return { kind: "Spacer" };
-  if (chord === null) return { kind: "Empty" };
-
   const { annots } = cellIreal;
   const parsed = parseAnnotations(annots);
 
+  if (spacer > 0)
+    return {
+      kind: "Spacer",
+      index: cellIreal.index,
+    };
+  if (chord === null)
+    return {
+      kind: "Empty",
+      index: cellIreal.index,
+    };
+
   return {
+    index: cellIreal.index,
     kind: "Chord",
     chord: validateAndConvertChord(chord),
     keychange: null,
@@ -324,13 +327,15 @@ function convertSong(song: SongIreal): ExerciseSchema {
 
   const sections = buildSections(cells);
 
-  return {
+  const exercise = {
     title: song.title,
     composer: song.composer,
     chordsGrid: { sections },
     defaultConfig: config,
     midifileUrl: null,
   };
+
+  return exercise;
 }
 
 function buildSections(cells: CellIreal[]): SectionSchema[] {
@@ -341,46 +346,29 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
   let measureIndex = 0;
   let sectionIndex = 0;
 
+  function ensureSection(type: SectionType = SectionType.Generic) {
+    if (!currentSection) {
+      currentSection = {
+        index: sectionIndex++,
+        type,
+        label: getSectionLabel(type, sectionIndex),
+        commonMeasures: [],
+        voltas: [],
+      };
+    }
+    return currentSection;
+  }
+
   function pushMeasure() {
     if (!currentMeasure || currentMeasure.cells.length === 0) return;
-    if (!currentSection) return;
+    const section = ensureSection();
 
     if (currentVolta) {
       currentVolta.measures.push(currentMeasure);
     } else {
-      currentSection.commonMeasures.push(currentMeasure);
+      section.commonMeasures.push(currentMeasure);
     }
     currentMeasure = null;
-  }
-
-  function pushSection() {
-    if (!currentSection) return;
-    pushMeasure();
-    sections.push(currentSection);
-    currentSection = null;
-    currentVolta = null;
-  }
-
-  function startSection(type: SectionType) {
-    pushSection();
-    currentSection = {
-      index: sectionIndex++,
-      type,
-      label: getSectionLabel(type, sectionIndex),
-      commonMeasures: [],
-      voltas: [],
-    };
-    currentMeasure = { index: measureIndex++, cells: [] };
-  }
-
-  function startVolta(volta: 1 | 2 | 3) {
-    if (!currentSection) {
-      throw new IrealConversionError("buildSections", `Volta ${volta} sans section parente`);
-    }
-    pushMeasure();
-    currentVolta = { volta, measures: [] };
-    currentSection.voltas.push(currentVolta);
-    currentMeasure = { index: measureIndex++, cells: [] };
   }
 
   for (const cellIreal of cells) {
@@ -388,44 +376,50 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
     const parsedBars = parseBars(cellIreal.bars);
 
     if (parsedAnnots.sectionType !== null) {
-      startSection(parsedAnnots.sectionType);
+      pushMeasure();
+      if (currentSection) sections.push(currentSection);
+      currentSection = null;
+      ensureSection(parsedAnnots.sectionType);
+      currentVolta = null;
     }
 
-    if (!currentSection) {
-      startSection(SectionType.Generic);
+    const section = ensureSection();
+
+    if (parsedAnnots.volta !== null) {
+      pushMeasure();
+      currentVolta = {
+        volta: parsedAnnots.volta as 1 | 2 | 3,
+        measures: [],
+      };
+      section.voltas.push(currentVolta);
     }
 
     if (parsedBars.leftBar !== null && currentMeasure && currentMeasure.cells.length > 0) {
       pushMeasure();
-      currentMeasure = { index: measureIndex++, cells: [] };
     }
 
-    if (parsedAnnots.volta !== null) {
-      startVolta(parsedAnnots.volta);
+    if (!currentMeasure) {
+      currentMeasure = {
+        index: measureIndex++,
+        cells: [],
+        bars: { left: parsedBars.leftBar, right: null },
+      };
     }
 
-    if (parsedBars.isEmpty) {
-      currentMeasure ??= { index: measureIndex++, cells: [] };
-      currentMeasure.cells.push({ kind: "Empty" });
+    if (parsedBars.isEmpty && !cellIreal.chord) {
+      currentMeasure.cells.push({ kind: "Empty", index: cellIreal.index });
     } else {
-      const cell = convertCell(cellIreal);
-      currentMeasure ??= { index: measureIndex++, cells: [] };
-      currentMeasure.cells.push(cell);
+      currentMeasure.cells.push(convertCell(cellIreal));
     }
 
-    if (parsedBars.rightBar === "final" || parsedBars.rightBar === "sectionClose") {
+    if (parsedBars.rightBar !== null) {
+      currentMeasure.bars.right = parsedBars.rightBar;
       pushMeasure();
-      if (parsedBars.rightBar === "final") {
-        pushSection();
-      }
     }
   }
 
-  pushSection();
-
-  if (sections.length === 0) {
-    throw new IrealConversionError("buildSections", "Aucune section trouvée dans la grille");
-  }
+  pushMeasure();
+  if (currentSection) sections.push(currentSection);
 
   return sections;
 }
@@ -439,7 +433,9 @@ export function convertPlaylist(playlistIreal: PlaylistIreal): {
 
   for (const song of playlistIreal.songs) {
     try {
-      exercises.push(convertSong(song));
+      const converted = convertSong(song);
+      applyRuleset(converted);
+      exercises.push(converted);
     } catch (err) {
       failures.push({
         title: song.title,

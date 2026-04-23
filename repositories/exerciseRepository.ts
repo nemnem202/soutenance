@@ -45,11 +45,13 @@ export default class ExerciseRepository extends Repository {
           ...exercise.defaultConfig,
         },
       },
-      chordsGrid: {
-        create: {
-          ...this.chordsGridMapper(exercise.chordsGrid),
-        },
-      },
+      chordsGrid: exercise.chordsGrid
+        ? {
+            create: {
+              ...this.chordsGridMapper(exercise.chordsGrid),
+            },
+          }
+        : undefined,
 
       midifile: exercise.midifileUrl
         ? {
@@ -87,18 +89,28 @@ export default class ExerciseRepository extends Repository {
       cells: {
         create: measure.cells.map((cell) => this.cellMapper(cell)),
       },
+      bars: {
+        create: {
+          left: measure.bars.left,
+          right: measure.bars.right,
+        },
+      },
     };
   }
 
   private voltaMapper(volta: VoltaSchema): Prisma.VoltaBracketCreateWithoutSectionInput {
     return {
       volta: volta.volta,
+      measures: {
+        create: volta.measures.map((measure) => this.measureMapper(measure)),
+      },
     };
   }
 
   private cellMapper(cell: CellSchema): Prisma.CellCreateWithoutMeasureInput {
     return {
       kind: cell.kind,
+      index: cell.index,
       chord:
         cell.kind === "Chord"
           ? {
