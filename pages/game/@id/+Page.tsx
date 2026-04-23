@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChordTab from "@/components/features/game/chord-tab";
 import { Tab } from "@/components/features/game/game-assets";
 import DesktopGameControlsSection, {
@@ -19,13 +19,29 @@ import type { Data } from "./+data";
 import GameProvider from "@/providers/game-provider";
 import PianoRoll from "@/midi-editor/components/piano-roll";
 import { ClientOnly } from "vike-react/ClientOnly";
+import { MidiProvider } from "@/midi-editor/providers/midi-provider";
+import type { State } from "@/midi-editor/types/instance";
+import { logger } from "@/lib/logger";
+import { convertMidiFileToState, getMidiFile } from "@/midi-editor/lib/midiconverter";
+import midiFile from "@/assets/midi/FlyMeToTheMoon.mid?url";
 
 export default function Page() {
+  logger.info("Game page");
   const { exercise } = useData<Data>();
+  const [midiState, setMidiState] = useState<State | null>(null);
 
-  if (!exercise.success) return null;
+  useEffect(() => {
+    getMidiFile(midiFile).then(convertMidiFileToState).then(setMidiState);
+  }, []);
 
-  return <Content exercise={exercise.data} />;
+  if (!exercise.success) return;
+  return (
+    <MidiProvider initialMidiData={midiState}>
+      <GameProvider exercise={exercise.data}>
+        <Content exercise={exercise.data} />
+      </GameProvider>
+    </MidiProvider>
+  );
 }
 
 function Content({ exercise }: { exercise: Exercise }) {

@@ -20,4 +20,11 @@ export default defineConfig({
       "@": new URL("./", import.meta.url).pathname,
     },
   },
+  optimizeDeps: {
+    include: ["@tonejs/midi"],
+  },
+  ssr: {
+    noExternal: ["@tonejs/midi"], // ❌ retire ça si tu l'avais
+    external: ["@tonejs/midi"], // ✅ remplace par ça
+  },
 });
