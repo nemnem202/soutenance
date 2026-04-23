@@ -253,7 +253,7 @@ function SectionLabel({ label }: { label: string }) {
 
 function VoltaBracket({ volta }: { volta?: number }) {
   return (
-    <div className="absolute inset-0 h-[30%] w-[60%] left-1 -top-1 border-1 border-r-0 border-b-0 border-secondary text-secondary">
+    <div className="absolute inset-0 h-[30%] w-[60%] left-1 -top-1 border-1 border-r-0 border-b-0 border-foreground text-foreground opacity-50">
       <p className="paragraph-sm px-1 font-bold">{volta}.</p>
     </div>
   );

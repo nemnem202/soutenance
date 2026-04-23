@@ -14,17 +14,13 @@
 
 
 - Les spacers semblent pouvoir contenir des accords
-- Les voltas sont vides alors qu'elles devraient contenir des mesures
-- les semis diminués se transforment en B7
-- formatter les cellules dans le seeding (retirer les mesures vides + supprimer les cellules vides quand on peut)
 - filtrer les playlists redondantes + retirer toutes les playlists qui ne correspondent pas à certaines regles
-- ajouter la time signature par défaut a chaque premiere cellule dans le seeding
 
 
 
 ruleset: 
-- une mesure qui contient un seul accord -> une seule cell
-- une mesure vide -> supprimer
-- A % B % -> A B
-- une mesure en 4/4 ne peut pas contenir plus de 4 accords (idem pour les autres signatures)
-- ce qui est entre "{" et "}" est forcément une section (générique par défaut)
+- une mesure qui contient un seul accord -> une seule cell      V
+- une mesure vide -> supprimer          V
+- A % B % -> A B        V
+- une mesure en 4/4 ne peut pas contenir plus de 4 accords (idem pour les autres signatures)         X
+- ce qui est entre "{" et "}" est forcément une section (générique par défaut)      X
