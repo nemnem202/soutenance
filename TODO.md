@@ -27,4 +27,4 @@ ruleset:
 - une mesure vide -> supprimer
 - A % B % -> A B
 - une mesure en 4/4 ne peut pas contenir plus de 4 accords (idem pour les autres signatures)
-
+- ce qui est entre "{" et "}" est forcément une section (générique par défaut)

@@ -17,7 +17,7 @@ export default function ChordGrid() {
       </div>
     );
   return (
-    <div className="size-full p-0 md:p-4 flex flex-col gap-5">
+    <div className="size-full p-1 md:p-6 flex flex-col gap-5">
       {exercise.chordsGrid.sections
         .sort((a, b) => a.index - b.index)
         .map((section) => (
@@ -64,11 +64,14 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
     <div className="flex w-full h-12 relative items-center">
       {volta && <VoltaBracket volta={volta} />}
       {measure.bars.left && <LeftBar bar={measure.bars.left} />}
-      {measure.cells
-        .sort((a, b) => a.index - b.index)
-        .map((cell, index) => (
-          <CellGroup cell={cell} measure={measure} key={index} />
-        ))}
+      <div className="flex-1 flex items-center pl-1">
+        {measure.cells
+          .sort((a, b) => a.index - b.index)
+          .map((cell, index) => (
+            <CellGroup cell={cell} measure={measure} key={index} />
+          ))}
+      </div>
+
       {measure.bars.right && <RightBar bar={measure.bars.right} />}
     </div>
   );
@@ -90,8 +93,8 @@ function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureSchema
 
   return (
     <div
-      className="px-0.5 md:px-2 h-full overflow-hidden flex justify-between items-center gap-1"
-      style={{ width: `${100 / measure.cells.length}%` }}
+      className={`px-0.5 md:px-2 h-full flex justify-between items-center gap-1 ${cell.kind === "Chord" ? "flex-1" : "!w-0 !md:w-auto"}`}
+      // style={{ width: `${100 / measure.cells.length}%` }}
     >
       {cell.timeSignatureChangeBottom && cell.timeSignatureChangeTop && (
         <TimeSignature top={cell.timeSignatureChangeTop} bottom={cell.timeSignatureChangeBottom} />
@@ -108,11 +111,11 @@ type SpacerCellType = Extract<CellSchema, { kind: "Spacer" }>;
 
 function ChordCell({ cell }: { cell: ChordCellType }) {
   return (
-    <div className="h-min w-full flex items-center p-1">
-      <p className="whitespace-nowrap font-mono semibold text-xl flex h-fit lg:gap-1">
+    <div className="h-min w-full flex items-center text-foregroun">
+      <p className="whitespace-nowrap font-mono semibold text-xl md:text-3xl flex h-fit lg:gap-1">
         <span>{cell.chord.content.note}</span>
         {cell.chord.content.modifier && (
-          <span className="text-muted-foreground  paragraph-sm max-w[50%]">
+          <span className="opacity-60 md:text-xl text-sm  max-w[50%]">
             {cell.chord.content.modifier}
           </span>
         )}
@@ -123,9 +126,10 @@ function ChordCell({ cell }: { cell: ChordCellType }) {
 
 function EmptyCell({ cell }: { cell: EmptyCellType }) {
   return (
-    <div className="w-full h-full border flex items-center justify-center opacity-40">
-      {cell.index}
-    </div>
+    <div />
+    // <div className="w-full h-full border flex items-center justify-center opacity-40">
+    //   {cell.index}
+    // </div>
   );
 }
 
@@ -135,7 +139,7 @@ function SpacerCell({ cell }: { cell: SpacerCellType }) {
 
 function TimeSignature({ top, bottom }: { top: number; bottom: number }) {
   return (
-    <div className="flex flex-col text-xs -left-3 leading-none paragraph-md absolute">
+    <div className="flex flex-col text-xs -left-3.5 leading-none paragraph-md absolute">
       <span>{top}</span>
       <div className="h-[1px] w-full border border-foreground" />
       <span>{bottom}</span>
@@ -149,47 +153,55 @@ function LeftBar({ bar }: { bar: BarsSchema["left"] }) {
       case "single":
         return null;
       case "repeatOpen":
-        return null;
+        return <div className="w-1 h-full border-x border-foreground absolute top-0 -right-0.5" />;
       case "sectionOpen":
         return (
-          <div className="w-3 h-full border-l-2 border-primary absolute top-0 -left-0.5 rounded-lg flex items-center text-primary text-center justify-center">
+          <div className="w-3 h-full border-l-2 border-foreground absolute top-0 -right-2 rounded-lg flex items-center text-foreground text-center justify-center">
             <span>:</span>
           </div>
         );
     }
   };
 
-  return <div className="relative h-full">{getBar()}</div>;
+  return (
+    <div className="relative h-full opacity-50" id={`bar-${bar}`}>
+      {getBar()}
+    </div>
+  );
 }
 
 function RightBar({ bar }: { bar: BarsSchema["right"] }) {
   const getBar = () => {
     switch (bar) {
       case "single":
-        return <div className="w-px h-full bg-primary absolute top-0 right-0" />;
+        return <div className="w-px h-full bg-foreground absolute top-0 right-0" />;
       case "repeatClose":
-        return <div className="w-1 h-full border-x border-primary absolute top-0 -right-0.5" />;
+        return <div className="w-1 h-full border-x border-foreground absolute top-0 -right-0.5" />;
       case "sectionClose":
         return (
-          <div className="w-3 h-full border-r-2 border-primary absolute top-0 -right-0.5 rounded-lg flex items-center text-primary text-center justify-center">
+          <div className="w-3 h-full border-r-2 border-foreground absolute top-0 -right-0.5 rounded-lg flex items-center text-foreground text-center justify-center">
             <span>:</span>
           </div>
         );
       case "final":
         return (
           <>
-            <span className="h-full flex items-center pr-1 text-primary">:</span>
-            <div className="w-1 h-full border-x border-primary absolute top-0 -right-0.5" />
+            <span className="h-full flex items-center pr-1 text-foreground">:</span>
+            <div className="w-1 h-full border-x border-foreground absolute top-0 -right-0.5" />
           </>
         );
     }
   };
-  return <div className="relative h-full">{getBar()}</div>;
+  return (
+    <div className="relative h-full opacity-50" id={`bar-${bar}`}>
+      {getBar()}
+    </div>
+  );
 }
 
 function SectionLabel({ label }: { label: string }) {
   return (
-    <div className="w-fit aspect-square border bg-popover paragraph-md rounded-xs text-secondary font-mono font-bold flex items-center justify-center">
+    <div className="w-fit aspect-square border bg-popover paragraph-md rounded-xs text-secondary font-mono font-bold flex items-center justify-center opacity-60">
       {label}
     </div>
   );
