@@ -13,10 +13,12 @@ import { useLanguage } from "@/hooks/use-language";
 import Headline from "@/components/ui/headline";
 import MobileHeaderNavContainer from "@/components/features/layout/mobile-header-nav-container";
 import { HistoryBackButton } from "@/components/ui/custom-buttons";
-import { Exercise } from "@/types/entities";
+import type { Exercise } from "@/types/entities";
 import { useData } from "vike-react/useData";
-import { Data } from "./+data";
+import type { Data } from "./+data";
 import GameProvider from "@/providers/game-provider";
+import PianoRoll from "@/midi-editor/components/piano-roll";
+import { ClientOnly } from "vike-react/ClientOnly";
 
 export default function Page() {
   const { exercise } = useData<Data>();
@@ -97,7 +99,7 @@ function Game({ ...props }: Gameprops) {
     { id: "guitar", label: instance.getItem("guitar"), disabled: true },
   ];
 
-  const [activeTab, setActiveTab] = useState<TabID>("chords");
+  const [activeTab, setActiveTab] = useState<TabID>("piano-roll");
 
   return (
     <div className="size-full lg:px-10 md:py-5  flex flex-col gap-2 min-w-0">
@@ -118,7 +120,17 @@ function Game({ ...props }: Gameprops) {
           </div>
           <div className="md:flex-1"></div>
         </div>
-        <Tab>{activeTab === "chords" && <ChordTab />}</Tab>
+        <Tab>
+          {activeTab === "chords" ? (
+            <ChordTab />
+          ) : (
+            activeTab === "piano-roll" && (
+              <ClientOnly>
+                <PianoRoll />
+              </ClientOnly>
+            )
+          )}
+        </Tab>
       </div>
     </div>
   );
