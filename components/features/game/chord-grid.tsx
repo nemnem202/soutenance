@@ -64,7 +64,7 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
     <div className="flex w-full h-12 relative items-center">
       {volta && <VoltaBracket volta={volta} />}
       {measure.bars.left && <LeftBar bar={measure.bars.left} />}
-      <div className="flex-1 flex items-center pl-1">
+      <div className="flex-1 max-w-[100%] flex items-center pl-1 overflow-hidden">
         {measure.cells
           .sort((a, b) => a.index - b.index)
           .map((cell, index) => (
@@ -93,8 +93,8 @@ function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureSchema
 
   return (
     <div
-      className={`px-0.5 md:px-2 h-full flex justify-between items-center gap-1 ${cell.kind === "Chord" ? "flex-1" : "!w-0 !md:w-auto"}`}
-      // style={{ width: `${100 / measure.cells.length}%` }}
+      className={`px-0.5 md:px-2 h-full flex justify-between items-center  gap-1 ${cell.kind === "Chord" ? "flex-1" : "!w-0 !md:w-auto md:flex-1"}`}
+      style={{ maxWidth: `${100 / measure.cells.length}%` }}
     >
       {cell.timeSignatureChangeBottom && cell.timeSignatureChangeTop && (
         <TimeSignature top={cell.timeSignatureChangeTop} bottom={cell.timeSignatureChangeBottom} />
@@ -111,8 +111,8 @@ type SpacerCellType = Extract<CellSchema, { kind: "Spacer" }>;
 
 function ChordCell({ cell }: { cell: ChordCellType }) {
   return (
-    <div className="h-min w-full flex items-center text-foregroun">
-      <p className="whitespace-nowrap font-mono semibold text-xl md:text-3xl flex h-fit lg:gap-1">
+    <div className="h-min w-full flex items-center text-foreground">
+      <p className="whitespace-nowrap font-mono semibold text-xl md:text-3xl flex h-fit lg:gap-1 bg-background">
         <span>{cell.chord.content.note}</span>
         {cell.chord.content.modifier && (
           <span className="opacity-60 md:text-xl text-sm  max-w[50%]">

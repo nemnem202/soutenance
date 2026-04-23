@@ -225,7 +225,7 @@ export function Tab({ children }: { children: ReactNode }) {
         <div className="hidden md:block relative z-10">
           <FullScreenButton fullScreen={fullScreen} setFullScreen={setFullScreen} />
         </div>
-        <div className="z-0">{children}</div>
+        <div className="z-0 h-full">{children}</div>
       </div>
     );
   } else {
