@@ -1,11 +1,11 @@
-import type { ChordsGridSchema, ExerciseSchema, MeasureSchema } from "@/types/entities";
+import type { ChordsGridSchema, Config, ExerciseSchema, MeasureSchema } from "@/types/entities";
 import type { Cell } from "@/types/music";
 
 export default function applyRuleset(exercise: ExerciseSchema) {
-  exercise.chordsGrid && applyChordGridRuleset(exercise.chordsGrid);
+  exercise.chordsGrid && applyChordGridRuleset(exercise.chordsGrid, exercise.defaultConfig);
 }
 
-function applyChordGridRuleset(grid: ChordsGridSchema) {
+function applyChordGridRuleset(grid: ChordsGridSchema, config: Config) {
   for (const section of grid.sections) {
     section.commonMeasures = filterEmptyMeasures(section.commonMeasures);
     removeUselessEmptyCells(section.commonMeasures);
@@ -15,6 +15,8 @@ function applyChordGridRuleset(grid: ChordsGridSchema) {
       removeUselessEmptyCells(volta.measures);
     }
   }
+
+  specifyTimeSignature(grid, config);
 }
 
 function filterEmptyMeasures(measures: MeasureSchema[]) {
@@ -56,4 +58,15 @@ function matchCellsPattern(pattern: boolean[], cells: Cell[]): boolean {
     }
   }
   return true;
+}
+
+function specifyTimeSignature(grid: ChordsGridSchema, config: Config) {
+  const first_measure = grid.sections
+    .sort((a, b) => a.index - b.index)[0]
+    .commonMeasures.sort((a, b) => a.index - b.index)[0]
+    .cells.sort((a, b) => a.index - b.index)[0];
+  if (!first_measure.timeSignatureChangeTop) {
+    first_measure.timeSignatureChangeTop = config.timeSignatureTop;
+    first_measure.timeSignatureChangeBottom = config.timeSignatureBottom;
+  }
 }
