@@ -189,16 +189,14 @@ export function SmallCheckboxGroup({
 }
 
 export function FullScreenButton({
-  hover,
   fullScreen,
   setFullScreen,
 }: {
-  hover: boolean;
   fullScreen: boolean;
   setFullScreen: (full: boolean) => void;
 }) {
   return (
-    <div className={`absolute m-2 top-0 right-0 transition ${hover ? "opacity-100" : "opacity-0"}`}>
+    <div className={`absolute m-2 top-0 right-0 transition opacity-0 group-hover:opacity-100`}>
       <Button variant={"ghost"} onClick={() => setFullScreen(!fullScreen)}>
         {fullScreen ? (
           <Minimize className=" stroke-muted-foreground !hover:stroke-foreground" />
@@ -211,35 +209,35 @@ export function FullScreenButton({
 }
 
 export function Tab({ children }: { children: ReactNode }) {
-  const [hover, setHover] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
 
   const interactiveProps = {
     role: "region",
     tabIndex: 0,
-    onMouseEnter: () => setHover(true),
-    onMouseLeave: () => setHover(false),
-    onFocus: () => setHover(true),
-    onBlur: () => setHover(false),
   };
 
   if (!fullScreen) {
     return (
       <div
         {...interactiveProps}
-        className="size-full md:bg-card md:rounded-md relative md:overflow-hidden"
+        className="size-full md:bg-card md:rounded-md relative overflow-hidden group"
       >
-        <div className="hidden md:block">
-          <FullScreenButton hover={hover} fullScreen={fullScreen} setFullScreen={setFullScreen} />
+        <div className="hidden md:block relative z-10">
+          <FullScreenButton fullScreen={fullScreen} setFullScreen={setFullScreen} />
         </div>
-        {children}
+        <div className="z-0">{children}</div>
       </div>
     );
   } else {
     return (
-      <div {...interactiveProps} className="inset-0 absolute top-0 left-0 z-100 bg-background">
-        <FullScreenButton hover={hover} fullScreen={fullScreen} setFullScreen={setFullScreen} />
-        {children}
+      <div
+        {...interactiveProps}
+        className="inset-0 absolute top-0 left-0 z-100 bg-background group"
+      >
+        <div className="relative z-10">
+          <FullScreenButton fullScreen={fullScreen} setFullScreen={setFullScreen} />
+        </div>
+        <div className="z-0 h-full">{children}</div>
       </div>
     );
   }
