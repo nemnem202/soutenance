@@ -15,7 +15,7 @@ function applyChordGridRuleset(grid: ChordsGridSchema, config: Config) {
       removeUselessEmptyCells(volta.measures);
     }
   }
-
+  removeEmptySections(grid);
   specifyTimeSignature(grid, config);
 }
 
@@ -69,4 +69,7 @@ function specifyTimeSignature(grid: ChordsGridSchema, config: Config) {
     first_measure.timeSignatureChangeTop = config.timeSignatureTop;
     first_measure.timeSignatureChangeBottom = config.timeSignatureBottom;
   }
+}
+function removeEmptySections(grid: ChordsGridSchema) {
+  grid.sections = grid.sections.filter((section) => section.commonMeasures.length > 0);
 }

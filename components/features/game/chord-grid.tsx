@@ -3,11 +3,15 @@ import { useLanguage } from "@/hooks/use-language";
 import { logger } from "@/lib/logger";
 import { musicalNotationRootNote } from "@/lib/utils";
 import type { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
-import { useEffect, type ReactNode } from "react";
+import React, { useEffect, type ReactNode } from "react";
 
 export default function ChordGrid() {
   const { exercise } = useGame();
   const { instance } = useLanguage();
+
+  useEffect(() => {
+    logger.info("Exercise", exercise);
+  }, [exercise]);
 
   if (!exercise.chordsGrid)
     return (
@@ -28,7 +32,38 @@ export default function ChordGrid() {
   );
 }
 
+// function Section({ section }: { section: SectionSchema }) {
+//   return (
+//     <div className="flex flex-col gap-2">
+//       {section.type !== "Generic" && <SectionLabel label={section.type} />}
+
+//       <div className="w-full grid grid-cols-4 gap-y-2">
+//         {section.commonMeasures
+//           .sort((a, b) => a.index - b.index)
+//           .map((measure) => (
+//             <MeasureBlock measure={measure} key={measure.index} />
+//           ))}
+//         {section.voltas.map((volta) => (
+//           <>
+//             {volta.measures
+//               .sort((a, b) => a.index - b.index)
+//               .map((measure, index) => (
+//                 <MeasureBlock
+//                   measure={measure}
+//                   key={measure.index}
+//                   volta={index === 0 ? volta.volta : undefined}
+//                 />
+//               ))}
+//           </>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// }
+
 function Section({ section }: { section: SectionSchema }) {
+  const commonMeasuresCount = section.commonMeasures.length;
+  const firstVoltaStartColumn = (commonMeasuresCount % 4) + 1;
   return (
     <div className="flex flex-col gap-2">
       {section.type !== "Generic" && <SectionLabel label={section.type} />}
@@ -39,18 +74,29 @@ function Section({ section }: { section: SectionSchema }) {
           .map((measure) => (
             <MeasureBlock measure={measure} key={measure.index} />
           ))}
-        {section.voltas.map((volta) => (
-          <>
-            {volta.measures
-              .sort((a, b) => a.index - b.index)
-              .map((measure, index) => (
-                <MeasureBlock
-                  measure={measure}
-                  key={measure.index}
-                  volta={index === 0 ? volta.volta : undefined}
-                />
-              ))}
-          </>
+        {section.voltas.length > 0 &&
+          section.voltas[0].measures
+            .sort((a, b) => a.index - b.index)
+            .map((measure, index) => (
+              <MeasureBlock
+                measure={measure}
+                key={measure.index}
+                volta={index === 0 ? section.voltas[0].volta : undefined}
+              />
+            ))}
+      </div>
+      <div className="w-full grid grid-cols-4 gap-y-2">
+        {section.voltas.slice(1).map((volta, index) => (
+          <React.Fragment key={index}>
+            {volta.measures.map((measure, index) => (
+              <div
+                key={measure.index}
+                style={index === 0 ? { gridColumnStart: firstVoltaStartColumn } : {}}
+              >
+                <MeasureBlock measure={measure} volta={index === 0 ? volta.volta : undefined} />
+              </div>
+            ))}
+          </React.Fragment>
         ))}
       </div>
     </div>
@@ -58,9 +104,6 @@ function Section({ section }: { section: SectionSchema }) {
 }
 
 function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: number }) {
-  useEffect(() => {
-    logger.info("Measure", measure);
-  }, [measure]);
   return (
     <div className="flex w-full h-12 relative items-center">
       {volta && <VoltaBracket volta={volta} />}
