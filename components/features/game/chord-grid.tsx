@@ -1,6 +1,7 @@
 import useGame from "@/hooks/use-game";
 import { useLanguage } from "@/hooks/use-language";
 import { logger } from "@/lib/logger";
+import { musicalNotationRootNote } from "@/lib/utils";
 import type { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
 import { useEffect, type ReactNode } from "react";
 
@@ -111,9 +112,9 @@ type SpacerCellType = Extract<CellSchema, { kind: "Spacer" }>;
 
 function ChordCell({ cell }: { cell: ChordCellType }) {
   return (
-    <div className="h-min w-full flex items-center text-foreground">
-      <p className="whitespace-nowrap font-mono semibold text-xl md:text-3xl flex h-fit lg:gap-1 bg-background">
-        <span>{cell.chord.content.note}</span>
+    <div className="h-min w-full flex items-center text-foreground bg-background md:bg-transparent">
+      <p className="whitespace-nowrap font-mono semibold text-xl md:text-3xl flex h-fit lg:gap-1 ">
+        <span>{musicalNotationRootNote(cell.chord.content.note)}</span>
         {cell.chord.content.modifier && (
           <span className="opacity-60 md:text-xl text-sm  max-w[50%]">
             {cell.chord.content.modifier}
@@ -139,7 +140,7 @@ function SpacerCell({ cell }: { cell: SpacerCellType }) {
 
 function TimeSignature({ top, bottom }: { top: number; bottom: number }) {
   return (
-    <div className="flex flex-col text-xs -left-3.5 leading-none paragraph-md absolute">
+    <div className="flex flex-col text-xs -left-3.5 leading-none paragraph-md absolute opacity-50">
       <span>{top}</span>
       <div className="h-[1px] w-full border border-foreground" />
       <span>{bottom}</span>

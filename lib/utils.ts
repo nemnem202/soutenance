@@ -2,7 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { availableLanguages } from "@/config/language-pack";
 import type { Language } from "@/types/i18n";
-import type { Chord } from "@/types/music";
+import type { Chord, Note } from "@/types/music";
 import {
   onAddExerciseToPlaylist,
   onAddMultiExerciseToPlaylist,
@@ -176,4 +176,8 @@ export const generateImageVariations = (url: string, resolutions: [number, numbe
     }
     return url;
   });
+};
+
+export const musicalNotationRootNote = (note: Note): string => {
+  return note.replace("b", "♭").replace("#", "♯");
 };

@@ -48,7 +48,7 @@ export function AccountMenuContent() {
   const [currentContent, setCurrentContent] = useState<"main" | "theme" | "language">("main");
 
   return (
-    <DropdownMenuContent className="bg-background p-0 z-10 max-h-[var(--radix-dropdown-menu-content-available-height)] max-w-[var(--radix-dropdown-menu-content-available-width)] overflow-y-auto">
+    <DropdownMenuContent className="bg-background p-2 z-10 max-h-[var(--radix-dropdown-menu-content-available-height)] max-w-[var(--radix-dropdown-menu-content-available-width)] overflow-y-auto">
       {currentContent === "main" && (
         <MainContent
           onThemeClick={() => setCurrentContent("theme")}
