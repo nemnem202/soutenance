@@ -19,7 +19,7 @@ import type { Data } from "./+data";
 import GameProvider from "@/providers/game-provider";
 import PianoRoll from "@/midi-editor/components/piano-roll";
 import { ClientOnly } from "vike-react/ClientOnly";
-import { MidiProvider } from "@/midi-editor/providers/midi-provider";
+import { MidiProvider, useMidiActions } from "@/midi-editor/providers/midi-provider";
 import type { State } from "@/midi-editor/types/instance";
 import { logger } from "@/lib/logger";
 import { convertMidiFileToState, getMidiFile } from "@/midi-editor/lib/midiconverter";
@@ -107,6 +107,7 @@ type TabID = (typeof tabsIds)[number];
 
 function Game({ ...props }: Gameprops) {
   const { instance } = useLanguage();
+  const { startAudio } = useMidiActions();
 
   const tabs: { id: TabID; label: string; disabled?: boolean }[] = [
     { id: "piano-roll", label: instance.getItem("piano_roll") },
@@ -115,7 +116,7 @@ function Game({ ...props }: Gameprops) {
     { id: "guitar", label: instance.getItem("guitar"), disabled: true },
   ];
 
-  const [activeTab, setActiveTab] = useState<TabID>("piano-roll");
+  const [activeTab, setActiveTab] = useState<TabID>("chords");
 
   return (
     <div className="size-full lg:px-10 md:py-5  flex flex-col gap-2 min-w-0">
@@ -128,7 +129,11 @@ function Game({ ...props }: Gameprops) {
           <div className="col-2 flex-1 justify-center hidden sm:flex">
             <AnimatedTabs
               activeTab={activeTab}
-              onChange={(v) => setActiveTab(v as "piano-roll" | "chords" | "sheet" | "guitar")}
+              onChange={(v) => {
+                startAudio().then(() =>
+                  setActiveTab(v as "piano-roll" | "chords" | "sheet" | "guitar")
+                );
+              }}
               tabs={tabs}
               variant="pill"
               className="my-2"
