@@ -41,14 +41,33 @@ export default function Page() {
     </MidiProvider>
   );
 }
+const tabsIds = ["piano-roll", "chords", "sheet", "guitar"] as const;
+export type TabID = (typeof tabsIds)[number];
 
 function Content({ exercise }: { exercise: Exercise }) {
   const [sidebarOpen, setOpen] = useState(false);
   const [drawersVisible, setDrawersVisible] = useState(true);
+  const { instance } = useLanguage();
+
+  const tabs: { id: TabID; label: string; disabled?: boolean }[] = [
+    { id: "piano-roll", label: instance.getItem("piano_roll") },
+    { id: "chords", label: instance.getItem("chords") },
+    { id: "sheet", label: instance.getItem("sheet"), disabled: true },
+    { id: "guitar", label: instance.getItem("guitar"), disabled: true },
+  ];
+
+  const [activeTab, setActiveTab] = useState<TabID>("chords");
+
   return (
     <GameProvider exercise={exercise}>
       <div className="flex flex-row w-screen h-screen overflow-hidden">
-        <GameSidebar sidebarOpen={sidebarOpen} setOpen={setOpen} />
+        <GameSidebar
+          sidebarOpen={sidebarOpen}
+          setOpen={setOpen}
+          activeTab={activeTab}
+          tabs={tabs}
+          setActiveTab={setActiveTab}
+        />
         <div className="flex-1 min-w-0 h-screen flex flex-col overflow-auto">
           <SizeAdapter
             sm={
@@ -69,7 +88,12 @@ function Content({ exercise }: { exercise: Exercise }) {
                         <div></div>
                       </MobileHeaderNavContainer>
                     </div>
-                    <Game toggleSidebar={() => setOpen((prev) => !prev)} />
+                    <Game
+                      toggleSidebar={() => setOpen((prev) => !prev)}
+                      activeTab={activeTab}
+                      tabs={tabs}
+                      setActiveTab={setActiveTab}
+                    />
                   </main>
                 </DrawerTrigger>
                 <DrawerContent className="rounded-none border-t border-l-0 border-r-0 border-b-0">
@@ -85,7 +109,12 @@ function Content({ exercise }: { exercise: Exercise }) {
                 <Header />
                 <main className="flex-1 min-w-0  flex flex-col items-center p-4 max-w-screen">
                   <Headline>{exercise.title}</Headline>
-                  <Game toggleSidebar={() => setOpen((prev) => !prev)} />
+                  <Game
+                    toggleSidebar={() => setOpen((prev) => !prev)}
+                    activeTab={activeTab}
+                    tabs={tabs}
+                    setActiveTab={setActiveTab}
+                  />
                 </main>
               </>
             }
@@ -100,21 +129,17 @@ export interface Gameprops {
   toggleSidebar: () => void;
 }
 
-const tabsIds = ["piano-roll", "chords", "sheet", "guitar"] as const;
-type TabID = (typeof tabsIds)[number];
-
-function Game({ ...props }: Gameprops) {
-  const { instance } = useLanguage();
+function Game({
+  activeTab,
+  tabs,
+  setActiveTab,
+  ...props
+}: Gameprops & {
+  activeTab: TabID;
+  tabs: { id: TabID; label: string; disabled?: boolean }[];
+  setActiveTab: (tab: TabID) => void;
+}) {
   const { startAudio } = useMidiActions();
-
-  const tabs: { id: TabID; label: string; disabled?: boolean }[] = [
-    { id: "piano-roll", label: instance.getItem("piano_roll") },
-    { id: "chords", label: instance.getItem("chords") },
-    { id: "sheet", label: instance.getItem("sheet"), disabled: true },
-    { id: "guitar", label: instance.getItem("guitar"), disabled: true },
-  ];
-
-  const [activeTab, setActiveTab] = useState<TabID>("chords");
 
   return (
     <div
@@ -127,7 +152,7 @@ function Game({ ...props }: Gameprops) {
             <DesktopGameControlsSection {...props} />
           </div>
 
-          <div className="col-2 flex-1 justify-center hidden sm:flex">
+          <div className="col-2 flex-1 justify-center hidden md:flex">
             <AnimatedTabs
               activeTab={activeTab}
               onChange={(v) => setActiveTab(v as "piano-roll" | "chords" | "sheet" | "guitar")}

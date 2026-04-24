@@ -18,6 +18,11 @@ export default function ScreenSizeProvider({ children }: { children: ReactNode }
 
   function getCurrentScreenSize(): ScreenSizeType {
     const width = window.innerWidth;
+    const height = window.innerHeight;
+    const isLandscape = width > height;
+    const isMobileLandscape = isLandscape && height < 500;
+
+    if (isMobileLandscape) return "sm";
 
     if (width >= BREAKPOINTS.xl) return "xl";
     if (width >= BREAKPOINTS.lg) return "lg";

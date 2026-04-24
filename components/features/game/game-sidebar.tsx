@@ -25,13 +25,20 @@ import AppearanceSettings from "./settings/appearance-settings";
 import BackingTrackSettings from "./settings/backing-track-settings";
 import GeneralSettings from "./settings/general-settings";
 import MidiSettings from "./settings/midi-settings";
+import type { TabID } from "@/pages/game/@id/+Page";
 
 export default function GameSidebar({
   sidebarOpen,
   setOpen,
+  activeTab,
+  tabs,
+  setActiveTab,
 }: {
   sidebarOpen: boolean;
   setOpen: (open: boolean) => void;
+  activeTab: TabID;
+  tabs: { id: TabID; label: string; disabled?: boolean }[];
+  setActiveTab: (tab: TabID) => void;
 }) {
   const { instance } = useLanguage();
   const size = useScreen();
@@ -58,7 +65,7 @@ export default function GameSidebar({
           </div>
 
           <div className="w-full p-4 pt-0">
-            <TabBar />
+            <TabBar activeTab={activeTab} setActiveTab={setActiveTab} tabs={tabs} />
           </div>
 
           <Separator />
@@ -109,21 +116,39 @@ function PresetSelect() {
   );
 }
 
-function TabBar() {
+function TabBar({
+  activeTab,
+  tabs,
+  setActiveTab,
+}: {
+  activeTab: TabID;
+  tabs: { id: TabID; label: string; disabled?: boolean }[];
+  setActiveTab: (tab: TabID) => void;
+}) {
   const { instance } = useLanguage();
   return (
     <nav className="flex flex-wrap md:flex-col  w-full">
-      <SidebarTabButton text={instance.getItem("piano_roll")} isActive={true} />
-      <SidebarTabButton text={instance.getItem("chords")} isActive={false} />
+      <SidebarTabButton
+        text={instance.getItem("piano_roll")}
+        isActive={activeTab === "piano-roll"}
+        onClick={() => setActiveTab("piano-roll")}
+      />
+      <SidebarTabButton
+        text={instance.getItem("chords")}
+        isActive={activeTab === "chords"}
+        onClick={() => setActiveTab("chords")}
+      />
       <SidebarTabButton
         text={instance.getItem("sheet")}
-        isActive={false}
+        isActive={activeTab === "sheet"}
         props={{ disabled: true }}
+        onClick={() => setActiveTab("sheet")}
       />
       <SidebarTabButton
         text={instance.getItem("guitar")}
-        isActive={false}
+        isActive={activeTab === "guitar"}
         props={{ disabled: true }}
+        onClick={() => setActiveTab("guitar")}
       />
     </nav>
   );
