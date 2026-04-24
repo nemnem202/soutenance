@@ -68,7 +68,7 @@ function Content({ exercise }: { exercise: Exercise }) {
           tabs={tabs}
           setActiveTab={setActiveTab}
         />
-        <div className="flex-1 min-w-0 h-screen flex flex-col overflow-auto">
+        <div className="flex-1 min-w-0 h-screen flex flex-col">
           <SizeAdapter
             sm={
               <Drawer
@@ -77,7 +77,7 @@ function Content({ exercise }: { exercise: Exercise }) {
                 onOpenChange={(open) => setDrawersVisible(open)}
               >
                 <DrawerTrigger asChild>
-                  <main className="flex-1 min-w-0 flex flex-col items-center p-4 max-w-screen">
+                  <main className="flex-1 min-w-0 h-full flex flex-col items-center p-4 max-w-screen min-h-0">
                     <div
                       className={` w-full overflow-hidden transition-[height] duration-300 ease-in-out`}
                       style={{ height: drawersVisible ? `${14 / 4 + 1}rem` : "0px" }}
@@ -107,7 +107,7 @@ function Content({ exercise }: { exercise: Exercise }) {
             md={
               <>
                 <Header />
-                <main className="flex-1 min-w-0  flex flex-col items-center p-4 max-w-screen">
+                <main className="flex-1 min-w-0 flex flex-col items-center p-4 max-w-screen min-h-0">
                   <Headline>{exercise.title}</Headline>
                   <Game
                     toggleSidebar={() => setOpen((prev) => !prev)}
@@ -143,10 +143,10 @@ function Game({
 
   return (
     <div
-      className="size-full lg:px-10 md:py-5  flex flex-col gap-2 min-w-0"
+      className="size-full lg:px-10 md:py-5  flex flex-col gap-2 min-w-0 min-h-0"
       onClickCapture={() => startAudio()}
     >
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col h-full min-h-0">
         <div className="w-full flex  gap-2 justify-between">
           <div className="col-1 flex flex-1  items-center">
             <DesktopGameControlsSection {...props} />
