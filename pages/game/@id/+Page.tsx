@@ -9,7 +9,6 @@ import Header from "@/components/features/layout/game-header";
 import SizeAdapter from "@/components/molecules/size-adapter";
 import AnimatedTabs from "@/components/organisms/animated-tabs";
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/organisms/drawer";
-import { useLanguage } from "@/hooks/use-language";
 import Headline from "@/components/ui/headline";
 import MobileHeaderNavContainer from "@/components/features/layout/mobile-header-nav-container";
 import { HistoryBackButton } from "@/components/ui/custom-buttons";
@@ -23,6 +22,7 @@ import { MidiProvider, useMidiActions } from "@/midi-editor/providers/midi-provi
 import type { State } from "@/midi-editor/types/instance";
 import { convertMidiFileToState, getMidiFile } from "@/midi-editor/lib/midiconverter";
 import midiFile from "@/assets/midi/FlyMeToTheMoon.mid?url";
+import useGame from "@/hooks/use-game";
 
 export default function Page() {
   const { exercise } = useData<Data>();
@@ -41,87 +41,56 @@ export default function Page() {
     </MidiProvider>
   );
 }
-const tabsIds = ["piano-roll", "chords", "sheet", "guitar"] as const;
-export type TabID = (typeof tabsIds)[number];
 
 function Content({ exercise }: { exercise: Exercise }) {
   const [sidebarOpen, setOpen] = useState(false);
   const [drawersVisible, setDrawersVisible] = useState(true);
-  const { instance } = useLanguage();
-
-  const tabs: { id: TabID; label: string; disabled?: boolean }[] = [
-    { id: "piano-roll", label: instance.getItem("piano_roll") },
-    { id: "chords", label: instance.getItem("chords") },
-    { id: "sheet", label: instance.getItem("sheet"), disabled: true },
-    { id: "guitar", label: instance.getItem("guitar"), disabled: true },
-  ];
-
-  const [activeTab, setActiveTab] = useState<TabID>("chords");
-
   return (
-    <GameProvider exercise={exercise}>
-      <div className="flex flex-row w-screen h-screen overflow-hidden">
-        <GameSidebar
-          sidebarOpen={sidebarOpen}
-          setOpen={setOpen}
-          activeTab={activeTab}
-          tabs={tabs}
-          setActiveTab={setActiveTab}
-        />
-        <div className="flex-1 min-w-0 h-screen flex flex-col">
-          <SizeAdapter
-            sm={
-              <Drawer
-                modal={false}
-                open={drawersVisible}
-                onOpenChange={(open) => setDrawersVisible(open)}
-              >
-                <DrawerTrigger asChild>
-                  <main className="flex-1 min-w-0 h-full flex flex-col items-center p-4 max-w-screen min-h-0">
-                    <div
-                      className={` w-full overflow-hidden transition-[height] duration-300 ease-in-out`}
-                      style={{ height: drawersVisible ? `${14 / 4 + 1}rem` : "0px" }}
-                    >
-                      <MobileHeaderNavContainer>
-                        <HistoryBackButton />
-                        <Headline>{exercise.title}</Headline>
-                        <div></div>
-                      </MobileHeaderNavContainer>
-                    </div>
-                    <Game
-                      toggleSidebar={() => setOpen((prev) => !prev)}
-                      activeTab={activeTab}
-                      tabs={tabs}
-                      setActiveTab={setActiveTab}
-                    />
-                  </main>
-                </DrawerTrigger>
-                <DrawerContent className="rounded-none border-t border-l-0 border-r-0 border-b-0">
-                  <DrawerTitle className="hidden">Game controls</DrawerTitle>
-                  <div className="mx-auto w-full max-w-sm h-fit py-10 pt-0">
-                    <MobileGameControlSection toggleSidebar={() => setOpen((prev) => !prev)} />
+    <div className="flex flex-row w-screen h-screen overflow-hidden">
+      <GameSidebar sidebarOpen={sidebarOpen} setOpen={setOpen} />
+      <div className="flex-1 min-w-0 h-screen flex flex-col">
+        <SizeAdapter
+          sm={
+            <Drawer
+              modal={false}
+              open={drawersVisible}
+              onOpenChange={(open) => setDrawersVisible(open)}
+            >
+              <DrawerTrigger asChild>
+                <main className="flex-1 min-w-0 h-full flex flex-col items-center p-4 max-w-screen min-h-0">
+                  <div
+                    className={` w-full overflow-hidden transition-[height] duration-300 ease-in-out`}
+                    style={{ height: drawersVisible ? `${14 / 4 + 1}rem` : "0px" }}
+                  >
+                    <MobileHeaderNavContainer>
+                      <HistoryBackButton />
+                      <Headline>{exercise.title}</Headline>
+                      <div></div>
+                    </MobileHeaderNavContainer>
                   </div>
-                </DrawerContent>
-              </Drawer>
-            }
-            md={
-              <>
-                <Header />
-                <main className="flex-1 min-w-0 flex flex-col items-center p-4 max-w-screen min-h-0">
-                  <Headline>{exercise.title}</Headline>
-                  <Game
-                    toggleSidebar={() => setOpen((prev) => !prev)}
-                    activeTab={activeTab}
-                    tabs={tabs}
-                    setActiveTab={setActiveTab}
-                  />
+                  <Game toggleSidebar={() => setOpen((prev) => !prev)} />
                 </main>
-              </>
-            }
-          />
-        </div>
+              </DrawerTrigger>
+              <DrawerContent className="rounded-none border-t border-l-0 border-r-0 border-b-0">
+                <DrawerTitle className="hidden">Game controls</DrawerTitle>
+                <div className="mx-auto w-full max-w-sm h-fit py-10 pt-0">
+                  <MobileGameControlSection toggleSidebar={() => setOpen((prev) => !prev)} />
+                </div>
+              </DrawerContent>
+            </Drawer>
+          }
+          md={
+            <>
+              <Header />
+              <main className="flex-1 min-w-0 flex flex-col items-center p-4 max-w-screen min-h-0">
+                <Headline>{exercise.title}</Headline>
+                <Game toggleSidebar={() => setOpen((prev) => !prev)} />
+              </main>
+            </>
+          }
+        />
       </div>
-    </GameProvider>
+    </div>
   );
 }
 
@@ -129,18 +98,9 @@ export interface Gameprops {
   toggleSidebar: () => void;
 }
 
-function Game({
-  activeTab,
-  tabs,
-  setActiveTab,
-  ...props
-}: Gameprops & {
-  activeTab: TabID;
-  tabs: { id: TabID; label: string; disabled?: boolean }[];
-  setActiveTab: (tab: TabID) => void;
-}) {
+function Game({ ...props }: Gameprops) {
   const { startAudio } = useMidiActions();
-
+  const { activeTab, tabs, setActiveTab } = useGame();
   return (
     <div
       className="size-full lg:px-10 md:py-5  flex flex-col gap-2 min-w-0 min-h-0"

@@ -25,20 +25,14 @@ import AppearanceSettings from "./settings/appearance-settings";
 import BackingTrackSettings from "./settings/backing-track-settings";
 import GeneralSettings from "./settings/general-settings";
 import MidiSettings from "./settings/midi-settings";
-import type { TabID } from "@/pages/game/@id/+Page";
+import useGame from "@/hooks/use-game";
 
 export default function GameSidebar({
   sidebarOpen,
   setOpen,
-  activeTab,
-  tabs,
-  setActiveTab,
 }: {
   sidebarOpen: boolean;
   setOpen: (open: boolean) => void;
-  activeTab: TabID;
-  tabs: { id: TabID; label: string; disabled?: boolean }[];
-  setActiveTab: (tab: TabID) => void;
 }) {
   const { instance } = useLanguage();
   const size = useScreen();
@@ -65,7 +59,7 @@ export default function GameSidebar({
           </div>
 
           <div className="w-full p-4 pt-0">
-            <TabBar activeTab={activeTab} setActiveTab={setActiveTab} tabs={tabs} />
+            <TabBar />
           </div>
 
           <Separator />
@@ -116,16 +110,9 @@ function PresetSelect() {
   );
 }
 
-function TabBar({
-  activeTab,
-  tabs,
-  setActiveTab,
-}: {
-  activeTab: TabID;
-  tabs: { id: TabID; label: string; disabled?: boolean }[];
-  setActiveTab: (tab: TabID) => void;
-}) {
+function TabBar() {
   const { instance } = useLanguage();
+  const { activeTab, setActiveTab } = useGame();
   return (
     <nav className="flex flex-wrap md:flex-col  w-full">
       <SidebarTabButton
