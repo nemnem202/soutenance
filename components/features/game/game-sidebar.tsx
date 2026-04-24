@@ -25,6 +25,7 @@ import AppearanceSettings from "./settings/appearance-settings";
 import BackingTrackSettings from "./settings/backing-track-settings";
 import GeneralSettings from "./settings/general-settings";
 import MidiSettings from "./settings/midi-settings";
+import useGame from "@/hooks/use-game";
 
 export default function GameSidebar({
   sidebarOpen,
@@ -111,19 +112,30 @@ function PresetSelect() {
 
 function TabBar() {
   const { instance } = useLanguage();
+  const { activeTab, setActiveTab } = useGame();
   return (
     <nav className="flex flex-wrap md:flex-col  w-full">
-      <SidebarTabButton text={instance.getItem("piano_roll")} isActive={true} />
-      <SidebarTabButton text={instance.getItem("chords")} isActive={false} />
+      <SidebarTabButton
+        text={instance.getItem("piano_roll")}
+        isActive={activeTab === "piano-roll"}
+        onClick={() => setActiveTab("piano-roll")}
+      />
+      <SidebarTabButton
+        text={instance.getItem("chords")}
+        isActive={activeTab === "chords"}
+        onClick={() => setActiveTab("chords")}
+      />
       <SidebarTabButton
         text={instance.getItem("sheet")}
-        isActive={false}
+        isActive={activeTab === "sheet"}
         props={{ disabled: true }}
+        onClick={() => setActiveTab("sheet")}
       />
       <SidebarTabButton
         text={instance.getItem("guitar")}
-        isActive={false}
+        isActive={activeTab === "guitar"}
         props={{ disabled: true }}
+        onClick={() => setActiveTab("guitar")}
       />
     </nav>
   );

@@ -5,16 +5,18 @@ import { useLanguage } from "@/hooks/use-language";
 import type { Gameprops } from "@/pages/game/@id/+Page";
 import { ControlsSection, IconButton } from "./game-assets";
 import { CustomInput } from "@/components/ui/custom_input";
+import { useMidiActions } from "@/midi-editor/providers/midi-provider";
 
 export default function DesktopGameControlsSection({ ...props }: Gameprops) {
   const { instance } = useLanguage();
+  const { togglePlay } = useMidiActions();
   return (
     <div className="hidden md:block">
       <ControlsSection>
         <IconButton onClick={props.toggleSidebar}>
           <Settings className="hover:stroke-primary  transition" />
         </IconButton>
-        <IconButton>
+        <IconButton onClick={() => togglePlay()}>
           <Play className="hover:stroke-primary hover:fill-primary fill-foreground transition" />
         </IconButton>
         <IconButton>

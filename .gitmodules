@@ -1,0 +1,3 @@
+[submodule "midi-editor"]
+	path = midi-editor
+	url = https://github.com/nemnem202/Midi-editor-library.git

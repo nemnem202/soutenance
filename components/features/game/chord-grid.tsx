@@ -1,17 +1,12 @@
 import useGame from "@/hooks/use-game";
 import { useLanguage } from "@/hooks/use-language";
-import { logger } from "@/lib/logger";
 import { musicalNotationRootNote } from "@/lib/utils";
 import type { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
-import React, { useEffect, type ReactNode } from "react";
+import React, { type ReactNode } from "react";
 
 export default function ChordGrid() {
   const { exercise } = useGame();
   const { instance } = useLanguage();
-
-  useEffect(() => {
-    logger.info("Exercise", exercise);
-  }, [exercise]);
 
   if (!exercise.chordsGrid)
     return (
@@ -31,35 +26,6 @@ export default function ChordGrid() {
     </div>
   );
 }
-
-// function Section({ section }: { section: SectionSchema }) {
-//   return (
-//     <div className="flex flex-col gap-2">
-//       {section.type !== "Generic" && <SectionLabel label={section.type} />}
-
-//       <div className="w-full grid grid-cols-4 gap-y-2">
-//         {section.commonMeasures
-//           .sort((a, b) => a.index - b.index)
-//           .map((measure) => (
-//             <MeasureBlock measure={measure} key={measure.index} />
-//           ))}
-//         {section.voltas.map((volta) => (
-//           <>
-//             {volta.measures
-//               .sort((a, b) => a.index - b.index)
-//               .map((measure, index) => (
-//                 <MeasureBlock
-//                   measure={measure}
-//                   key={measure.index}
-//                   volta={index === 0 ? volta.volta : undefined}
-//                 />
-//               ))}
-//           </>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// }
 
 function Section({ section }: { section: SectionSchema }) {
   const commonMeasuresCount = section.commonMeasures.length;

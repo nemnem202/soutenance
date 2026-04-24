@@ -220,24 +220,24 @@ export function Tab({ children }: { children: ReactNode }) {
     return (
       <div
         {...interactiveProps}
-        className="size-full md:bg-card md:rounded-md relative overflow-hidden group"
+        className="size-full md:bg-card md:rounded-md relative overflow-hidden group min-h-0"
       >
         <div className="hidden md:block relative z-10">
           <FullScreenButton fullScreen={fullScreen} setFullScreen={setFullScreen} />
         </div>
-        <div className="z-0 h-full">{children}</div>
+        <div className="z-0 h-full min-h-0">{children}</div>
       </div>
     );
   } else {
     return (
       <div
         {...interactiveProps}
-        className="inset-0 absolute top-0 left-0 z-100 bg-background group"
+        className="inset-0 absolute top-0 left-0 z-100 bg-background group min-h-0"
       >
         <div className="relative z-10">
           <FullScreenButton fullScreen={fullScreen} setFullScreen={setFullScreen} />
         </div>
-        <div className="z-0 h-full">{children}</div>
+        <div className="z-0 h-full min-h-0">{children}</div>
       </div>
     );
   }

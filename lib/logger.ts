@@ -3,13 +3,14 @@
 // const IS_TEST = process.env.NODE_ENV === "test" || import.meta.env?.TEST;
 // const IS_BROWSER = typeof window !== "undefined";
 
-type LogLevel = "info" | "success" | "warn" | "error";
+type LogLevel = "info" | "success" | "warn" | "error" | "draw";
 
 const colors = {
   info: "#057cc9",
   success: "#419210",
   warn: "#fdaf13",
   error: "#c70d18",
+  draw: "#c96e05",
 };
 
 const formatLog = (level: LogLevel, message: string) => {
@@ -38,6 +39,9 @@ export const logger = {
   },
   warn: (msg: string, ...args: any[]) => {
     console.warn(...formatLog("warn", msg), ...args);
+  },
+  draw: (msg: string, ...args: any[]) => {
+    console.log(...formatLog("draw", msg), ...args);
   },
   error: (msg: string, ...args: any[]) => {
     console.error(...formatLog("error", msg), ...args);
