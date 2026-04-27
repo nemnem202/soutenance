@@ -1,64 +1,39 @@
 import { PlaylistRepository } from "@/repositories/playlistRepository";
-import { playlistSchema } from "@/schemas/entities.schema";
-import type { Exercise, PlaylistSchema } from "@/types/entities";
-import { Controller, type ControllerDeps } from "./Controller";
+import { playlistRegisterSchema } from "@/schemas/auth.schema";
 import type { PlaylistRegisterData } from "@/types/playlist";
 import { type ServerResponse, Status } from "@/types/server-response";
-import { playlistRegisterSchema } from "@/schemas/auth.schema";
 import { AppError } from "@/lib/errors";
+import { Controller } from "./Controller";
 import FileController from "./FileController";
 
-interface PlaylistControllerDeps extends ControllerDeps {
-  userId: number;
-}
+export default class PlaylistController extends Controller {
+  private repository = new PlaylistRepository(this.client);
 
-export default class PlaylistController extends Controller<PlaylistControllerDeps> {
-  private repository = new PlaylistRepository(this.deps.client);
+  async createPlaylistFromUser(playlistData: PlaylistRegisterData): Promise<ServerResponse<{}>> {
+    const userId = this.okUser();
+    const validation = playlistRegisterSchema.safeParse(playlistData);
 
-  public async createPlaylist(playlist: PlaylistSchema) {
-    const user = await this.deps.client.user.findUnique({
-      where: {
-        id: this.deps.userId,
-      },
-    });
-
-    if (!user) throw new Error("User not found");
-
-    const playlistValidation = playlistSchema.safeParse(playlist);
-
-    if (!playlistValidation.success) {
-      throw new Error(`Playlist invalide ${playlistValidation.error.message}`);
-    }
-
-    return await this.repository.create(playlist, this.deps.userId);
-  }
-
-  public async createPlaylistFromUser(
-    playlistData: PlaylistRegisterData
-  ): Promise<ServerResponse<{}>> {
-    const playlistValidation = playlistRegisterSchema.safeParse(playlistData);
-    if (!playlistValidation.success) {
+    if (!validation.success) {
       throw new AppError(
         Status.IncorrectRegisterData,
-        "Formulaire invalide",
-        playlistValidation.error.message
+        "Données invalides",
+        validation.error.message
       );
     }
 
     const { cover, tags, title, visibility, description } = playlistData;
 
     const fileController = new FileController({
-      client: this.deps.client,
+      client: this.client,
+      user: this.user,
       file: cover.file as File,
     });
+
     const imageUpload = await fileController.uploadFileAsImage();
 
-    const user = await this.repository.create(
+    await this.repository.create(
       {
-        cover: {
-          alt: cover.alt,
-          url: imageUpload.url,
-        },
+        cover: { alt: cover.alt, url: imageUpload.url },
         imageId: imageUpload.imageId,
         exercises: [],
         tags: tags,
@@ -66,20 +41,54 @@ export default class PlaylistController extends Controller<PlaylistControllerDep
         visibility: visibility,
         description: description ?? undefined,
       },
-      this.deps.userId
+      userId
     );
 
-    return {
-      success: true,
-      status: Status.Ok,
-      data: {},
-    };
+    return { success: true, status: Status.Ok, data: {} };
   }
 
-  public addExerciseToPlaylist(exercise: Exercise, playlist_id: number) {}
-  public removeExerciseFromPlaylist(exercise: Exercise, playlist_id: number) {}
-  public changePlaylistVisibility(playlistId: number) {}
-  public removePlaylist(playlistId: number) {
-    return this.repository.removePlaylist(playlistId, this.deps.userId);
+  async removePlaylist(playlistId: number): Promise<ServerResponse<null>> {
+    const userId = this.okUser();
+    return await this.repository.removePlaylist(playlistId, userId);
+  }
+
+  async addPlaylistToPlaylist(
+    targetPlaylistId: number,
+    playlistToAddId: number
+  ): Promise<ServerResponse<null>> {
+    const userId = this.okUser();
+    return await this.repository.addPlaylistToPlaylist(targetPlaylistId, playlistToAddId, userId);
+  }
+
+  async addExerciseToPlaylist(
+    targetPlaylistId: number,
+    exerciseToAddId: number
+  ): Promise<ServerResponse<null>> {
+    const userId = this.okUser();
+    return await this.repository.addExerciseToPlaylist(targetPlaylistId, exerciseToAddId, userId);
+  }
+
+  async addManyExercisesToPlaylist(
+    targetPlaylistId: number,
+    exercisesToAddIds: number[]
+  ): Promise<ServerResponse<null>> {
+    const userId = this.okUser();
+    return await this.repository.addManyExercisesToPlaylist(
+      targetPlaylistId,
+      exercisesToAddIds,
+      userId
+    );
+  }
+
+  async removeExerciseFromPlaylist(
+    targetPlaylistId: number,
+    exerciseToRemoveId: number
+  ): Promise<ServerResponse<null>> {
+    const userId = this.okUser();
+    return await this.repository.removeExerciseFromPlaylist(
+      targetPlaylistId,
+      exerciseToRemoveId,
+      userId
+    );
   }
 }
