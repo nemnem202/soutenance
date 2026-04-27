@@ -1,22 +1,4 @@
-import { MMAGroove } from "@/types/mma";
-
-export type MMAGrooveTitle =
-  | "JazzBasie"
-  | "JazzWaltz"
-  | "BossaNova"
-  | "Ballad"
-  | "Metal"
-  | "Shuffle"
-  | "Bebop"
-  | "8Beat"
-  | "16Beat"
-  | "50sRock"
-  | "Mambo"
-  | "Salsa"
-  | "Techno"
-  | "04JAZZ01"
-  | "AFRO01"
-  | "FUS01";
+import { MMAGroove, MMAGrooveTitle } from "@/types/mma";
 
 export const MMA_GROOVES: Map<MMAGrooveTitle, MMAGroove> = new Map([
   [
