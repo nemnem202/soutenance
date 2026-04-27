@@ -2,41 +2,45 @@ import { spawn } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { readFile, unlink } from "node:fs/promises";
 import { logger } from "@/lib/logger";
-import { type ServerResponse, Status } from "@/types/server-response";
+import type { ChordsGridSchema, ExerciseSchema } from "@/types/entities";
+import { Status, type ServerResponse } from "@/types/server-response";
+import { Controller, type ControllerDeps } from "./Controller";
+import GameRepository from "@/repositories/gameRepository";
+import MMAContentGenerator from "@/lib/mma-content-generator";
 
-export default class MidiController {
-  public async getMidiFromChords(): Promise<ServerResponse<Buffer>> {
-    const start = Date.now();
-    const content = [
-      "Tempo 110",
-      "SwingMode On",
-      "Groove Ballad",
-      "SeqSize 4",
+export type ExerciseWithForcedChordGrid = ExerciseSchema & { chordsGrid: ChordsGridSchema };
 
-      "Repeat",
-      "1 Am7",
-      "2 Dm7",
-      "3 G7",
-      "4 CM7",
-      "5 FM7",
-      "6 Bm7b5",
-      "7 E7b9",
-      "RepeatEnding 1",
-      "Groove BalladFill", // fill activé seulement au dernier passage
-      "8 Am7 / E7b9 /",
-      "Groove Ballad", // on remet le groove normal pour la suite
-      "RepeatEnd 2",
+export default class MidiController extends Controller<ControllerDeps> {
+  private repository = new GameRepository(this.deps.client);
 
-      "Groove BalladEnd",
-      "9 Am7",
-      "z",
-    ].join("\n");
-    const buffer = await this.generateMidiBuffer(content);
-    logger.info(`Midi generated in ${Date.now() - start}ms`);
-    return { success: true, status: Status.Ok, data: buffer };
+  public async getMidiFile(
+    exerciseId: number,
+    userId: number | null
+  ): Promise<ServerResponse<Buffer>> {
+    const request = await this.repository.findOne(exerciseId, userId);
+    if (!request.success) return request;
+    if (!request.data.chordsGrid) throw new Error("Execises does not have chord grid");
+    const file = await this.generateMidiFile(request.data as ExerciseWithForcedChordGrid);
+    return {
+      success: true,
+      status: Status.Ok,
+      data: file,
+    };
   }
 
-  private async generateMidiBuffer(content: string): Promise<Buffer> {
+  private async generateMidiFile(
+    exercise: ExerciseWithForcedChordGrid
+  ): Promise<Buffer<ArrayBufferLike>> {
+    const start = Date.now();
+
+    const content = new MMAContentGenerator(exercise, "JazzBasie").generate();
+    logger.info("Content: ", content);
+    const buffer = await this.generateMidiBuffer(content);
+    logger.success(`Midi generated in ${Date.now() - start}ms`);
+    return buffer;
+  }
+
+  async generateMidiBuffer(content: string): Promise<Buffer> {
     const tempFilePath = `/tmp/mma_${randomBytes(8).toString("hex")}.mid`;
 
     try {

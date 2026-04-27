@@ -12,6 +12,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import useScreen from "@/hooks/use-screen";
+import useGame from "@/hooks/use-game";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/organisms/select";
+import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
+import { Action } from "@/midi-editor/types/actions";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
   return (
@@ -196,21 +207,19 @@ export function FullScreenButton({
   setFullScreen: (full: boolean) => void;
 }) {
   return (
-    <div className={`absolute m-2 top-0 right-0 transition opacity-0 group-hover:opacity-100`}>
-      <Button variant={"ghost"} onClick={() => setFullScreen(!fullScreen)}>
-        {fullScreen ? (
-          <Minimize className=" stroke-muted-foreground !hover:stroke-foreground" />
-        ) : (
-          <Maximize className=" stroke-muted-foreground !hover:stroke-foreground" />
-        )}
-      </Button>
-    </div>
+    <Button variant={"ghost"} onClick={() => setFullScreen(!fullScreen)}>
+      {fullScreen ? (
+        <Minimize className=" stroke-muted-foreground !hover:stroke-foreground" />
+      ) : (
+        <Maximize className=" stroke-muted-foreground !hover:stroke-foreground" />
+      )}
+    </Button>
   );
 }
 
 export function Tab({ children }: { children: ReactNode }) {
   const [fullScreen, setFullScreen] = useState(false);
-
+  const { activeTab } = useGame();
   const interactiveProps = {
     role: "region",
     tabIndex: 0,
@@ -223,7 +232,13 @@ export function Tab({ children }: { children: ReactNode }) {
         className="size-full md:bg-card md:rounded-md relative overflow-hidden group min-h-0"
       >
         <div className="hidden md:block relative z-10">
-          <FullScreenButton fullScreen={fullScreen} setFullScreen={setFullScreen} />
+          <div
+            className={`absolute m-2 top-0 right-0 transition opacity-0 group-hover:opacity-100 flex gap-3`}
+          >
+            {activeTab === "piano-roll" && <TrackSelect />}
+
+            <FullScreenButton fullScreen={fullScreen} setFullScreen={setFullScreen} />
+          </div>
         </div>
         <div className="z-0 h-full min-h-0">{children}</div>
       </div>
@@ -235,10 +250,46 @@ export function Tab({ children }: { children: ReactNode }) {
         className="inset-0 absolute top-0 left-0 z-100 bg-background group min-h-0"
       >
         <div className="relative z-10">
-          <FullScreenButton fullScreen={fullScreen} setFullScreen={setFullScreen} />
+          <div
+            className={`absolute m-2 top-0 right-0 transition opacity-0 group-hover:opacity-100 flex gap-3`}
+          >
+            {activeTab === "piano-roll" && <TrackSelect />}
+            <FullScreenButton fullScreen={fullScreen} setFullScreen={setFullScreen} />
+          </div>
         </div>
         <div className="z-0 h-full min-h-0">{children}</div>
       </div>
     );
   }
+}
+
+export function TrackSelect() {
+  const { state, dispatch } = useMidiStore();
+
+  if (!state?.currentTrackId || !state?.tracks) return;
+
+  return (
+    <Select
+      defaultValue={String(state.currentTrackId)}
+      onValueChange={(value) =>
+        dispatch({
+          type: Action.CHANGE_CURRENT_TRACK,
+          trackId: parseInt(value, 10),
+        })
+      }
+    >
+      <SelectTrigger className="w-full max-w-35">
+        <SelectValue className="text-left" />
+      </SelectTrigger>
+      <SelectContent className="z-52">
+        <SelectGroup>
+          {state.tracks.map((track) => (
+            <SelectItem value={String(track.id)} key={track.id}>
+              {track.instrumentFamily}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
 }

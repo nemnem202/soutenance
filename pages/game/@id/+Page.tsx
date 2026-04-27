@@ -20,17 +20,27 @@ import PianoRoll from "@/midi-editor/components/piano-roll";
 import { ClientOnly } from "vike-react/ClientOnly";
 import { MidiProvider, useMidiActions } from "@/midi-editor/providers/midi-provider";
 import type { State } from "@/midi-editor/types/instance";
-import { convertMidiFileToState, getMidiFile } from "@/midi-editor/lib/midiconverter";
-import midiFile from "@/assets/midi/FlyMeToTheMoon.mid?url";
+import { convertMidiFileToState, getMidiFileFromBuffer } from "@/midi-editor/lib/midiconverter";
 import useGame from "@/hooks/use-game";
+import onMidiFile from "@/telefunc/midifile.telefunc";
+import { errorToast } from "@/lib/toaster";
+import { logger } from "@/lib/logger";
 
 export default function Page() {
   const { exercise } = useData<Data>();
   const [midiState, setMidiState] = useState<State | null>(null);
 
   useEffect(() => {
-    getMidiFile(midiFile).then(convertMidiFileToState).then(setMidiState);
-  }, []);
+    if (!exercise.success) return;
+    onMidiFile(exercise.data.id).then((response) => {
+      if (response.success) {
+        logger.info("data", response.data);
+        getMidiFileFromBuffer(response.data).then(convertMidiFileToState).then(setMidiState);
+      } else {
+        errorToast(response.title, response.description);
+      }
+    });
+  }, [exercise]);
 
   if (!exercise.success) return;
   return (

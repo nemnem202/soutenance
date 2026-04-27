@@ -1,9 +1,12 @@
 import MidiController from "@/controllers/MidiController";
+import prismaClient from "@/lib/prisma-client";
 import { handleAction } from "@/lib/response-handler";
+import { getContext } from "telefunc";
 
-export default async function onMidiFile() {
-  const controller = new MidiController();
-  return handleAction("Generate a midi file", () => {
-    return controller.getMidiFromChords();
+export default async function onMidiFile(exerciseId: number) {
+  const controller = new MidiController({ client: prismaClient });
+  const user = getContext().user;
+  return handleAction("Get a midi file", () => {
+    return controller.getMidiFile(exerciseId, user?.id ?? null);
   });
 }

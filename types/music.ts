@@ -15,5 +15,6 @@ export type ChordHarmony = {
   intervals: ChordIntervals;
   labels: ChordLabel[];
   symbolLabel: ChordLabel;
+  mmaLabel: ChordLabel;
 };
 export type ChordDictionary = Record<string, ChordHarmony | null>;
