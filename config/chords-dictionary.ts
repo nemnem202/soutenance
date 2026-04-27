@@ -1,6 +1,6 @@
 import type { ChordDictionary, ChordIntervals, ChordLabel } from "@/types/music";
 
-const CHORDS_DICTIONNARY_RAW: Record<string, [number[], string[], string]> = {
+export const CHORDS_DICTIONNARY_RAW: Record<string, [number[], string[], string]> = {
   "4": [[0, 4, 10, 15], ["quartal"], "m7(add11)"],
   "5": [[0, 7], [], "5"],
   "M#5": [[0, 4, 8], ["augmented", "maj#5", "Maj#5", "+", "aug", "^#5", "#5"], "+"],
@@ -96,11 +96,11 @@ const CHORDS_DICTIONNARY_RAW: Record<string, [number[], string[], string]> = {
   mMaj7b6: [[0, 3, 7, 8, 11], ["mM7b6"], "mM7"],
   mM9: [[0, 3, 7, 11, 14], ["mMaj9", "-M9"], "mM7(add9)"],
   mM9b6: [[0, 3, 7, 8, 11, 14], ["mMaj9b6"], "mM7"],
-  mb6M7: [[0, 3, 8, 11], [], "o"],
-  mb6b9: [[0, 3, 8, 13], [], "o"],
-  o: [[0, 3, 6], ["mb5", "dim"], "o3"],
-  o7: [[0, 3, 6, 21], ["diminished", "m6b5", "dim7"], "o"],
-  oM7: [[0, 3, 6, 11], ["o^", "o^7"], "o(addM7)"],
+  mb6M7: [[0, 3, 8, 11], [], "dim"],
+  mb6b9: [[0, 3, 8, 13], [], "dim"],
+  o: [[0, 3, 6], ["mb5", "dim"], "dim3"],
+  o7: [[0, 3, 6, 21], ["diminished", "m6b5", "dim7"], "dim"],
+  oM7: [[0, 3, 6, 11], ["o^", "o^7"], "dim7(addM7)"],
   sus24: [[0, 2, 4, 7], ["sus4add9"], "sus(add9)"],
   "+add#9": [[0, 4, 8, 15], [], "+"],
   madd4: [[0, 3, 4, 7], ["-add4"], "msus4"],
@@ -119,8 +119,8 @@ const CHORDS_DICTIONNARY_RAW: Record<string, [number[], string[], string]> = {
   "7susadd3": [[0, 4, 5, 7, 10], ["7susadd3"], "7sus"],
   "7b13sus": [[0, 5, 7, 10, 20], ["7b13sus"], "7sus"],
   "M7#11": [[0, 4, 7, 11, 17], ["maj7#11", "Maj7#11", "M7+4", "M7#4", "^#11", "^7#11"], "M7#11"],
-  o7M7: [[0, 3, 6, 9, 11], ["o^7"], "o(addM7)"],
-  m7b6: [[0, 3, 7, 8, 10], ["-7b6"], ""],
+  o7M7: [[0, 3, 6, 9, 11], ["o^7"], "dim7(addM7)"],
+  m7b6: [[0, 3, 7, 8, 10], ["-7b6"], "m7"],
   "7#5": [[0, 4, 8, 10], ["+7", "7aug", "aug7", "7+"], "+7"],
 };
 const getSymbolicLabel = (key: string): string => {

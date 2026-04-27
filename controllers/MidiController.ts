@@ -64,7 +64,7 @@ export default class MidiController extends Controller<ControllerDeps> {
     return buffer;
   }
 
-  private async generateMidiBuffer(content: string): Promise<Buffer> {
+  async generateMidiBuffer(content: string): Promise<Buffer> {
     const tempFilePath = `/tmp/mma_${randomBytes(8).toString("hex")}.mid`;
 
     try {
