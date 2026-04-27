@@ -103,7 +103,7 @@ function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureSchema
 
   return (
     <div
-      className={`px-0.5 md:px-2 h-full flex justify-between items-center  gap-1 ${cell.kind === "Chord" ? "flex-1" : "!w-0 !md:w-auto md:flex-1"}`}
+      className={`px-0.5 md:px-2 h-full flex justify-between items-center  gap-1 ${cell.kind === "Chord" ? "flex-1" : "!w-0 w-auto flex-1"}`}
       style={{ maxWidth: `${100 / measure.cells.length}%` }}
     >
       {cell.timeSignatureChangeBottom && cell.timeSignatureChangeTop && (
