@@ -4,9 +4,10 @@ import type { Cell } from "@/types/music";
 import { logger } from "./logger";
 import type { MeasureSchema, SectionSchema } from "@/types/entities";
 import { MMA_GROOVES } from "@/config/grooves_dictionnary";
-import { MMAGrooveTitle } from "@/types/mma";
+import { MMAGrooveName, MMAGrooveTitle } from "@/types/mma";
 
 export default class MMAContentGenerator {
+  private usedFills: MMAGrooveName[] = [];
   constructor(
     private readonly exercise: ExerciseWithForcedChordGrid,
     private readonly groove: MMAGrooveTitle
@@ -88,18 +89,29 @@ export default class MMAContentGenerator {
     return sections;
   }
 
-  private getMeasures(section: SectionSchema) {
-    const measures: MeasureSchema[] = [
+  private getMeasures(section: SectionSchema): string[] {
+    const measuresSchemas: MeasureSchema[] = [
       ...section.commonMeasures,
       ...section.voltas.flatMap((v) => v.measures),
     ];
 
-    return measures
+    return measuresSchemas
       .sort((a, b) => a.index - b.index)
-      .map((measure) => this.getSingleMeasure(measure));
+      .flatMap((measure, index) => {
+        const isLast = index === measuresSchemas.length - 1;
+        const measureLine = this.getSingleMeasure(measure, isLast ? "isLast" : undefined);
+
+        if (isLast) {
+          const fill = this.getFill();
+          // On retourne un tableau [Fill, Mesure] sans le "..." devant measureLine
+          return fill ? [fill, measureLine] : [measureLine];
+        }
+
+        return [measureLine];
+      });
   }
 
-  private getSingleMeasure(measure: MeasureSchema) {
+  private getSingleMeasure(measure: MeasureSchema, isLast?: "isLast"): string {
     const chordCells: Extract<Cell, { kind: "Chord" }>[] = measure.cells.filter(
       (c) => c.kind === "Chord"
     );
@@ -113,6 +125,29 @@ export default class MMAContentGenerator {
     const returnValue = `${measure.index} ${values.join(" ")}`;
     logger.info("Measure", returnValue);
     return returnValue;
+  }
+
+  private getFill(): string | null {
+    const config = MMA_GROOVES.get(this.groove);
+    if (!config || !config.fills) {
+      return null;
+    }
+    const allAvailableFills = Object.values(config.fills).filter(
+      (f): f is MMAGrooveName => f !== null
+    );
+
+    if (allAvailableFills.length === 0) {
+      return null;
+    }
+    let remainingFills = allAvailableFills.filter((fill) => !this.usedFills.includes(fill));
+    if (remainingFills.length === 0) {
+      this.usedFills = [];
+      remainingFills = allAvailableFills;
+    }
+    const selectedFill = remainingFills[0];
+    this.usedFills.push(selectedFill);
+
+    return `Groove ${selectedFill}`;
   }
 
   private getEnd() {

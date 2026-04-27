@@ -33,7 +33,7 @@ export default class MidiController extends Controller<ControllerDeps> {
   ): Promise<Buffer<ArrayBufferLike>> {
     const start = Date.now();
 
-    const content = new MMAContentGenerator(exercise, "BossaNova").generate();
+    const content = new MMAContentGenerator(exercise, "JazzBasie").generate();
     logger.info("Content: ", content);
     const buffer = await this.generateMidiBuffer(content);
     logger.success(`Midi generated in ${Date.now() - start}ms`);
