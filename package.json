@@ -14,7 +14,8 @@
     "format:check": "biome check .",
     "check": "biome check --write .",
     "check:ci": "biome ci . && tsc --noEmit",
-    "stats": "tsx seed/conversion/stats.ts"
+    "stats": "tsx seed/conversion/stats.ts",
+    "get-grooves": "tsx lib/get-mma-grooves.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.0",

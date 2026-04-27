@@ -29,3 +29,6 @@ free-space:
 	docker volume prune -f
 	docker image prune -a -f
 	docker container prune -f
+
+get-mma-grooves: 
+	docker exec music-sandbox-app-dev bash -c 'find /opt/mma/lib -name "*.mma" -exec python3 /opt/mma/mma.py -Dbo {} \; | grep -E "^[a-zA-Z0-9_-]+$" | sort -u' > all_grooves.txt
