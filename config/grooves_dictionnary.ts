@@ -1,0 +1,332 @@
+type MMAGrooveFamily =
+  | "Jazz"
+  | "Rock"
+  | "Ballad"
+  | "Country"
+  | "Hip-hop"
+  | "Latin"
+  | "Tech"
+  | "Fusion"
+  | "Afro"
+  | "Metal"
+  | "Shuffle";
+
+type MMAGrooveName = string;
+
+type MMAGroove = {
+  family: MMAGrooveFamily;
+  sections: {
+    default: MMAGrooveName | null;
+    plus: MMAGrooveName | null;
+    A: MMAGrooveName | null;
+    B: MMAGrooveName | null;
+    C: MMAGrooveName | null;
+    D: MMAGrooveName | null;
+  };
+  fills: {
+    default: MMAGrooveName | null;
+    A: MMAGrooveName | null;
+    B: MMAGrooveName | null;
+    C: MMAGrooveName | null;
+    D: MMAGrooveName | null;
+  };
+  intros: {
+    default: MMAGrooveName | null;
+    A: MMAGrooveName | null;
+    B: MMAGrooveName | null;
+    C: MMAGrooveName | null;
+  };
+  endings: {
+    default: MMAGrooveName | null;
+    A: MMAGrooveName | null;
+    B: MMAGrooveName | null;
+    C: MMAGrooveName | null;
+  };
+};
+
+export const MMA_GROOVES: Map<MMAGrooveName, MMAGroove> = new Map([
+  [
+    "JazzBasie",
+    {
+      family: "Jazz",
+      sections: {
+        default: null,
+        plus: null,
+        A: "JazzBasieA",
+        B: "JazzBasieB",
+        C: "JazzBasieMainC",
+        D: "JazzBasieMainD",
+      },
+      fills: {
+        default: null,
+        A: "JazzBasieFillAA",
+        B: "JazzBasieFillBA",
+        C: "JazzBasieFillCC",
+        D: "JazzBasieFillDD",
+      },
+      intros: { default: null, A: "JazzBasieIntroA", B: "JazzBasieIntroB", C: "JazzBasieIntroC" },
+      endings: {
+        default: null,
+        A: "JazzBasieEndingA",
+        B: "JazzBasieEndingB",
+        C: "JazzBasieEndingC",
+      },
+    },
+  ],
+  [
+    "JazzWaltz",
+    {
+      family: "Jazz",
+      sections: {
+        default: "JazzWaltz",
+        plus: null,
+        A: "JazzWaltzMainA",
+        B: "JazzWaltzMainB",
+        C: null,
+        D: null,
+      },
+      fills: {
+        default: "JazzWaltzFill",
+        A: "JazzWaltzFillAA",
+        B: "JazzWaltzFillBB",
+        C: null,
+        D: null,
+      },
+      intros: { default: "JazzWaltzIntro", A: "JazzWaltzIntroA", B: null, C: null },
+      endings: { default: "JazzWaltzEnd", A: "JazzWaltzEndingA", B: null, C: null },
+    },
+  ],
+  [
+    "Bebop",
+    {
+      family: "Jazz",
+      sections: { default: "Bebop", plus: "BebopPlus", A: null, B: null, C: null, D: null },
+      fills: { default: null, A: null, B: null, C: null, D: null },
+      intros: { default: "BebopIntro", A: null, B: null, C: null },
+      endings: { default: "BebopEnd", A: null, B: null, C: null },
+    },
+  ],
+
+  [
+    "8Beat",
+    {
+      family: "Rock",
+      sections: {
+        default: "8Beat",
+        plus: "8BeatPlus",
+        A: "8beat1A",
+        B: "8beat1B",
+        C: null,
+        D: null,
+      },
+      fills: { default: "8BeatFill", A: "8beat1FA", B: "8beat1FB", C: null, D: null },
+      intros: { default: "8BeatIntro", A: null, B: null, C: null },
+      endings: { default: "8BeatEnd", A: null, B: null, C: null },
+    },
+  ],
+  [
+    "16Beat",
+    {
+      family: "Rock",
+      sections: { default: "16Beat01", plus: null, A: "16beat1A", B: "16beat1B", C: null, D: null },
+      fills: { default: null, A: "16beat1FA", B: "16beat1FB", C: null, D: null },
+      intros: { default: "16beat1Intro", A: null, B: null, C: null },
+      endings: { default: "16beat1End", A: null, B: null, C: null },
+    },
+  ],
+  [
+    "50sRock",
+    {
+      family: "Rock",
+      sections: {
+        default: "50sRock",
+        plus: "50sRockPlus",
+        A: "50s_RockA",
+        B: "50s_RockB",
+        C: "50s_RockC",
+        D: "50s_RockD",
+      },
+      fills: {
+        default: null,
+        A: "50s_RockFillAA",
+        B: "50s_RockFillBA",
+        C: "50s_RockFillCC",
+        D: "50s_RockFillDD",
+      },
+      intros: {
+        default: "50sRockIntro",
+        A: "50s_RockIntroA",
+        B: "50s_RockIntroB",
+        C: "50s_RockIntroC",
+      },
+      endings: {
+        default: "50sRockEnd",
+        A: "50s_RockEndingA",
+        B: "50s_RockEndingB",
+        C: "50s_RockEndingC",
+      },
+    },
+  ],
+
+  [
+    "Mambo",
+    {
+      family: "Latin",
+      sections: {
+        default: "Mambo",
+        plus: null,
+        A: "MamboMainA",
+        B: "MamboMainB",
+        C: null,
+        D: null,
+      },
+      fills: {
+        default: null,
+        A: "MamboFillAA",
+        B: "MamboFillBA",
+        C: "MamboBreakAA",
+        D: "MamboBreakBB",
+      },
+      intros: { default: "MamboIntro", A: "MamboIntroA", B: "MamboIntroB", C: null },
+      endings: { default: "MamboEnd", A: "MamboEndingA", B: "MamboEndingB", C: null },
+    },
+  ],
+  [
+    "Salsa",
+    {
+      family: "Latin",
+      sections: {
+        default: "Salsa",
+        plus: "SalsaPlus",
+        A: "Salsa1MainA",
+        B: "Salsa1MainB",
+        C: "Salsa2MainA",
+        D: "Salsa2MainB",
+      },
+      fills: {
+        default: "SalsaFill",
+        A: "Salsa1FillAA",
+        B: "Salsa1FillBA",
+        C: "Salsa2FillAA",
+        D: "Salsa2FillBA",
+      },
+      intros: { default: "SalsaIntro", A: "Salsa1IntroA", B: "Salsa1IntroB", C: null },
+      endings: { default: "SalsaEnd", A: "Salsa1EndingA", B: "Salsa1EndingB", C: null },
+    },
+  ],
+  [
+    "BossaNova",
+    {
+      family: "Latin",
+      sections: { default: "BossaNova", plus: "BossaNovaPlus", A: null, B: null, C: null, D: null },
+      fills: { default: "BossaNovaFill", A: null, B: null, C: null, D: null },
+      intros: { default: "BossaNovaIntro", A: null, B: null, C: null },
+      endings: { default: "BossaNovaEnd", A: null, B: null, C: null },
+    },
+  ],
+
+  [
+    "Ballad",
+    {
+      family: "Ballad",
+      sections: { default: "Ballad", plus: "BalladPlus", A: null, B: null, C: null, D: null },
+      fills: { default: "BalladFill", A: null, B: null, C: null, D: null },
+      intros: { default: "BalladIntro", A: "BalladIntro1", B: "BalladIntro2", C: null },
+      endings: { default: "BalladEnd", A: null, B: null, C: null },
+    },
+  ],
+
+  [
+    "Shuffle",
+    {
+      family: "Shuffle",
+      sections: {
+        default: "SHFL01",
+        plus: null,
+        A: "HappyshuffleA",
+        B: "HappyshuffleB",
+        C: "HappyshuffleC",
+        D: "HappyshuffleD",
+      },
+      fills: {
+        default: null,
+        A: "HappyshuffleFillA",
+        B: "HappyshuffleFillB",
+        C: "HappyshuffleFillC",
+        D: "HappyshuffleFillD",
+      },
+      intros: {
+        default: null,
+        A: "HappyshuffleIntroA",
+        B: "HappyshuffleIntroB",
+        C: "HappyshuffleIntroC",
+      },
+      endings: {
+        default: null,
+        A: "HappyshuffleEndingA",
+        B: "HappyshuffleEndingB",
+        C: "HappyshuffleEndingC",
+      },
+    },
+  ],
+
+  [
+    "Techno",
+    {
+      family: "Tech",
+      sections: { default: "Techno", plus: null, A: "TECH01", B: "TECH02", C: null, D: null },
+      fills: { default: null, A: null, B: null, C: null, D: null },
+      intros: { default: "TechnoIntro", A: null, B: null, C: null },
+      endings: { default: "TechnoEnd", A: null, B: null, C: null },
+    },
+  ],
+
+  [
+    "Metal",
+    {
+      family: "Metal",
+      sections: {
+        default: "metal1A",
+        plus: null,
+        A: "metal1A",
+        B: "metal1B",
+        C: "metal2A",
+        D: "metal2B",
+      },
+      fills: { default: null, A: "metal1FA", B: "metal1FB", C: "metal2FA", D: "metal2FB" },
+      intros: { default: null, A: null, B: null, C: null },
+      endings: { default: null, A: null, B: null, C: null },
+    },
+  ],
+
+  [
+    "04JAZZ01",
+    {
+      family: "Jazz",
+      sections: { default: "04JAZZ01", plus: null, A: null, B: null, C: null, D: null },
+      fills: { default: null, A: null, B: null, C: null, D: null },
+      intros: { default: null, A: null, B: null, C: null },
+      endings: { default: null, A: null, B: null, C: null },
+    },
+  ],
+  [
+    "AFRO01",
+    {
+      family: "Afro",
+      sections: { default: "AFRO01", plus: null, A: null, B: null, C: null, D: null },
+      fills: { default: null, A: null, B: null, C: null, D: null },
+      intros: { default: null, A: null, B: null, C: null },
+      endings: { default: null, A: null, B: null, C: null },
+    },
+  ],
+  [
+    "FUS01",
+    {
+      family: "Fusion",
+      sections: { default: "FUS01", plus: null, A: null, B: null, C: null, D: null },
+      fills: { default: null, A: null, B: null, C: null, D: null },
+      intros: { default: null, A: null, B: null, C: null },
+      endings: { default: null, A: null, B: null, C: null },
+    },
+  ],
+]);

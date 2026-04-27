@@ -13,7 +13,8 @@ try {
   const grooves = content.split("\n").filter((line) => line.trim() !== "");
 
   logger.info("Grooves chargés", { count: grooves.length });
-  logger.table(grooves);
+
+  fs.writeFileSync("config/grooves.json", JSON.stringify(grooves), { encoding: "utf-8" });
 } catch (error) {
   logger.error("Impossible de lire le fichier de grooves", error);
 }
