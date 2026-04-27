@@ -5,6 +5,8 @@ import { type ServerResponse, Status } from "@/types/server-response";
 import { AppError } from "@/lib/errors";
 import { Controller } from "./Controller";
 import FileController from "./FileController";
+import { PlaylistSchema } from "@/types/entities";
+import { playlistSchema } from "@/schemas/entities.schema";
 
 export default class PlaylistController extends Controller {
   private repository = new PlaylistRepository(this.client);
@@ -45,6 +47,24 @@ export default class PlaylistController extends Controller {
     );
 
     return { success: true, status: Status.Ok, data: {} };
+  }
+
+  async createPlaylistFromSeeding(playlistData: PlaylistSchema, userId: number) {
+    const user = await this.client.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) throw new Error("User not found");
+
+    const playlistValidation = playlistSchema.safeParse(playlistData);
+
+    if (!playlistValidation.success) {
+      throw new Error(`Playlist invalide ${playlistValidation.error.message}`);
+    }
+
+    return await this.repository.create(playlistData, userId);
   }
 
   async removePlaylist(playlistId: number): Promise<ServerResponse<null>> {

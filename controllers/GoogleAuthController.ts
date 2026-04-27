@@ -2,184 +2,137 @@ import { faker } from "@faker-js/faker";
 import type { Request, Response } from "express";
 import type { OAuth2Client } from "google-auth-library";
 import { nanoid } from "nanoid";
-import { generateJwt } from "@/lib/auth-utils";
+import { COOKIE_NAME, generateJwt, getCookieOptions } from "@/lib/auth-utils";
 import { env } from "@/lib/env";
-import { logger } from "@/lib/logger";
 import type { Session } from "@/types/auth";
-import { type ServerResponse, Status } from "@/types/server-response";
 import { Controller, type ControllerDeps } from "./Controller";
+import { AppError } from "@/lib/errors";
+import { Status } from "@/types/server-response";
 
 interface GoogleAuthDeps extends ControllerDeps {
-  req: Request;
-  res: Response;
   googleClient: OAuth2Client;
 }
 
-export default class GoogleAuthController extends Controller<GoogleAuthDeps> {
-  private generateRandomUsername(username: string): string {
-    const cleanBase = username.split(" ").join("_").substring(0, 11);
-    return `${cleanBase}_${nanoid(8)}`;
-  }
-  async getAuth(): Promise<ServerResponse<{}>> {
-    const { res, googleClient } = this.deps;
+export default class GoogleAuthController extends Controller {
+  private googleClient: OAuth2Client;
 
+  constructor(deps: GoogleAuthDeps) {
+    super(deps);
+    this.googleClient = deps.googleClient;
+  }
+
+  /**
+   * Génère l'URL d'authentification Google et définit le cookie d'état.
+   */
+  async getAuth(res: Response) {
     const state = crypto.randomUUID();
 
     res.cookie("oauth_state", state, {
       httpOnly: true,
-      secure: false,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
+      maxAge: 600000, // 10 min
     });
 
-    const url = googleClient.generateAuthUrl({
+    const url = this.googleClient.generateAuthUrl({
       access_type: "offline",
       scope: ["openid", "email", "profile"],
       state,
       prompt: "consent",
     });
-    logger.info(`Redirect URL: ${url}`);
 
     res.redirect(url);
-
-    return {
-      success: true,
-      status: Status.Ok,
-      data: {},
-    };
   }
 
-  async getCallback(): Promise<ServerResponse<{}>> {
-    const { req, res, googleClient, client } = this.deps;
+  /**
+   * Gère le retour de Google, valide le token et crée/récupère l'utilisateur.
+   */
+  async handleCallback(req: Request, res: Response) {
     const { code, state } = req.query;
     const storedState = req.cookies.oauth_state;
+
     if (!state || state !== storedState) {
-      res.status(400).send("Invalid state");
-      return {
-        success: false,
-        status: Status.UnknownError,
-        title: "Invalid state",
-      };
+      throw new AppError(
+        Status.BadRequest,
+        "État invalide",
+        "La session d'authentification a expiré."
+      );
     }
 
-    const { tokens } = await googleClient.getToken(code as string);
+    const { tokens } = await this.googleClient.getToken(code as string);
+    this.googleClient.setCredentials(tokens);
 
-    googleClient.setCredentials(tokens);
-
-    const ticket = await googleClient.verifyIdToken({
+    const ticket = await this.googleClient.verifyIdToken({
       idToken: tokens.id_token!,
       audience: env.GOOGLE_CLIENT_ID,
     });
 
     const payload = ticket.getPayload();
+    if (!payload || !payload.email || !payload.sub) {
+      throw new AppError(
+        Status.UnknownError,
+        "Erreur Google",
+        "Impossible de récupérer les informations du profil."
+      );
+    }
 
-    if (!payload) throw new Error("No payload");
-
-    const user = {
-      id: payload?.sub,
-      email: payload?.email,
-      name: payload.name ?? faker.person.firstName(),
-      picture: payload.picture,
-    };
-
-    if (!user.email || !user.id) throw new Error("Payload do not have email or id");
-
-    logger.info("Google user authentified !");
-    logger.table(user);
-
-    let dbUser = await client.user.findUnique({
-      where: {
-        email: user.email,
-      },
-      include: {
-        profilePicture: true,
-      },
+    let user = await this.client.user.findUnique({
+      where: { email: payload.email },
+      include: { profilePicture: true },
     });
 
-    if (!dbUser) {
-      let username: string;
-      let isUnique = false;
-      let attempts = 0;
-      const maxAttempts = 10;
-
-      while (!isUnique && attempts < maxAttempts) {
-        username = this.generateRandomUsername(user.name);
-
-        const existingUser = await client.user.findUnique({
-          where: { username: username },
-        });
-
-        if (!existingUser) {
-          isUnique = true;
-        }
-        attempts++;
-      }
-
-      dbUser = await client.user.create({
+    // Création de l'utilisateur s'il n'existe pas
+    if (!user) {
+      const username = await this.generateUniqueUsername(payload.name || "User");
+      user = await this.client.user.create({
         data: {
-          email: user.email,
-          username: username!,
+          email: payload.email,
+          username,
           profilePicture: {
             create: {
-              alt: `The profile picture of ${username!}`,
-              url: user.picture ?? faker.image.avatar(),
+              alt: `Profil de ${username}`,
+              url: payload.picture || faker.image.avatar(),
             },
           },
           authMethods: {
-            create: {
-              provider: "Google",
-              providerId: user.id,
-            },
+            create: { provider: "Google", providerId: payload.sub },
           },
         },
-        include: {
-          profilePicture: true,
-        },
+        include: { profilePicture: true },
       });
     }
 
     const session: Session = {
-      id: dbUser.id,
-      profilePicture: {
-        alt: dbUser.profilePicture.alt,
-        url: dbUser.profilePicture.url,
-      },
-      username: dbUser.username,
+      id: user.id,
+      username: user.username,
+      profilePicture: user.profilePicture,
     };
 
-    const jwt = await generateJwt(dbUser.id, true);
+    const jwt = await generateJwt(user.id, true);
+    res.cookie(COOKIE_NAME, jwt, getCookieOptions(true));
+    res.clearCookie("oauth_state");
 
-    res.cookie("token", jwt, {
-      httpOnly: true,
-      secure: false,
-      path: "/",
-      maxAge: 365 * 24 * 3600 * 1000,
-      sameSite: "lax",
-    });
-
-    res.clearCookie("oauth_state", {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-      path: "/",
-    });
-
+    // Script pour fermer la popup et notifier le parent (frontend)
     res.send(`
       <html>
         <body>
           <script>
-            window.opener.postMessage(
-              { session: ${JSON.stringify(session)} },
-            );
+            window.opener.postMessage({ session: ${JSON.stringify(session)} }, window.location.origin);
             window.close();
           </script>
         </body>
       </html>
     `);
+  }
 
-    return {
-      success: true,
-      status: Status.Ok,
-      data: {},
-    };
+  private async generateUniqueUsername(baseName: string): Promise<string> {
+    const username = baseName.split(" ").join("_").substring(0, 11);
+    const exists = true;
+    while (exists) {
+      const candidate = `${username}_${nanoid(5)}`;
+      const user = await this.client.user.findUnique({ where: { username: candidate } });
+      if (!user) return candidate;
+    }
+    return username;
   }
 }

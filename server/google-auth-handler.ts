@@ -1,33 +1,38 @@
-import cookieParser from "cookie-parser";
 import { Router } from "express";
 import GoogleAuthController from "@/controllers/GoogleAuthController";
 import googleClient from "@/lib/google-auth-client";
 import prismaClient from "@/lib/prisma-client";
-import { handleAction } from "@/lib/response-handler";
 
 export default function googleAuthHandler() {
   const router = Router();
 
-  router.use(cookieParser());
-
   router.get("/google", async (req, res) => {
     const controller = new GoogleAuthController({
-      req,
-      res,
       client: prismaClient,
+      user: null,
       googleClient,
     });
-    return handleAction("Google Auth", () => controller.getAuth());
+    return controller.getAuth(res);
   });
 
   router.get("/callback", async (req, res) => {
     const controller = new GoogleAuthController({
-      req,
-      res,
       client: prismaClient,
+      user: null,
       googleClient,
     });
-    return handleAction("Google Auth", () => controller.getCallback());
+
+    try {
+      await controller.handleCallback(req, res);
+    } catch (err) {
+      // En cas d'erreur dans la popup, on ferme proprement
+      res.status(400).send(`
+        <html><body><script>
+          window.opener.postMessage({ error: "Auth failed" }, window.location.origin);
+          window.close();
+        </script></body></html>
+      `);
+    }
   });
 
   return router;
