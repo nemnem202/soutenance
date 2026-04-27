@@ -3,10 +3,10 @@ import { logger } from "@/lib/logger";
 import prismaClient from "@/lib/prisma-client";
 import { handleAction } from "@/lib/response-handler";
 import UserRepository from "@/repositories/userRepository";
-import { UserCardDto } from "@/types/dtos/user";
-import { UserSeeAllQUery } from "@/types/navigation";
-import { ServerResponse, Status } from "@/types/server-response";
-import { PageContextServer } from "vike/types";
+import type { UserCardDto } from "@/types/dtos/user";
+import type { UserSeeAllQUery } from "@/types/navigation";
+import { type ServerResponse, Status } from "@/types/server-response";
+import type { PageContextServer } from "vike/types";
 
 async function getSeeAllData(
   pageContext: PageContextServer

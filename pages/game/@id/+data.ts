@@ -2,9 +2,9 @@ import { getAuthenticatedSession, getGlobalData } from "@/lib/global-data";
 import prismaClient from "@/lib/prisma-client";
 import { handleAction } from "@/lib/response-handler";
 import GameRepository from "@/repositories/gameRepository";
-import { Exercise } from "@/types/entities";
-import { ServerResponse, Status } from "@/types/server-response";
-import { PageContextServer } from "vike/types";
+import type { Exercise } from "@/types/entities";
+import { type ServerResponse, Status } from "@/types/server-response";
+import type { PageContextServer } from "vike/types";
 
 async function getExercise(pageContext: PageContextServer): Promise<ServerResponse<Exercise>> {
   const session = await getAuthenticatedSession(pageContext.headers.cookie);

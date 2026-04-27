@@ -3,10 +3,10 @@ import { logger } from "@/lib/logger";
 import prismaClient from "@/lib/prisma-client";
 import { handleAction } from "@/lib/response-handler";
 import { PlaylistRepository } from "@/repositories/playlistRepository";
-import { PlaylistCardDto } from "@/types/dtos/playlist";
-import { PlaylistSeeAllQUery } from "@/types/navigation";
-import { ServerResponse, Status } from "@/types/server-response";
-import { PageContextServer } from "vike/types";
+import type { PlaylistCardDto } from "@/types/dtos/playlist";
+import type { PlaylistSeeAllQUery } from "@/types/navigation";
+import { type ServerResponse, Status } from "@/types/server-response";
+import type { PageContextServer } from "vike/types";
 
 async function getSeeAllData(
   pageContext: PageContextServer

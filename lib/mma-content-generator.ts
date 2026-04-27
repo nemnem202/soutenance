@@ -4,7 +4,7 @@ import type { Cell } from "@/types/music";
 import { logger } from "./logger";
 import type { MeasureSchema, SectionSchema } from "@/types/entities";
 import { MMA_GROOVES } from "@/config/grooves_dictionnary";
-import { MMAGrooveName, MMAGrooveTitle } from "@/types/mma";
+import type { MMAGrooveName, MMAGrooveTitle } from "@/types/mma";
 
 export default class MMAContentGenerator {
   private usedFills: MMAGrooveName[] = [];
