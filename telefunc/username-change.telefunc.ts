@@ -4,8 +4,7 @@ import prismaClient from "@/lib/prisma-client";
 import { handleAction } from "@/lib/response-handler";
 
 export async function onUsernameChange(newUsername: string) {
-  const context = getContext();
-  const controller = new UserController({ client: prismaClient });
-  const userId = context.user?.id ?? null;
-  return handleAction("Username Change", () => controller.updateUsername(userId, newUsername));
+  const { user } = getContext();
+  const controller = new UserController({ client: prismaClient, user });
+  return handleAction("Username Change", () => controller.updateUsername(newUsername));
 }
