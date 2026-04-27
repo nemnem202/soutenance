@@ -1,50 +1,24 @@
-type MMAGrooveFamily =
-  | "Jazz"
-  | "Rock"
+import { MMAGroove } from "@/types/mma";
+
+export type MMAGrooveTitle =
+  | "JazzBasie"
+  | "JazzWaltz"
+  | "BossaNova"
   | "Ballad"
-  | "Country"
-  | "Hip-hop"
-  | "Latin"
-  | "Tech"
-  | "Fusion"
-  | "Afro"
   | "Metal"
-  | "Shuffle";
+  | "Shuffle"
+  | "Bebop"
+  | "8Beat"
+  | "16Beat"
+  | "50sRock"
+  | "Mambo"
+  | "Salsa"
+  | "Techno"
+  | "04JAZZ01"
+  | "AFRO01"
+  | "FUS01";
 
-type MMAGrooveName = string;
-
-type MMAGroove = {
-  family: MMAGrooveFamily;
-  sections: {
-    default: MMAGrooveName | null;
-    plus: MMAGrooveName | null;
-    A: MMAGrooveName | null;
-    B: MMAGrooveName | null;
-    C: MMAGrooveName | null;
-    D: MMAGrooveName | null;
-  };
-  fills: {
-    default: MMAGrooveName | null;
-    A: MMAGrooveName | null;
-    B: MMAGrooveName | null;
-    C: MMAGrooveName | null;
-    D: MMAGrooveName | null;
-  };
-  intros: {
-    default: MMAGrooveName | null;
-    A: MMAGrooveName | null;
-    B: MMAGrooveName | null;
-    C: MMAGrooveName | null;
-  };
-  endings: {
-    default: MMAGrooveName | null;
-    A: MMAGrooveName | null;
-    B: MMAGrooveName | null;
-    C: MMAGrooveName | null;
-  };
-};
-
-export const MMA_GROOVES: Map<MMAGrooveName, MMAGroove> = new Map([
+export const MMA_GROOVES: Map<MMAGrooveTitle, MMAGroove> = new Map([
   [
     "JazzBasie",
     {
@@ -106,7 +80,6 @@ export const MMA_GROOVES: Map<MMAGrooveName, MMAGroove> = new Map([
       endings: { default: "BebopEnd", A: null, B: null, C: null },
     },
   ],
-
   [
     "8Beat",
     {
@@ -167,7 +140,6 @@ export const MMA_GROOVES: Map<MMAGrooveName, MMAGroove> = new Map([
       },
     },
   ],
-
   [
     "Mambo",
     {
@@ -224,7 +196,6 @@ export const MMA_GROOVES: Map<MMAGrooveName, MMAGroove> = new Map([
       endings: { default: "BossaNovaEnd", A: null, B: null, C: null },
     },
   ],
-
   [
     "Ballad",
     {
@@ -235,7 +206,6 @@ export const MMA_GROOVES: Map<MMAGrooveName, MMAGroove> = new Map([
       endings: { default: "BalladEnd", A: null, B: null, C: null },
     },
   ],
-
   [
     "Shuffle",
     {
@@ -269,7 +239,6 @@ export const MMA_GROOVES: Map<MMAGrooveName, MMAGroove> = new Map([
       },
     },
   ],
-
   [
     "Techno",
     {
@@ -280,7 +249,6 @@ export const MMA_GROOVES: Map<MMAGrooveName, MMAGroove> = new Map([
       endings: { default: "TechnoEnd", A: null, B: null, C: null },
     },
   ],
-
   [
     "Metal",
     {
@@ -298,7 +266,6 @@ export const MMA_GROOVES: Map<MMAGrooveName, MMAGroove> = new Map([
       endings: { default: null, A: null, B: null, C: null },
     },
   ],
-
   [
     "04JAZZ01",
     {
