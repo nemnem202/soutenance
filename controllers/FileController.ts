@@ -5,7 +5,7 @@ import { AppError } from "@/lib/errors";
 import UserRepository from "@/repositories/userRepository";
 import type { Session } from "@/types/auth";
 import { type ServerResponse, Status } from "@/types/server-response";
-import { Controller, type ControllerDeps } from "./Controller";
+import { Controller, ControllerDeps } from "./Controller";
 
 interface FileDeps extends ControllerDeps {
   file?: File;
@@ -18,12 +18,19 @@ cloudinary.config({
   secure: true,
 });
 
-export default class FileController extends Controller<FileDeps> {
-  private repository = new UserRepository(this.deps.client);
+export default class FileController extends Controller {
+  private repository: UserRepository;
+  private file?: File;
   private readonly image_folder = env.CLOUD_IMAGE_FOLDER_NAME;
 
+  constructor(deps: FileDeps) {
+    super(deps);
+    this.repository = new UserRepository(this.client);
+    this.file = deps.file;
+  }
+
   async uploadFileAsImage() {
-    if (!this.deps.file) throw new AppError(Status.UnknownError, "Fichier manquant");
+    if (!this.file) throw new AppError(Status.UnknownError, "Fichier manquant");
 
     try {
       const result = await new Promise<UploadApiResponse>((resolve, reject) => {
@@ -31,7 +38,7 @@ export default class FileController extends Controller<FileDeps> {
           { folder: this.image_folder, format: "webp", resource_type: "image" },
           (error, res) => (error ? reject(error) : resolve(res!))
         );
-        Readable.fromWeb(this.deps.file?.stream() as any).pipe(uploadStream);
+        Readable.fromWeb(this.file?.stream() as any).pipe(uploadStream);
       });
 
       return { url: result.secure_url, imageId: result.public_id };
@@ -40,38 +47,30 @@ export default class FileController extends Controller<FileDeps> {
     }
   }
 
-  async handleUserImageChange(user: { id: number } | null): Promise<ServerResponse<Session>> {
-    if (!user) throw new AppError(Status.NotConnected, "Vous devez être connecté");
-
-    await this.removeUserImage(user.id);
+  async handleUserImageChange(): Promise<ServerResponse<Session>> {
+    const userId = this.okUser();
+    await this.removeUserImage(userId);
     const fileUpload = await this.uploadFileAsImage();
-
-    const update = await this.repository.updateImage(fileUpload, user.id);
+    const update = await this.repository.updateImage(fileUpload, userId);
 
     return {
       success: true,
       status: Status.Ok,
       data: {
-        id: user.id,
+        id: userId,
         username: update.username,
-        profilePicture: { alt: update.profilePicture.alt, url: update.profilePicture.url },
+        profilePicture: update.profilePicture,
       },
     };
   }
 
   async removeUserImage(userId: number) {
-    const existingUser = await this.deps.client.user.findUnique({
-      where: {
-        id: userId,
-      },
-      include: {
-        profilePicture: true,
-      },
+    const existingUser = await this.client.user.findUnique({
+      where: { id: userId },
+      include: { profilePicture: true },
     });
 
-    if (!existingUser) throw new Error("Existing user not found in db");
-
-    if (existingUser.profilePicture.cloudId) {
+    if (existingUser?.profilePicture.cloudId) {
       await cloudinary.uploader.destroy(existingUser.profilePicture.cloudId);
     }
   }
