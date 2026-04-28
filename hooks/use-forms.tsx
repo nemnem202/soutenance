@@ -26,11 +26,13 @@ export function useNewPlaylistForm({ onSubmit }: { onSubmit?: () => void }) {
 
   const handleSubmit = async (data: PlaylistRegisterData) => {
     await loadingToast(onPlaylistCreation(data), {
-      loading: "Création de la playlist...",
-      success: () => ({ title: "Playlist créée !" }),
+      loading: "Playlist submition...",
+      success: () => {
+        reload();
+        onSubmit?.();
+        return { title: "Playlist created !" };
+      },
     });
-    reload();
-    onSubmit?.();
   };
 
   return { formRef, form, handleSubmit };

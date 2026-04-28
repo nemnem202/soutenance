@@ -14,8 +14,9 @@ import { SmallAddNewPlaylistWidget, SmallAddToPlaylistWidget } from "./playlists
 import { useData } from "vike-react/useData";
 import type { Data } from "@/pages/+data";
 import { addPlaylistToPlaylist } from "@/lib/utils";
+import { PlaylistCardDto } from "@/types/dtos/playlist";
 
-export default function AddToPlaylistButton({ playlistToAddId }: { playlistToAddId: number }) {
+export default function AddToPlaylistButton({ playlistToAdd }: { playlistToAdd: PlaylistCardDto }) {
   const { instance } = useLanguage();
   const { userPlaylists } = useData<Data>();
 
@@ -41,7 +42,7 @@ export default function AddToPlaylistButton({ playlistToAddId }: { playlistToAdd
               <DropdownMenuItem className="p-0" key={playlist.id}>
                 <SmallAddToPlaylistWidget
                   playlist={playlist}
-                  callBack={() => addPlaylistToPlaylist(playlist.id, playlistToAddId)}
+                  callBack={() => addPlaylistToPlaylist(playlist, playlistToAdd)}
                 />
               </DropdownMenuItem>
             ))}

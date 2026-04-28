@@ -45,24 +45,35 @@ export const getPreferredLanguage = (header: string | null): Language => {
 export const chordToString = (chord: Chord) =>
   `${chord.content.note} ${chord.content.modifier ?? ""} ${chord.over && `${chord.over.note} ${chord.over.modifier}`}`;
 
-export const addPlaylistToPlaylist = async (targetId: number, playlistToAddId: number) => {
-  const responsePromise = onAddPlaylistToPlaylist(targetId, playlistToAddId);
-  loadingToast(responsePromise);
-  await responsePromise;
-};
-
-export const addExerciseToPlaylist = async (targetId: number, exerciseId: number) => {
-  await loadingToast(onAddExerciseToPlaylist(targetId, exerciseId), {
+export const addPlaylistToPlaylist = async (
+  target: PlaylistCardDto,
+  playlistToAdd: PlaylistCardDto
+) => {
+  await loadingToast(onAddPlaylistToPlaylist(target.id, playlistToAdd.id), {
     loading: "Add to playlist...",
-    success: () => ({ title: "Exercise added !" }),
+    success: () => ({ title: `${target.title} was added to ${playlistToAdd.title}` }),
   });
   reload();
 };
 
-export const addManyExercisesToPlaylist = async (targetId: number, exercisesIds: number[]) => {
-  await loadingToast(onAddMultiExerciseToPlaylist(targetId, exercisesIds), {
+export const addExerciseToPlaylist = async (
+  playlist: PlaylistCardDto,
+  exercise: ExerciseCardDto
+) => {
+  await loadingToast(onAddExerciseToPlaylist(playlist.id, exercise.id), {
     loading: "Add to playlist...",
-    success: () => ({ title: `${exercisesIds.length} exercice added !` }),
+    success: () => ({ title: `${exercise.title} was added to ${playlist.title}` }),
+  });
+  reload();
+};
+
+export const addManyExercisesToPlaylist = async (
+  playlist: PlaylistCardDto,
+  exercisesIds: number[]
+) => {
+  await loadingToast(onAddMultiExerciseToPlaylist(playlist.id, exercisesIds), {
+    loading: "Add to playlist...",
+    success: () => ({ title: `${exercisesIds.length} exercice added to ${playlist.title}` }),
   });
   reload();
 };

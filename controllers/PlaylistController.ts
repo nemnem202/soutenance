@@ -77,6 +77,7 @@ export default class PlaylistController extends Controller {
     playlistToAddId: number
   ): Promise<ServerResponse<null>> {
     const userId = this.okUser();
+
     return await this.repository.addPlaylistToPlaylist(targetPlaylistId, playlistToAddId, userId);
   }
 

@@ -173,9 +173,9 @@ export function AddToPlaylistContent({
                 playlist={playlist}
                 callBack={async () => {
                   currentExercise
-                    ? await addExerciseToPlaylist(playlist.id, currentExercise.id)
+                    ? await addExerciseToPlaylist(playlist, currentExercise)
                     : currentPlaylist
-                      ? await addPlaylistToPlaylist(playlist.id, currentPlaylist.id)
+                      ? await addPlaylistToPlaylist(playlist, currentPlaylist)
                       : null;
                 }}
               />
@@ -291,7 +291,7 @@ export function MultiAddToPlaylistContent({
                 playlist={playlist}
                 callBack={async () => {
                   await addManyExercisesToPlaylist(
-                    playlist.id,
+                    playlist,
                     exercises.map((e) => e.id)
                   );
                 }}
