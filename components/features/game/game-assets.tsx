@@ -32,20 +32,6 @@ export function ControlsSection({ children }: { children: ReactNode }) {
   );
 }
 
-export function IconButton({
-  children,
-  onClick = () => {},
-}: {
-  children: ReactNode;
-  onClick?: () => void;
-}) {
-  return (
-    <button type="button" onClick={onClick} className="all-unset cursor-pointer ">
-      {children}
-    </button>
-  );
-}
-
 export function SidebarTabButton({
   text,
   isActive,
@@ -219,7 +205,7 @@ export function FullScreenButton({
 
 export function Tab({ children }: { children: ReactNode }) {
   const [fullScreen, setFullScreen] = useState(false);
-  const { activeTab } = useGame();
+  const { activeTab, isLoading } = useGame();
   const interactiveProps = {
     role: "region",
     tabIndex: 0,
@@ -235,7 +221,7 @@ export function Tab({ children }: { children: ReactNode }) {
           <div
             className={`absolute m-2 top-0 right-0 transition opacity-0 group-hover:opacity-100 flex gap-3`}
           >
-            {activeTab === "piano-roll" && <TrackSelect />}
+            {activeTab === "piano-roll" && !isLoading && <TrackSelect />}
 
             <FullScreenButton fullScreen={fullScreen} setFullScreen={setFullScreen} />
           </div>

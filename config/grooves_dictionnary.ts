@@ -1,4 +1,4 @@
-import { MMAGroove, MMAGrooveTitle } from "@/types/mma";
+import type { MMAGroove, MMAGrooveTitle } from "@/types/mma";
 
 export const MMA_GROOVES: Map<MMAGrooveTitle, MMAGroove> = new Map([
   [

@@ -12,13 +12,9 @@ function getScreen(pageContext: PageContextServer): ScreenSizeType {
   const ua = pageContext.headers ? (pageContext.headers["user-agent"] ?? "") : "";
   const parser = new UAParser(ua);
   const device = parser.getDevice().type;
-  if (device && ["mobile", "wearable", "embedded"].includes(device)) {
-    return "sm";
-  } else if (device === "tablet") {
-    return "md";
-  } else {
-    return "lg";
-  }
+  if (device && ["mobile", "wearable", "embedded"].includes(device)) return "sm";
+  if (device === "tablet") return "md";
+  return "lg";
 }
 
 export async function getAuthenticatedSession(
@@ -27,26 +23,21 @@ export async function getAuthenticatedSession(
   if (!cookieHeader) return null;
   const user = await getCurrentUserFromCookie(cookieHeader);
   if (!user) return null;
-  const controller = new SessionController({ client: prismaClient });
-  const response = await controller.getSession(user.id);
-  if (response.success) {
-    return response.data;
-  } else {
-    return null;
-  }
-}
 
-async function getUserPlaylists(userId: number | null) {
-  return handleAction("Get user playlist", async () => {
-    const controller = await new SessionController({ client: prismaClient });
-    return handleAction("Profile Picture Change", () => controller.getUserPlaylists(userId));
-  });
+  const controller = new SessionController({ client: prismaClient, user });
+  const response = await controller.getSession();
+  return response.success ? response.data : null;
 }
 
 export async function getGlobalData(pageContext: PageContextServer) {
+  const user = await getCurrentUserFromCookie(pageContext.headers.cookie);
   const session = await getAuthenticatedSession(pageContext.headers.cookie);
   const preferredLanguage = getPreferredLanguage(pageContext.headers["accept-language"]);
-  const userPlaylists = await getUserPlaylists(session?.id ?? null);
   const screen = getScreen(pageContext);
+  const sessionController = new SessionController({ client: prismaClient, user });
+  const userPlaylists = user
+    ? await handleAction("Get user playlists (Global)", () => sessionController.getUserPlaylists())
+    : { success: true, data: [], status: 200 };
+
   return { session, preferredLanguage, screen, userPlaylists };
 }

@@ -24,12 +24,15 @@ export default function ChordTab() {
     }
   };
   return (
-    <div className="h-full w-full flex flex-col justify-between">
-      {display === "grid" ? (
-        <ChordGrid />
-      ) : (
-        <ChordCarousel key={axis} api={api} carouselRef={carouselRef} axis={axis} />
-      )}
+    <div className="h-full w-full flex flex-col justify-between overflow-auto">
+      <div className="flex-1">
+        {display === "grid" ? (
+          <ChordGrid />
+        ) : (
+          <ChordCarousel key={axis} api={api} carouselRef={carouselRef} axis={axis} />
+        )}
+      </div>
+
       <div className="w-full h-20 flex justify-between items-end gap-2 p-2 hidden md:flex">
         <div className="border rounded-md flex items-center h-10 overflow-hidden ">
           <button

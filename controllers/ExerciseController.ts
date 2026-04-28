@@ -1,30 +1,21 @@
 import ExerciseRepository from "@/repositories/exerciseRepository";
 import { exerciseSchema } from "@/schemas/entities.schema";
-import type { Config, ExerciseSchema } from "@/types/entities";
-import { Controller, type ControllerDeps } from "./Controller";
+import type { ExerciseSchema } from "@/types/entities";
+import { Controller } from "./Controller";
+import { AppError } from "@/lib/errors";
+import { Status } from "@/types/server-response";
 
-interface ExerciseControllerDeps extends ControllerDeps {
-  userId: number;
-}
-
-export default class ExerciseController extends Controller<ExerciseControllerDeps> {
-  private repository = new ExerciseRepository(this.deps.client);
+export default class ExerciseController extends Controller {
+  private repository = new ExerciseRepository(this.client);
 
   public async createExercise(exercise: ExerciseSchema, playlistId: number) {
-    const user = await this.deps.client.user.findUnique({
-      where: { id: this.deps.userId },
-    });
+    const userId = this.okUser();
 
-    if (!user) throw new Error("User not found");
-
-    const exerciseValidation = exerciseSchema.safeParse(exercise);
-    if (!exerciseValidation.success) {
-      throw new Error(`Exercise invalide ${exerciseValidation.error.message}`);
+    const validation = exerciseSchema.safeParse(exercise);
+    if (!validation.success) {
+      throw new AppError(Status.BadRequest, "Exercice invalide", validation.error.message);
     }
 
-    return await this.repository.create(exercise, playlistId, user.id);
+    return await this.repository.create(exercise, playlistId, userId);
   }
-  public updateExercise(_exercise: ExerciseSchema) {}
-  public removeExercise(_exercise: ExerciseSchema) {}
-  public updateUserCustomConfig(_config: Config, _exerciseId: number) {}
 }

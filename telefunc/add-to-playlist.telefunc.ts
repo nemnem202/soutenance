@@ -1,37 +1,21 @@
 import prismaClient from "@/lib/prisma-client";
 import { handleAction } from "@/lib/response-handler";
-import { PlaylistRepository } from "@/repositories/playlistRepository";
-import { Status } from "@/types/server-response";
+import PlaylistController from "@/controllers/PlaylistController";
 import { getContext } from "telefunc";
 
 export async function onAddPlaylistToPlaylist(targetPlaylistId: number, playlistToAddId: number) {
-  const user = getContext().user;
-
-  if (!user)
-    return {
-      success: false,
-      status: Status.NotConnected,
-      title: "You are not connected",
-    };
-
-  const repository = new PlaylistRepository(prismaClient);
+  const { user } = getContext();
+  const controller = new PlaylistController({ client: prismaClient, user });
   return handleAction("Add playlist to playlist", () =>
-    repository.addPlaylistToPlaylist(targetPlaylistId, playlistToAddId, user.id)
+    controller.addPlaylistToPlaylist(targetPlaylistId, playlistToAddId)
   );
 }
 
 export async function onAddExerciseToPlaylist(targetPlaylistId: number, exerciseToAddId: number) {
-  const user = getContext().user;
-
-  if (!user)
-    return {
-      success: false,
-      status: Status.NotConnected,
-      title: "You are not connected",
-    };
-  const repository = new PlaylistRepository(prismaClient);
+  const { user } = getContext();
+  const controller = new PlaylistController({ client: prismaClient, user });
   return handleAction("Add Exercise to playlist", () =>
-    repository.addExerciseToPlaylist(targetPlaylistId, exerciseToAddId, user.id)
+    controller.addExerciseToPlaylist(targetPlaylistId, exerciseToAddId)
   );
 }
 
@@ -39,16 +23,9 @@ export async function onAddMultiExerciseToPlaylist(
   targetPlaylistId: number,
   exercisesToAddIds: number[]
 ) {
-  const user = getContext().user;
-
-  if (!user)
-    return {
-      success: false,
-      status: Status.NotConnected,
-      title: "You are not connected",
-    };
-  const repository = new PlaylistRepository(prismaClient);
-  return handleAction("Add Exercise to playlist", () =>
-    repository.addManyExercisesToPlaylist(targetPlaylistId, exercisesToAddIds, user.id)
+  const { user } = getContext();
+  const controller = new PlaylistController({ client: prismaClient, user });
+  return handleAction("Add Multi-Exercises to playlist", () =>
+    controller.addManyExercisesToPlaylist(targetPlaylistId, exercisesToAddIds)
   );
 }

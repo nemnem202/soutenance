@@ -1,55 +1,36 @@
-import type { PrismaClient } from "@/lib/generated/prisma/client";
 import UserRepository from "@/repositories/userRepository";
 import { usernameSchema } from "@/schemas/common.schema";
 import type { Session } from "@/types/auth";
 import { type ServerResponse, Status } from "@/types/server-response";
-import { Controller } from "./Controller";
+import { Controller, type ControllerDeps } from "./Controller";
+import { AppError } from "@/lib/errors";
 
-export default class UserController extends Controller<{ client: PrismaClient }> {
-  private repository = new UserRepository(this.deps.client);
-  async updateUsername(
-    userId: number | null,
-    newUsername: string
-  ): Promise<ServerResponse<Session>> {
-    if (!userId) return { success: false, status: Status.NotConnected, title: "Not connected" };
+export default class UserController extends Controller {
+  private repository: UserRepository;
 
+  constructor(deps: ControllerDeps) {
+    super(deps);
+    this.repository = new UserRepository(this.client);
+  }
+
+  async updateUsername(newUsername: string): Promise<ServerResponse<Session>> {
+    const userId = this.okUser();
     const parse = usernameSchema.safeParse(newUsername);
 
     if (!parse.success) {
-      const firstErrorMessage = parse.error.issues[0].message;
-
-      return {
-        success: false,
-        status: Status.IncorrectLoginData,
-        title: "Bad username",
-        description: firstErrorMessage,
-      };
+      throw new AppError(
+        Status.IncorrectLoginData,
+        "Nom d'utilisateur invalide",
+        parse.error.issues[0].message
+      );
     }
 
-    const existingUser = await this.deps.client.user.findUnique({
-      where: {
-        username: newUsername,
-      },
-    });
-
-    if (existingUser && existingUser.id !== userId)
-      return {
-        success: false,
-        status: Status.ExistingUsername,
-        title: "Username already exists",
-        description: "Please choose another one",
-      };
+    const existingUser = await this.client.user.findUnique({ where: { username: newUsername } });
+    if (existingUser && existingUser.id !== userId) {
+      throw new AppError(Status.ExistingUsername, "Nom d'utilisateur déjà pris");
+    }
 
     const userData = await this.repository.updateUsername(userId, newUsername);
-
-    if (!userData) {
-      return {
-        success: false,
-        status: Status.UnknownError,
-        title: "Account not found",
-        description: "Try to reconnect",
-      };
-    }
 
     return {
       success: true,
@@ -57,10 +38,7 @@ export default class UserController extends Controller<{ client: PrismaClient }>
       data: {
         id: userData.id,
         username: userData.username,
-        profilePicture: {
-          alt: userData.profilePicture.alt,
-          url: userData.profilePicture.url,
-        },
+        profilePicture: userData.profilePicture,
       },
     };
   }

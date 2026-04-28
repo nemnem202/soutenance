@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useData } from "vike-react/useData";
 import { navigate } from "vike/client/router";
-import { Data } from "./+data";
+import type { Data } from "./+data";
 import { usePageContext } from "vike-react/usePageContext";
-import { UserSeeAllQUery } from "@/types/navigation";
+import type { UserSeeAllQUery } from "@/types/navigation";
 import { MediumAccountDynamicWrapper } from "@/components/features/auth/account-widgets";
 
 export default function Page() {

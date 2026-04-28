@@ -16,23 +16,17 @@ export default function Page() {
   const { session, setSession } = useSession();
 
   const handleImageChange = async (image: File) => {
-    const imagePromise = onImageChange(image);
-    loadingToast(imagePromise, {
-      loading: "Upload de l'image en cours...",
-      success: {
-        title: "Image enregistrée !",
+    loadingToast(onImageChange(image), {
+      loading: "Upload...",
+      success: (session) => {
+        setSession(session);
+        return { title: "Image saved !" };
       },
-      error: {
+      error: () => ({
         title: "Échec de l'envoi",
         description: "Vérifiez votre connexion internet ou la taille du fichier.",
-      },
+      }),
     });
-    const response = await imagePromise;
-
-    if (response.success) {
-      const session = response.data;
-      setSession(session);
-    }
   };
 
   return (

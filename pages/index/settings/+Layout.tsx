@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import type { ReactNode } from "react";
 import MobileHeader from "@/components/features/layout/mobile-header";
 import SizeAdapter from "@/components/molecules/size-adapter";
 import AnimatedTabs from "@/components/organisms/animated-tabs";

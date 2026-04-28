@@ -50,18 +50,22 @@ async function createUser(): Promise<User> {
 }
 
 async function fillPlaylist(userId: number, playlistId: number, exercises: ExerciseSchema[]) {
-  const exerciseController = new ExerciseController({ client: prismaClient, userId });
+  const exerciseController = new ExerciseController({
+    client: prismaClient,
+    user: { id: userId },
+  });
   const promises = exercises.map((exercise) =>
     exerciseController.createExercise(exercise, playlistId)
   );
-
   await Promise.all(promises);
 }
 
 async function putPlaylistInDb(playlist: PlaylistSchema, user: User) {
-  const controller = new PlaylistController({ client: prismaClient, userId: user.id });
-  const playlistDb = await controller.createPlaylist(playlist);
-
+  const controller = new PlaylistController({
+    client: prismaClient,
+    user: { id: user.id },
+  });
+  const playlistDb = await controller.createPlaylistFromSeeding(playlist, user.id);
   await fillPlaylist(user.id, playlistDb.id, playlist.exercises);
 }
 

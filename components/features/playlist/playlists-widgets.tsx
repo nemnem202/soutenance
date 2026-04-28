@@ -102,7 +102,7 @@ export function MediumPlaylistWidget({ playlist }: { playlist: PlaylistCardDto }
     <div className="relative group w-full max-w-60">
       <div className="absolute top-0 left-0 px-2 pt-2 w-full z-1 flex justify-between  opacity-0 group-hover:opacity-100 transition pointer-events-none hidden md:flex">
         <div className="pointer-events-auto">
-          <AddToPlaylistButton playlistToAddId={playlist.id} />
+          <AddToPlaylistButton playlistToAdd={playlist} />
         </div>
         <div className="pointer-events-auto ">
           <LikeButton

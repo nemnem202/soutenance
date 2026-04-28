@@ -2,6 +2,7 @@ import type { PlaylistCardDto, PlaylistDetailDto } from "@/types/dtos/playlist";
 import type { Playlist, PlaylistSchema } from "@/types/entities";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Repository } from "./repository";
+import { logger } from "@/lib/logger";
 
 export class PlaylistRepository extends Repository {
   async create(playlist: PlaylistSchema & { imageId?: string }, userId: number): Promise<Playlist> {
@@ -296,61 +297,70 @@ export class PlaylistRepository extends Repository {
     playlistToAddId: number,
     userId: number
   ): Promise<ServerResponse<null>> {
-    const exercisesIds = await this.client.exercise.findMany({
-      where: {
-        inPlaylists: {
-          some: {
-            playlistId: playlistToAddId,
-          },
-        },
-        OR: [
-          {
-            fromPlaylist: {
-              visibility: "public",
+    logger.info("Add playlist to playlist", targetPlaylistId, playlistToAddId);
+    try {
+      const exercisesIds = await this.client.exercise.findMany({
+        where: {
+          inPlaylists: {
+            some: {
+              playlistId: playlistToAddId,
             },
           },
-          userId
-            ? {
-                fromPlaylist: {
-                  visibility: "private",
-                  authorId: userId,
-                },
-              }
-            : {},
-        ],
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    await this.client.playlist.update({
-      where: {
-        id: targetPlaylistId,
-        authorId: userId,
-      },
-      data: {
-        includesExercises: {
-          connectOrCreate: exercisesIds.map((e) => ({
-            where: {
-              exerciseId_playlistId: {
-                playlistId: targetPlaylistId,
-                exerciseId: e.id,
+          OR: [
+            {
+              fromPlaylist: {
+                visibility: "public",
               },
             },
-            create: {
-              exerciseId: e.id,
-            },
-          })),
+            userId
+              ? {
+                  fromPlaylist: {
+                    visibility: "private",
+                    authorId: userId,
+                  },
+                }
+              : {},
+          ],
         },
-      },
-    });
+        select: {
+          id: true,
+        },
+      });
 
-    return {
-      success: true,
-      status: Status.Ok,
-      data: null,
-    };
+      await this.client.playlist.update({
+        where: {
+          id: targetPlaylistId,
+          authorId: userId,
+        },
+        data: {
+          includesExercises: {
+            connectOrCreate: exercisesIds.map((e) => ({
+              where: {
+                exerciseId_playlistId: {
+                  playlistId: targetPlaylistId,
+                  exerciseId: e.id,
+                },
+              },
+              create: {
+                exerciseId: e.id,
+              },
+            })),
+          },
+        },
+      });
+
+      return {
+        success: true,
+        status: Status.Ok,
+        data: null,
+      };
+    } catch (err) {
+      return {
+        success: false,
+        status: Status.UnknownError,
+        title: "Internal server error",
+      };
+    }
   }
 
   async addExerciseToPlaylist(

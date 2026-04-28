@@ -1,220 +1,118 @@
 import { type ServerResponse, Status } from "@/types/server-response";
-import { Controller, type ControllerDeps } from "./Controller";
-import { AppError } from "@/lib/errors";
+import { Controller } from "./Controller";
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
+import { AppError } from "@/lib/errors";
 import type { ExerciseCardDto } from "@/types/dtos/exercise";
 import type { UserCardDto } from "@/types/dtos/user";
 
-export default class LikeController extends Controller<ControllerDeps> {
-  async userLikesPlaylist(userId: number | null, playlistId: number): Promise<ServerResponse<{}>> {
-    if (!userId) throw new AppError(Status.NotConnected, "You are not connected");
+export default class LikeController extends Controller {
+  async userLikesPlaylist(playlistId: number): Promise<ServerResponse<{}>> {
+    const userId = this.okUser();
 
-    const user = await this.deps.client.user.findUnique({ where: { id: userId } });
-
-    if (!user) throw new AppError(Status.BadAuthMethod, "Unknown account", "Try to connect again.");
-
-    await this.deps.client.playlist.update({
-      where: {
-        id: playlistId,
-      },
+    await this.client.playlist.update({
+      where: { id: playlistId },
       data: {
         userLikesPlaylists: {
           connectOrCreate: {
-            where: {
-              userId_playlistId: {
-                userId: user.id,
-                playlistId: playlistId,
-              },
-            },
-            create: {
-              userId: user.id,
-            },
+            where: { userId_playlistId: { userId, playlistId } },
+            create: { userId },
           },
         },
       },
     });
 
-    return {
-      success: true,
-      status: Status.Ok,
-      data: {},
-    };
+    return { success: true, status: Status.Ok, data: {} };
   }
 
-  async userUnlikesPlaylist(
-    userId: number | null,
-    playlistId: number
-  ): Promise<ServerResponse<{}>> {
-    if (!userId) throw new AppError(Status.NotConnected, "You are not connected");
+  async userUnlikesPlaylist(playlistId: number): Promise<ServerResponse<{}>> {
+    const userId = this.okUser();
 
-    const user = await this.deps.client.user.findUnique({ where: { id: userId } });
-
-    if (!user) throw new AppError(Status.BadAuthMethod, "Unknown account", "Try to connect again.");
-
-    await this.deps.client.playlist.update({
-      where: {
-        id: playlistId,
-      },
+    await this.client.playlist.update({
+      where: { id: playlistId },
       data: {
         userLikesPlaylists: {
-          deleteMany: {
-            userId: user.id,
-            playlistId: playlistId,
-          },
+          deleteMany: { userId, playlistId },
         },
       },
     });
 
-    return {
-      success: true,
-      status: Status.Ok,
-      data: {},
-    };
+    return { success: true, status: Status.Ok, data: {} };
   }
 
-  async userLikesExercise(userId: number | null, exerciseId: number): Promise<ServerResponse<{}>> {
-    if (!userId) throw new AppError(Status.NotConnected, "You are not connected");
+  async userLikesExercise(exerciseId: number): Promise<ServerResponse<{}>> {
+    const userId = this.okUser();
 
-    const user = await this.deps.client.user.findUnique({ where: { id: userId } });
-
-    if (!user) throw new AppError(Status.BadAuthMethod, "Unknown account", "Try to connect again.");
-
-    await this.deps.client.exercise.update({
-      where: {
-        id: exerciseId,
-      },
+    await this.client.exercise.update({
+      where: { id: exerciseId },
       data: {
         likedByUsers: {
           connectOrCreate: {
-            where: {
-              userId_exerciseId: {
-                userId: user.id,
-                exerciseId: exerciseId,
-              },
-            },
-            create: {
-              userId: user.id,
-            },
+            where: { userId_exerciseId: { userId, exerciseId } },
+            create: { userId },
           },
         },
       },
     });
 
-    return {
-      success: true,
-      status: Status.Ok,
-      data: {},
-    };
+    return { success: true, status: Status.Ok, data: {} };
   }
 
-  async userUnlikesExercise(
-    userId: number | null,
-    exerciseId: number
-  ): Promise<ServerResponse<{}>> {
-    if (!userId) throw new AppError(Status.NotConnected, "You are not connected");
+  async userUnlikesExercise(exerciseId: number): Promise<ServerResponse<{}>> {
+    const userId = this.okUser();
 
-    const user = await this.deps.client.user.findUnique({ where: { id: userId } });
-
-    if (!user) throw new AppError(Status.BadAuthMethod, "Unknown account", "Try to connect again.");
-
-    await this.deps.client.exercise.update({
-      where: {
-        id: exerciseId,
-      },
+    await this.client.exercise.update({
+      where: { id: exerciseId },
       data: {
         likedByUsers: {
-          deleteMany: {
-            userId: user.id,
-            exerciseId: exerciseId,
-          },
+          deleteMany: { userId, exerciseId },
         },
       },
     });
 
-    return {
-      success: true,
-      status: Status.Ok,
-      data: {},
-    };
+    return { success: true, status: Status.Ok, data: {} };
   }
 
-  async userLikesUser(
-    likingUserId: number | null,
-    likedUserId: number
-  ): Promise<ServerResponse<{}>> {
-    if (!likingUserId) throw new AppError(Status.NotConnected, "You are not connected");
+  async userLikesUser(likedUserId: number): Promise<ServerResponse<{}>> {
+    const userId = this.okUser();
 
-    const user = await this.deps.client.user.findUnique({ where: { id: likingUserId } });
-
-    if (!user) throw new AppError(Status.BadAuthMethod, "Unknown account", "Try to connect again.");
-
-    await this.deps.client.user.update({
-      where: {
-        id: likedUserId,
-      },
+    await this.client.user.update({
+      where: { id: likedUserId },
       data: {
         likedByUsers: {
           connectOrCreate: {
-            where: {
-              likedId_likingId: {
-                likedId: likedUserId,
-                likingId: likingUserId,
-              },
-            },
-            create: {
-              likingId: user.id,
-            },
+            where: { likedId_likingId: { likedId: likedUserId, likingId: userId } },
+            create: { likingId: userId },
           },
         },
       },
     });
 
-    return {
-      success: true,
-      status: Status.Ok,
-      data: {},
-    };
+    return { success: true, status: Status.Ok, data: {} };
   }
 
-  async userUnlikesUser(
-    likingUserId: number | null,
-    likedUserId: number
-  ): Promise<ServerResponse<{}>> {
-    if (!likingUserId) throw new AppError(Status.NotConnected, "You are not connected");
+  async userUnlikesUser(likedUserId: number): Promise<ServerResponse<{}>> {
+    const userId = this.okUser();
 
-    const user = await this.deps.client.user.findUnique({ where: { id: likingUserId } });
-
-    if (!user) throw new AppError(Status.BadAuthMethod, "Unknown account", "Try to connect again.");
-
-    await this.deps.client.user.update({
-      where: {
-        id: likedUserId,
-      },
+    await this.client.user.update({
+      where: { id: likedUserId },
       data: {
         likedByUsers: {
-          deleteMany: {
-            likedId: likedUserId,
-            likingId: likingUserId,
-          },
+          deleteMany: { likedId: likedUserId, likingId: userId },
         },
       },
     });
 
-    return {
-      success: true,
-      status: Status.Ok,
-      data: {},
-    };
+    return { success: true, status: Status.Ok, data: {} };
   }
 
-  async getPlaylists(userId: number | null): Promise<ServerResponse<PlaylistCardDto[]>> {
-    if (!userId) throw new AppError(Status.NotConnected, "You are not connected");
+  async getPlaylists(): Promise<ServerResponse<PlaylistCardDto[]>> {
+    const userId = this.okUser();
 
-    const user = await this.deps.client.user.findUnique({ where: { id: userId } });
+    const user = await this.client.user.findUnique({ where: { id: userId } });
 
     if (!user) throw new AppError(Status.BadAuthMethod, "Unknown account", "Try to connect again.");
 
-    const playlists = await this.deps.client.playlist.findMany({
+    const playlists = await this.client.playlist.findMany({
       where: {
         userLikesPlaylists: {
           some: {
@@ -269,14 +167,14 @@ export default class LikeController extends Controller<ControllerDeps> {
     };
   }
 
-  async getExercises(userId: number | null): Promise<ServerResponse<ExerciseCardDto[]>> {
-    if (!userId) throw new AppError(Status.NotConnected, "You are not connected");
+  async getExercises(): Promise<ServerResponse<ExerciseCardDto[]>> {
+    const userId = this.okUser();
 
-    const user = await this.deps.client.user.findUnique({ where: { id: userId } });
+    const user = await this.client.user.findUnique({ where: { id: userId } });
 
     if (!user) throw new AppError(Status.BadAuthMethod, "Unknown account", "Try to connect again.");
 
-    const exercises = await this.deps.client.exercise.findMany({
+    const exercises = await this.client.exercise.findMany({
       where: {
         likedByUsers: {
           some: {
@@ -360,14 +258,14 @@ export default class LikeController extends Controller<ControllerDeps> {
     };
   }
 
-  async getUsers(userId: number | null): Promise<ServerResponse<UserCardDto[]>> {
-    if (!userId) throw new AppError(Status.NotConnected, "You are not connected");
+  async getUsers(): Promise<ServerResponse<UserCardDto[]>> {
+    const userId = this.okUser();
 
-    const user = await this.deps.client.user.findUnique({ where: { id: userId } });
+    const user = await this.client.user.findUnique({ where: { id: userId } });
 
     if (!user) throw new AppError(Status.BadAuthMethod, "Unknown account", "Try to connect again.");
 
-    const users = await this.deps.client.user.findMany({
+    const users = await this.client.user.findMany({
       where: {
         likedByUsers: {
           some: {
@@ -388,6 +286,7 @@ export default class LikeController extends Controller<ControllerDeps> {
         },
       },
     });
+
     return {
       success: true,
       status: Status.Ok,

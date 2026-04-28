@@ -1,8 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRef, useState } from "react";
 import { type Resolver, useForm } from "react-hook-form";
-import { logger } from "@/lib/logger";
-import { errorToast, loadingToast, successToast } from "@/lib/toaster";
+import { errorToast, loadingToast } from "@/lib/toaster";
 import { loginSchema, playlistRegisterSchema, registerSchema } from "@/schemas/auth.schema";
 import { onLogin, onRegister } from "@/telefunc/connexion.telefunc";
 import type { LoginData, RegisterData } from "@/types/auth";
@@ -25,22 +24,15 @@ export function useNewPlaylistForm({ onSubmit }: { onSubmit?: () => void }) {
     },
   });
 
-  const handleSubmit = async (playlistRegisterForm: PlaylistRegisterData) => {
-    const responsePromise = onPlaylistCreation(playlistRegisterForm);
-    loadingToast(responsePromise, {
-      loading: "Upload de la playlist en cours...",
-      success: {
-        title: "Playlist enregistrée !",
-      },
-      error: {
-        title: "Échec de l'envoi",
-        description: "Vérifiez votre connexion internet.",
+  const handleSubmit = async (data: PlaylistRegisterData) => {
+    await loadingToast(onPlaylistCreation(data), {
+      loading: "Playlist submition...",
+      success: () => {
+        reload();
+        onSubmit?.();
+        return { title: "Playlist created !" };
       },
     });
-    await responsePromise;
-    reload();
-    form.reset();
-    onSubmit?.();
   };
 
   return { formRef, form, handleSubmit };
@@ -55,32 +47,16 @@ export function useLoginForm({ onSuccess }: { onSuccess: () => void }) {
     defaultValues: { remember: true },
   });
 
-  const handleSubmit = async (submitted: LoginData) => {
-    setSubmitLoading(true);
-    try {
-      const response = await onLogin(submitted);
-
-      if (!response.success) {
-        if (response.status === Status.IncorrectPassword) {
-          form.setError("password", { message: response.title });
-        } else if (response.status === Status.IncorrectEmail) {
-          form.setError("email", { message: response.title });
-        } else {
-          errorToast(response.title, response.description);
-        }
-      } else {
-        const session = response.data;
-        setSession(session);
-        reload();
-        successToast(`Welcome back, ${session.username} !`);
+  const handleSubmit = async (data: LoginData) => {
+    loadingToast(onLogin(data), {
+      loading: "Connexion...",
+      success: (user) => {
+        setSession(user);
         onSuccess();
-      }
-    } catch (err) {
-      logger.error("Client-side error during login:", err);
-      errorToast("A client error occurred");
-    } finally {
-      setSubmitLoading(false);
-    }
+        reload();
+        return { title: `Ravi de vous revoir, ${user.username} !` };
+      },
+    });
   };
 
   return { formRef, form, handleSubmit, submitLoading };
@@ -99,30 +75,27 @@ export function useRegisterForm({ onSuccess }: { onSuccess: () => void }) {
 
   const handleSubmit = async (submitted: RegisterData) => {
     setSubmitLoading(true);
-    try {
-      const response = await onRegister(submitted);
-
-      if (!response.success) {
-        if (response.status === Status.ExistingEmail || response.status === Status.IncorrectEmail) {
-          form.setError("email", { message: response.title });
-        } else if (response.status === Status.ExistingUsername) {
-          form.setError("username", { message: response.title });
-        } else {
-          errorToast(response.title, response.description);
-        }
-      } else {
-        const session = response.data;
-        setSession(session);
+    const promise = onRegister(submitted);
+    loadingToast(promise, {
+      loading: "Création du compte...",
+      success: (user) => {
+        setSession(user);
         reload();
-        successToast(`Welcome, ${session.username} !`);
         onSuccess();
+        return { title: `Bienvenue, ${user.username} !` };
+      },
+    });
+    const response = await promise;
+    if (!response.success) {
+      if (response.status === Status.ExistingEmail || response.status === Status.IncorrectEmail) {
+        form.setError("email", { message: response.title });
+      } else if (response.status === Status.ExistingUsername) {
+        form.setError("username", { message: response.title });
+      } else {
+        errorToast(response.title, response.description);
       }
-    } catch (err) {
-      logger.error("Client-side error during register:", err);
-      errorToast("An unexpected error occurred");
-    } finally {
-      setSubmitLoading(false);
     }
+    setSubmitLoading(true);
   };
 
   return { formRef, form, handleSubmit, submitLoading };

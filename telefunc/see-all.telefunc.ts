@@ -2,10 +2,10 @@ import prismaClient from "@/lib/prisma-client";
 import { handleAction } from "@/lib/response-handler";
 import { PlaylistRepository } from "@/repositories/playlistRepository";
 import UserRepository from "@/repositories/userRepository";
-import { PlaylistCardDto } from "@/types/dtos/playlist";
-import { UserCardDto } from "@/types/dtos/user";
-import { PlaylistSeeAllQUery, UserSeeAllQUery } from "@/types/navigation";
-import { ServerResponse, Status } from "@/types/server-response";
+import type { PlaylistCardDto } from "@/types/dtos/playlist";
+import type { UserCardDto } from "@/types/dtos/user";
+import type { PlaylistSeeAllQUery, UserSeeAllQUery } from "@/types/navigation";
+import { type ServerResponse, Status } from "@/types/server-response";
 import { getContext } from "telefunc";
 
 export async function onUserSeeAllRequest(

@@ -1,27 +1,28 @@
-import { Play, Settings, Square } from "lucide-react";
 import { Field, FieldLabel } from "@/components/molecules/field";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
-import type { Gameprops } from "@/pages/game/@id/+Page";
-import { ControlsSection, IconButton } from "./game-assets";
+import { ControlsSection } from "./game-assets";
 import { CustomInput } from "@/components/ui/custom_input";
-import { useMidiActions } from "@/midi-editor/providers/midi-provider";
+import useGame from "@/hooks/use-game";
+import { PlayButton, SettingsButton, StopButton } from "@/components/ui/custom-buttons";
+
+interface Gameprops {
+  toggleSidebar: () => void;
+}
 
 export default function DesktopGameControlsSection({ ...props }: Gameprops) {
   const { instance } = useLanguage();
-  const { togglePlay } = useMidiActions();
+  const { audioReady, togglePlay, midiState } = useGame();
   return (
     <div className="hidden md:block">
       <ControlsSection>
-        <IconButton onClick={props.toggleSidebar}>
-          <Settings className="hover:stroke-primary  transition" />
-        </IconButton>
-        <IconButton onClick={() => togglePlay()}>
-          <Play className="hover:stroke-primary hover:fill-primary fill-foreground transition" />
-        </IconButton>
-        <IconButton>
-          <Square className="hover:stroke-primary hover:fill-primary fill-foreground transition" />
-        </IconButton>
+        <SettingsButton onClick={() => props.toggleSidebar()} />
+        <PlayButton
+          disabled={!audioReady}
+          onClick={togglePlay}
+          isPlaying={!!midiState?.config.isPlaying}
+        />
+        <StopButton disabled={!audioReady} />
         <Separator orientation="vertical" className="!h-6" />
         <Field className="flex flex-row items-center justify-center !w-min">
           <CustomInput
@@ -40,17 +41,20 @@ export default function DesktopGameControlsSection({ ...props }: Gameprops) {
 }
 
 export function MobileGameControlSection({ ...props }: Gameprops) {
+  const { audioReady, togglePlay, midiState } = useGame();
   return (
     <div className=" flex w-full justify-evenly">
-      <IconButton onClick={() => props.toggleSidebar()}>
-        <Settings className="hover:stroke-primary  transition h-8 w-8" />
-      </IconButton>
-      <IconButton>
-        <Square className="hover:stroke-primary hover:fill-primary fill-foreground transition h-8 w-8" />
-      </IconButton>
-      <IconButton>
-        <Play className="hover:stroke-primary hover:fill-primary fill-foreground transition h-8 w-8" />
-      </IconButton>
+      <SettingsButton onClick={() => props.toggleSidebar()} />
+      {midiState && (
+        <>
+          <StopButton disabled={!audioReady} />
+          <PlayButton
+            disabled={!audioReady}
+            onClick={togglePlay}
+            isPlaying={!!midiState?.config.isPlaying}
+          />
+        </>
+      )}
       <p className="text-4xl/7 font-bold font-mono flex items-end">120</p>
     </div>
   );

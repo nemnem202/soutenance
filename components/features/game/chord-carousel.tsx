@@ -3,6 +3,9 @@ import type { EmblaViewportRefType } from "embla-carousel-react";
 import { motion } from "motion/react";
 import useChordCarousel from "@/hooks/use-chord-carousel";
 import { chordToString } from "@/lib/utils";
+import { useData } from "vike-react/useData";
+import type { Data } from "@/pages/game/@id/+data";
+import type { ChordsGridSchema } from "@/types/entities";
 import type { Chord } from "@/types/music";
 
 export interface ChordCarouselProps {
@@ -11,12 +14,37 @@ export interface ChordCarouselProps {
   axis: "x" | "y";
 }
 
-export default function ChordCarousel({ carouselRef, api, axis }: ChordCarouselProps) {
+export default function ChordCarousel({ ...props }: ChordCarouselProps) {
+  const { exercise } = useData<Data>();
+  if (!exercise.success || !exercise.data.chordsGrid) return null;
+
+  return <ChordCarouselContent {...props} chordsGrid={exercise.data.chordsGrid} />;
+}
+
+function ChordCarouselContent({
+  carouselRef,
+  api,
+  axis,
+  chordsGrid,
+}: ChordCarouselProps & { chordsGrid: ChordsGridSchema }) {
   const { springWidth } = useChordCarousel({ carouselRef, api, axis });
-  const chords: Chord[] = [];
+  const getChordsFromChordsGrid = (grid: ChordsGridSchema): Chord[] => {
+    const measures = grid.sections.flatMap((section) => [
+      ...section.commonMeasures,
+      ...section.voltas.flatMap((volta) => [...volta.measures]),
+    ]);
+
+    return measures
+      .sort((a, b) => a.index - b.index)
+      .flatMap((measure) => measure.cells)
+      .filter((cell) => cell.kind === "Chord")
+      .sort((a, b) => a.index - b.index)
+      .flatMap((cell) => cell.chord);
+  };
+  const chords = getChordsFromChordsGrid(chordsGrid);
 
   return (
-    <>
+    <div className="flex items-center justify-center size-full">
       <div></div>
       <div className="relative w-full h-40 pointer-events-none">
         <div className="relative z-10 w-full mx-auto [--slide-height:19rem] [--slide-spacing:1rem] [--slide-size:100%] [--slide-spacing-sm:1.6rem] [--slide-size-sm:50%] [--slide-spacing-lg:2rem]">
@@ -50,6 +78,6 @@ export default function ChordCarousel({ carouselRef, api, axis }: ChordCarouselP
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ChordTab from "@/components/features/game/chord-tab";
 import { Tab } from "@/components/features/game/game-assets";
 import DesktopGameControlsSection, {
@@ -12,79 +12,57 @@ import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/
 import Headline from "@/components/ui/headline";
 import MobileHeaderNavContainer from "@/components/features/layout/mobile-header-nav-container";
 import { HistoryBackButton } from "@/components/ui/custom-buttons";
-import type { Exercise } from "@/types/entities";
 import { useData } from "vike-react/useData";
 import type { Data } from "./+data";
-import GameProvider from "@/providers/game-provider";
+import GameProvider, { type TabID } from "@/providers/game-provider";
 import PianoRoll from "@/midi-editor/components/piano-roll";
 import { ClientOnly } from "vike-react/ClientOnly";
-import { MidiProvider, useMidiActions } from "@/midi-editor/providers/midi-provider";
-import type { State } from "@/midi-editor/types/instance";
-import { convertMidiFileToState, getMidiFileFromBuffer } from "@/midi-editor/lib/midiconverter";
 import useGame from "@/hooks/use-game";
-import onMidiFile from "@/telefunc/midifile.telefunc";
-import { errorToast } from "@/lib/toaster";
-import { logger } from "@/lib/logger";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function Page() {
   const { exercise } = useData<Data>();
-  const [midiState, setMidiState] = useState<State | null>(null);
 
-  useEffect(() => {
-    if (!exercise.success) return;
-    onMidiFile(exercise.data.id).then((response) => {
-      if (response.success) {
-        logger.info("data", response.data);
-        getMidiFileFromBuffer(response.data).then(convertMidiFileToState).then(setMidiState);
-      } else {
-        errorToast(response.title, response.description);
-      }
-    });
-  }, [exercise]);
+  if (!exercise.success) return null;
 
-  if (!exercise.success) return;
   return (
-    <MidiProvider initialMidiData={midiState}>
-      <GameProvider exercise={exercise.data}>
-        <Content exercise={exercise.data} />
-      </GameProvider>
-    </MidiProvider>
+    <GameProvider exercise={exercise.data}>
+      <GameContent />
+    </GameProvider>
   );
 }
 
-function Content({ exercise }: { exercise: Exercise }) {
+function GameContent() {
+  const { exercise } = useGame();
   const [sidebarOpen, setOpen] = useState(false);
   const [drawersVisible, setDrawersVisible] = useState(true);
+
   return (
     <div className="flex flex-row w-screen h-screen overflow-hidden">
       <GameSidebar sidebarOpen={sidebarOpen} setOpen={setOpen} />
       <div className="flex-1 min-w-0 h-screen flex flex-col">
         <SizeAdapter
           sm={
-            <Drawer
-              modal={false}
-              open={drawersVisible}
-              onOpenChange={(open) => setDrawersVisible(open)}
-            >
+            <Drawer modal={false} open={drawersVisible} onOpenChange={setDrawersVisible}>
               <DrawerTrigger asChild>
                 <main className="flex-1 min-w-0 h-full flex flex-col items-center p-4 max-w-screen min-h-0">
                   <div
-                    className={` w-full overflow-hidden transition-[height] duration-300 ease-in-out`}
-                    style={{ height: drawersVisible ? `${14 / 4 + 1}rem` : "0px" }}
+                    className={`w-full overflow-hidden transition-[height] duration-300`}
+                    style={{ height: drawersVisible ? `4.5rem` : "0px" }}
                   >
                     <MobileHeaderNavContainer>
                       <HistoryBackButton />
                       <Headline>{exercise.title}</Headline>
-                      <div></div>
+                      <div />
                     </MobileHeaderNavContainer>
                   </div>
-                  <Game toggleSidebar={() => setOpen((prev) => !prev)} />
+                  <GameView toggleSidebar={() => setOpen(!sidebarOpen)} />
                 </main>
               </DrawerTrigger>
-              <DrawerContent className="rounded-none border-t border-l-0 border-r-0 border-b-0">
-                <DrawerTitle className="hidden">Game controls</DrawerTitle>
-                <div className="mx-auto w-full max-w-sm h-fit py-10 pt-0">
-                  <MobileGameControlSection toggleSidebar={() => setOpen((prev) => !prev)} />
+              <DrawerContent className="rounded-none border-t">
+                <DrawerTitle className="hidden">Controls</DrawerTitle>
+                <div className="mx-auto w-full max-w-sm py-10 pt-0">
+                  <MobileGameControlSection toggleSidebar={() => setOpen(!sidebarOpen)} />
                 </div>
               </DrawerContent>
             </Drawer>
@@ -94,7 +72,7 @@ function Content({ exercise }: { exercise: Exercise }) {
               <Header />
               <main className="flex-1 min-w-0 flex flex-col items-center p-4 max-w-screen min-h-0">
                 <Headline>{exercise.title}</Headline>
-                <Game toggleSidebar={() => setOpen((prev) => !prev)} />
+                <GameView toggleSidebar={() => setOpen(!sidebarOpen)} />
               </main>
             </>
           }
@@ -104,44 +82,41 @@ function Content({ exercise }: { exercise: Exercise }) {
   );
 }
 
-export interface Gameprops {
-  toggleSidebar: () => void;
-}
+function GameView({ toggleSidebar }: { toggleSidebar: () => void }) {
+  const { setAudioStarted, audioReady, activeTab, tabs, setActiveTab } = useGame();
 
-function Game({ ...props }: Gameprops) {
-  const { startAudio } = useMidiActions();
-  const { activeTab, tabs, setActiveTab } = useGame();
   return (
     <div
-      className="size-full lg:px-10 md:py-5  flex flex-col gap-2 min-w-0 min-h-0"
-      onClickCapture={() => startAudio()}
+      className="size-full lg:px-10 md:py-5 flex flex-col gap-2 min-h-0"
+      onClickCapture={() => setAudioStarted(true)}
     >
-      <div className="flex-1 flex flex-col h-full min-h-0">
-        <div className="w-full flex  gap-2 justify-between">
-          <div className="col-1 flex flex-1  items-center">
-            <DesktopGameControlsSection {...props} />
+      <div className="flex-1 flex flex-col h-full min-h-0 gap-3">
+        <div className="w-full flex justify-between items-center gap-2">
+          <div className="flex-1">
+            <DesktopGameControlsSection toggleSidebar={toggleSidebar} />
           </div>
-
-          <div className="col-2 flex-1 justify-center hidden md:flex">
+          <div className="hidden md:block flex-1 md:flex-initial text-center">
             <AnimatedTabs
               activeTab={activeTab}
-              onChange={(v) => setActiveTab(v as "piano-roll" | "chords" | "sheet" | "guitar")}
+              onChange={(v) => setActiveTab(v as TabID)}
               tabs={tabs}
               variant="pill"
-              className="my-2"
             />
           </div>
-          <div className="md:flex-1"></div>
+          <div className="flex-1 hidden lg:block" />
         </div>
         <Tab>
-          {activeTab === "chords" ? (
-            <ChordTab />
-          ) : (
-            activeTab === "piano-roll" && (
-              <ClientOnly>
+          {activeTab === "chords" && <ChordTab />}
+          {activeTab === "piano-roll" && (
+            <ClientOnly>
+              {!audioReady ? (
+                <div className="size-full flex items-center justify-center">
+                  <Spinner />
+                </div>
+              ) : (
                 <PianoRoll />
-              </ClientOnly>
-            )
+              )}
+            </ClientOnly>
           )}
         </Tab>
       </div>

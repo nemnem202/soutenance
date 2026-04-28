@@ -13,15 +13,23 @@ interface ConnexionDeps extends ControllerDeps {
   context: Telefunc.Context;
 }
 
-export class ConnexionController extends Controller<ConnexionDeps> {
-  repository = new UserRepository(this.deps.client);
+export class ConnexionController extends Controller {
+  private repository: UserRepository;
+  private context: Telefunc.Context;
+
+  constructor(deps: ConnexionDeps) {
+    super(deps);
+    this.repository = new UserRepository(this.client);
+    this.context = deps.context;
+  }
+
   async login(props: LoginData): Promise<ServerResponse<Session>> {
     const loginValidation = loginSchema.safeParse(props);
     if (!loginValidation.success) {
       throw new AppError(Status.IncorrectLoginData, "Données invalides");
     }
 
-    const user = await this.deps.client.user.findFirst({
+    const user = await this.client.user.findFirst({
       where: { email: props.email },
       include: { classicAuthMethod: true, profilePicture: true },
     });
@@ -36,7 +44,7 @@ export class ConnexionController extends Controller<ConnexionDeps> {
     }
 
     const token = await generateJwt(user.id, props.remember);
-    this.deps.context.setCookie(COOKIE_NAME, token, getCookieOptions(props.remember));
+    this.context.setCookie(COOKIE_NAME, token, getCookieOptions(props.remember));
 
     return {
       status: Status.Ok,
@@ -52,16 +60,11 @@ export class ConnexionController extends Controller<ConnexionDeps> {
   async register(props: RegisterData): Promise<ServerResponse<Session>> {
     const registerValidation = registerSchema.safeParse(props);
     if (!registerValidation.success) {
-      throw new AppError(
-        Status.IncorrectRegisterData,
-        "Formulaire invalide",
-        registerValidation.error.message
-      );
+      throw new AppError(Status.IncorrectRegisterData, "Formulaire invalide");
     }
 
-    const { email, password, username, image } = props;
-
-    const existingUser = await this.deps.client.user.findFirst({
+    const { email, password, username } = props;
+    const existingUser = await this.client.user.findFirst({
       where: { OR: [{ username }, { email }] },
     });
 
@@ -74,22 +77,24 @@ export class ConnexionController extends Controller<ConnexionDeps> {
     }
 
     const fileController = new FileController({
-      client: this.deps.client,
+      client: this.client,
+      user: this.user,
       file: props.image.file as File,
     });
+
     const imageUpload = await fileController.uploadFileAsImage();
 
     const user = await this.repository.create(
       email,
       username,
-      image.alt,
+      props.image.alt,
       imageUpload.url,
       imageUpload.imageId,
       password
     );
 
     const token = await generateJwt(user.id, true);
-    this.deps.context.setCookie(COOKIE_NAME, token, getCookieOptions(true));
+    this.context.setCookie(COOKIE_NAME, token, getCookieOptions(true));
 
     return {
       success: true,
@@ -103,17 +108,16 @@ export class ConnexionController extends Controller<ConnexionDeps> {
   }
 
   async logout(): Promise<ServerResponse<{}>> {
-    this.deps.context.setCookie(COOKIE_NAME, "", { ...getCookieOptions(false), maxAge: 0 });
+    this.context.setCookie(COOKIE_NAME, "", { ...getCookieOptions(false), maxAge: 0 });
     return { status: Status.LogoutSuccessfull, success: true, data: {} };
   }
 
   async removeAccount(): Promise<ServerResponse<{}>> {
-    const user = this.deps.context.user;
-    if (!user) throw new AppError(Status.NotConnected, "Non connecté");
+    const userId = this.okUser();
 
-    const fileController = new FileController({ client: this.deps.client });
-    await fileController.removeUserImage(user.id);
-    await this.repository.delete(user.id);
+    const fileController = new FileController({ client: this.client, user: this.user });
+    await fileController.removeUserImage(userId);
+    await this.repository.delete(userId);
 
     await this.logout();
 

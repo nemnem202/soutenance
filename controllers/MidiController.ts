@@ -4,23 +4,33 @@ import { readFile, unlink } from "node:fs/promises";
 import { logger } from "@/lib/logger";
 import type { ChordsGridSchema, ExerciseSchema } from "@/types/entities";
 import { Status, type ServerResponse } from "@/types/server-response";
-import { Controller, type ControllerDeps } from "./Controller";
+import { Controller } from "./Controller";
 import GameRepository from "@/repositories/gameRepository";
 import MMAContentGenerator from "@/lib/mma-content-generator";
+import { AppError } from "@/lib/errors";
 
 export type ExerciseWithForcedChordGrid = ExerciseSchema & { chordsGrid: ChordsGridSchema };
 
-export default class MidiController extends Controller<ControllerDeps> {
-  private repository = new GameRepository(this.deps.client);
+export default class MidiController extends Controller {
+  private repository = new GameRepository(this.client);
 
-  public async getMidiFile(
-    exerciseId: number,
-    userId: number | null
-  ): Promise<ServerResponse<Buffer>> {
-    const request = await this.repository.findOne(exerciseId, userId);
+  public async getMidiFile(exerciseId: number): Promise<ServerResponse<Buffer>> {
+    const request = await this.repository.findOne(exerciseId, this.user?.id ?? null);
+
     if (!request.success) return request;
-    if (!request.data.chordsGrid) throw new Error("Execises does not have chord grid");
-    const file = await this.generateMidiFile(request.data as ExerciseWithForcedChordGrid);
+
+    const exercise = request.data;
+
+    if (!exercise.chordsGrid) {
+      throw new AppError(
+        Status.NotFound,
+        "Grille d'accords manquante",
+        "Cet exercice ne contient pas de grille d'accords pour générer un MIDI."
+      );
+    }
+
+    const file = await this.generateMidiFile(exercise as ExerciseWithForcedChordGrid);
+
     return {
       success: true,
       status: Status.Ok,
@@ -28,13 +38,9 @@ export default class MidiController extends Controller<ControllerDeps> {
     };
   }
 
-  private async generateMidiFile(
-    exercise: ExerciseWithForcedChordGrid
-  ): Promise<Buffer<ArrayBufferLike>> {
+  private async generateMidiFile(exercise: ExerciseWithForcedChordGrid): Promise<Buffer> {
     const start = Date.now();
-
-    const content = new MMAContentGenerator(exercise, "JazzBasie").generate();
-    logger.info("Content: ", content);
+    const content = new MMAContentGenerator(exercise, "BossaNova").generate();
     const buffer = await this.generateMidiBuffer(content);
     logger.success(`Midi generated in ${Date.now() - start}ms`);
     return buffer;
@@ -46,6 +52,8 @@ export default class MidiController extends Controller<ControllerDeps> {
     try {
       await this.runMma(content, tempFilePath);
       return await readFile(tempFilePath);
+    } catch (err) {
+      throw new AppError(Status.UnknownError, "Erreur de génération MIDI", (err as Error).message);
     } finally {
       await unlink(tempFilePath).catch(() => {});
     }

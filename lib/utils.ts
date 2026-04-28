@@ -8,7 +8,7 @@ import {
   onAddMultiExerciseToPlaylist,
   onAddPlaylistToPlaylist,
 } from "@/telefunc/add-to-playlist.telefunc";
-import { errorToast, loadingToast, successToast } from "./toaster";
+import { loadingToast } from "./toaster";
 import type { ExerciseCardDto } from "@/types/dtos/exercise";
 import { navigate, reload } from "vike/client/router";
 import { onPlaylistRemove } from "@/telefunc/playlist.telefunc";
@@ -20,7 +20,7 @@ import {
   onUserUnlikesPlaylist,
   onUserUnlikesUser,
 } from "@/telefunc/like.telefunc";
-import type { MouseEvent } from "react";
+import type { Dispatch, MouseEvent, SetStateAction } from "react";
 import type { UserCardDto } from "@/types/dtos/user";
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
 
@@ -43,117 +43,104 @@ export const getPreferredLanguage = (header: string | null): Language => {
 };
 
 export const chordToString = (chord: Chord) =>
-  `${chord.content.note} ${chord.content.modifier ?? ""} ${chord.over && `${chord.over.note} ${chord.over.modifier}`}`;
+  `${chord.content.note} ${chord.content.modifier ?? ""} ${chord.over ? `${chord.over.note} ${chord.over.modifier}` : ""}`;
 
-export const addPlaylistToPlaylist = async (targetId: number, playlistToAddId: number) => {
-  const responsePromise = onAddPlaylistToPlaylist(targetId, playlistToAddId);
-  loadingToast(responsePromise);
-  await responsePromise;
-};
-
-export const addExerciseToPlaylist = async (targetId: number, exercise: ExerciseCardDto) => {
-  const responsePromise = onAddExerciseToPlaylist(targetId, exercise.id);
-  loadingToast(responsePromise);
-  await responsePromise;
+export const addPlaylistToPlaylist = async (
+  target: PlaylistCardDto,
+  playlistToAdd: PlaylistCardDto
+) => {
+  await loadingToast(onAddPlaylistToPlaylist(target.id, playlistToAdd.id), {
+    loading: "Add to playlist...",
+    success: () => ({ title: `${playlistToAdd.title} was added to ${target.title}` }),
+  });
   reload();
 };
 
-export const addManyExercisesToPlaylist = async (targetId: number, exercisesIds: number[]) => {
-  const responsePromise = onAddMultiExerciseToPlaylist(targetId, exercisesIds);
-  loadingToast(responsePromise);
-  await responsePromise;
+export const addExerciseToPlaylist = async (
+  playlist: PlaylistCardDto,
+  exercise: ExerciseCardDto
+) => {
+  await loadingToast(onAddExerciseToPlaylist(playlist.id, exercise.id), {
+    loading: "Add to playlist...",
+    success: () => ({ title: `${exercise.title} was added to ${playlist.title}` }),
+  });
+  reload();
+};
+
+export const addManyExercisesToPlaylist = async (
+  playlist: PlaylistCardDto,
+  exercisesIds: number[]
+) => {
+  await loadingToast(onAddMultiExerciseToPlaylist(playlist.id, exercisesIds), {
+    loading: "Add to playlist...",
+    success: () => ({ title: `${exercisesIds.length} exercices added to ${playlist.title}` }),
+  });
   reload();
 };
 
 export const deletePlaylist = async (playlistId: number) => {
-  const responsePromise = onPlaylistRemove(playlistId);
-  loadingToast(responsePromise);
-  await responsePromise;
+  await loadingToast(onPlaylistRemove(playlistId), {
+    loading: "Deleting...",
+    success: () => ({ title: "Playlist deleted" }),
+  });
   navigate("/");
 };
 
 export const handleLikeExercise = async (
   e: MouseEvent,
   isLiked: boolean,
-  setIsLiked: (value: boolean) => void,
+  setIsLiked: Dispatch<SetStateAction<boolean>>,
   exercise: ExerciseCardDto
 ) => {
   e.preventDefault();
   e.stopPropagation();
-  if (isLiked) {
-    const response = await onUserUnlikesExercise(exercise.id);
-    if (!response.success) {
-      errorToast(response.title, response.description);
-    } else {
-      successToast(`${exercise.title} was removed from your likes`);
-      setIsLiked(false);
-    }
-  } else {
-    const response = await onUserLikesExercise(exercise.id);
-    if (!response.success) {
-      errorToast(response.title, response.description);
-    } else {
-      successToast(`${exercise.title} was added to your likes`);
-      setIsLiked(true);
-      reload();
-    }
-  }
+  const action = isLiked ? onUserUnlikesExercise(exercise.id) : onUserLikesExercise(exercise.id);
+  await loadingToast(action, {
+    success: () => ({
+      title: isLiked
+        ? `${exercise.title} removed from your likes`
+        : `${exercise.title} added to your likes`,
+    }),
+  });
+  setIsLiked((prev) => !prev);
 };
 
 export const handleLikePlaylist = async (
   e: MouseEvent,
   isLiked: boolean,
-  setIsLiked: (value: boolean) => void,
+  setIsLiked: Dispatch<SetStateAction<boolean>>,
   playlist: PlaylistCardDto
 ) => {
   e.preventDefault();
   e.stopPropagation();
-  if (isLiked) {
-    const response = await onUserUnlikesPlaylist(playlist.id);
-    if (!response.success) {
-      errorToast(response.title, response.description);
-    } else {
-      successToast(`${playlist.title} was removed from your likes`);
-      setIsLiked(false);
-    }
-  } else {
-    const response = await onUserLikesPlaylist(playlist.id);
-    if (!response.success) {
-      errorToast(response.title, response.description);
-    } else {
-      successToast(`${playlist.title} was added to your likes`);
-      setIsLiked(true);
-      reload();
-    }
-  }
+  const action = isLiked ? onUserUnlikesPlaylist(playlist.id) : onUserLikesPlaylist(playlist.id);
+  await loadingToast(action, {
+    success: () => ({
+      title: isLiked
+        ? `${playlist.title} removed from your likes`
+        : `${playlist.title} added to your likes`,
+    }),
+  });
+  setIsLiked((prev) => !prev);
 };
 
 export const handleLikeAccount = async (
   e: MouseEvent,
   isLiked: boolean,
-  setIsLiked: (value: boolean) => void,
+  setIsLiked: Dispatch<SetStateAction<boolean>>,
   account: UserCardDto
 ) => {
-  e.stopPropagation();
   e.preventDefault();
-  if (isLiked) {
-    const response = await onUserUnlikesUser(account.id);
-    if (!response.success) {
-      errorToast(response.title, response.description);
-    } else {
-      successToast(`${account.username} was removed from your likes`);
-      setIsLiked(false);
-    }
-  } else {
-    const response = await onUserLikesUser(account.id);
-    if (!response.success) {
-      errorToast(response.title, response.description);
-    } else {
-      successToast(`${account.username} was added to your likes`);
-      setIsLiked(true);
-      reload();
-    }
-  }
+  e.stopPropagation();
+  const action = isLiked ? onUserUnlikesUser(account.id) : onUserLikesUser(account.id);
+  await loadingToast(action, {
+    success: () => ({
+      title: isLiked
+        ? `${account.username} removed from your likes`
+        : `${account.username} added to your likes`,
+    }),
+  });
+  setIsLiked((prev) => !prev);
 };
 
 export const generateImageVariations = (url: string, resolutions: [number, number][]): string[] => {
