@@ -51,7 +51,7 @@ export const addPlaylistToPlaylist = async (
 ) => {
   await loadingToast(onAddPlaylistToPlaylist(target.id, playlistToAdd.id), {
     loading: "Add to playlist...",
-    success: () => ({ title: `${target.title} was added to ${playlistToAdd.title}` }),
+    success: () => ({ title: `${playlistToAdd.title} was added to ${target.title}` }),
   });
   reload();
 };
@@ -73,7 +73,7 @@ export const addManyExercisesToPlaylist = async (
 ) => {
   await loadingToast(onAddMultiExerciseToPlaylist(playlist.id, exercisesIds), {
     loading: "Add to playlist...",
-    success: () => ({ title: `${exercisesIds.length} exercice added to ${playlist.title}` }),
+    success: () => ({ title: `${exercisesIds.length} exercices added to ${playlist.title}` }),
   });
   reload();
 };
