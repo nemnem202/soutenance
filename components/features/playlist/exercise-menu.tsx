@@ -173,7 +173,7 @@ export function AddToPlaylistContent({
                 playlist={playlist}
                 callBack={async () => {
                   currentExercise
-                    ? await addExerciseToPlaylist(playlist.id, currentExercise)
+                    ? await addExerciseToPlaylist(playlist.id, currentExercise.id)
                     : currentPlaylist
                       ? await addPlaylistToPlaylist(playlist.id, currentPlaylist.id)
                       : null;
