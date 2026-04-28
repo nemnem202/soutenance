@@ -43,7 +43,7 @@ export const getPreferredLanguage = (header: string | null): Language => {
 };
 
 export const chordToString = (chord: Chord) =>
-  `${chord.content.note} ${chord.content.modifier ?? ""} ${chord.over && `${chord.over.note} ${chord.over.modifier}`}`;
+  `${chord.content.note} ${chord.content.modifier ?? ""} ${chord.over ? `${chord.over.note} ${chord.over.modifier}` : ""}`;
 
 export const addPlaylistToPlaylist = async (
   target: PlaylistCardDto,
