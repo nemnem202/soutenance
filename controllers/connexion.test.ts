@@ -53,9 +53,6 @@ describe("ConnexionController Integration", () => {
     await prismaClient.authMethod.deleteMany();
     await prismaClient.user.deleteMany();
     await prismaClient.image.deleteMany();
-
-    context = createMockContext();
-    controller = new ConnexionController({ client: prismaClient, context });
   });
 
   describe("Register", () => {
@@ -68,6 +65,9 @@ describe("ConnexionController Integration", () => {
         agree_terms_of_service: true,
         image: { file: mockFile, alt: "My avatar" },
       };
+
+      context = createMockContext();
+      controller = new ConnexionController({ client: prismaClient, context, user: null });
 
       const result = await controller.register(data);
 
@@ -110,6 +110,9 @@ describe("ConnexionController Integration", () => {
         image: { file: mockFile, alt: "..." },
       };
 
+      context = createMockContext();
+      controller = new ConnexionController({ client: prismaClient, context, user: null });
+
       await expect(controller.register(data)).rejects.toThrow(
         new AppError(Status.ExistingEmail, "Email déjà utilisé")
       );
@@ -127,6 +130,8 @@ describe("ConnexionController Integration", () => {
           classicAuthMethod: { create: { password: hashedPassword } },
         },
       });
+      context = createMockContext();
+      controller = new ConnexionController({ client: prismaClient, context, user: null });
 
       const result = await controller.login({
         email: "login@test.com",
@@ -149,6 +154,9 @@ describe("ConnexionController Integration", () => {
         },
       });
 
+      context = createMockContext();
+      controller = new ConnexionController({ client: prismaClient, context, user: null });
+
       await expect(
         controller.login({
           email: "fail@test.com",
@@ -161,6 +169,17 @@ describe("ConnexionController Integration", () => {
 
   describe("Logout", () => {
     it("should clear the session cookie", async () => {
+      const user = await prismaClient.user.create({
+        data: {
+          email: "logout@test.com",
+          username: "logout-me",
+          profilePicture: { create: { url: "...", alt: "...", cloudId: "test_id" } },
+        },
+      });
+
+      context = createMockContext(user.id);
+      controller = new ConnexionController({ client: prismaClient, context, user });
+
       await controller.logout();
 
       expect(context.setCookie).toHaveBeenCalledWith(
@@ -181,13 +200,10 @@ describe("ConnexionController Integration", () => {
         },
       });
 
-      const authContext = createMockContext(user.id);
-      const authController = new ConnexionController({
-        client: prismaClient,
-        context: authContext,
-      });
+      context = createMockContext(user.id);
+      controller = new ConnexionController({ client: prismaClient, context, user });
 
-      await authController.removeAccount();
+      await controller.removeAccount();
 
       const dbUser = await prismaClient.user.findUnique({ where: { id: user.id } });
       expect(dbUser).toBeNull();
