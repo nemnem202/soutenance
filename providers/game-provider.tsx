@@ -5,6 +5,8 @@ import {
   type ReactNode,
   type Dispatch,
   type SetStateAction,
+  useCallback,
+  useRef,
 } from "react";
 import { useLanguage } from "@/hooks/use-language";
 import type { Exercise } from "@/types/entities";
@@ -12,6 +14,10 @@ import type { State as MidiState } from "@/midi-editor/types/instance";
 import { convertMidiFileToState, getMidiFileFromBuffer } from "@/midi-editor/lib/midiconverter";
 import onMidiFile from "@/telefunc/midifile.telefunc";
 import { errorToast } from "@/lib/toaster";
+import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
+import { Action, type MidiAction } from "@/midi-editor/types/actions";
+import SoundEngine from "@/midi-editor/engines/sound-engine";
+import { logger } from "@/lib/logger";
 
 const tabsIds = ["piano-roll", "chords", "sheet", "guitar"] as const;
 export type TabID = (typeof tabsIds)[number];
@@ -22,9 +28,12 @@ export interface GameContextType {
   tabs: Tab[];
   activeTab: TabID;
   setActiveTab: Dispatch<SetStateAction<TabID>>;
-  midiState: MidiState | null;
   isLoading: boolean;
   isReady: boolean;
+  midiState: MidiState | null;
+  dispatch: (action: MidiAction) => void;
+  startAudio: () => Promise<void>;
+  togglePlay: () => void;
 }
 
 export const GameContext = createContext<GameContextType | null>(null);
@@ -38,8 +47,10 @@ export default function GameProvider({
 }) {
   const { instance } = useLanguage();
   const [activeTab, setActiveTab] = useState<TabID>("chords");
-  const [midiState, setMidiState] = useState<MidiState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const isStoreSet = useRef(false);
+  const dispatch = useMidiStore((s) => s.dispatch);
+  const state = useMidiStore((s) => s.state);
 
   const tabs: Tab[] = [
     { id: "piano-roll", label: instance.getItem("piano_roll") },
@@ -47,6 +58,22 @@ export default function GameProvider({
     { id: "sheet", label: instance.getItem("sheet"), disabled: true },
     { id: "guitar", label: instance.getItem("guitar"), disabled: true },
   ];
+
+  const startAudio = useCallback(async () => {
+    try {
+      if (!SoundEngine.isInitialized) {
+        logger.info("Initializing SoundEngine for the first time...");
+
+        await SoundEngine.init(state, (tick) => {});
+
+        const engine = SoundEngine.get();
+        engine.updateMidiEvents();
+      }
+    } catch (error) {
+      logger.error("CRITICAL: startAudio failed", error);
+    }
+  }, [state]);
+  const togglePlay = () => dispatch({ type: Action.TOGGLE_PLAY });
 
   useEffect(() => {
     async function loadResources() {
@@ -56,7 +83,10 @@ export default function GameProvider({
         if (response.success) {
           const midiFile = await getMidiFileFromBuffer(response.data);
           const state = await convertMidiFileToState(midiFile);
-          setMidiState(state);
+          if (!isStoreSet.current) {
+            useMidiStore.setState({ state });
+            isStoreSet.current = true;
+          }
         } else {
           errorToast(response.title, response.description);
         }
@@ -70,14 +100,17 @@ export default function GameProvider({
     loadResources();
   }, [exercise.id]);
 
-  const value = {
+  const value: GameContextType = {
     exercise,
     tabs,
     activeTab,
     setActiveTab,
-    midiState,
+    midiState: state,
     isLoading,
-    isReady: !isLoading && !!midiState,
+    isReady: !isLoading && !!state,
+    dispatch,
+    startAudio,
+    togglePlay,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

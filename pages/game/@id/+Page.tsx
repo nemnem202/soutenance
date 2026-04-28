@@ -17,7 +17,6 @@ import type { Data } from "./+data";
 import GameProvider, { TabID } from "@/providers/game-provider";
 import PianoRoll from "@/midi-editor/components/piano-roll";
 import { ClientOnly } from "vike-react/ClientOnly";
-import { MidiProvider, useMidiActions } from "@/midi-editor/providers/midi-provider";
 import useGame from "@/hooks/use-game";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -28,27 +27,8 @@ export default function Page() {
 
   return (
     <GameProvider exercise={exercise.data}>
-      <MidiInitWrapper />
-    </GameProvider>
-  );
-}
-
-function MidiInitWrapper() {
-  const { midiState, isLoading } = useGame();
-
-  if (isLoading) {
-    return (
-      <div className="flex h-screen w-screen items-center justify-center flex-col gap-4">
-        <Spinner className="size-8" />
-        <p className="paragraph-md text-muted-foreground">Chargement des ressources musicales...</p>
-      </div>
-    );
-  }
-
-  return (
-    <MidiProvider initialMidiData={midiState}>
       <GameContent />
-    </MidiProvider>
+    </GameProvider>
   );
 }
 
@@ -103,8 +83,8 @@ function GameContent() {
 }
 
 function GameView({ toggleSidebar }: { toggleSidebar: () => void }) {
-  const { startAudio } = useMidiActions();
-  const { activeTab, tabs, setActiveTab } = useGame();
+  const { startAudio } = useGame();
+  const { activeTab, tabs, setActiveTab, isLoading } = useGame();
 
   return (
     <div
@@ -112,11 +92,11 @@ function GameView({ toggleSidebar }: { toggleSidebar: () => void }) {
       onClickCapture={startAudio}
     >
       <div className="flex-1 flex flex-col h-full min-h-0 gap-3">
-        <div className="w-full flex justify-between items-center">
+        <div className="w-full flex justify-between items-center gap-2">
           <div className="flex-1">
             <DesktopGameControlsSection toggleSidebar={toggleSidebar} />
           </div>
-          <div className="hidden md:block flex-1 text-center">
+          <div className="hidden md:block flex-1 md:flex-initial text-center">
             <AnimatedTabs
               activeTab={activeTab}
               onChange={(v) => setActiveTab(v as TabID)}
@@ -124,13 +104,19 @@ function GameView({ toggleSidebar }: { toggleSidebar: () => void }) {
               variant="pill"
             />
           </div>
-          <div className="flex-1" />
+          <div className="flex-1 hidden lg:block" />
         </div>
         <Tab>
           {activeTab === "chords" && <ChordTab />}
           {activeTab === "piano-roll" && (
             <ClientOnly>
-              <PianoRoll />
+              {isLoading ? (
+                <div className="size-full flex items-center justify-center">
+                  <Spinner />
+                </div>
+              ) : (
+                <PianoRoll />
+              )}
             </ClientOnly>
           )}
         </Tab>

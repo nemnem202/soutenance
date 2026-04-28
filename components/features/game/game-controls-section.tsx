@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
 import { ControlsSection, IconButton } from "./game-assets";
 import { CustomInput } from "@/components/ui/custom_input";
-import { useMidiActions } from "@/midi-editor/providers/midi-provider";
+import useGame from "@/hooks/use-game";
 
 interface Gameprops {
   toggleSidebar: () => void;
@@ -12,7 +12,7 @@ interface Gameprops {
 
 export default function DesktopGameControlsSection({ ...props }: Gameprops) {
   const { instance } = useLanguage();
-  const { togglePlay } = useMidiActions();
+  const { togglePlay } = useGame();
   return (
     <div className="hidden md:block">
       <ControlsSection>
