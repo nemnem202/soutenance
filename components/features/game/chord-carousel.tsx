@@ -16,7 +16,7 @@ export default function ChordCarousel({ carouselRef, api, axis }: ChordCarouselP
   const chords: Chord[] = [];
 
   return (
-    <>
+    <div className="flex items-center justify-center size-full">
       <div></div>
       <div className="relative w-full h-40 pointer-events-none">
         <div className="relative z-10 w-full mx-auto [--slide-height:19rem] [--slide-spacing:1rem] [--slide-size:100%] [--slide-spacing-sm:1.6rem] [--slide-size-sm:50%] [--slide-spacing-lg:2rem]">
@@ -50,6 +50,6 @@ export default function ChordCarousel({ carouselRef, api, axis }: ChordCarouselP
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }

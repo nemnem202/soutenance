@@ -33,3 +33,5 @@ export default async function data(pageContext: PageContextServer) {
 
   return { ...globalData, playlists, exercises, users };
 }
+
+export type Data = Awaited<ReturnType<typeof data>>;

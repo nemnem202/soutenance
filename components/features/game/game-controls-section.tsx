@@ -2,10 +2,13 @@ import { Play, Settings, Square } from "lucide-react";
 import { Field, FieldLabel } from "@/components/molecules/field";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
-import type { Gameprops } from "@/pages/game/@id/+Page";
 import { ControlsSection, IconButton } from "./game-assets";
 import { CustomInput } from "@/components/ui/custom_input";
 import { useMidiActions } from "@/midi-editor/providers/midi-provider";
+
+interface Gameprops {
+  toggleSidebar: () => void;
+}
 
 export default function DesktopGameControlsSection({ ...props }: Gameprops) {
   const { instance } = useLanguage();
