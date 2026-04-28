@@ -5,7 +5,7 @@ import { type ServerResponse, Status } from "@/types/server-response";
 import { AppError } from "@/lib/errors";
 import { Controller } from "./Controller";
 import FileController from "./FileController";
-import { PlaylistSchema } from "@/types/entities";
+import type { PlaylistSchema } from "@/types/entities";
 import { playlistSchema } from "@/schemas/entities.schema";
 
 export default class PlaylistController extends Controller {

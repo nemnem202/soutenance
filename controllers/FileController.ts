@@ -5,7 +5,7 @@ import { AppError } from "@/lib/errors";
 import UserRepository from "@/repositories/userRepository";
 import type { Session } from "@/types/auth";
 import { type ServerResponse, Status } from "@/types/server-response";
-import { Controller, ControllerDeps } from "./Controller";
+import { Controller, type ControllerDeps } from "./Controller";
 
 interface FileDeps extends ControllerDeps {
   file?: File;

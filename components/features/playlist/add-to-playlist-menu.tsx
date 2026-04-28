@@ -14,7 +14,7 @@ import { SmallAddNewPlaylistWidget, SmallAddToPlaylistWidget } from "./playlists
 import { useData } from "vike-react/useData";
 import type { Data } from "@/pages/+data";
 import { addPlaylistToPlaylist } from "@/lib/utils";
-import { PlaylistCardDto } from "@/types/dtos/playlist";
+import type { PlaylistCardDto } from "@/types/dtos/playlist";
 
 export default function AddToPlaylistButton({ playlistToAdd }: { playlistToAdd: PlaylistCardDto }) {
   const { instance } = useLanguage();

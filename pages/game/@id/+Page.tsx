@@ -14,7 +14,7 @@ import MobileHeaderNavContainer from "@/components/features/layout/mobile-header
 import { HistoryBackButton } from "@/components/ui/custom-buttons";
 import { useData } from "vike-react/useData";
 import type { Data } from "./+data";
-import GameProvider, { TabID } from "@/providers/game-provider";
+import GameProvider, { type TabID } from "@/providers/game-provider";
 import PianoRoll from "@/midi-editor/components/piano-roll";
 import { ClientOnly } from "vike-react/ClientOnly";
 import useGame from "@/hooks/use-game";

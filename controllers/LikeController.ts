@@ -1,9 +1,9 @@
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Controller } from "./Controller";
-import { PlaylistCardDto } from "@/types/dtos/playlist";
+import type { PlaylistCardDto } from "@/types/dtos/playlist";
 import { AppError } from "@/lib/errors";
-import { ExerciseCardDto } from "@/types/dtos/exercise";
-import { UserCardDto } from "@/types/dtos/user";
+import type { ExerciseCardDto } from "@/types/dtos/exercise";
+import type { UserCardDto } from "@/types/dtos/user";
 
 export default class LikeController extends Controller {
   async userLikesPlaylist(playlistId: number): Promise<ServerResponse<{}>> {
