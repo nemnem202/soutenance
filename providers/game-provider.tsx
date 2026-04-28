@@ -29,10 +29,11 @@ export interface GameContextType {
   activeTab: TabID;
   setActiveTab: Dispatch<SetStateAction<TabID>>;
   isLoading: boolean;
+  audioReady: boolean;
   isReady: boolean;
   midiState: MidiState | null;
   dispatch: (action: MidiAction) => void;
-  startAudio: () => Promise<void>;
+  setAudioStarted: (started: boolean) => void;
   togglePlay: () => void;
 }
 
@@ -51,7 +52,8 @@ export default function GameProvider({
   const isStoreSet = useRef(false);
   const dispatch = useMidiStore((s) => s.dispatch);
   const state = useMidiStore((s) => s.state);
-
+  const [audioStarted, setAudioStarted] = useState(false);
+  const [audioReady, setAudioReady] = useState(false);
   const tabs: Tab[] = [
     { id: "piano-roll", label: instance.getItem("piano_roll") },
     { id: "chords", label: instance.getItem("chords") },
@@ -63,9 +65,8 @@ export default function GameProvider({
     try {
       if (!SoundEngine.isInitialized) {
         logger.info("Initializing SoundEngine for the first time...");
-
         await SoundEngine.init(state, (tick) => {});
-
+        setAudioReady(true);
         const engine = SoundEngine.get();
         engine.updateMidiEvents();
       }
@@ -73,6 +74,7 @@ export default function GameProvider({
       logger.error("CRITICAL: startAudio failed", error);
     }
   }, [state]);
+
   const togglePlay = () => dispatch({ type: Action.TOGGLE_PLAY });
 
   useEffect(() => {
@@ -100,6 +102,10 @@ export default function GameProvider({
     loadResources();
   }, [exercise.id]);
 
+  useEffect(() => {
+    if (!isLoading && audioStarted) startAudio();
+  }, [audioStarted, startAudio, isLoading]);
+
   const value: GameContextType = {
     exercise,
     tabs,
@@ -107,9 +113,10 @@ export default function GameProvider({
     setActiveTab,
     midiState: state,
     isLoading,
+    audioReady,
     isReady: !isLoading && !!state,
     dispatch,
-    startAudio,
+    setAudioStarted,
     togglePlay,
   };
 

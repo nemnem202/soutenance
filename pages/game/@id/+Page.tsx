@@ -83,13 +83,12 @@ function GameContent() {
 }
 
 function GameView({ toggleSidebar }: { toggleSidebar: () => void }) {
-  const { startAudio } = useGame();
-  const { activeTab, tabs, setActiveTab, isLoading } = useGame();
+  const { setAudioStarted, audioReady, activeTab, tabs, setActiveTab } = useGame();
 
   return (
     <div
       className="size-full lg:px-10 md:py-5 flex flex-col gap-2 min-h-0"
-      onClickCapture={startAudio}
+      onClickCapture={() => setAudioStarted(true)}
     >
       <div className="flex-1 flex flex-col h-full min-h-0 gap-3">
         <div className="w-full flex justify-between items-center gap-2">
@@ -110,7 +109,7 @@ function GameView({ toggleSidebar }: { toggleSidebar: () => void }) {
           {activeTab === "chords" && <ChordTab />}
           {activeTab === "piano-roll" && (
             <ClientOnly>
-              {isLoading ? (
+              {!audioReady ? (
                 <div className="size-full flex items-center justify-center">
                   <Spinner />
                 </div>

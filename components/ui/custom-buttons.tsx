@@ -6,7 +6,11 @@ import {
   ChevronUp,
   Ellipsis,
   Heart,
+  Pause,
+  Play,
   Plus,
+  Settings,
+  Square,
   X,
 } from "lucide-react";
 import { Button, type ButtonProps } from "./button";
@@ -121,5 +125,49 @@ export function CloseButton({ ...props }: ButtonProps) {
     >
       <X />
     </button>
+  );
+}
+
+function IconButton({ ...props }: ButtonProps) {
+  return (
+    <Button
+      type="button"
+      variant={"ghost"}
+      size={"icon"}
+      className="[&>svg]:w-auto [&>svg]:h-auto [&>svg]:shrink 
+      fill-foreground stroke-foreground 
+      hover:fill-primary hover:stroke-primary
+      hover:!bg-transparent !bg-transparent
+      "
+      {...props}
+    />
+  );
+}
+
+export function PlayButton({ ...props }: ButtonProps & { isPlaying: boolean }) {
+  return (
+    <IconButton {...props}>
+      {props.isPlaying ? (
+        <Pause className="fill-inherit stroke-inherit" />
+      ) : (
+        <Play className="fill-inherit stroke-inherit" />
+      )}
+    </IconButton>
+  );
+}
+
+export function StopButton({ ...props }: ButtonProps) {
+  return (
+    <IconButton {...props}>
+      <Square className="fill-inherit stroke-inherit" />
+    </IconButton>
+  );
+}
+
+export function SettingsButton({ ...props }: ButtonProps) {
+  return (
+    <IconButton {...props}>
+      <Settings className="stroke-inherit" />
+    </IconButton>
   );
 }

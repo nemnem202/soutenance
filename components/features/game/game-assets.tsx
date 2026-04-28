@@ -32,20 +32,6 @@ export function ControlsSection({ children }: { children: ReactNode }) {
   );
 }
 
-export function IconButton({
-  children,
-  onClick = () => {},
-}: {
-  children: ReactNode;
-  onClick?: () => void;
-}) {
-  return (
-    <button type="button" onClick={onClick} className="all-unset cursor-pointer ">
-      {children}
-    </button>
-  );
-}
-
 export function SidebarTabButton({
   text,
   isActive,
