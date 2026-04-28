@@ -106,6 +106,13 @@ export default function GameProvider({
     if (!isLoading && audioStarted) startAudio();
   }, [audioStarted, startAudio, isLoading]);
 
+  useEffect(() => {
+    return () => {
+      logger.info("Game provider dismount");
+      if (SoundEngine.isInitialized) SoundEngine.get().destroy();
+    };
+  }, []);
+
   const value: GameContextType = {
     exercise,
     tabs,
