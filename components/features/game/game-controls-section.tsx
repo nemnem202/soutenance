@@ -20,7 +20,7 @@ export default function DesktopGameControlsSection({ ...props }: Gameprops) {
         <PlayButton
           disabled={!audioReady}
           onClick={togglePlay}
-          isPlaying={!!midiState?.config.isPlaying}
+          isPlaying={!!midiState?.transport.isPlaying}
         />
         <StopButton disabled={!audioReady} />
         <Separator orientation="vertical" className="!h-6" />
@@ -51,7 +51,7 @@ export function MobileGameControlSection({ ...props }: Gameprops) {
           <PlayButton
             disabled={!audioReady}
             onClick={togglePlay}
-            isPlaying={!!midiState?.config.isPlaying}
+            isPlaying={!!midiState?.transport.isPlaying}
           />
         </>
       )}

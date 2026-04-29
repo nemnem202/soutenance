@@ -63,12 +63,10 @@ export default function GameProvider({
 
   const startAudio = useCallback(async () => {
     try {
-      if (!SoundEngine.isInitialized) {
-        logger.info("Initializing SoundEngine for the first time...");
-        await SoundEngine.init(state, (tick) => {});
-        setAudioReady(true);
-        const engine = SoundEngine.get();
+      if (!SoundEngine.initialized) {
+        const engine = await SoundEngine.init(state, () => {});
         engine.updateMidiEvents();
+        setAudioReady(true);
       }
     } catch (error) {
       logger.error("CRITICAL: startAudio failed", error);
@@ -109,7 +107,7 @@ export default function GameProvider({
   useEffect(() => {
     return () => {
       logger.info("Game provider dismount");
-      if (SoundEngine.isInitialized) SoundEngine.get().destroy();
+      if (SoundEngine.initialized) SoundEngine.get().destroy();
     };
   }, []);
 
