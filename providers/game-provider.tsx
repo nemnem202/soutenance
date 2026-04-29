@@ -5,8 +5,6 @@ import {
   type ReactNode,
   type Dispatch,
   type SetStateAction,
-  useCallback,
-  useRef,
 } from "react";
 import { useLanguage } from "@/hooks/use-language";
 import type { Exercise } from "@/types/entities";
@@ -15,9 +13,9 @@ import { convertMidiFileToState, getMidiFileFromBuffer } from "@/midi-editor/lib
 import onMidiFile from "@/telefunc/midifile.telefunc";
 import { errorToast } from "@/lib/toaster";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
-import { Action, type MidiAction } from "@/midi-editor/types/actions";
-import SoundEngine from "@/midi-editor/engines/sound-engine";
-import { logger } from "@/lib/logger";
+import type { MidiAction } from "@/midi-editor/types/actions";
+import useAudio from "@/hooks/use-audio";
+import { useShortcuts } from "@/midi-editor/hooks/useShortcuts";
 
 const tabsIds = ["piano-roll", "chords", "sheet", "guitar"] as const;
 export type TabID = (typeof tabsIds)[number];
@@ -28,13 +26,9 @@ export interface GameContextType {
   tabs: Tab[];
   activeTab: TabID;
   setActiveTab: Dispatch<SetStateAction<TabID>>;
-  isLoading: boolean;
-  audioReady: boolean;
-  isReady: boolean;
   midiState: MidiState | null;
+  midiLoading: boolean;
   dispatch: (action: MidiAction) => void;
-  setAudioStarted: (started: boolean) => void;
-  togglePlay: () => void;
 }
 
 export const GameContext = createContext<GameContextType | null>(null);
@@ -48,12 +42,36 @@ export default function GameProvider({
 }) {
   const { instance } = useLanguage();
   const [activeTab, setActiveTab] = useState<TabID>("chords");
-  const [isLoading, setIsLoading] = useState(true);
-  const isStoreSet = useRef(false);
+  const [midiLoading, setMidiLoading] = useState(true);
   const dispatch = useMidiStore((s) => s.dispatch);
   const state = useMidiStore((s) => s.state);
-  const [audioStarted, setAudioStarted] = useState(false);
-  const [audioReady, setAudioReady] = useState(false);
+  const { loadMidiFile } = useAudio();
+
+  useShortcuts();
+  useEffect(() => {
+    let isMounted = true;
+    async function loadResources() {
+      setMidiLoading(true);
+      try {
+        const response = await onMidiFile(exercise.id);
+        if (response.success && isMounted) {
+          const midiFile = await getMidiFileFromBuffer(response.data);
+          const newState = await convertMidiFileToState(midiFile);
+          useMidiStore.setState({ state: newState });
+          loadMidiFile();
+        }
+      } catch (err) {
+        errorToast("Erreur MIDI");
+      } finally {
+        if (isMounted) setMidiLoading(false);
+      }
+    }
+    loadResources();
+    return () => {
+      isMounted = false;
+    };
+  }, [exercise.id, loadMidiFile]);
+
   const tabs: Tab[] = [
     { id: "piano-roll", label: instance.getItem("piano_roll") },
     { id: "chords", label: instance.getItem("chords") },
@@ -61,70 +79,14 @@ export default function GameProvider({
     { id: "guitar", label: instance.getItem("guitar"), disabled: true },
   ];
 
-  const startAudio = useCallback(async () => {
-    try {
-      if (!SoundEngine.isInitialized) {
-        logger.info("Initializing SoundEngine for the first time...");
-        await SoundEngine.init(state, (tick) => {});
-        setAudioReady(true);
-        const engine = SoundEngine.get();
-        engine.updateMidiEvents();
-      }
-    } catch (error) {
-      logger.error("CRITICAL: startAudio failed", error);
-    }
-  }, [state]);
-
-  const togglePlay = () => dispatch({ type: Action.TOGGLE_PLAY });
-
-  useEffect(() => {
-    async function loadResources() {
-      setIsLoading(true);
-      try {
-        const response = await onMidiFile(exercise.id);
-        if (response.success) {
-          const midiFile = await getMidiFileFromBuffer(response.data);
-          const state = await convertMidiFileToState(midiFile);
-          if (!isStoreSet.current) {
-            useMidiStore.setState({ state });
-            isStoreSet.current = true;
-          }
-        } else {
-          errorToast(response.title, response.description);
-        }
-      } catch (err) {
-        errorToast("Erreur de chargement des ressources");
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    loadResources();
-  }, [exercise.id]);
-
-  useEffect(() => {
-    if (!isLoading && audioStarted) startAudio();
-  }, [audioStarted, startAudio, isLoading]);
-
-  useEffect(() => {
-    return () => {
-      logger.info("Game provider dismount");
-      if (SoundEngine.isInitialized) SoundEngine.get().destroy();
-    };
-  }, []);
-
   const value: GameContextType = {
     exercise,
     tabs,
     activeTab,
     setActiveTab,
     midiState: state,
-    isLoading,
-    audioReady,
-    isReady: !isLoading && !!state,
+    midiLoading,
     dispatch,
-    setAudioStarted,
-    togglePlay,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

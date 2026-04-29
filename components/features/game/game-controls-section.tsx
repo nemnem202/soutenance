@@ -5,6 +5,7 @@ import { ControlsSection } from "./game-assets";
 import { CustomInput } from "@/components/ui/custom_input";
 import useGame from "@/hooks/use-game";
 import { PlayButton, SettingsButton, StopButton } from "@/components/ui/custom-buttons";
+import { Action } from "@/midi-editor/types/actions";
 
 interface Gameprops {
   toggleSidebar: () => void;
@@ -12,17 +13,16 @@ interface Gameprops {
 
 export default function DesktopGameControlsSection({ ...props }: Gameprops) {
   const { instance } = useLanguage();
-  const { audioReady, togglePlay, midiState } = useGame();
+  const { midiState, dispatch } = useGame();
   return (
     <div className="hidden md:block">
       <ControlsSection>
         <SettingsButton onClick={() => props.toggleSidebar()} />
         <PlayButton
-          disabled={!audioReady}
-          onClick={togglePlay}
-          isPlaying={!!midiState?.config.isPlaying}
+          onClick={() => dispatch({ type: Action.TOGGLE_PLAY })}
+          isPlaying={!!midiState?.transport.isPlaying}
         />
-        <StopButton disabled={!audioReady} />
+        <StopButton />
         <Separator orientation="vertical" className="!h-6" />
         <Field className="flex flex-row items-center justify-center !w-min">
           <CustomInput
@@ -41,17 +41,16 @@ export default function DesktopGameControlsSection({ ...props }: Gameprops) {
 }
 
 export function MobileGameControlSection({ ...props }: Gameprops) {
-  const { audioReady, togglePlay, midiState } = useGame();
+  const { midiState, dispatch } = useGame();
   return (
     <div className=" flex w-full justify-evenly">
       <SettingsButton onClick={() => props.toggleSidebar()} />
       {midiState && (
         <>
-          <StopButton disabled={!audioReady} />
+          <StopButton />
           <PlayButton
-            disabled={!audioReady}
-            onClick={togglePlay}
-            isPlaying={!!midiState?.config.isPlaying}
+            onClick={() => dispatch({ type: Action.TOGGLE_PLAY })}
+            isPlaying={!!midiState?.transport.isPlaying}
           />
         </>
       )}

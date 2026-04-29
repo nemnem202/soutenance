@@ -144,10 +144,10 @@ function IconButton({ ...props }: ButtonProps) {
   );
 }
 
-export function PlayButton({ ...props }: ButtonProps & { isPlaying: boolean }) {
+export function PlayButton({ isPlaying, ...props }: ButtonProps & { isPlaying: boolean }) {
   return (
     <IconButton {...props}>
-      {props.isPlaying ? (
+      {isPlaying ? (
         <Pause className="fill-inherit stroke-inherit" />
       ) : (
         <Play className="fill-inherit stroke-inherit" />

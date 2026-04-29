@@ -152,6 +152,9 @@ importers:
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      spessasynth_lib:
+        specifier: ^4.2.15
+        version: 4.2.15
       tailwind-merge:
         specifier: ^3.4.1
         version: 3.4.1
@@ -3395,6 +3398,12 @@ packages:
   source-map@0.6.1:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
+
+  spessasynth_core@4.2.13:
+    resolution: {integrity: sha512-IB3K1MZBsvgufvjuaB0FT71+btQfwBsNJt0iQFGG/iaprlRbKkgQ5IYvZ9+y9vsKLgJryOlt/mtlGomt0hRSjQ==}
+
+  spessasynth_lib@4.2.15:
+    resolution: {integrity: sha512-3QEOkzws6J/z/hkYS4jTO9uxM99NwoPH1J/L61+DAAxoedeBZopY3M5Ebql/r+4DOy1rcULnQYExucEjVp0C8w==}
 
   split2@4.2.0:
     resolution: {integrity: sha512-UcjcJOWknrNkF6PLX83qcHM6KHgVKNkV62Y8a5uYDVv9ydGQVwAHMKqHdJje1VTWpljG0WYpCDhrCdAOYH4TWg==}
@@ -6874,6 +6883,12 @@ snapshots:
       source-map: 0.6.1
 
   source-map@0.6.1: {}
+
+  spessasynth_core@4.2.13: {}
+
+  spessasynth_lib@4.2.15:
+    dependencies:
+      spessasynth_core: 4.2.13
 
   split2@4.2.0: {}
 
