@@ -15,6 +15,7 @@ import { errorToast } from "@/lib/toaster";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import type { MidiAction } from "@/midi-editor/types/actions";
 import useAudio from "@/hooks/use-audio";
+import { useShortcuts } from "@/midi-editor/hooks/useShortcuts";
 
 const tabsIds = ["piano-roll", "chords", "sheet", "guitar"] as const;
 export type TabID = (typeof tabsIds)[number];
@@ -46,6 +47,7 @@ export default function GameProvider({
   const state = useMidiStore((s) => s.state);
   const { loadMidiFile } = useAudio();
 
+  useShortcuts();
   useEffect(() => {
     let isMounted = true;
     async function loadResources() {

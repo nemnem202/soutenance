@@ -7,6 +7,7 @@ interface AudioContextType {
   isPlaying: () => boolean;
   release: () => void;
   setPlayhead: (tick: number) => void;
+  unlockAudioContext: () => Promise<void>;
   audioLoaded: boolean;
 }
 
@@ -42,7 +43,9 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AudioContext.Provider value={{ loadMidiFile, isPlaying, setPlayhead, release, audioLoaded }}>
+    <AudioContext.Provider
+      value={{ loadMidiFile, isPlaying, setPlayhead, release, unlockAudioContext, audioLoaded }}
+    >
       <div onClickCapture={unlockAudioContext}>{children}</div>
     </AudioContext.Provider>
   );
