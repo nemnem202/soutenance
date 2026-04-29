@@ -19,6 +19,7 @@ import PianoRoll from "@/midi-editor/components/piano-roll";
 import { ClientOnly } from "vike-react/ClientOnly";
 import useGame from "@/hooks/use-game";
 import { Spinner } from "@/components/ui/spinner";
+import useAudio from "@/hooks/use-audio";
 
 export default function Page() {
   const { exercise } = useData<Data>();
@@ -82,13 +83,10 @@ function GameContent() {
 }
 
 function GameView({ toggleSidebar }: { toggleSidebar: () => void }) {
-  const { setAudioStarted, audioReady, activeTab, tabs, setActiveTab } = useGame();
-
+  const { activeTab, tabs, setActiveTab } = useGame();
+  const { audioLoaded } = useAudio();
   return (
-    <div
-      className="size-full lg:px-10 md:py-5 flex flex-col gap-2 min-h-0"
-      onClickCapture={() => setAudioStarted(true)}
-    >
+    <div className="size-full lg:px-10 md:py-5 flex flex-col gap-2 min-h-0">
       <div className="flex-1 flex flex-col h-full min-h-0 gap-3">
         <div className="w-full flex justify-between items-center gap-2">
           <div className="flex-1">
@@ -108,7 +106,7 @@ function GameView({ toggleSidebar }: { toggleSidebar: () => void }) {
           {activeTab === "chords" && <ChordTab />}
           {activeTab === "piano-roll" && (
             <ClientOnly>
-              {!audioReady ? (
+              {!audioLoaded ? (
                 <div className="size-full flex items-center justify-center">
                   <Spinner />
                 </div>
