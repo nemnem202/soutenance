@@ -252,7 +252,7 @@ export function Tab({ children }: { children: ReactNode }) {
 export function TrackSelect() {
   const { state, dispatch } = useMidiStore();
 
-  if (!state?.currentTrackId || !state?.tracks) return;
+  if (!state) return;
 
   return (
     <Select
