@@ -36,27 +36,9 @@ function GameContent() {
   const { exercise, midiState } = useGame();
   const [sidebarOpen, setOpen] = useState(false);
   const [drawersVisible, setDrawersVisible] = useState(true);
-  const downloadDebugMidi = (buffer: Uint8Array) => {
-    const uint8 = new Uint8Array(buffer).slice();
-
-    const blob = new Blob([uint8], { type: "audio/midi" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "test.mid";
-    a.click();
-
-    // Nettoyage mémoire
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  };
   return (
     <div className="flex flex-row w-screen h-screen overflow-hidden">
       <GameSidebar sidebarOpen={sidebarOpen} setOpen={setOpen} />
-      {midiState && (
-        <button type="button" onClick={() => downloadDebugMidi(midiState.rawMidiBuffer)}>
-          telechrager
-        </button>
-      )}
       <div className="flex-1 min-w-0 h-screen flex flex-col">
         <SizeAdapter
           sm={

@@ -64,14 +64,14 @@ export default function GameProvider({
   const startAudio = useCallback(async () => {
     try {
       if (!SoundEngine.initialized) {
-        const engine = await SoundEngine.init(state, () => {});
+        const engine = await SoundEngine.init(state, () => {}, dispatch);
         engine.updateMidiEvents();
         setAudioReady(true);
       }
     } catch (error) {
       logger.error("CRITICAL: startAudio failed", error);
     }
-  }, [state]);
+  }, [state, dispatch]);
 
   const togglePlay = () => dispatch({ type: Action.TOGGLE_PLAY });
 
