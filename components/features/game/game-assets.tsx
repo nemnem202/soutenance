@@ -271,7 +271,7 @@ export function TrackSelect() {
         <SelectGroup>
           {state.tracks.map((track) => (
             <SelectItem value={String(track.id)} key={track.id}>
-              {track.instrumentFamily}
+              {track.instrument}
             </SelectItem>
           ))}
         </SelectGroup>
