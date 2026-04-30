@@ -2,9 +2,13 @@ import SwitchParam from "@/components/molecules/switch-param";
 import { useLanguage } from "@/hooks/use-language";
 import { SmallInput } from "../game-assets";
 import { ParamsAccordion } from "../game-sidebar";
+import useGame from "@/hooks/use-game";
+import { logger } from "@/lib/logger";
+import { Action } from "@/midi-editor/types/actions";
 
 export default function GeneralSettings() {
   const { instance } = useLanguage();
+  const { midiState, dispatch } = useGame();
   return (
     <ParamsAccordion title={<h3 className="title-3">{instance.getItem("general")}</h3>}>
       <div className="mb-2">
@@ -41,8 +45,17 @@ export default function GeneralSettings() {
           <SmallInput
             label={instance.getItem("bpm")}
             type="number"
-            defaultValue={0}
+            disabled={!midiState}
+            defaultValue={midiState ? Math.floor(midiState.config.bpm) : undefined}
             containerClassName="w-full"
+            onBlur={(e) => {
+              let value = parseInt(e.currentTarget.value, 10);
+              if (value < 30) value = 30;
+              if (value > 500) value = 500;
+              e.currentTarget.value = value.toString();
+              logger.info("New bpm is set to: ", value);
+              dispatch({ type: Action.SET_BPM, bpm: value });
+            }}
           />
           <SmallInput
             label={instance.getItem("bpm_practice")}

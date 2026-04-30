@@ -6,6 +6,7 @@ import { CustomInput } from "@/components/ui/custom_input";
 import useGame from "@/hooks/use-game";
 import { PlayButton, SettingsButton, StopButton } from "@/components/ui/custom-buttons";
 import { Action } from "@/midi-editor/types/actions";
+import { logger } from "@/lib/logger";
 
 interface Gameprops {
   toggleSidebar: () => void;
@@ -28,7 +29,16 @@ export default function DesktopGameControlsSection({ ...props }: Gameprops) {
           <CustomInput
             id="bpm"
             type="number"
-            defaultValue={"120"}
+            disabled={!midiState}
+            defaultValue={midiState ? Math.floor(midiState.config.bpm) : undefined}
+            onBlur={(e) => {
+              let value = parseInt(e.currentTarget.value, 10);
+              if (value < 30) value = 30;
+              if (value > 500) value = 500;
+              e.currentTarget.value = value.toString();
+              logger.info("New bpm is set to: ", value);
+              dispatch({ type: Action.SET_BPM, bpm: value });
+            }}
             className="!w-15 min-w-0 p-0 text-center"
           />
           <FieldLabel htmlFor="bpm" className="!w-min text-muted-foreground paragraph-small">
