@@ -79,6 +79,7 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
   return (
     <div
       className={`flex w-full h-12 relative items-center ${currentMeasure === measure.index && "bg-popover"}`}
+      id={String(measure.index)}
     >
       {volta && <VoltaBracket volta={volta} />}
       {measure.bars.left && <LeftBar bar={measure.bars.left} />}

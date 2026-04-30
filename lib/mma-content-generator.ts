@@ -1,4 +1,4 @@
-import { CHORDS_DICTIONNARY } from "@/config/chords-dictionary";
+import { findChordFromModifier } from "@/config/chords-dictionary";
 import type { ExerciseWithForcedChordGrid } from "@/controllers/MidiController";
 import type { Cell } from "@/types/music";
 import { logger } from "./logger";
@@ -103,7 +103,6 @@ export default class MMAContentGenerator {
 
         if (isLast) {
           const fill = this.getFill();
-          // On retourne un tableau [Fill, Mesure] sans le "..." devant measureLine
           return fill ? [fill, measureLine] : [measureLine];
         }
 
@@ -119,7 +118,8 @@ export default class MMAContentGenerator {
       if (cell.chord.content.note === "%") {
         return `/`;
       } else {
-        return `${cell.chord.content.note}${CHORDS_DICTIONNARY[cell.chord.content.modifier]?.mmaLabel ?? ""}`;
+        const chord = findChordFromModifier(cell.chord.content.modifier);
+        return `${cell.chord.content.note}${chord?.mmaLabel ?? ""}`;
       }
     });
     const returnValue = `${measure.index} ${values.join(" ")}`;
@@ -129,7 +129,7 @@ export default class MMAContentGenerator {
 
   private getFill(): string | null {
     const config = MMA_GROOVES.get(this.groove);
-    if (!config || !config.fills) {
+    if (!config?.fills) {
       return null;
     }
     const allAvailableFills = Object.values(config.fills).filter(
