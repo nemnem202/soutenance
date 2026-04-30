@@ -1,14 +1,19 @@
 import useGame from "@/hooks/use-game";
 import { useLanguage } from "@/hooks/use-language";
+import useScreen from "@/hooks/use-screen";
 import {
   computeLoopIndexes,
   type SectionWithLoopIndexes,
   type MeasureWithLoopIndexes,
 } from "@/lib/computeLoopIndexes";
+import { logger } from "@/lib/logger";
 import { musicalNotationRootNote } from "@/lib/utils";
+import { getFirstTickFromMeasureIndex } from "@/midi-editor/lib/utils";
+import { Action } from "@/midi-editor/types/actions";
 import ChordGridProvider, { useChordGrid } from "@/providers/chord-grid-provider";
-import type { BarsSchema, CellSchema, MeasureSchema } from "@/types/entities";
-import React, { useMemo, type ReactNode } from "react";
+import type { BarsSchema, CellSchema } from "@/types/entities";
+import { FlagTriangleRight } from "lucide-react";
+import React, { type MouseEvent, useMemo, useState, type ReactNode } from "react";
 
 export default function ChordGrid() {
   const { exercise } = useGame();
@@ -93,7 +98,7 @@ function MeasureBlock({ measure, volta }: { measure: MeasureWithLoopIndexes; vol
   const isActive = measure.inLoopIndexes.includes(currentMeasure);
   return (
     <div
-      className={`flex w-full h-12 relative items-center ${isActive && "bg-popover"}`}
+      className={`flex w-full h-12 relative items-center relative group/measure ${isActive && "bg-popover"}`}
       id={String(measure.index)}
     >
       {volta && <VoltaBracket volta={volta} />}
@@ -107,15 +112,58 @@ function MeasureBlock({ measure, volta }: { measure: MeasureWithLoopIndexes; vol
       </div>
 
       {measure.bars.right && <RightBar bar={measure.bars.right} />}
+      <SetStartButton measure={measure} />
     </div>
   );
 }
 
-function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureSchema }) {
+function SetStartButton({ measure }: { measure: MeasureWithLoopIndexes }) {
+  const [clicksIndex, setClicksIndex] = useState(0);
+  const size = useScreen();
+  const { dispatch, midiState } = useGame();
+
+  const handleClick = (e: MouseEvent) => {
+    e.stopPropagation();
+    if (size === "sm" && clicksIndex < 1) {
+      logger.info("Display");
+      setClicksIndex(1);
+    } else if (midiState) {
+      logger.info("Set start");
+      dispatch({
+        type: Action.SET_TRANSPORT_START,
+        start: getFirstTickFromMeasureIndex(midiState.config.ppq, measure.index, {
+          top: midiState.config.signature[0],
+          bottom: midiState.config.signature[1],
+        }),
+        skipHistory: true,
+      });
+      if (!midiState.transport.isPlaying) {
+        dispatch({
+          type: Action.TOGGLE_PLAY,
+          force: true,
+        });
+      }
+      setClicksIndex(0);
+    }
+  };
+  if (!midiState?.transport.isPlaying)
+    return (
+      <button
+        type="button"
+        className={`absolute flex size-full justify-center items-center bg-foreground/20 cursor-pointer transition-all opacity-0 md:group-hover/measure:opacity-100 ${clicksIndex === 1 && "opacity-100"}`}
+        onBlur={() => setClicksIndex(0)}
+        onClick={handleClick}
+      >
+        <FlagTriangleRight className="fill-primary stroke-primary" />
+      </button>
+    );
+}
+
+function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureWithLoopIndexes }) {
   const renderCellContent = (): ReactNode => {
     switch (cell.kind) {
       case "Chord":
-        return <ChordCell cell={cell} />;
+        return <ChordCell cell={cell} measure={measure} />;
       case "Empty":
         return <EmptyCell cell={cell} />;
       case "Spacer":
@@ -143,10 +191,13 @@ type ChordCellType = Extract<CellSchema, { kind: "Chord" }>;
 type EmptyCellType = Extract<CellSchema, { kind: "Empty" }>;
 type SpacerCellType = Extract<CellSchema, { kind: "Spacer" }>;
 
-function ChordCell({ cell }: { cell: ChordCellType }) {
-  // logger.info("Chord", cell.chord);
+function ChordCell({ cell, measure }: { cell: ChordCellType; measure: MeasureWithLoopIndexes }) {
+  const { currentMeasure } = useChordGrid();
+  const isActive = measure.inLoopIndexes.includes(currentMeasure);
   return (
-    <div className="h-min w-full flex items-center text-foreground bg-background md:bg-transparent">
+    <div
+      className={`h-min w-full flex items-center text-foreground md:bg-transparent ${isActive ? "bg-popover" : "bg-background"}`}
+    >
       <p className="whitespace-nowrap font-mono semibold text-xl md:text-3xl flex h-fit lg:gap-1 ">
         <span>{musicalNotationRootNote(cell.chord.content.note)}</span>
         {cell.chord.content.modifier && (
