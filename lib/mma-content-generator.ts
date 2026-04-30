@@ -1,7 +1,7 @@
 import { findChordFromModifier } from "@/config/chords-dictionary";
 import type { ExerciseWithForcedChordGrid } from "@/controllers/MidiController";
 import type { Cell } from "@/types/music";
-import type { MeasureSchema, SectionSchema } from "@/types/entities";
+import type { MeasureSchema, SectionSchema, TimeSignatureSchema } from "@/types/entities";
 import { MMA_GROOVES } from "@/config/grooves_dictionnary";
 import type { MMAGrooveName, MMAGrooveTitle } from "@/types/mma";
 
@@ -14,21 +14,29 @@ export default class MMAContentGenerator {
 
   public generate(): string {
     const tempo: string = this.getTempo();
-    const swing: string = this.getSwingMode();
+    const humanisation: string[] = this.getHumanisation();
     const sections: string[] = this.getSections();
+    const timeSignature: string = this.getTimeSignature({
+      top: this.exercise.defaultConfig.timeSignatureTop,
+      bottom: this.exercise.defaultConfig.timeSignatureBottom,
+    });
     const end = this.getEnd();
 
-    const content = [tempo, swing, ...sections, end].join("\n");
+    const content = [tempo, timeSignature, ...humanisation, ...sections, end].join("\n");
 
     return content;
+  }
+
+  private getTimeSignature(timeSig: TimeSignatureSchema) {
+    return `Time ${timeSig.top}/${timeSig.bottom}`;
   }
 
   private getTempo() {
     return `Tempo ${this.exercise.defaultConfig.bpm}`;
   }
 
-  private getSwingMode() {
-    return `SwingMode Off`;
+  private getHumanisation(): string[] {
+    return [`SwingMode Off`, "AllTracks RVolume 80", "AllTracks RTime 80"];
   }
 
   private getGroove(sectionType: SectionSchema["type"]): string {
@@ -84,7 +92,17 @@ export default class MMAContentGenerator {
 
       const measures = this.getMeasures(section);
 
-      return [...repeat, groove, ...measures];
+      const timeSignature: string = this.getTimeSignature({
+        top: this.exercise.defaultConfig.timeSignatureTop,
+        bottom: this.exercise.defaultConfig.timeSignatureBottom,
+      });
+
+      return [
+        groove,
+        //  timeSignature,
+        ...repeat,
+        ...measures,
+      ];
     });
 
     return sections;
@@ -94,24 +112,25 @@ export default class MMAContentGenerator {
     const hasVoltas = section.voltas.length > 0;
 
     if (hasVoltas) {
-      const commonLines = this.renderMeasureList(section.commonMeasures, false, true);
+      const commonLines = this.renderMeasureList(section.commonMeasures, section, false, true);
 
       const sortedVoltas = [...section.voltas].sort((a, b) => a.volta - b.volta);
 
       const voltaLines = sortedVoltas.flatMap((volta, i) => {
         const isLastVolta = i === sortedVoltas.length - 1;
-        const measures = this.renderMeasureList(volta.measures, isLastVolta, true);
+        const measures = this.renderMeasureList(volta.measures, section, isLastVolta, true);
         return [`RepeatEnding`, ...measures];
       });
 
-      return [...commonLines, ...voltaLines, `RepeatEnd ${sortedVoltas.length}`];
+      return [...commonLines, ...voltaLines, `RepeatEnd 0`];
     }
 
-    return this.renderMeasureList(section.commonMeasures, true, false);
+    return this.renderMeasureList(section.commonMeasures, section, true, false);
   }
 
   private renderMeasureList(
     measures: MeasureSchema[],
+    section: SectionSchema,
     withFill: boolean,
     ignoreRepeatBars: boolean
   ): string[] {
@@ -121,18 +140,27 @@ export default class MMAContentGenerator {
       const isLast = index === sorted.length - 1;
       const lines: string[] = [];
 
-      if (!ignoreRepeatBars && measure.bars.left === "repeatOpen") {
+      if (!ignoreRepeatBars && measure.bars.left === "loopOpen") {
         lines.push("Repeat");
       }
 
       if (isLast && withFill) {
         const fill = this.getFill();
+        // const timeSignature: string = this.getTimeSignature({
+        //   top: this.exercise.defaultConfig.timeSignatureTop,
+        //   bottom: this.exercise.defaultConfig.timeSignatureBottom,
+        // });
         if (fill) lines.push(fill);
       }
 
       lines.push(this.getSingleMeasure(measure, isLast && withFill ? "isLast" : undefined));
 
-      if (!ignoreRepeatBars && measure.bars.right === "repeatClose") {
+      if (isLast && withFill) {
+        const groove = this.getGroove(section.type);
+        lines.push(groove);
+      }
+
+      if (!ignoreRepeatBars && measure.bars.right === "loopClose") {
         lines.push("RepeatEnd");
       }
 
@@ -180,6 +208,7 @@ export default class MMAContentGenerator {
   }
 
   private getEnd() {
-    return "z";
+    // return "z";
+    return "";
   }
 }

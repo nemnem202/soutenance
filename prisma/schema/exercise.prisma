@@ -164,13 +164,13 @@ model Bar {
 
 enum LeftBarKind {
     single
-    repeatOpen
-    sectionOpen
+    double
+    loopOpen
 }
 
 enum RightBarKind {
     single
-    repeatClose
-    sectionClose
+    double
+    loopClose
     final
 }

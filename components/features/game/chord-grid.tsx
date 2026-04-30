@@ -1,17 +1,27 @@
 import useGame from "@/hooks/use-game";
 import { useLanguage } from "@/hooks/use-language";
+import {
+  computeLoopIndexes,
+  type SectionWithLoopIndexes,
+  type MeasureWithLoopIndexes,
+} from "@/lib/computeLoopIndexes";
 import { musicalNotationRootNote } from "@/lib/utils";
 import ChordGridProvider, { useChordGrid } from "@/providers/chord-grid-provider";
-import type { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
-import React, { type ReactNode } from "react";
+import type { BarsSchema, CellSchema, MeasureSchema } from "@/types/entities";
+import React, { useMemo, type ReactNode } from "react";
 
 export default function ChordGrid() {
   const { exercise } = useGame();
   const { instance } = useLanguage();
 
+  const sectionsWithLoopIndexes = useMemo(
+    () => (exercise.chordsGrid ? computeLoopIndexes(exercise.chordsGrid.sections) : []),
+    [exercise.chordsGrid]
+  );
+
   if (!exercise.chordsGrid)
     return (
-      <ChordGridProvider>
+      <ChordGridProvider sectionsWithLoopIndexes={sectionsWithLoopIndexes} exercise={exercise}>
         <div className="size-full p-0 md:p-4 flex flex-col gap-5">
           <p className="paragraph-md text-muted-foreground">
             {instance.getItem("this_exercise_does_not_contains_chords_grid")}
@@ -19,10 +29,11 @@ export default function ChordGrid() {
         </div>
       </ChordGridProvider>
     );
+
   return (
-    <ChordGridProvider>
+    <ChordGridProvider sectionsWithLoopIndexes={sectionsWithLoopIndexes} exercise={exercise}>
       <div className="size-full p-1 md:p-6 flex flex-col gap-5">
-        {exercise.chordsGrid.sections
+        {sectionsWithLoopIndexes
           .sort((a, b) => a.index - b.index)
           .map((section) => (
             <Section section={section} key={section.index} />
@@ -32,9 +43,10 @@ export default function ChordGrid() {
   );
 }
 
-function Section({ section }: { section: SectionSchema }) {
+function Section({ section }: { section: SectionWithLoopIndexes }) {
   const commonMeasuresCount = section.commonMeasures.length;
   const firstVoltaStartColumn = (commonMeasuresCount % 4) + 1;
+
   return (
     <div className="flex flex-col gap-2">
       {section.type !== "Generic" && <SectionLabel label={section.type} />}
@@ -76,11 +88,12 @@ function Section({ section }: { section: SectionSchema }) {
   );
 }
 
-function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: number }) {
+function MeasureBlock({ measure, volta }: { measure: MeasureWithLoopIndexes; volta?: number }) {
   const { currentMeasure } = useChordGrid();
+  const isActive = measure.inLoopIndexes.includes(currentMeasure);
   return (
     <div
-      className={`flex w-full h-12 relative items-center ${currentMeasure === measure.index && "bg-popover"}`}
+      className={`flex w-full h-12 relative items-center ${isActive && "bg-popover"}`}
       id={String(measure.index)}
     >
       {volta && <VoltaBracket volta={volta} />}
@@ -131,6 +144,7 @@ type EmptyCellType = Extract<CellSchema, { kind: "Empty" }>;
 type SpacerCellType = Extract<CellSchema, { kind: "Spacer" }>;
 
 function ChordCell({ cell }: { cell: ChordCellType }) {
+  // logger.info("Chord", cell.chord);
   return (
     <div className="h-min w-full flex items-center text-foreground bg-background md:bg-transparent">
       <p className="whitespace-nowrap font-mono semibold text-xl md:text-3xl flex h-fit lg:gap-1 ">
@@ -168,9 +182,9 @@ function LeftBar({ bar }: { bar: BarsSchema["left"] }) {
     switch (bar) {
       case "single":
         return null;
-      case "repeatOpen":
+      case "double":
         return <div className="w-1 h-full border-x border-foreground absolute top-0 -right-0.5" />;
-      case "sectionOpen":
+      case "loopOpen":
         return (
           <div className="w-3 h-full border-l-2 border-foreground absolute top-0 -right-2 rounded-lg flex items-center text-foreground text-center justify-center">
             <span>:</span>
@@ -191,9 +205,9 @@ function RightBar({ bar }: { bar: BarsSchema["right"] }) {
     switch (bar) {
       case "single":
         return <div className="w-px h-full bg-foreground absolute top-0 right-0" />;
-      case "repeatClose":
+      case "double":
         return <div className="w-1 h-full border-x border-foreground absolute top-0 -right-0.5" />;
-      case "sectionClose":
+      case "loopClose":
         return (
           <div className="w-3 h-full border-r-2 border-foreground absolute top-0 -right-0.5 rounded-lg flex items-center text-foreground text-center justify-center">
             <span>:</span>

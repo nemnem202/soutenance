@@ -176,9 +176,16 @@ export const CHORDS_DICTIONNARY: ChordDictionary = Object.entries(CHORDS_DICTION
 );
 
 export const findChordFromModifier = (modifier: string): ChordHarmony | null => {
+  // Recherche directe par clé
   if (CHORDS_DICTIONNARY[modifier]) return CHORDS_DICTIONNARY[modifier];
-  const name = Object.entries(CHORDS_DICTIONNARY_RAW).find((chord) => chord[1][1])?.[0];
+
+  // Recherche dans les labels alternatifs
+  const name = Object.entries(CHORDS_DICTIONNARY_RAW).find(([_, value]) =>
+    value[1].includes(modifier)
+  )?.[0];
+
   if (name) return CHORDS_DICTIONNARY[name];
+
   logger.error("Could not find chord for modifier: ", modifier);
   return null;
 };

@@ -217,8 +217,8 @@ function parseTimeSignature(token: string): TimeSignatureSchema {
 }
 
 type ParsedBars = {
-  leftBar: "single" | "repeatOpen" | "sectionOpen" | null;
-  rightBar: "single" | "repeatClose" | "sectionClose" | "final" | null;
+  leftBar: "single" | "double" | "loopOpen" | null;
+  rightBar: "single" | "double" | "loopClose" | "final" | null;
   isEmpty: boolean;
 };
 
@@ -227,14 +227,14 @@ function parseBars(bars: string): ParsedBars {
 
   const LEFT_MAP: Record<string, ParsedBars["leftBar"]> = {
     "(": "single",
-    "[": "repeatOpen",
-    "{": "sectionOpen",
+    "[": "double",
+    "{": "loopOpen",
   };
 
   const RIGHT_MAP: Record<string, ParsedBars["rightBar"]> = {
     ")": "single",
-    "]": "repeatClose",
-    "}": "sectionClose",
+    "]": "double",
+    "}": "loopClose",
     Z: "final",
   };
 
