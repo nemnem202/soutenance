@@ -13,7 +13,7 @@ import { convertMidiFileToState, getMidiFileFromBuffer } from "@/midi-editor/lib
 import onMidiFile from "@/telefunc/midifile.telefunc";
 import { errorToast } from "@/lib/toaster";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
-import type { MidiAction } from "@/midi-editor/types/actions";
+import { Action, type MidiAction } from "@/midi-editor/types/actions";
 import useAudio from "@/hooks/use-audio";
 import { useShortcuts } from "@/midi-editor/hooks/useShortcuts";
 
@@ -69,8 +69,9 @@ export default function GameProvider({
     loadResources();
     return () => {
       isMounted = false;
+      dispatch({ type: Action.STOP });
     };
-  }, [exercise.id, loadMidiFile]);
+  }, [exercise.id, loadMidiFile, dispatch]);
 
   const tabs: Tab[] = [
     { id: "piano-roll", label: instance.getItem("piano_roll") },
