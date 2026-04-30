@@ -1,7 +1,6 @@
 import { findChordFromModifier } from "@/config/chords-dictionary";
 import type { ExerciseWithForcedChordGrid } from "@/controllers/MidiController";
 import type { Cell } from "@/types/music";
-import { logger } from "./logger";
 import type { MeasureSchema, SectionSchema } from "@/types/entities";
 import { MMA_GROOVES } from "@/config/grooves_dictionnary";
 import type { MMAGrooveName, MMAGrooveTitle } from "@/types/mma";
@@ -81,33 +80,64 @@ export default class MMAContentGenerator {
   private getSections(): string[] {
     const sections = this.exercise.chordsGrid.sections.flatMap((section) => {
       const groove = this.getGroove(section.type);
+      const repeat = section.voltas.length > 0 ? ["Repeat"] : [];
+
       const measures = this.getMeasures(section);
 
-      return [groove, ...measures];
+      return [...repeat, groove, ...measures];
     });
 
     return sections;
   }
 
   private getMeasures(section: SectionSchema): string[] {
-    const measuresSchemas: MeasureSchema[] = [
-      ...section.commonMeasures,
-      ...section.voltas.flatMap((v) => v.measures),
-    ];
+    const hasVoltas = section.voltas.length > 0;
 
-    return measuresSchemas
-      .sort((a, b) => a.index - b.index)
-      .flatMap((measure, index) => {
-        const isLast = index === measuresSchemas.length - 1;
-        const measureLine = this.getSingleMeasure(measure, isLast ? "isLast" : undefined);
+    if (hasVoltas) {
+      const commonLines = this.renderMeasureList(section.commonMeasures, false, true);
 
-        if (isLast) {
-          const fill = this.getFill();
-          return fill ? [fill, measureLine] : [measureLine];
-        }
+      const sortedVoltas = [...section.voltas].sort((a, b) => a.volta - b.volta);
 
-        return [measureLine];
+      const voltaLines = sortedVoltas.flatMap((volta, i) => {
+        const isLastVolta = i === sortedVoltas.length - 1;
+        const measures = this.renderMeasureList(volta.measures, isLastVolta, true);
+        return [`RepeatEnding`, ...measures];
       });
+
+      return [...commonLines, ...voltaLines, `RepeatEnd ${sortedVoltas.length}`];
+    }
+
+    return this.renderMeasureList(section.commonMeasures, true, false);
+  }
+
+  private renderMeasureList(
+    measures: MeasureSchema[],
+    withFill: boolean,
+    ignoreRepeatBars: boolean
+  ): string[] {
+    const sorted = [...measures].sort((a, b) => a.index - b.index);
+
+    return sorted.flatMap((measure, index) => {
+      const isLast = index === sorted.length - 1;
+      const lines: string[] = [];
+
+      if (!ignoreRepeatBars && measure.bars.left === "repeatOpen") {
+        lines.push("Repeat");
+      }
+
+      if (isLast && withFill) {
+        const fill = this.getFill();
+        if (fill) lines.push(fill);
+      }
+
+      lines.push(this.getSingleMeasure(measure, isLast && withFill ? "isLast" : undefined));
+
+      if (!ignoreRepeatBars && measure.bars.right === "repeatClose") {
+        lines.push("RepeatEnd");
+      }
+
+      return lines;
+    });
   }
 
   private getSingleMeasure(measure: MeasureSchema, isLast?: "isLast"): string {
@@ -123,7 +153,6 @@ export default class MMAContentGenerator {
       }
     });
     const returnValue = `${measure.index} ${values.join(" ")}`;
-    logger.info("Measure", returnValue);
     return returnValue;
   }
 

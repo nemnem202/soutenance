@@ -209,7 +209,7 @@ function RightBar({ bar }: { bar: BarsSchema["right"] }) {
     }
   };
   return (
-    <div className="relative h-full opacity-50" id={`bar-${bar}`}>
+    <div className="relative h-full opacity-50" data-bar={bar}>
       {getBar()}
     </div>
   );
