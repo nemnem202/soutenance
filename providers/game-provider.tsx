@@ -16,6 +16,7 @@ import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import type { MidiAction } from "@/midi-editor/types/actions";
 import useAudio from "@/hooks/use-audio";
 import { useShortcuts } from "@/midi-editor/hooks/useShortcuts";
+import SoundEngine from "@/midi-editor/engines/sound-engine";
 
 const tabsIds = ["piano-roll", "chords", "sheet", "guitar"] as const;
 export type TabID = (typeof tabsIds)[number];
@@ -69,6 +70,7 @@ export default function GameProvider({
     loadResources();
     return () => {
       isMounted = false;
+      SoundEngine.get()?.stopAndCleanup();
     };
   }, [exercise.id, loadMidiFile]);
 

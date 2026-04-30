@@ -131,10 +131,12 @@ export function SmallInput({
                 {...props}
                 className={`paragraph-sm h-6 full !rounded-xs text-left! ${!icon && "pl-1"}`}
               />
-              {icon && (
+              {icon ? (
                 <InputGroupAddon align={align} className="pl-1">
                   {icon}
                 </InputGroupAddon>
+              ) : (
+                <InputGroupAddon align={align} />
               )}
             </InputGroup>
           </div>
@@ -154,10 +156,12 @@ export function SmallInput({
             {...props}
             className={`paragraph-sm h-6 full !rounded-xs text-left! ${!icon && "pl-1"}`}
           />
-          {icon && (
+          {icon ? (
             <InputGroupAddon align={align} className="pl-1">
               {icon}
             </InputGroupAddon>
+          ) : (
+            <InputGroupAddon align={align} />
           )}
         </InputGroup>
       </div>
@@ -267,7 +271,7 @@ export function TrackSelect() {
       <SelectTrigger className="w-full max-w-35">
         <SelectValue className="text-left" />
       </SelectTrigger>
-      <SelectContent className="z-52">
+      <SelectContent className="z-200">
         <SelectGroup>
           {state.tracks.map((track) => (
             <SelectItem value={String(track.id)} key={track.id}>

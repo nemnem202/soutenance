@@ -1,4 +1,5 @@
-import type { ChordDictionary, ChordIntervals, ChordLabel } from "@/types/music";
+import { logger } from "@/lib/logger";
+import type { ChordDictionary, ChordHarmony, ChordIntervals, ChordLabel } from "@/types/music";
 
 export const CHORDS_DICTIONNARY_RAW: Record<string, [number[], string[], string]> = {
   "4": [[0, 4, 10, 15], ["quartal"], "m7(add11)"],
@@ -173,3 +174,18 @@ export const CHORDS_DICTIONNARY: ChordDictionary = Object.entries(CHORDS_DICTION
   },
   {} as ChordDictionary
 );
+
+export const findChordFromModifier = (modifier: string): ChordHarmony | null => {
+  // Recherche directe par clé
+  if (CHORDS_DICTIONNARY[modifier]) return CHORDS_DICTIONNARY[modifier];
+
+  // Recherche dans les labels alternatifs
+  const name = Object.entries(CHORDS_DICTIONNARY_RAW).find(([_, value]) =>
+    value[1].includes(modifier)
+  )?.[0];
+
+  if (name) return CHORDS_DICTIONNARY[name];
+
+  logger.error("Could not find chord for modifier: ", modifier);
+  return null;
+};

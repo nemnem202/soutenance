@@ -59,7 +59,7 @@ function GameContent() {
                   <GameView toggleSidebar={() => setOpen(!sidebarOpen)} />
                 </main>
               </DrawerTrigger>
-              <DrawerContent className="rounded-none border-t">
+              <DrawerContent className="rounded-none border-0 border-t">
                 <DrawerTitle className="hidden">Controls</DrawerTitle>
                 <div className="mx-auto w-full max-w-sm py-10 pt-0">
                   <MobileGameControlSection toggleSidebar={() => setOpen(!sidebarOpen)} />

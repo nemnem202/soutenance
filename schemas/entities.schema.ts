@@ -59,8 +59,8 @@ export const noteSchema = z.enum([
 export const cellKindSchema = z.enum(["Chord", "Spacer", "Empty"]);
 
 export const barsSchema = z.object({
-  left: z.enum(["single", "repeatOpen", "sectionOpen"]).optional().nullable(),
-  right: z.enum(["single", "repeatClose", "sectionClose", "final"]).optional().nullable(),
+  left: z.enum(["single", "double", "loopOpen"]).optional().nullable(),
+  right: z.enum(["single", "double", "loopClose", "final"]).optional().nullable(),
 });
 
 export const chordchema = z.string();

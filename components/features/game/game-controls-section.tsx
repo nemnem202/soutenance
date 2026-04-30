@@ -4,8 +4,14 @@ import { useLanguage } from "@/hooks/use-language";
 import { ControlsSection } from "./game-assets";
 import { CustomInput } from "@/components/ui/custom_input";
 import useGame from "@/hooks/use-game";
-import { PlayButton, SettingsButton, StopButton } from "@/components/ui/custom-buttons";
+import {
+  MetronomeButton,
+  PlayButton,
+  SettingsButton,
+  StopButton,
+} from "@/components/ui/custom-buttons";
 import { Action } from "@/midi-editor/types/actions";
+import { logger } from "@/lib/logger";
 
 interface Gameprops {
   toggleSidebar: () => void;
@@ -22,13 +28,22 @@ export default function DesktopGameControlsSection({ ...props }: Gameprops) {
           onClick={() => dispatch({ type: Action.TOGGLE_PLAY })}
           isPlaying={!!midiState?.transport.isPlaying}
         />
-        <StopButton />
+        <StopButton onClick={() => dispatch({ type: Action.STOP })} />
         <Separator orientation="vertical" className="!h-6" />
         <Field className="flex flex-row items-center justify-center !w-min">
           <CustomInput
             id="bpm"
             type="number"
-            defaultValue={"120"}
+            disabled={!midiState}
+            defaultValue={midiState ? Math.floor(midiState.config.bpm) : undefined}
+            onBlur={(e) => {
+              let value = parseInt(e.currentTarget.value, 10);
+              if (value < 30) value = 30;
+              if (value > 500) value = 500;
+              e.currentTarget.value = value.toString();
+              logger.info("New bpm is set to: ", value);
+              dispatch({ type: Action.SET_BPM, bpm: value });
+            }}
             className="!w-15 min-w-0 p-0 text-center"
           />
           <FieldLabel htmlFor="bpm" className="!w-min text-muted-foreground paragraph-small">
@@ -47,14 +62,14 @@ export function MobileGameControlSection({ ...props }: Gameprops) {
       <SettingsButton onClick={() => props.toggleSidebar()} />
       {midiState && (
         <>
-          <StopButton />
+          <StopButton onClick={() => dispatch({ type: Action.STOP })} />
           <PlayButton
             onClick={() => dispatch({ type: Action.TOGGLE_PLAY })}
             isPlaying={!!midiState?.transport.isPlaying}
           />
+          <MetronomeButton />
         </>
       )}
-      <p className="text-4xl/7 font-bold font-mono flex items-end">120</p>
     </div>
   );
 }
