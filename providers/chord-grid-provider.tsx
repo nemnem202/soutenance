@@ -28,7 +28,7 @@ export default function ChordGridProvider({
   useEffect(() => {
     const loop = () => {
       const soundInstance = SoundEngine.get();
-      if (!soundInstance || !state?.transport.isPlaying) {
+      if (!soundInstance) {
         return () => {
           requestRef.current && cancelAnimationFrame(requestRef.current);
         };

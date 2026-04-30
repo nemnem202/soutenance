@@ -23,7 +23,7 @@ export default function DesktopGameControlsSection({ ...props }: Gameprops) {
           onClick={() => dispatch({ type: Action.TOGGLE_PLAY })}
           isPlaying={!!midiState?.transport.isPlaying}
         />
-        <StopButton />
+        <StopButton onClick={() => dispatch({ type: Action.STOP })} />
         <Separator orientation="vertical" className="!h-6" />
         <Field className="flex flex-row items-center justify-center !w-min">
           <CustomInput
