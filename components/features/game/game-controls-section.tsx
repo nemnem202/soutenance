@@ -4,7 +4,12 @@ import { useLanguage } from "@/hooks/use-language";
 import { ControlsSection } from "./game-assets";
 import { CustomInput } from "@/components/ui/custom_input";
 import useGame from "@/hooks/use-game";
-import { PlayButton, SettingsButton, StopButton } from "@/components/ui/custom-buttons";
+import {
+  MetronomeButton,
+  PlayButton,
+  SettingsButton,
+  StopButton,
+} from "@/components/ui/custom-buttons";
 import { Action } from "@/midi-editor/types/actions";
 import { logger } from "@/lib/logger";
 
@@ -62,9 +67,9 @@ export function MobileGameControlSection({ ...props }: Gameprops) {
             onClick={() => dispatch({ type: Action.TOGGLE_PLAY })}
             isPlaying={!!midiState?.transport.isPlaying}
           />
+          <MetronomeButton />
         </>
       )}
-      <p className="text-4xl/7 font-bold font-mono flex items-end">120</p>
     </div>
   );
 }

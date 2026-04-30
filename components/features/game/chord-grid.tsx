@@ -118,6 +118,7 @@ function MeasureBlock({ measure, volta }: { measure: MeasureWithLoopIndexes; vol
 }
 
 function SetStartButton({ measure }: { measure: MeasureWithLoopIndexes }) {
+  const { currentMeasure } = useChordGrid();
   const [clicksIndex, setClicksIndex] = useState(0);
   const size = useScreen();
   const { dispatch, midiState } = useGame();
@@ -129,9 +130,10 @@ function SetStartButton({ measure }: { measure: MeasureWithLoopIndexes }) {
       setClicksIndex(1);
     } else if (midiState) {
       logger.info("Set start");
+      const smallestIndex = Math.min(...measure.inLoopIndexes);
       dispatch({
         type: Action.SET_TRANSPORT_START,
-        start: getFirstTickFromMeasureIndex(midiState.config.ppq, measure.index, {
+        start: getFirstTickFromMeasureIndex(midiState.config.ppq, smallestIndex, {
           top: midiState.config.signature[0],
           bottom: midiState.config.signature[1],
         }),
@@ -150,7 +152,7 @@ function SetStartButton({ measure }: { measure: MeasureWithLoopIndexes }) {
     return (
       <button
         type="button"
-        className={`absolute flex size-full justify-center items-center bg-foreground/20 cursor-pointer transition-all opacity-0 md:group-hover/measure:opacity-100 ${clicksIndex === 1 && "opacity-100"}`}
+        className={`absolute flex size-full justify-center items-center bg-foreground/20 cursor-pointer transition-all opacity-0 md:group-hover/measure:opacity-100 ${clicksIndex !== 0 && "opacity-100"}`}
         onBlur={() => setClicksIndex(0)}
         onClick={handleClick}
       >

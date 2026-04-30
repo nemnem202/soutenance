@@ -12,6 +12,7 @@ import {
   Settings,
   Square,
   X,
+  Timer,
 } from "lucide-react";
 import { Button, type ButtonProps } from "./button";
 import { useLanguage } from "@/hooks/use-language";
@@ -152,6 +153,14 @@ export function PlayButton({ isPlaying, ...props }: ButtonProps & { isPlaying: b
       ) : (
         <Play className="fill-inherit stroke-inherit" />
       )}
+    </IconButton>
+  );
+}
+
+export function MetronomeButton({ ...props }: ButtonProps) {
+  return (
+    <IconButton {...props}>
+      <Timer />
     </IconButton>
   );
 }
