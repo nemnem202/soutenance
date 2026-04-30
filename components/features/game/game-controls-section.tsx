@@ -57,7 +57,7 @@ export function MobileGameControlSection({ ...props }: Gameprops) {
       <SettingsButton onClick={() => props.toggleSidebar()} />
       {midiState && (
         <>
-          <StopButton />
+          <StopButton onClick={() => dispatch({ type: Action.STOP })} />
           <PlayButton
             onClick={() => dispatch({ type: Action.TOGGLE_PLAY })}
             isPlaying={!!midiState?.transport.isPlaying}

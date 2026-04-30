@@ -13,9 +13,10 @@ import { convertMidiFileToState, getMidiFileFromBuffer } from "@/midi-editor/lib
 import onMidiFile from "@/telefunc/midifile.telefunc";
 import { errorToast } from "@/lib/toaster";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
-import { Action, type MidiAction } from "@/midi-editor/types/actions";
+import type { MidiAction } from "@/midi-editor/types/actions";
 import useAudio from "@/hooks/use-audio";
 import { useShortcuts } from "@/midi-editor/hooks/useShortcuts";
+import SoundEngine from "@/midi-editor/engines/sound-engine";
 
 const tabsIds = ["piano-roll", "chords", "sheet", "guitar"] as const;
 export type TabID = (typeof tabsIds)[number];
@@ -69,9 +70,9 @@ export default function GameProvider({
     loadResources();
     return () => {
       isMounted = false;
-      dispatch({ type: Action.STOP });
+      SoundEngine.get()?.stopAndCleanup();
     };
-  }, [exercise.id, loadMidiFile, dispatch]);
+  }, [exercise.id, loadMidiFile]);
 
   const tabs: Tab[] = [
     { id: "piano-roll", label: instance.getItem("piano_roll") },
