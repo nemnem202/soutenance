@@ -42,7 +42,7 @@ function Section({ section }: { section: SectionSchema }) {
       <div className="w-full grid grid-cols-4 gap-y-2">
         {section.commonMeasures
           .sort((a, b) => a.index - b.index)
-          .map((measure) => (
+          .map((measure, index) => (
             <MeasureBlock measure={measure} key={measure.index} />
           ))}
         {section.voltas.length > 0 &&

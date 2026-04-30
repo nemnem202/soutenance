@@ -17,6 +17,25 @@ function applyChordGridRuleset(grid: ChordsGridSchema, config: Config) {
   }
   removeEmptySections(grid);
   specifyTimeSignature(grid, config);
+  correctMeasuresIndexes(grid);
+}
+
+function correctMeasuresIndexes(grid: ChordsGridSchema) {
+  let currentMeasureIndex = 0;
+  let currentSectionIndex = 0;
+  const sortedSections = grid.sections.sort((a, b) => a.index - b.index);
+
+  for (const section of sortedSections) {
+    section.index = currentSectionIndex++;
+    for (const measure of section.commonMeasures) {
+      measure.index = currentMeasureIndex++;
+    }
+    for (const volta of section.voltas) {
+      for (const measure of volta.measures) {
+        measure.index = currentMeasureIndex++;
+      }
+    }
+  }
 }
 
 function filterEmptyMeasures(measures: MeasureSchema[]) {
