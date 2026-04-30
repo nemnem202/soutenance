@@ -4,7 +4,6 @@ import { createContext, useState, type ReactNode } from "react";
 
 interface AudioContextType {
   loadMidiFile: () => void;
-  isPlaying: () => boolean;
   release: () => void;
   setPlayhead: (tick: number) => void;
   unlockAudioContext: () => Promise<void>;
@@ -38,13 +37,10 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
   };
   const release = () => {};
   const setPlayhead = () => {};
-  const isPlaying = () => {
-    return !!SoundEngine.get()?.isPlaying;
-  };
 
   return (
     <AudioContext.Provider
-      value={{ loadMidiFile, isPlaying, setPlayhead, release, unlockAudioContext, audioLoaded }}
+      value={{ loadMidiFile, setPlayhead, release, unlockAudioContext, audioLoaded }}
     >
       <div onClickCapture={unlockAudioContext}>{children}</div>
     </AudioContext.Provider>

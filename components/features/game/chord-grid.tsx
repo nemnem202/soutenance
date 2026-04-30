@@ -1,6 +1,7 @@
 import useGame from "@/hooks/use-game";
 import { useLanguage } from "@/hooks/use-language";
 import { musicalNotationRootNote } from "@/lib/utils";
+import ChordGridProvider, { useChordGrid } from "@/providers/chord-grid-provider";
 import type { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
 import React, { type ReactNode } from "react";
 
@@ -10,20 +11,24 @@ export default function ChordGrid() {
 
   if (!exercise.chordsGrid)
     return (
-      <div className="size-full p-0 md:p-4 flex flex-col gap-5">
-        <p className="paragraph-md text-muted-foreground">
-          {instance.getItem("this_exercise_does_not_contains_chords_grid")}
-        </p>
-      </div>
+      <ChordGridProvider>
+        <div className="size-full p-0 md:p-4 flex flex-col gap-5">
+          <p className="paragraph-md text-muted-foreground">
+            {instance.getItem("this_exercise_does_not_contains_chords_grid")}
+          </p>
+        </div>
+      </ChordGridProvider>
     );
   return (
-    <div className="size-full p-1 md:p-6 flex flex-col gap-5">
-      {exercise.chordsGrid.sections
-        .sort((a, b) => a.index - b.index)
-        .map((section) => (
-          <Section section={section} key={section.index} />
-        ))}
-    </div>
+    <ChordGridProvider>
+      <div className="size-full p-1 md:p-6 flex flex-col gap-5">
+        {exercise.chordsGrid.sections
+          .sort((a, b) => a.index - b.index)
+          .map((section) => (
+            <Section section={section} key={section.index} />
+          ))}
+      </div>
+    </ChordGridProvider>
   );
 }
 
@@ -70,8 +75,11 @@ function Section({ section }: { section: SectionSchema }) {
 }
 
 function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: number }) {
+  const { currentMeasure } = useChordGrid();
   return (
-    <div className="flex w-full h-12 relative items-center">
+    <div
+      className={`flex w-full h-12 relative items-center ${currentMeasure === measure.index && "bg-popover"}`}
+    >
       {volta && <VoltaBracket volta={volta} />}
       {measure.bars.left && <LeftBar bar={measure.bars.left} />}
       <div className="flex-1 max-w-[100%] flex items-center pl-1 overflow-hidden">
@@ -135,12 +143,7 @@ function ChordCell({ cell }: { cell: ChordCellType }) {
 }
 
 function EmptyCell({ cell }: { cell: EmptyCellType }) {
-  return (
-    <div />
-    // <div className="w-full h-full border flex items-center justify-center opacity-40">
-    //   {cell.index}
-    // </div>
-  );
+  return <div />;
 }
 
 function SpacerCell({ cell }: { cell: SpacerCellType }) {
