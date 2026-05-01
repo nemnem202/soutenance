@@ -1,7 +1,7 @@
 import { Field, FieldLabel } from "@/components/molecules/field";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
-import { ControlsSection } from "./game-assets";
+import { ControlsSection, TrackSelect } from "./game-assets";
 import { CustomInput } from "@/components/ui/custom_input";
 import useGame from "@/hooks/use-game";
 import {
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/custom-buttons";
 import { Action } from "@/midi-editor/types/actions";
 import { logger } from "@/lib/logger";
+import useScreen from "@/hooks/use-screen";
 
 interface Gameprops {
   toggleSidebar: () => void;
@@ -56,10 +57,15 @@ export default function DesktopGameControlsSection({ ...props }: Gameprops) {
 }
 
 export function MobileGameControlSection({ ...props }: Gameprops) {
+  const { activeTab } = useGame();
   const { midiState, dispatch } = useGame();
+  const isHorizontal = useScreen().orientation === "horizontal";
   return (
     <div className=" flex w-full justify-evenly">
+      {isHorizontal && <div className="w-40" />}
+
       <SettingsButton onClick={() => props.toggleSidebar()} />
+
       {midiState && (
         <>
           <StopButton onClick={() => dispatch({ type: Action.STOP })} />
@@ -68,6 +74,18 @@ export function MobileGameControlSection({ ...props }: Gameprops) {
             isPlaying={!!midiState?.transport.isPlaying}
           />
           <MetronomeButton />
+
+          {isHorizontal && (
+            <>
+              {activeTab === "piano-roll" ? (
+                <div className="w-40">
+                  <TrackSelect />
+                </div>
+              ) : (
+                <div className="w-40" />
+              )}
+            </>
+          )}
         </>
       )}
     </div>

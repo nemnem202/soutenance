@@ -135,7 +135,7 @@ function MobileGameView({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>
 
         <DrawerContent className="rounded-none border-0 border-t">
           <DrawerTitle className="hidden">Controls</DrawerTitle>
-          <div className="mx-auto w-full max-w-sm py-10">
+          <div className="mx-auto w-full py-5">
             <MobileGameControlSection toggleSidebar={() => setOpen((prev) => !prev)} />
           </div>
         </DrawerContent>
@@ -154,7 +154,7 @@ function MobileGameView({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>
         </DrawerTrigger>
         <DrawerContent className="rounded-none border-0 border-t">
           <DrawerTitle className="hidden">Controls</DrawerTitle>
-          <div className="mx-auto w-full max-w-sm py-5">
+          <div className="mx-auto w-full  py-5">
             <MobileGameControlSection toggleSidebar={() => setOpen((prev) => !prev)} />
           </div>
         </DrawerContent>
