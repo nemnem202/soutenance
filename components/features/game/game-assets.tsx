@@ -272,7 +272,7 @@ export function TrackSelect() {
         })
       }
     >
-      <SelectTrigger className="w-fit" onClick={(e) => e.stopPropagation()}>
+      <SelectTrigger className="w-full" onClick={(e) => e.stopPropagation()}>
         <SelectValue className="text-left" />
       </SelectTrigger>
       <SelectContent className="z-200 ">
