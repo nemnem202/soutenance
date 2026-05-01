@@ -1,4 +1,4 @@
-import { Pen, Upload, ZoomIn, ZoomOut } from "lucide-react";
+import { Upload, ZoomIn, ZoomOut } from "lucide-react";
 import AvatarEditor from "react-avatar-editor";
 import PlaceholderImage from "@/assets/images/placeholder.webp";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,6 @@ import useEditImage from "@/hooks/use-edit-image";
 import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
 import { Slider } from "../ui/slider";
-import Modal from "./modal";
 import Image from "../ui/image";
 import { Spinner } from "../ui/spinner";
 
@@ -52,7 +51,7 @@ export default function EditableImage({
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
-        {canBeEdited && (
+        {/* {canBeEdited && (
           <Button
             className={`absolute top-0 right-0 m-1 rounded-full z-2 ${!hovered && "hidden"}`}
             variant="ghost"
@@ -68,7 +67,7 @@ export default function EditableImage({
           >
             <Pen />
           </Button>
-        )}
+        )} */}
 
         <button
           type="button"
@@ -88,10 +87,10 @@ export default function EditableImage({
           loading="lazy"
         />
       </div>
-
+      {/* 
       <Modal isOpen={open} onClose={() => setOpen(false)} size="md" title="Edit image">
         <EditImageModalContent {...editImage} />
-      </Modal>
+      </Modal> */}
       <input
         type="file"
         accept="image/*"
