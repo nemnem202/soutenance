@@ -9,7 +9,7 @@ export default {
   // https://vike.dev/head-tags
   title: "Music Sandbox",
   description: "A musical training app made for both beginner and advanced players.",
-
+  reactStrictMode: false,
   extends: [vikeReact, vikePhoton],
 
   // https://vike.dev/vike-photon
