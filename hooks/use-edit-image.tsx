@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, type WheelEvent } from "react";
-import type AvatarEditor from "react-avatar-editor";
 import type { EditableImageProps } from "@/components/organisms/editable-image";
 import { logger } from "@/lib/logger";
 import { errorToast } from "@/lib/toaster";
@@ -8,11 +7,9 @@ import imageCompression from "browser-image-compression";
 export default function useEditImage(props: EditableImageProps) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageSource, setImageSource] = useState<string | undefined>(props.src);
-  const [hovered, setHovered] = useState(false);
   const [open, setOpen] = useState(false);
   const [avatarZoom, setAvatarZoom] = useState(1);
   const inputRef = useRef<HTMLInputElement>(null);
-  const avatarEditorRef = useRef<AvatarEditor>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleWheel = (e: WheelEvent) => {
@@ -56,30 +53,6 @@ export default function useEditImage(props: EditableImageProps) {
     }
   };
 
-  const handleEditorEditsSave = () => {
-    if (!avatarEditorRef.current) return;
-
-    const canvas = avatarEditorRef.current.getImageScaledToCanvas();
-
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) return;
-
-        const file = new File(
-          [blob], // ⚠️ tableau obligatoire
-          "avatar.webp", // nom du fichier
-          { type: "image/webp" } // MIME type
-        );
-
-        setImageFile(file);
-
-        setOpen(false);
-      },
-      "image/webp",
-      0.9
-    );
-  };
-
   // biome-ignore lint/correctness/useExhaustiveDependencies: qsdqsd
   useEffect(() => {
     if (!imageFile) return;
@@ -87,20 +60,16 @@ export default function useEditImage(props: EditableImageProps) {
   }, [imageFile]);
 
   return {
-    handleEditorEditsSave,
     handleImageChange,
     handleWheel,
     changeImage,
     imageFile,
     imageSource,
-    hovered,
-    setHovered,
     open,
     setOpen,
     avatarZoom,
     setAvatarZoom,
     inputRef,
-    avatarEditorRef,
     isLoading,
   };
 }
