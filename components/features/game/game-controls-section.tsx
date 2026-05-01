@@ -75,17 +75,14 @@ export function MobileGameControlSection({ ...props }: Gameprops) {
           />
           <MetronomeButton />
 
-          {isHorizontal && (
-            <>
-              {activeTab === "piano-roll" ? (
-                <div className="w-40">
-                  <TrackSelect />
-                </div>
-              ) : (
-                <div className="w-40" />
-              )}
-            </>
-          )}
+          {isHorizontal &&
+            (activeTab === "piano-roll" ? (
+              <div className="w-40">
+                <TrackSelect />
+              </div>
+            ) : (
+              <div className="w-40" />
+            ))}
         </>
       )}
     </div>

@@ -272,13 +272,17 @@ export function TrackSelect() {
         })
       }
     >
-      <SelectTrigger className="w-full max-w-35">
+      <SelectTrigger className="w-fit" onClick={(e) => e.stopPropagation()}>
         <SelectValue className="text-left" />
       </SelectTrigger>
-      <SelectContent className="z-200">
+      <SelectContent className="z-200 ">
         <SelectGroup>
           {state.tracks.map((track) => (
-            <SelectItem value={String(track.id)} key={track.id}>
+            <SelectItem
+              value={String(track.id)}
+              key={track.id}
+              onClick={(e) => e.stopPropagation()}
+            >
               {track.instrument}
             </SelectItem>
           ))}
