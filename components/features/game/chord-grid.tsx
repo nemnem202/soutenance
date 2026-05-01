@@ -13,7 +13,14 @@ import { Action } from "@/midi-editor/types/actions";
 import ChordGridProvider, { useChordGrid } from "@/providers/chord-grid-provider";
 import type { BarsSchema, CellSchema } from "@/types/entities";
 import { FlagTriangleRight } from "lucide-react";
-import React, { type MouseEvent, useMemo, useState, type ReactNode } from "react";
+import React, {
+  type MouseEvent,
+  useMemo,
+  useState,
+  type ReactNode,
+  useRef,
+  useEffect,
+} from "react";
 
 export default function ChordGrid() {
   const { exercise } = useGame();
@@ -96,8 +103,20 @@ function Section({ section }: { section: SectionWithLoopIndexes }) {
 function MeasureBlock({ measure, volta }: { measure: MeasureWithLoopIndexes; volta?: number }) {
   const { currentMeasure } = useChordGrid();
   const isActive = measure.inLoopIndexes.includes(currentMeasure);
+  const measureRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (isActive && measureRef.current) {
+      measureRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        inline: "center",
+      });
+    }
+  }, [isActive]);
+
   return (
     <div
+      ref={measureRef}
       className={`flex w-full h-12 relative items-center relative group/measure ${isActive && "bg-popover"}`}
       id={String(measure.index)}
     >
@@ -107,7 +126,7 @@ function MeasureBlock({ measure, volta }: { measure: MeasureWithLoopIndexes; vol
         {measure.cells
           .sort((a, b) => a.index - b.index)
           .map((cell, index) => (
-            <CellGroup cell={cell} measure={measure} key={index} />
+            <CellGroup cell={cell} measure={measure} key={index} isActive={isActive} />
           ))}
       </div>
 
@@ -161,11 +180,19 @@ function SetStartButton({ measure }: { measure: MeasureWithLoopIndexes }) {
     );
 }
 
-function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureWithLoopIndexes }) {
+function CellGroup({
+  cell,
+  measure,
+  isActive,
+}: {
+  cell: CellSchema;
+  measure: MeasureWithLoopIndexes;
+  isActive: boolean;
+}) {
   const renderCellContent = (): ReactNode => {
     switch (cell.kind) {
       case "Chord":
-        return <ChordCell cell={cell} measure={measure} />;
+        return <ChordCell cell={cell} isActive={isActive} />;
       case "Empty":
         return <EmptyCell cell={cell} />;
       case "Spacer":
@@ -177,6 +204,7 @@ function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureWithLo
 
   return (
     <div
+      data-cellGroup={measure.index}
       className={`px-0.5 md:px-2 h-full flex justify-between items-center  gap-1 ${cell.kind === "Chord" ? "flex-1" : "!w-0 w-auto flex-1"}`}
       style={{ maxWidth: `${100 / measure.cells.length}%` }}
     >
@@ -193,9 +221,7 @@ type ChordCellType = Extract<CellSchema, { kind: "Chord" }>;
 type EmptyCellType = Extract<CellSchema, { kind: "Empty" }>;
 type SpacerCellType = Extract<CellSchema, { kind: "Spacer" }>;
 
-function ChordCell({ cell, measure }: { cell: ChordCellType; measure: MeasureWithLoopIndexes }) {
-  const { currentMeasure } = useChordGrid();
-  const isActive = measure.inLoopIndexes.includes(currentMeasure);
+function ChordCell({ cell, isActive }: { cell: ChordCellType; isActive: boolean }) {
   return (
     <div
       className={`h-min w-full flex items-center text-foreground md:bg-transparent ${isActive ? "bg-popover" : "bg-background"}`}
@@ -247,7 +273,7 @@ function LeftBar({ bar }: { bar: BarsSchema["left"] }) {
   };
 
   return (
-    <div className="relative h-full opacity-50" id={`bar-${bar}`}>
+    <div className="relative h-full opacity-50" data-bar={bar}>
       {getBar()}
     </div>
   );
