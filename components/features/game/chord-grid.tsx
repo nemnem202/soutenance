@@ -120,7 +120,7 @@ function MeasureBlock({ measure, volta }: { measure: MeasureWithLoopIndexes; vol
 function SetStartButton({ measure }: { measure: MeasureWithLoopIndexes }) {
   const { currentMeasure } = useChordGrid();
   const [clicksIndex, setClicksIndex] = useState(0);
-  const size = useScreen();
+  const { size } = useScreen();
   const { dispatch, midiState } = useGame();
 
   const handleClick = (e: MouseEvent) => {

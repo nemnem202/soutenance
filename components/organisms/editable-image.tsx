@@ -117,7 +117,7 @@ function EditImageModalContent(props: EditableImageModalProps) {
   } = props;
 
   const { instance } = useLanguage();
-  const isMobile = useScreen() === "sm";
+  const isMobile = useScreen().size === "sm";
 
   const handleSave = (e: React.MouseEvent) => {
     e.preventDefault();

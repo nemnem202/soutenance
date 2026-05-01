@@ -116,7 +116,7 @@ export function SmallInput({
   tooltip?: ReactNode;
 } & ComponentProps<"input">) {
   const id = useId();
-  const isMobile = useScreen() === "sm";
+  const isMobile = useScreen().size === "sm";
   if (tooltip && !isMobile) {
     return (
       <Tooltip>

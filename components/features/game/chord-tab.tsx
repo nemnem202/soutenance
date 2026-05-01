@@ -9,9 +9,9 @@ import ChordCarousel from "./chord-carousel";
 import ChordGrid from "./chord-grid";
 
 export default function ChordTab() {
-  const screen = useScreen();
+  const { size } = useScreen();
   const [display, setDisplay] = useState<"grid" | "carousel">("grid");
-  const axis = screen === "sm" ? "y" : "x";
+  const axis = size === "sm" ? "y" : "x";
   const [carouselRef, api] = useCarousel({ loop: true, align: "center", axis });
   const handleClickNext = () => {
     if (display === "carousel") {

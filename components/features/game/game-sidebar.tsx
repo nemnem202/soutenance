@@ -35,7 +35,7 @@ export default function GameSidebar({
   setOpen: (open: boolean) => void;
 }) {
   const { instance } = useLanguage();
-  const size = useScreen();
+  const { size } = useScreen();
   return (
     <div
       className={`fixed z-51 md:static w-screen bg-card h-screen overflow-x-hidden transition-all shrink-0 duration-100 ease-in-out ${sidebarOpen && "border-r"} `}
