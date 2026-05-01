@@ -10,7 +10,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/molecules/
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
+import { Slider, type SliderProps } from "@/components/ui/slider";
 import useScreen from "@/hooks/use-screen";
 import useGame from "@/hooks/use-game";
 import {
@@ -61,19 +61,22 @@ export function SidebarTabButton({
 
 export function SidebarSlider({
   children,
-  defaultValue,
-  onValueChange = () => {},
-  disabled = false,
-}: {
+  // defaultValue,
+  // onValueChange = () => {},
+  // disabled = false,
+  axis = "x",
+  ...props
+}: SliderProps & {
   children: ReactNode;
-  defaultValue: number;
-  onValueChange?: (value: number) => void;
-  disabled?: boolean;
+  // defaultValue: number;
+  // onValueChange?: (value: number) => void;
+  // disabled?: boolean;
+  axis?: "y" | "x";
 }) {
-  const [valueIsZero, setValueIsZero] = useState<boolean>(defaultValue === 0);
+  const [valueIsZero, setValueIsZero] = useState<boolean>(props.defaultValue?.[0] === 0);
   const id = useId();
   return (
-    <div className={`flex items-center gap-2 `}>
+    <div className={`flex items-center gap-2 ${axis === "y" && "flex-col items-start"}`}>
       <Label
         htmlFor={id}
         onClick={(e) => {
@@ -83,19 +86,20 @@ export function SidebarSlider({
         {children}
       </Label>
       <Slider
-        defaultValue={[defaultValue]}
-        max={100}
-        step={1}
+        // defaultValue={[defaultValue]}
+        // max={100}
+        // step={1}
+        {...props}
         onValueChange={(v) => {
           if (v[0] === 0 && !valueIsZero) {
             setValueIsZero(true);
           } else if (v[0] !== 0 && valueIsZero) {
             setValueIsZero(false);
           }
-          onValueChange(v[0]);
+          props.onValueChange?.(v);
         }}
-        disabled={disabled}
-        id={id}
+        // disabled={disabled}
+        // id={id}
       />
     </div>
   );

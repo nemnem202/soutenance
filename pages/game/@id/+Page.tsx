@@ -62,26 +62,27 @@ function GameContent() {
 function GameView({ toggleSidebar }: { toggleSidebar: () => void }) {
   const { activeTab, tabs, setActiveTab } = useGame();
   const { audioLoaded } = useAudio();
-  const { size } = useScreen();
   return (
     <div className="size-full lg:px-10 md:py-5 flex flex-col gap-2 min-h-0">
       <div className="flex-1 flex flex-col h-full min-h-0 gap-3">
-        {size !== "sm" && (
-          <div className="w-full flex justify-between items-center gap-2">
-            <div className="flex-1">
-              <DesktopGameControlsSection toggleSidebar={toggleSidebar} />
+        <SizeAdapter
+          md={
+            <div className="w-full flex justify-between items-center gap-2">
+              <div className="flex-1">
+                <DesktopGameControlsSection toggleSidebar={toggleSidebar} />
+              </div>
+              <div className="hidden md:block flex-1 md:flex-initial text-center">
+                <AnimatedTabs
+                  activeTab={activeTab}
+                  onChange={(v) => setActiveTab(v as TabID)}
+                  tabs={tabs}
+                  variant="pill"
+                />
+              </div>
+              <div className="flex-1 hidden lg:block" />
             </div>
-            <div className="hidden md:block flex-1 md:flex-initial text-center">
-              <AnimatedTabs
-                activeTab={activeTab}
-                onChange={(v) => setActiveTab(v as TabID)}
-                tabs={tabs}
-                variant="pill"
-              />
-            </div>
-            <div className="flex-1 hidden lg:block" />
-          </div>
-        )}
+          }
+        />
         <Tab>
           {activeTab === "chords" && <ChordTab />}
           {activeTab === "piano-roll" && (

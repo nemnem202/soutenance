@@ -45,10 +45,10 @@ export default function BackingTrackSettings() {
         {midiState?.tracks.map((track) => (
           <>
             <SidebarSlider
-              defaultValue={100}
+              defaultValue={[100]}
               disabled={!backingTackActive}
               onValueChange={(value) =>
-                SoundEngine.get()?.changeChannelVolume(track.channel, value)
+                SoundEngine.get()?.changeChannelVolume(track.channel, value[0])
               }
             >
               <p className="paragraph w-15">{track.instrument}</p>
