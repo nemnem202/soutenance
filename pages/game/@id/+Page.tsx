@@ -21,6 +21,7 @@ import useGame from "@/hooks/use-game";
 import { Spinner } from "@/components/ui/spinner";
 import useAudio from "@/hooks/use-audio";
 import useScreen from "@/hooks/use-screen";
+import { useFullscreenOnInteraction } from "@/hooks/use-full-screen";
 
 export default function Page() {
   const { exercise } = useData<Data>();
@@ -41,7 +42,7 @@ function GameContent() {
   return (
     <div className="flex flex-row w-screen h-[100dvh] overflow-hidden">
       <GameSidebar sidebarOpen={sidebarOpen} setOpen={setOpen} />
-      <div className="flex-1 min-w-0 h-screen flex flex-col">
+      <div className="flex-1 min-w-0 h-[100dvh] flex flex-col">
         <SizeAdapter
           sm={<MobileGameView setOpen={setOpen} />}
           md={
@@ -106,12 +107,15 @@ function MobileGameView({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>
   const { exercise } = useGame();
   const [drawersVisible, setDrawersVisible] = useState(true);
   const { orientation } = useScreen();
-
+  const fullscreenRef = useFullscreenOnInteraction();
   if (orientation === "vertical") {
     return (
       <Drawer modal={false} open={drawersVisible} onOpenChange={setDrawersVisible}>
         <DrawerTrigger asChild>
-          <main className="flex-1 min-w-0 h-full flex flex-col items-center p-4 max-w-screen min-h-0">
+          <main
+            ref={fullscreenRef}
+            className="flex-1 min-w-0 h-[100dvh] flex flex-col items-center p-2 max-w-screen min-h-0"
+          >
             <div
               className={`w-full overflow-hidden transition-[height] duration-300`}
               style={{ height: drawersVisible ? `4.5rem` : "0px" }}
@@ -122,9 +126,13 @@ function MobileGameView({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>
                 <div />
               </MobileHeaderNavContainer>
             </div>
-            <GameView toggleSidebar={() => setOpen((prev) => !prev)} />
+
+            <div className="flex-1 w-full flex flex-col min-h-0">
+              <GameView toggleSidebar={() => setOpen((prev) => !prev)} />
+            </div>
           </main>
         </DrawerTrigger>
+
         <DrawerContent className="rounded-none border-0 border-t">
           <DrawerTitle className="hidden">Controls</DrawerTitle>
           <div className="mx-auto w-full max-w-sm py-10">
@@ -137,7 +145,10 @@ function MobileGameView({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>
     return (
       <Drawer modal={false} open={drawersVisible} onOpenChange={setDrawersVisible}>
         <DrawerTrigger asChild>
-          <main className="flex-1 min-w-0 h-full flex flex-col items-center p-4 max-w-screen min-h-0">
+          <main
+            ref={fullscreenRef}
+            className="flex-1 min-w-0 h-[100dvh] flex flex-col items-center p-2 max-w-screen min-h-0"
+          >
             <GameView toggleSidebar={() => setOpen((prev) => !prev)} />
           </main>
         </DrawerTrigger>
