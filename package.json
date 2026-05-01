@@ -43,6 +43,7 @@
     "@universal-middleware/core": "^0.4.16",
     "argon2": "^0.44.0",
     "auto-text-size": "^0.2.3",
+    "browser-image-compression": "^2.0.2",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.9.0",
     "clsx": "^2.1.1",

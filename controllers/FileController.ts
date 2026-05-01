@@ -6,6 +6,7 @@ import UserRepository from "@/repositories/userRepository";
 import type { Session } from "@/types/auth";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Controller, type ControllerDeps } from "./Controller";
+import { logger } from "@/lib/logger";
 
 interface FileDeps extends ControllerDeps {
   file?: File;
@@ -33,6 +34,8 @@ export default class FileController extends Controller {
     if (!this.file) throw new AppError(Status.UnknownError, "Fichier manquant");
 
     try {
+      const sizeInMb = (this.file.size / (1024 * 1024)).toFixed(2);
+      logger.info(`Image requested has size of ${sizeInMb} MB`);
       const result = await new Promise<UploadApiResponse>((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
           { folder: this.image_folder, format: "webp", resource_type: "image" },
