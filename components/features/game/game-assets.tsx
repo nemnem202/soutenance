@@ -1,6 +1,6 @@
 import type * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Maximize, Minimize } from "lucide-react";
-import { type ComponentProps, type ReactNode, useId, useState } from "react";
+import { type ComponentProps, type ReactNode, useEffect, useId, useState } from "react";
 import {
   CustomInputGroupInput,
   InputGroup,
@@ -214,10 +214,27 @@ export function FullScreenButton({
 export function Tab({ children }: { children: ReactNode }) {
   const [fullScreen, setFullScreen] = useState(false);
   const { activeTab } = useGame();
-  const interactiveProps = {
-    role: "region",
-    tabIndex: 0,
+
+  const handleFullScreen = (value: boolean) => {
+    if (value) {
+      document.documentElement.requestFullscreen?.().catch(() => {});
+    } else {
+      document.exitFullscreen?.().catch(() => {});
+    }
+    setFullScreen(value);
   };
+
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        setFullScreen(false);
+      }
+    };
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
+  }, []);
+
+  const interactiveProps = { role: "region", tabIndex: 0 };
 
   if (!fullScreen) {
     return (
@@ -230,8 +247,7 @@ export function Tab({ children }: { children: ReactNode }) {
             className={`absolute m-2 top-0 right-0 transition opacity-0 group-hover:opacity-100 flex gap-3`}
           >
             {activeTab === "piano-roll" && <TrackSelect />}
-
-            <FullScreenButton fullScreen={fullScreen} setFullScreen={setFullScreen} />
+            <FullScreenButton fullScreen={fullScreen} setFullScreen={handleFullScreen} />
           </div>
         </div>
         <div className="z-0 h-full min-h-0">{children}</div>
@@ -248,7 +264,7 @@ export function Tab({ children }: { children: ReactNode }) {
             className={`absolute m-2 top-0 right-0 transition opacity-0 group-hover:opacity-100 flex gap-3`}
           >
             {activeTab === "piano-roll" && <TrackSelect />}
-            <FullScreenButton fullScreen={fullScreen} setFullScreen={setFullScreen} />
+            <FullScreenButton fullScreen={fullScreen} setFullScreen={handleFullScreen} />
           </div>
         </div>
         <div className="z-0 h-full min-h-0">{children}</div>
