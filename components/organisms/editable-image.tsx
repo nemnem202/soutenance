@@ -8,6 +8,7 @@ import useScreen from "@/hooks/use-screen";
 import { Slider } from "../ui/slider";
 import Modal from "./modal";
 import Image from "../ui/image";
+import { Spinner } from "../ui/spinner";
 
 export interface EditableImageProps {
   onImageChange: (image: File) => void;
@@ -33,7 +34,15 @@ export default function EditableImage({
     setOpen,
     inputRef,
     handleImageChange,
+    isLoading,
   } = editImage;
+
+  if (isLoading)
+    return (
+      <div className="size-full flex justify-center items-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <>

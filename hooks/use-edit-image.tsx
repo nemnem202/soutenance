@@ -13,6 +13,7 @@ export default function useEditImage(props: EditableImageProps) {
   const [avatarZoom, setAvatarZoom] = useState(1);
   const inputRef = useRef<HTMLInputElement>(null);
   const avatarEditorRef = useRef<AvatarEditor>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleWheel = (e: WheelEvent) => {
     if (e.deltaY > 0) {
@@ -28,6 +29,7 @@ export default function useEditImage(props: EditableImageProps) {
   };
 
   const handleImageChange = async () => {
+    setIsLoading(true);
     if (!inputRef.current) return;
     const file = inputRef.current.files?.[0];
     if (!file) return;
@@ -49,6 +51,8 @@ export default function useEditImage(props: EditableImageProps) {
     } catch (error) {
       logger.error("Image compression", error);
       errorToast("An error occured :/", "The image format is incorrect, try another one.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -97,5 +101,6 @@ export default function useEditImage(props: EditableImageProps) {
     setAvatarZoom,
     inputRef,
     avatarEditorRef,
+    isLoading,
   };
 }
