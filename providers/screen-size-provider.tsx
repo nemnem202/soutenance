@@ -25,9 +25,12 @@ export default function ScreenSizeProvider({ children }: { children: ReactNode }
     return getCurrentScreenSize();
   });
 
-  const [orientation, setOrientation] = useState<ScreenOrientationType>(
-    size === "sm" ? "vertical" : "horizontal"
-  );
+  const [orientation, setOrientation] = useState<ScreenOrientationType>(() => {
+    if (typeof window !== "undefined") {
+      return window.innerHeight > window.innerWidth ? "vertical" : "horizontal";
+    }
+    return "vertical";
+  });
 
   function getCurrentScreenSize(): ScreenSizeType {
     const width = window.innerWidth;
@@ -43,29 +46,43 @@ export default function ScreenSizeProvider({ children }: { children: ReactNode }
     return "sm";
   }
 
+  function screenToOrientation(orientation: OrientationType): ScreenOrientationType {
+    switch (orientation) {
+      case "landscape-primary":
+      case "landscape-secondary":
+        return "horizontal";
+      case "portrait-primary":
+      case "portrait-secondary":
+        return "vertical";
+    }
+  }
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: qsdqsd
   useEffect(() => {
     const handler = () => {
       setSize(getCurrentScreenSize());
+      setOrientation(window.innerHeight > window.innerWidth ? "vertical" : "horizontal");
     };
 
-    screen.orientation.addEventListener("change", () => {
-      switch (screen.orientation.type) {
-        case "landscape-primary":
-        case "landscape-secondary":
-          return setOrientation("horizontal");
-        case "portrait-primary":
-        case "portrait-secondary":
-          return setOrientation("vertical");
-      }
-    });
+    if (screen?.orientation) {
+      setOrientation(screenToOrientation(screen.orientation.type));
 
-    window.addEventListener("resize", handler);
-    return () => window.removeEventListener("resize", handler);
+      const orientHandler = () => {
+        setOrientation(screenToOrientation(screen.orientation.type));
+      };
+
+      screen.orientation.addEventListener("change", orientHandler);
+      window.addEventListener("resize", handler);
+
+      return () => {
+        screen.orientation.removeEventListener("change", orientHandler);
+        window.removeEventListener("resize", handler);
+      };
+    }
   }, []);
 
   return (
-    <ScreenSizeContext.Provider value={{ size: screenSize, orientation }}>
+    <ScreenSizeContext.Provider value={{ size, orientation }}>
       {children}
     </ScreenSizeContext.Provider>
   );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { type Dispatch, type SetStateAction, useState } from "react";
 import ChordTab from "@/components/features/game/chord-tab";
 import { Tab } from "@/components/features/game/game-assets";
 import DesktopGameControlsSection, {
@@ -20,6 +20,7 @@ import { ClientOnly } from "vike-react/ClientOnly";
 import useGame from "@/hooks/use-game";
 import { Spinner } from "@/components/ui/spinner";
 import useAudio from "@/hooks/use-audio";
+import useScreen from "@/hooks/use-screen";
 
 export default function Page() {
   const { exercise } = useData<Data>();
@@ -34,39 +35,15 @@ export default function Page() {
 }
 
 function GameContent() {
-  const { exercise, midiState } = useGame();
+  const { exercise } = useGame();
   const [sidebarOpen, setOpen] = useState(false);
-  const [drawersVisible, setDrawersVisible] = useState(true);
+
   return (
-    <div className="flex flex-row w-screen h-screen overflow-hidden">
+    <div className="flex flex-row w-screen h-[100dvh] overflow-hidden">
       <GameSidebar sidebarOpen={sidebarOpen} setOpen={setOpen} />
       <div className="flex-1 min-w-0 h-screen flex flex-col">
         <SizeAdapter
-          sm={
-            <Drawer modal={false} open={drawersVisible} onOpenChange={setDrawersVisible}>
-              <DrawerTrigger asChild>
-                <main className="flex-1 min-w-0 h-full flex flex-col items-center p-4 max-w-screen min-h-0">
-                  <div
-                    className={`w-full overflow-hidden transition-[height] duration-300`}
-                    style={{ height: drawersVisible ? `4.5rem` : "0px" }}
-                  >
-                    <MobileHeaderNavContainer>
-                      <HistoryBackButton />
-                      <Headline>{exercise.title}</Headline>
-                      <div />
-                    </MobileHeaderNavContainer>
-                  </div>
-                  <GameView toggleSidebar={() => setOpen(!sidebarOpen)} />
-                </main>
-              </DrawerTrigger>
-              <DrawerContent className="rounded-none border-0 border-t">
-                <DrawerTitle className="hidden">Controls</DrawerTitle>
-                <div className="mx-auto w-full max-w-sm py-10 pt-0">
-                  <MobileGameControlSection toggleSidebar={() => setOpen(!sidebarOpen)} />
-                </div>
-              </DrawerContent>
-            </Drawer>
-          }
+          sm={<MobileGameView setOpen={setOpen} />}
           md={
             <>
               <Header />
@@ -85,23 +62,26 @@ function GameContent() {
 function GameView({ toggleSidebar }: { toggleSidebar: () => void }) {
   const { activeTab, tabs, setActiveTab } = useGame();
   const { audioLoaded } = useAudio();
+  const { size } = useScreen();
   return (
     <div className="size-full lg:px-10 md:py-5 flex flex-col gap-2 min-h-0">
       <div className="flex-1 flex flex-col h-full min-h-0 gap-3">
-        <div className="w-full flex justify-between items-center gap-2">
-          <div className="flex-1">
-            <DesktopGameControlsSection toggleSidebar={toggleSidebar} />
+        {size !== "sm" && (
+          <div className="w-full flex justify-between items-center gap-2">
+            <div className="flex-1">
+              <DesktopGameControlsSection toggleSidebar={toggleSidebar} />
+            </div>
+            <div className="hidden md:block flex-1 md:flex-initial text-center">
+              <AnimatedTabs
+                activeTab={activeTab}
+                onChange={(v) => setActiveTab(v as TabID)}
+                tabs={tabs}
+                variant="pill"
+              />
+            </div>
+            <div className="flex-1 hidden lg:block" />
           </div>
-          <div className="hidden md:block flex-1 md:flex-initial text-center">
-            <AnimatedTabs
-              activeTab={activeTab}
-              onChange={(v) => setActiveTab(v as TabID)}
-              tabs={tabs}
-              variant="pill"
-            />
-          </div>
-          <div className="flex-1 hidden lg:block" />
-        </div>
+        )}
         <Tab>
           {activeTab === "chords" && <ChordTab />}
           {activeTab === "piano-roll" && (
@@ -119,4 +99,54 @@ function GameView({ toggleSidebar }: { toggleSidebar: () => void }) {
       </div>
     </div>
   );
+}
+
+function MobileGameView({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>> }) {
+  const { exercise } = useGame();
+  const [drawersVisible, setDrawersVisible] = useState(true);
+  const { orientation } = useScreen();
+
+  if (orientation === "vertical") {
+    return (
+      <Drawer modal={false} open={drawersVisible} onOpenChange={setDrawersVisible}>
+        <DrawerTrigger asChild>
+          <main className="flex-1 min-w-0 h-full flex flex-col items-center p-4 max-w-screen min-h-0">
+            <div
+              className={`w-full overflow-hidden transition-[height] duration-300`}
+              style={{ height: drawersVisible ? `4.5rem` : "0px" }}
+            >
+              <MobileHeaderNavContainer>
+                <HistoryBackButton />
+                <Headline>{exercise.title}</Headline>
+                <div />
+              </MobileHeaderNavContainer>
+            </div>
+            <GameView toggleSidebar={() => setOpen((prev) => !prev)} />
+          </main>
+        </DrawerTrigger>
+        <DrawerContent className="rounded-none border-0 border-t">
+          <DrawerTitle className="hidden">Controls</DrawerTitle>
+          <div className="mx-auto w-full max-w-sm py-10">
+            <MobileGameControlSection toggleSidebar={() => setOpen((prev) => !prev)} />
+          </div>
+        </DrawerContent>
+      </Drawer>
+    );
+  } else {
+    return (
+      <Drawer modal={false} open={drawersVisible} onOpenChange={setDrawersVisible}>
+        <DrawerTrigger asChild>
+          <main className="flex-1 min-w-0 h-full flex flex-col items-center p-4 max-w-screen min-h-0">
+            <GameView toggleSidebar={() => setOpen((prev) => !prev)} />
+          </main>
+        </DrawerTrigger>
+        <DrawerContent className="rounded-none border-0 border-t">
+          <DrawerTitle className="hidden">Controls</DrawerTitle>
+          <div className="mx-auto w-full max-w-sm py-5">
+            <MobileGameControlSection toggleSidebar={() => setOpen((prev) => !prev)} />
+          </div>
+        </DrawerContent>
+      </Drawer>
+    );
+  }
 }
