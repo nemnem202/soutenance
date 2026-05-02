@@ -40,7 +40,7 @@ export default class MidiController extends Controller {
 
   private async generateMidiFile(exercise: ExerciseWithForcedChordGrid): Promise<Buffer> {
     const start = Date.now();
-    const content = new MMAContentGenerator(exercise, "JazzBasie").generate();
+    const content = new MMAContentGenerator(exercise, "BossaNova").generate();
     logger.success("New midi file generated: ", content);
     const buffer = await this.generateMidiBuffer(content);
     logger.success(`Midi generated in ${Date.now() - start}ms`);

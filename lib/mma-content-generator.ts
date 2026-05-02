@@ -86,24 +86,26 @@ export default class MMAContentGenerator {
   }
 
   private getSections(): string[] {
-    const sections = this.exercise.chordsGrid.sections.flatMap((section) => {
-      const groove = this.getGroove(section.type);
-      const repeat = section.voltas.length > 0 ? ["Repeat"] : [];
+    const sections = this.exercise.chordsGrid.sections
+      .sort((a, b) => a.index - b.index)
+      .flatMap((section) => {
+        const groove = this.getGroove(section.type);
+        const repeat = section.voltas.length > 0 ? ["Repeat"] : [];
 
-      const measures = this.getMeasures(section);
+        const measures = this.getMeasures(section);
 
-      const timeSignature: string = this.getTimeSignature({
-        top: this.exercise.defaultConfig.timeSignatureTop,
-        bottom: this.exercise.defaultConfig.timeSignatureBottom,
+        const timeSignature: string = this.getTimeSignature({
+          top: this.exercise.defaultConfig.timeSignatureTop,
+          bottom: this.exercise.defaultConfig.timeSignatureBottom,
+        });
+
+        return [
+          groove,
+          //  timeSignature,
+          ...repeat,
+          ...measures,
+        ];
       });
-
-      return [
-        groove,
-        //  timeSignature,
-        ...repeat,
-        ...measures,
-      ];
-    });
 
     return sections;
   }
@@ -172,14 +174,16 @@ export default class MMAContentGenerator {
     const chordCells: Extract<Cell, { kind: "Chord" }>[] = measure.cells.filter(
       (c) => c.kind === "Chord"
     );
-    const values = chordCells.map((cell) => {
-      if (cell.chord.content.note === "%") {
-        return `/`;
-      } else {
-        const chord = findChordFromModifier(cell.chord.content.modifier);
-        return `${cell.chord.content.note}${chord?.mmaLabel ?? ""}`;
-      }
-    });
+    const values = chordCells
+      .sort((a, b) => a.index - b.index)
+      .map((cell) => {
+        if (cell.chord.content.note === "%") {
+          return `/`;
+        } else {
+          const chord = findChordFromModifier(cell.chord.content.modifier);
+          return `${cell.chord.content.note}${chord?.mmaLabel ?? ""}`;
+        }
+      });
     const returnValue = `${measure.index} ${values.join(" ")}`;
     return returnValue;
   }
