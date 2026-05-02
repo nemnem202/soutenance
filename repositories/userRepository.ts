@@ -91,7 +91,7 @@ export default class UserRepository extends Repository {
         id: user.id,
         profilePicture: user.profilePicture,
         username: user.username,
-        likedByCurrentUser: user.likedByUsers.length > 0,
+        likedByCurrentUser: user.likedByUsers && user.likedByUsers.length > 0,
       })),
     };
   }

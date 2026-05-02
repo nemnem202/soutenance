@@ -28,4 +28,4 @@ export function onRemoveAccount() {
   return handleAction("Remove Account", () => controller.removeAccount());
 }
 
-shield(onRegister, [shield.type.any]);
+shield(onRegister, [shield.type.any], {});

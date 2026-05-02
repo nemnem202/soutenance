@@ -10,6 +10,7 @@ import useSession from "./use-session";
 import type { PlaylistRegisterData } from "@/types/playlist";
 import { onPlaylistCreation } from "@/telefunc/playlist.telefunc";
 import { reload } from "vike/client/router";
+import { logger } from "@/lib/logger";
 
 export function useNewPlaylistForm({ onSubmit }: { onSubmit?: () => void }) {
   const formRef = useRef<HTMLFormElement>(null);
@@ -79,6 +80,7 @@ export function useRegisterForm({ onSuccess }: { onSuccess: () => void }) {
     loadingToast(promise, {
       loading: "Création du compte...",
       success: (user) => {
+        logger.info("SUUUUUCESS");
         setSession(user);
         reload();
         onSuccess();
@@ -95,7 +97,7 @@ export function useRegisterForm({ onSuccess }: { onSuccess: () => void }) {
         errorToast(response.title, response.description);
       }
     }
-    setSubmitLoading(true);
+    setSubmitLoading(false);
   };
 
   return { formRef, form, handleSubmit, submitLoading };

@@ -1,8 +1,5 @@
-import { Field, FieldLabel } from "@/components/molecules/field";
 import { Separator } from "@/components/ui/separator";
-import { useLanguage } from "@/hooks/use-language";
-import { ControlsSection } from "./game-assets";
-import { CustomInput } from "@/components/ui/custom_input";
+import { BpmControl, ControlsSection, TrackSelect } from "./game-assets";
 import useGame from "@/hooks/use-game";
 import {
   MetronomeButton,
@@ -11,14 +8,13 @@ import {
   StopButton,
 } from "@/components/ui/custom-buttons";
 import { Action } from "@/midi-editor/types/actions";
-import { logger } from "@/lib/logger";
+import useScreen from "@/hooks/use-screen";
 
 interface Gameprops {
   toggleSidebar: () => void;
 }
 
 export default function DesktopGameControlsSection({ ...props }: Gameprops) {
-  const { instance } = useLanguage();
   const { midiState, dispatch } = useGame();
   return (
     <div className="hidden md:block">
@@ -30,36 +26,22 @@ export default function DesktopGameControlsSection({ ...props }: Gameprops) {
         />
         <StopButton onClick={() => dispatch({ type: Action.STOP })} />
         <Separator orientation="vertical" className="!h-6" />
-        <Field className="flex flex-row items-center justify-center !w-min">
-          <CustomInput
-            id="bpm"
-            type="number"
-            disabled={!midiState}
-            defaultValue={midiState ? Math.floor(midiState.config.bpm) : undefined}
-            onBlur={(e) => {
-              let value = parseInt(e.currentTarget.value, 10);
-              if (value < 30) value = 30;
-              if (value > 500) value = 500;
-              e.currentTarget.value = value.toString();
-              logger.info("New bpm is set to: ", value);
-              dispatch({ type: Action.SET_BPM, bpm: value });
-            }}
-            className="!w-15 min-w-0 p-0 text-center"
-          />
-          <FieldLabel htmlFor="bpm" className="!w-min text-muted-foreground paragraph-small">
-            {instance.getItem("bpm").toLowerCase()}
-          </FieldLabel>
-        </Field>
+        <BpmControl />
       </ControlsSection>
     </div>
   );
 }
 
 export function MobileGameControlSection({ ...props }: Gameprops) {
+  const { activeTab } = useGame();
   const { midiState, dispatch } = useGame();
+  const isHorizontal = useScreen().orientation === "horizontal";
   return (
     <div className=" flex w-full justify-evenly">
+      {isHorizontal && <div className="w-40" />}
+
       <SettingsButton onClick={() => props.toggleSidebar()} />
+
       {midiState && (
         <>
           <StopButton onClick={() => dispatch({ type: Action.STOP })} />
@@ -68,6 +50,15 @@ export function MobileGameControlSection({ ...props }: Gameprops) {
             isPlaying={!!midiState?.transport.isPlaying}
           />
           <MetronomeButton />
+
+          {isHorizontal &&
+            (activeTab === "piano-roll" ? (
+              <div className="w-40">
+                <TrackSelect />
+              </div>
+            ) : (
+              <div className="w-40" />
+            ))}
         </>
       )}
     </div>

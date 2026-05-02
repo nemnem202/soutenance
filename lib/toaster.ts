@@ -1,5 +1,6 @@
 import { type ExternalToast, toast } from "sonner";
 import type { ServerResponse } from "@/types/server-response";
+import { logger } from "./logger";
 
 const TOAST_CONFIG: ExternalToast = {
   richColors: true,
@@ -23,11 +24,13 @@ export const loadingToast = <T>(
   options: LoadingToastOptions<T> = {}
 ) => {
   const handledPromise = promise.then((res) => {
+    logger.info("response: ", res);
     if (!res.success) throw res;
+
     return res.data;
   });
 
-  return toast.promise(handledPromise, {
+  toast.promise(handledPromise, {
     ...TOAST_CONFIG,
     loading: options.loading ?? "Traitement en cours...",
     success: (data) => {
@@ -38,10 +41,7 @@ export const loadingToast = <T>(
       const info = options.error?.(err);
       return info?.title ?? err.title ?? "Une erreur est survenue";
     },
-    description: (data: any) => {
-      if (typeof options.success === "function") return options.success(data).description;
-      if (data && data.description) return data.description;
-      return undefined;
-    },
   });
+
+  return handledPromise;
 };

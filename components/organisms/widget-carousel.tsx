@@ -28,7 +28,7 @@ export function MediumWidgetGroup(props: MediumWidgetGroupProps) {
     handleScrollEnd,
     onLastItemVisibilityChange,
   } = props;
-  const size = useScreen();
+  const { size } = useScreen();
 
   useEffect(() => {
     if (size === "sm") return;
@@ -140,7 +140,7 @@ export function WidgetTitle({
   widgetsRef?: RefObject<(HTMLDivElement | null)[]>;
 }) {
   const { instance } = useLanguage();
-  const isMobile = useScreen() === "sm";
+  const isMobile = useScreen().size === "sm";
   return (
     <div className="flex w-full justify-between items-center min-h-5">
       <div className="flex items-center gap-x-5 w-full">
