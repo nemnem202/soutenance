@@ -46,5 +46,7 @@ model UserLikesUser {
    likingUser User @relation("LikingUser", fields: [likingId], references: [id], onDelete: Cascade)
    likingId   Int
 
+   likedAt DateTime @default(now())
+
    @@id([likedId, likingId])
 }
