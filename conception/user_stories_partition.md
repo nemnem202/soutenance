@@ -21,7 +21,7 @@
 | US-010 | Visiteur             | Utiliser un exercise sans le modifier    | Tester l’exercise sans danger               | • Lecture de l’exercise<br>• Pas de modification possible                                  | Must Have   |
 | US-011 | Utilisateur connecté | Enregistrer un exercise dans ma playlist | Organiser mes exercises préférés            | • Choix de la playlist propriétaire<br>• Confirmation après ajout                          | Must Have   |
 | US-012 | Utilisateur connecté | Créer une nouvelle playlist propriétaire | Organiser mes exercises comme je veux       | • Formulaire de création de playlist<br>• Nom et description<br>• Confirmation en français | Must Have   |
-| US-013 | Utilisateur connecté | Importer un exercise ou une playlist     | Ajouter du contenu existant dans mon compte | • Import de fichiers XML ou liens iReal Pro<br>• Confirmation de l'importation             | Should Have |
+| US-013 | Utilisateur connecté | Créer un exercise     | Ajouter du contenu existant dans mon compte | • Import de fichiers XML ou liens iReal Pro<br>• Confirmation de l'importation  <br>• Créer un exercice via un éditeur buildt-in           | Should Have |
 | US-014 | Utilisateur connecté | Liker une playlist ou un exercise        | Marquer mes contenus préférés               | • Bouton "Like"<br>• Enregistrement dans la liste de likes                                 | Should Have |
 
 ## Gestion d’un Exercise (Modules)
