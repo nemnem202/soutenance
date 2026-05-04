@@ -1,0 +1,23 @@
+@startuml
+title Génération du fichier MIDI
+
+start
+
+:Envoyer requête MIDI au serveur\navec la configuration utilisateur;
+
+if (Fichier MIDI compatible\ndans le cloud ?) then (oui)
+  :Retourner le fichier MIDI;
+  stop
+else (non)
+  if (L'exercice contient\nune grille d'accords ?) then (non)
+    :Retourner une erreur;
+    stop
+  else (oui)
+    :Appeler le controller\nde génération du fichier MIDI;
+    :Générer le fichier MIDI\nà partir de la grille d'accords;
+    :Retourner le fichier MIDI généré;
+    stop
+  endif
+endif
+
+@enduml

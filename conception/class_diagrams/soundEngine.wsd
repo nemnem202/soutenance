@@ -1,0 +1,52 @@
+@startuml
+title SoundEngine — Diagramme de classe
+
+class SoundEngine {
+  - instance: SoundEngine  {static}
+  - context: AudioContext
+  - synth: WorkerSynthesizer
+  - sequencer: Sequencer
+  - midiState: State
+  - actionsDirtyFlags: Set<Action>
+  --
+  + initAudio(): SoundEngine  {static}
+  + loadNewMidi(): void
+  + changeChannelVolume(channel, volume): void
+  - processActions(): void
+  - play(): void
+  - pause(): void
+  - resume(): void
+}
+
+class WorkerSynthesizer {
+  + noteOn(channel, note, vel): void
+  + controllerChange(ch, cc, val): void
+  + connect(destination): void
+}
+
+class Sequencer {
+  + currentTime: number
+  + currentTempo: number
+  + playbackRate: number
+  + play(): void
+  + pause(): void
+}
+
+class useMidiStore {
+  + state: State
+  + dispatch(action: MidiAction): void
+  + subscribe(cb): () => void
+}
+
+class State {
+  + config: { bpm, ppq, signature }
+  + transport: { isPlaying, start }
+  + rawMidiBuffer: Uint8Array
+}
+
+SoundEngine *-- WorkerSynthesizer
+SoundEngine *-- Sequencer
+SoundEngine ..> useMidiStore : subscribe
+SoundEngine ..> State : utilise
+useMidiStore --> State
+@enduml
