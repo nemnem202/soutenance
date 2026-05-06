@@ -20,10 +20,6 @@ export abstract class Controller {
     this.user = deps.user;
   }
 
-  /**
-   * Garantit que l'utilisateur est authentifié et retourne son ID.
-   * Lève une AppError sinon.
-   */
   protected okUser(): number {
     if (!this.user?.id) {
       throw new AppError(
@@ -35,9 +31,6 @@ export abstract class Controller {
     return this.user.id;
   }
 
-  /**
-   * Vérifie si l'utilisateur actuel est le propriétaire d'une ressource.
-   */
   protected isOwner(ownerId: number): boolean {
     return this.user?.id === ownerId;
   }
