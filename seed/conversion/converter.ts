@@ -388,7 +388,7 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
     if (parsedAnnots.volta !== null) {
       pushMeasure();
       currentVolta = {
-        volta: parsedAnnots.volta as 1 | 2 | 3,
+        index: parsedAnnots.volta as 1 | 2 | 3,
         measures: [],
       };
       section.voltas.push(currentVolta);
