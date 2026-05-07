@@ -1,7 +1,6 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Intentional */
 
-const { NODE_ENV } = process.env;
-const isTest = NODE_ENV === "test";
+const isTest = import.meta.env.MODE === "test";
 type LogLevel = "info" | "success" | "warn" | "error" | "draw";
 
 const colors = {
