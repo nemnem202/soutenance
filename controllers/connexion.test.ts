@@ -1,5 +1,5 @@
 import type { RegisterData } from "@/types/auth";
-import { beforeAll, describe, it } from "vitest";
+import { afterAll, beforeAll, describe, it } from "vitest";
 import prismaClient from "@/lib/prisma-client";
 import UserRepository from "@/repositories/userRepository";
 import { faker } from "@faker-js/faker";
@@ -67,4 +67,12 @@ describe("Update an account", async () => {
 describe("Remove an account", async () => {
   await it("Fails to Delete an account if user doesn't have session", async () => {});
   await it("Delete an account with success if user has session", async () => {});
+});
+
+afterAll(async () => {
+  await prismaClient.user.deleteMany({
+    where: {
+      OR: [{ username: userData.username }, { username: existingUserData.username }],
+    },
+  });
 });
