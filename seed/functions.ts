@@ -9,6 +9,7 @@ import { IrealChartDecoder } from "./conversion/chart_decoder";
 import { convertPlaylist } from "./conversion/converter";
 import links from "./links.json";
 import testLinks from "./test-links.json";
+import { logger } from "@/lib/logger";
 
 async function createUser(): Promise<User> {
   const baseUsername = faker.person.firstName().substring(0, 20);
@@ -74,7 +75,7 @@ export default async function convertAllPlaylists(forTest?: "forTest") {
   let fails = 0;
   let success = 0;
 
-  console.log("🚀 Starting Conversion...");
+  logger.info("🚀 Starting Conversion...");
 
   let currentUser: User = await createUser();
 
@@ -88,14 +89,14 @@ export default async function convertAllPlaylists(forTest?: "forTest") {
 
       if (converted.failures.length > 0) {
         fails++;
-        console.log(`⚠️ [${index}] FAILED items in: ${irealPlaylist.title}`);
+        logger.info(`⚠️ [${index}] FAILED items in: ${irealPlaylist.title}`);
         continue;
       }
 
       const verifyPlaylist = playlistSchema.safeParse(converted.playlist);
       if (!verifyPlaylist.success) {
         fails++;
-        console.log(`❌ [${index}] VALIDATION ERROR: ${converted.playlist.title}`);
+        logger.info(`❌ [${index}] VALIDATION ERROR: ${converted.playlist.title}`);
 
         continue;
       }
@@ -107,7 +108,7 @@ export default async function convertAllPlaylists(forTest?: "forTest") {
       await putPlaylistInDb(converted.playlist, currentUser);
 
       success++;
-      console.log(
+      logger.info(
         `✅ [${index}] Seeded: ${converted.playlist.title} (${converted.playlist.exercises.length} songs)`
       );
     } catch (err) {
@@ -117,6 +118,6 @@ export default async function convertAllPlaylists(forTest?: "forTest") {
     }
   }
 
-  console.log("-----------------------------------------");
-  console.log(`🏁 CONVERSION ENDED | Success: ${success} | Failed: ${fails}`);
+  logger.info("-----------------------------------------");
+  logger.info(`🏁 CONVERSION ENDED | Success: ${success} | Failed: ${fails}`);
 }

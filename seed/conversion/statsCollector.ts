@@ -145,9 +145,9 @@ export default class StatsCollector {
     const valid = modifier.filter(([mod]) => this.isChordInDictionary(mod));
     const invalid = modifier.filter(([mod]) => !this.isChordInDictionary(mod));
 
-    console.log(`\n${"=".repeat(50)}`);
-    console.log("📊 RAPPORT GLOBAL DE DÉCODAGE");
-    console.log("=".repeat(50));
+    logger.info(`\n${"=".repeat(50)}`);
+    logger.info("📊 RAPPORT GLOBAL DE DÉCODAGE");
+    logger.info("=".repeat(50));
 
     console.table({
       "Liens traités": this.totalLinks,
@@ -163,25 +163,25 @@ export default class StatsCollector {
       "Couverture modifieurs": `${((valid.length / this.modifiertats.size) * 100).toFixed(1)}%`,
     });
 
-    console.log("\n🎲 ÉCHANTILLONS ALÉATOIRES (Extraits du JSON) :");
+    logger.info("\n🎲 ÉCHANTILLONS ALÉATOIRES (Extraits du JSON) :");
 
     if (duplicateSongs.length > 0) {
-      console.log(`\n🔍 TOP 10 DES CHANSONS LES PLUS RÉPÉTÉES :`);
+      logger.info(`\n🔍 TOP 10 DES CHANSONS LES PLUS RÉPÉTÉES :`);
       this.logTop(this.songTitles, 10);
     }
 
-    console.log(`\n🔝 TOP ${this.top_count} STYLES :`);
+    logger.info(`\n🔝 TOP ${this.top_count} STYLES :`);
     this.logTop(this.styles, this.top_count);
 
-    console.log(`\n🔝 TOP ${this.top_count} COMPOSITEURS :`);
+    logger.info(`\n🔝 TOP ${this.top_count} COMPOSITEURS :`);
     this.logTop(this.composers);
 
-    console.log(`\n🎹 RÉPARTITION DES TONALITÉS :`);
+    logger.info(`\n🎹 RÉPARTITION DES TONALITÉS :`);
     console.table(this.keys);
-    console.log("=".repeat(50));
+    logger.info("=".repeat(50));
 
     if (Object.keys(this.annotStats).length > 0) {
-      console.log(`\n🏷️  OCCURRENCES DES ANNOTATIONS :`);
+      logger.info(`\n🏷️  OCCURRENCES DES ANNOTATIONS :`);
       const sortedAnnots = Object.entries(this.annotStats).sort((a, b) => b[1] - a[1]);
 
       console.table(
@@ -193,7 +193,7 @@ export default class StatsCollector {
     }
 
     if (Object.keys(this.barStats).length > 0) {
-      console.log(`\n🏷️  OCCURRENCES DES BARS :`);
+      logger.info(`\n🏷️  OCCURRENCES DES BARS :`);
       const sortedBars = Object.entries(this.barStats).sort((a, b) => b[1] - a[1]);
 
       console.table(
@@ -204,7 +204,7 @@ export default class StatsCollector {
       );
     }
     if (invalid.length > 0) {
-      console.log(`\n❌ TOP 250 DES MODIFIEURS INCONNUS (Triés par occurrences) :`);
+      logger.info(`\n❌ TOP 250 DES MODIFIEURS INCONNUS (Triés par occurrences) :`);
 
       const sortedInvalid = invalid.sort((a, b) => b[1].count - a[1].count).slice(0, 250);
 
@@ -227,12 +227,12 @@ export default class StatsCollector {
 
   private logRandomFromJSON(indexes: number[], count: number) {
     if (indexes.length === 0) {
-      console.log("   (Aucun index disponible)");
+      logger.info("   (Aucun index disponible)");
       return;
     }
     const shuffled = [...indexes].sort(() => 0.5 - Math.random());
     shuffled.slice(0, count).forEach((linkIndex, i) => {
-      console.log(`   ${i + 1}. [Index ${linkIndex}] ${this.links[linkIndex]}`);
+      logger.info(`   ${i + 1}. [Index ${linkIndex}] ${this.links[linkIndex]}`);
     });
   }
 }
