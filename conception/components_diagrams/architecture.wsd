@@ -1,0 +1,49 @@
+@startuml
+!theme plain
+skinparam componentStyle uml2
+
+title Architecture Globale
+
+node "Navigateur (Client)" {
+    package "Frontend (Vike)" {
+        [React Components] as react
+        [Telefunc Client] as tf_client
+    }
+}
+
+node "Serveur d'Application (Node.js)" {
+    
+    package "Web Layer (Vike/Express)" {
+        [Vike SSR Engine] as vike      
+        [Express Middleware] as express
+        [Telefunc Server] as tf_server
+  
+    }
+
+    package "Business Layer" {
+        [Controllers] as ctrl
+    }
+
+    package "Data Access Layer" {
+        [Prisma ORM] as prisma
+        [Repositories] as repo
+    }
+}
+
+database "PostgreSQL" as db
+cloud "Cloudinary" as cloud_service
+
+vike ..> react : <<render>>
+express -> vike : route requests
+react -> tf_client : call functions
+
+tf_client --> tf_server : <<HTTP/RPC>>
+tf_server --> ctrl : calls
+
+ctrl --> repo : uses
+repo --> prisma : uses
+prisma --> db : SQL
+
+ctrl --> cloud_service : <<upload/fetch>>
+
+@enduml

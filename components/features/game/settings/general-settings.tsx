@@ -95,12 +95,12 @@ function MobileInputsGroup() {
           <p className="paragraph w-15">{instance.getItem("repeats")}</p>
         </SidebarSlider>
         <SidebarSlider
+          onValueChange={(value) => dispatch({ type: Action.SET_BPM, bpm: value[0] })}
           defaultValue={[midiState?.config.bpm]}
           axis="y"
           min={30}
           max={500}
           step={1}
-          onValueChange={(value) => dispatch({ type: Action.SET_BPM, bpm: value[0] })}
         >
           <div className="w-full flex gap-2">
             <p className="paragraph">{instance.getItem("bpm")}:</p>

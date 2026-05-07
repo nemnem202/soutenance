@@ -1,0 +1,54 @@
+@startuml
+autonumber
+
+actor "Utilisateur" as User
+participant "Formulaire (Client)" as UI
+participant "registerSchema (Zod)" as Zod
+participant "SessionProvider (State)" as SP
+participant "Telefunc (RPC)" as TF
+participant "Server (Logic)" as Srv
+database "Base de Données" as DB
+entity "Stockage Photo" as Store
+
+User -> UI : Remplit et soumet le formulaire
+UI -> Zod : Validation (Client-side)
+
+alt Données invalides (Zod Client)
+    Zod -->> UI : Retourne erreurs
+    UI -->> User : Affiche les messages d'erreur
+else Données valides (Zod Client)
+    UI -> TF : Appel RPC (Data)
+    
+    TF -> Srv : Exécution de la fonction
+    Srv -> Zod : Re-validation (Server-side)
+    
+    alt Erreur validation (Zod Server)
+        Srv -->> TF : Throw Error (Données corrompues)
+        TF -->> UI : Affiche erreur de validation
+    else Validation Zod OK
+        Srv -> DB : Vérifier unicité (Username/Email)
+        
+        alt Conflit (User ou Email déjà pris)
+            DB -->> Srv : Doublon détecté
+            Srv -->> TF : Throw Abort (Message: "Déjà utilisé")
+            TF -->> UI : Affiche "Email ou Pseudo indisponible"
+        else Données uniques (OK)
+            DB -->> Srv : Confirmation (Unique)
+            
+            Srv -> Store : Enregistrer la photo de profil
+            Store -->> Srv : URL / Path de la photo
+            
+            Srv -> DB : INSERT INTO users (...)
+            DB -->> Srv : Retourne ID Unique
+            
+            Srv -->> TF : Set-Cookie (Session) + Body (Session Type)
+            TF -->> UI : Réponse (ID, Username, Photo)
+            
+            UI -> SP : dispatch({type: 'LOGIN', payload: session})
+            note over UI, SP : Mise à jour du state global
+            
+            UI -> User : Redirection automatique vers "/"
+        end
+    end
+end
+@enduml

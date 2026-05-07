@@ -29,7 +29,7 @@ model PlaylistIncludesExercise {
 
 model PlaylistTag {
     id         Int      @id @default(autoincrement())
-    label      String   @db.VarChar(50)
+    label      String   @unique @db.VarChar(50)
     playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
     playlistId Int
 }
