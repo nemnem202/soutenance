@@ -44,6 +44,7 @@ describe("LikeController - Test d'Intégration et Sécurité (Zéro Mock)", () =
   afterAll(async () => {
     if (testUser) {
       await prismaClient.user.delete({ where: { id: testUser.id } });
+      await prismaClient.playlist.deleteMany();
     }
   });
 
