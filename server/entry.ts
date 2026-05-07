@@ -5,10 +5,12 @@ import router from "./router";
 import { telefuncHandler } from "./telefunc-handler";
 
 const port = 3000;
-export const app = express();
+
 export default startApp() as unknown;
 
 function startApp() {
+  const app = express();
+
   app.use(cookieParser());
 
   app.use("/api", router);
