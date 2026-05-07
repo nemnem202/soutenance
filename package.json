@@ -9,6 +9,7 @@
     "prisma:generate": "prisma generate",
     "shadcn": "npx shadcn@latest",
     "test": "vitest run --reporter=tree",
+    "test:watch": "vitest run --reporter=tree --watch",
     "lint": "biome lint --write .",
     "format": "biome check --write --unsafe .",
     "format:check": "biome check .",

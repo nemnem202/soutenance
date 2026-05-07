@@ -1,17 +1,18 @@
 import type { RegisterData } from "@/types/auth";
 import { beforeAll, describe, it } from "vitest";
-import account_default_url from "@/assets/images/account-default-pic.webp";
 import prismaClient from "@/lib/prisma-client";
 import UserRepository from "@/repositories/userRepository";
 import { faker } from "@faker-js/faker";
+import fs from "node:fs";
+import path from "node:path";
 
 let userData: RegisterData;
 let existingUserData: RegisterData;
 
 beforeAll(async () => {
-  const response = await fetch(account_default_url);
-  const blob = await response.blob();
-  const file = new File([blob], "default.webp", { type: "image/webp" });
+  const imagePath = path.resolve(process.cwd(), "assets/images/account-default-pic.webp");
+  const buffer = fs.readFileSync(imagePath);
+  const file = new File([buffer], "default.webp", { type: "image/webp" });
 
   userData = {
     username: "TestUser",
