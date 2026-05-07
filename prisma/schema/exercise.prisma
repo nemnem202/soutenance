@@ -1,13 +1,13 @@
 model Exercise {
-    id               Int                        @id @default(autoincrement())
-    author           User                       @relation(fields: [authorId], references: [id], onDelete: Cascade)
-    authorId         Int
-    title            String                     @db.VarChar(100)
-    composer         String                     @db.VarChar(200)
-    defaultConfig    Config                     @relation("DefaultConfig", fields: [configId], references: [id], onDelete: Cascade)
-    configId         Int                        @unique
-    userConfigs      ExerciseSavesUserConfig[]
-    midifile         Midifile?
+    id            Int                       @id @default(autoincrement())
+    author        User                      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+    authorId      Int
+    title         String                    @db.VarChar(100)
+    composer      String                    @db.VarChar(200)
+    defaultConfig Config                    @relation("DefaultConfig", fields: [configId], references: [id], onDelete: Cascade)
+    configId      Int                       @unique
+    userConfigs   ExerciseSavesUserConfig[]
+
     chordsGrid       ChordsGrid?
     fromPlaylist     Playlist                   @relation("Origin", fields: [originPlaylistId], references: [id], onDelete: Cascade)
     originPlaylistId Int
@@ -28,33 +28,31 @@ model UserLikesExercise {
 }
 
 model Config {
-    id                  Int                       @id @default(autoincrement())
+    id                  Int                      @id @default(autoincrement())
     bpm                 Int
-    key                 String                    @db.VarChar(50)
-    groove              String                    @db.VarChar(100)
+    key                 String                   @db.VarChar(50)
+    groove              String                   @db.VarChar(100)
     timeSignatureTop    Int
     timeSignatureBottom Int
-    exerciseDefault     Exercise?                 @relation("DefaultConfig")
-    userConfigs         ExerciseSavesUserConfig[]
+    exerciseDefault     Exercise?                @relation("DefaultConfig")
+    userConfigs         ExerciseSavesUserConfig?
+    midifile            Midifile?
 }
 
 model ExerciseSavesUserConfig {
-    id         Int      @id @default(autoincrement())
     user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId     Int
     exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
     exerciseId Int
     config     Config   @relation(fields: [configId], references: [id], onDelete: Cascade)
-    configId   Int      @unique
-
-    @@unique([userId, exerciseId])
+    configId   Int      @id
 }
 
 model Midifile {
-    id         Int      @id @default(autoincrement())
-    url        String
-    exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
-    exerciseId Int      @unique
+    id       Int    @id @default(autoincrement())
+    url      String @unique @db.VarChar(500)
+    config   Config @relation(fields: [configId], references: [id], onDelete: Cascade)
+    configId Int    @unique
 }
 
 model ChordsGrid {
@@ -95,7 +93,7 @@ model Measure {
 
 model VoltaBracket {
     id        Int       @id @default(autoincrement())
-    volta     Int
+    index     Int
     measures  Measure[]
     section   Section   @relation(fields: [sectionId], references: [id], onDelete: Cascade)
     sectionId Int

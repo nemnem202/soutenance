@@ -1,0 +1,43 @@
+Tempo 60
+Time 4/4
+SwingMode Off
+AllTracks RVolume 80
+AllTracks RTime 80
+Groove BossaNova
+0 CM
+1 /
+2 B7
+3 /
+4 CM
+5 /
+6 E7
+7 A7
+8 Dm7
+9 Dm7 G7
+10 CM
+11 /
+12 B7
+13 /
+14 Em7 Ebdim3
+Groove BossaNovaFill
+15 G7
+Groove BossaNova
+Groove BossaNovaPlus
+16 CM
+17 /
+18 B7
+19 /
+20 CM
+21 /
+22 E7
+23 A7
+24 FM
+25 DM
+26 CM
+27 A7
+28 FM
+29 FM G7
+30 CM FM
+Groove BossaNovaFill
+31 F#dim3 G7
+Groove BossaNovaPlus

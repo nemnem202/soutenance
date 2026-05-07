@@ -1,0 +1,51 @@
+@startuml
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Diagramme de Classe : MMAContentGenerator
+
+class MMAContentGenerator {
+    - usedFills: MMAGrooveName[]
+    - readonly exercise: ExerciseWithForcedChordGrid
+    - readonly groove: MMAGrooveTitle
+
+    + constructor(exercise: ExerciseWithForcedChordGrid, groove: MMAGrooveTitle)
+    + generate(): string
+    
+    - getTimeSignature(timeSig: TimeSignatureSchema): string
+    - getTempo(): string
+    - getHumanisation(): string[]
+    - getGroove(sectionType: SectionType): string
+    - getSections(): string[]
+    - getMeasures(section: SectionSchema): string[]
+    - renderMeasureList(measures: MeasureSchema[], section: SectionSchema, withFill: boolean, ignoreRepeatBars: boolean): string[]
+    - getSingleMeasure(measure: MeasureSchema, isLast?: string): string
+    - getFill(): string | null
+    - getEnd(): string
+}
+
+interface ExerciseWithForcedChordGrid {
+    + defaultConfig: any
+    + chordsGrid: any
+}
+
+enum SectionType << (T, #FF7700) type >> {
+    Intro
+    Outro
+    Verse
+    Refrain
+    ...
+}
+
+' --- Relations ---
+
+MMAContentGenerator o-- ExerciseWithForcedChordGrid : "utilise (données)"
+MMAContentGenerator ..> SectionType : "dépend de"
+MMAContentGenerator ..> MeasureSchema : "traite"
+
+note right of MMAContentGenerator::generate
+  Orchestre la génération du 
+  fichier texte pour MMA
+end note
+
+@enduml

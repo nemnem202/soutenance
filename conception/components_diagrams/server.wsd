@@ -1,0 +1,66 @@
+@startuml
+!theme plain
+skinparam componentStyle uml2
+
+title Architecture Interne du Serveur (Express + Telefunc)
+
+package "Client Side" {
+    [React Application] as front
+}
+
+node "Server Side (Node.js)" {
+    
+    package "Entry Point (PhotonJS/Express)" {
+        [Express App] as app
+        [Cookie Parser] as cp
+        [Telefunc Middleware] as tf_mid
+        [Router /api] as router
+    }
+
+    package "Transport Layer (Telefunc Endpoints)" {
+        component "Telefunc Functions\n(.telefunc.ts)" as tf_files
+        note right of tf_files
+            - add-to-playlist
+            - connexion
+            - search
+            - etc.
+        end note
+    }
+
+    package "Business Logic Layer" {
+        component "Controllers" as ctrl
+        note right of ctrl
+            - ConnexionController
+            - PlaylistController
+            - MidiController
+            - etc.
+        end note
+    }
+
+    package "Data Access Layer" {
+        component "Repositories" as repo
+        note right of repo
+            - userRepository
+            - playlistRepository
+            - exerciseRepository
+            - etc.
+        end note
+    }
+}
+
+database "Database" as db
+
+' Relations
+front --> app : HTTP Requests / RPC Calls
+app --> cp : use()
+app --> tf_mid : apply()
+app --> router : use('/api')
+
+tf_mid --> tf_files : dispatches to
+router --> ctrl : calls
+
+tf_files --> ctrl : calls (Business Logic)
+ctrl --> repo : uses (Data operations)
+repo --> db : queries
+
+@enduml
