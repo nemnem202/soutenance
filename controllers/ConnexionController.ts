@@ -1,5 +1,4 @@
 import argon2 from "argon2";
-import type { Telefunc } from "telefunc";
 import { COOKIE_NAME, generateJwt, getCookieOptions } from "@/lib/auth-utils";
 import { AppError } from "@/lib/errors";
 import UserRepository from "@/repositories/userRepository";
@@ -10,17 +9,17 @@ import { Controller, type ControllerDeps } from "./Controller";
 import FileController from "./FileController";
 
 interface ConnexionDeps extends ControllerDeps {
-  context: Telefunc.Context;
+  setCookie: (name: string, value: string, options: Record<string, unknown>) => void;
 }
 
 export class ConnexionController extends Controller {
   private repository: UserRepository;
-  private context: Telefunc.Context;
+  private setCookie: (name: string, value: string, options: Record<string, unknown>) => void;
 
   constructor(deps: ConnexionDeps) {
     super(deps);
     this.repository = new UserRepository(this.client);
-    this.context = deps.context;
+    this.setCookie = deps.setCookie;
   }
 
   async login(props: LoginData): Promise<ServerResponse<Session>> {
@@ -44,7 +43,7 @@ export class ConnexionController extends Controller {
     }
 
     const token = await generateJwt(user.id, props.remember);
-    this.context.setCookie(COOKIE_NAME, token, getCookieOptions(props.remember));
+    this.setCookie(COOKIE_NAME, token, getCookieOptions(props.remember));
 
     return {
       status: Status.Ok,
@@ -94,7 +93,7 @@ export class ConnexionController extends Controller {
     );
 
     const token = await generateJwt(user.id, true);
-    this.context.setCookie(COOKIE_NAME, token, getCookieOptions(true));
+    this.setCookie(COOKIE_NAME, token, getCookieOptions(true));
 
     return {
       success: true,
@@ -108,7 +107,7 @@ export class ConnexionController extends Controller {
   }
 
   async logout(): Promise<ServerResponse<{}>> {
-    this.context.setCookie(COOKIE_NAME, "", { ...getCookieOptions(false), maxAge: 0 });
+    this.setCookie(COOKIE_NAME, "", { ...getCookieOptions(false), maxAge: 0 });
     return { status: Status.LogoutSuccessfull, success: true, data: {} };
   }
 
