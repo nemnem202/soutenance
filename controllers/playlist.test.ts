@@ -7,6 +7,7 @@ import { Status } from "@/types/server-response";
 import convertAllPlaylists from "@/seed/functions";
 import fs from "node:fs";
 import path from "node:path";
+import FileController from "./FileController";
 
 describe("PlaylistController - Test d'Intégration et Sécurité (Zéro Mock)", () => {
   let userA: { id: number; username: string };
@@ -22,7 +23,6 @@ describe("PlaylistController - Test d'Intégration et Sécurité (Zéro Mock)", 
   };
 
   beforeAll(async () => {
-    // 1. Seed global
     await convertAllPlaylists("forTest");
 
     const createTestUser = async (name: string) =>
@@ -41,9 +41,10 @@ describe("PlaylistController - Test d'Intégration et Sécurité (Zéro Mock)", 
   });
 
   afterAll(async () => {
-    // Nettoyage complet
-    await prismaClient.user.deleteMany({ where: { id: { in: [userA.id, userB.id] } } });
+    await prismaClient.user.deleteMany();
     await prismaClient.playlist.deleteMany();
+    const fileCtrl = new FileController({ client: prismaClient, user: null });
+    await fileCtrl.removeAllAfterTests();
   });
 
   describe("Méthode : createPlaylistFromUser", () => {
@@ -99,7 +100,6 @@ describe("PlaylistController - Test d'Intégration et Sécurité (Zéro Mock)", 
 
       expect(res.success).toBe(false);
 
-      // Vérification : la playlist est toujours là
       const check = await prismaClient.playlist.findUnique({ where: { id: userAPlaylistId } });
       expect(check).not.toBeNull();
     });
