@@ -4,10 +4,9 @@ import prismaClient from "@/lib/prisma-client";
 import PlaylistController from "./PlaylistController";
 import { handleAction } from "@/lib/response-handler";
 import { Status } from "@/types/server-response";
-import convertAllPlaylists from "@/seed/functions";
 import fs from "node:fs";
 import path from "node:path";
-import FileController from "./FileController";
+import { logger } from "@/lib/logger";
 
 describe("PlaylistController - Test d'Intégration et Sécurité (Zéro Mock)", () => {
   let userA: { id: number; username: string };
@@ -23,8 +22,6 @@ describe("PlaylistController - Test d'Intégration et Sécurité (Zéro Mock)", 
   };
 
   beforeAll(async () => {
-    await convertAllPlaylists("forTest");
-
     const createTestUser = async (name: string) =>
       prismaClient.user.create({
         data: {
@@ -43,8 +40,6 @@ describe("PlaylistController - Test d'Intégration et Sécurité (Zéro Mock)", 
   afterAll(async () => {
     await prismaClient.user.deleteMany();
     await prismaClient.playlist.deleteMany();
-    const fileCtrl = new FileController({ client: prismaClient, user: null });
-    await fileCtrl.removeAllAfterTests();
   });
 
   describe("Méthode : createPlaylistFromUser", () => {
@@ -108,7 +103,9 @@ describe("PlaylistController - Test d'Intégration et Sécurité (Zéro Mock)", 
   describe("Gestion du contenu : Exercises", () => {
     it("CAS NOMINAL : Ajouter un exercice à sa propre playlist", async () => {
       const ctrl = new PlaylistController({ client: prismaClient, user: { id: userA.id } });
-      const res = await ctrl.addExerciseToPlaylist(userAPlaylistId, seedExerciseId);
+      const res = await handleAction("AddExerciseToPlaylist", () =>
+        ctrl.addExerciseToPlaylist(userAPlaylistId, seedExerciseId)
+      );
 
       expect(res.success).toBe(true);
 
@@ -131,9 +128,12 @@ describe("PlaylistController - Test d'Intégration et Sécurité (Zéro Mock)", 
 
     it("CAS NOMINAL : Supprimer un exercice de sa playlist", async () => {
       const ctrl = new PlaylistController({ client: prismaClient, user: { id: userA.id } });
-      const res = await ctrl.removeExerciseFromPlaylist(userAPlaylistId, seedExerciseId);
+      const res = await handleAction("Remove exercise from playlist", () =>
+        ctrl.removeExerciseFromPlaylist(userAPlaylistId, seedExerciseId)
+      );
 
       expect(res.success).toBe(true);
+      logger.info("RESPONSE", res);
       const link = await prismaClient.playlistIncludesExercise.findUnique({
         where: {
           exerciseId_playlistId: { playlistId: userAPlaylistId, exerciseId: seedExerciseId },
@@ -150,6 +150,8 @@ describe("PlaylistController - Test d'Intégration et Sécurité (Zéro Mock)", 
         include: { includesExercises: true },
       });
       const exercisesCountBefore = seedPlaylist?.includesExercises.length;
+
+      expect(exercisesCountBefore).toBeGreaterThan(0);
 
       const ctrl = new PlaylistController({ client: prismaClient, user: { id: userA.id } });
       const res = await ctrl.addPlaylistToPlaylist(userAPlaylistId, seedPlaylist?.id as number);
