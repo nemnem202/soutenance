@@ -45,9 +45,9 @@ describe("ConnexionController - Test d'Intégration Complet (Zéro Mock)", () =>
   });
 
   afterAll(async () => {
-    await prismaClient.user.deleteMany({
-      where: { email: { contains: uniqueId } },
-    });
+    // await prismaClient.user.deleteMany({
+    //   where: { email: { contains: uniqueId } },
+    // });
   });
 
   describe("Méthode : register", () => {

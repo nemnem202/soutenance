@@ -54,9 +54,9 @@ describe("Midi generation", async () => {
 });
 
 afterAll(async () => {
-  await prismaClient.user.deleteMany({
-    where: {
-      OR: [{ username: userData.username }],
-    },
-  });
+  // await prismaClient.user.deleteMany({
+  //   where: {
+  //     OR: [{ username: userData.username }],
+  //   },
+  // });
 });

@@ -38,8 +38,8 @@ describe("PlaylistController - Test d'Intégration et Sécurité (Zéro Mock)", 
   });
 
   afterAll(async () => {
-    await prismaClient.user.deleteMany();
-    await prismaClient.playlist.deleteMany();
+    // await prismaClient.user.deleteMany();
+    // await prismaClient.playlist.deleteMany();
   });
 
   describe("Méthode : createPlaylistFromUser", () => {
