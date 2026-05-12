@@ -2,6 +2,7 @@ import argon2 from "argon2";
 import type { UserCardDto, UserDetailsDto } from "@/types/dtos/user";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Repository } from "./repository";
+import { AppError } from "@/lib/errors";
 
 export default class UserRepository extends Repository {
   async create(
@@ -44,13 +45,33 @@ export default class UserRepository extends Repository {
   async updateImage(fileUpload: { url: string; imageId: string }, userId: number) {
     return await this.client.user.update({
       where: { id: userId },
-      data: { profilePicture: { update: { url: fileUpload.url, cloudId: fileUpload.imageId } } },
+      data: {
+        profilePicture: {
+          upsert: {
+            create: {
+              url: fileUpload.url,
+              cloudId: fileUpload.imageId,
+              alt: `The profile picture of the user`,
+            },
+            update: { url: fileUpload.url, cloudId: fileUpload.imageId },
+          },
+        },
+      },
       include: { profilePicture: true },
     });
   }
 
   async delete(userId: number) {
-    await this.client.user.delete({ where: { id: userId } });
+    const user = await this.client.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    if (!user) {
+      throw new AppError(Status.BadRequest, "Tried to delete a user that does not exist");
+    } else {
+      await this.client.user.delete({ where: { id: userId } });
+    }
   }
 
   async getRecommended(
