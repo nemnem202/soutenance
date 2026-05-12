@@ -2,6 +2,7 @@ import argon2 from "argon2";
 import type { UserCardDto, UserDetailsDto } from "@/types/dtos/user";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Repository } from "./repository";
+import { AppError } from "@/lib/errors";
 
 export default class UserRepository extends Repository {
   async create(
@@ -42,11 +43,28 @@ export default class UserRepository extends Repository {
   }
 
   async updateImage(fileUpload: { url: string; imageId: string }, userId: number) {
-    return await this.client.user.update({
+    // 1. Récupérer l'imageId actuel du user
+    const user = await this.client.user.findUnique({
       where: { id: userId },
-      data: { profilePicture: { update: { url: fileUpload.url, cloudId: fileUpload.imageId } } },
+      select: { imageId: true },
+    });
+
+    if (!user) throw new Error(`User ${userId} not found`);
+
+    // 2. Mettre à jour l'Image directement
+    await this.client.image.update({
+      where: { id: user.imageId },
+      data: { url: fileUpload.url, cloudId: fileUpload.imageId },
+    });
+
+    // 3. Retourner le user avec la relation à jour
+    const updatedUser = await this.client.user.findUnique({
+      where: { id: userId },
       include: { profilePicture: true },
     });
+
+    if (!updatedUser) throw new AppError(Status.UnknownError, "Cannot update user image");
+    return updatedUser;
   }
 
   async delete(userId: number) {
