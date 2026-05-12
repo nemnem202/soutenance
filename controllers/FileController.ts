@@ -59,28 +59,9 @@ export default class FileController extends Controller {
 
   async handleUserImageChange(): Promise<ServerResponse<Session>> {
     const userId = this.okUser();
-    try {
-      await this.removeUserImage(userId);
-    } catch (err) {
-      throw new AppError(Status.UnknownError, "Could not remove user image");
-    }
-
-    let fileUpload: { url: string; imageId: string };
-
-    let update: Session;
-
-    try {
-      fileUpload = await this.uploadFileAsImage();
-    } catch (err) {
-      throw new AppError(Status.UnknownError, "Could not upload file");
-    }
-
-    try {
-      update = await this.repository.updateImage(fileUpload, userId);
-    } catch (err) {
-      console.error("updateImage error:", err);
-      throw new AppError(Status.UnknownError, "Could not update image");
-    }
+    const fileUpload = await this.uploadFileAsImage();
+    const update = await this.repository.updateImage(fileUpload, userId);
+    await this.removeUserImage(userId);
     return {
       success: true,
       status: Status.Ok,
@@ -98,20 +79,8 @@ export default class FileController extends Controller {
       include: { profilePicture: true },
     });
 
-    if (!existingUser?.profilePicture) {
-      console.error("This user does not have a profile picture", userId);
-      return;
-    }
-
-    if (!existingUser.profilePicture.cloudId) {
-      console.error("The pp of this user cannot be deleted since it's a placeholder", userId);
-      return;
-    }
-
-    try {
+    if (existingUser?.profilePicture.cloudId) {
       await cloudinary.uploader.destroy(existingUser.profilePicture.cloudId);
-    } catch (err) {
-      console.error("L'image cloud n'a pas été supprimée: ", err);
     }
   }
 

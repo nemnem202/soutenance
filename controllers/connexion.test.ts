@@ -243,9 +243,7 @@ describe("ConnexionController - Test d'Intégration Complet (Zéro Mock)", () =>
       });
 
       const res = await handleAction("Remove", () => ctrl.removeAccount());
-      console.info(res);
       expect(res.success).toBe(true);
-
       const checkUser = await prismaClient.user.findUnique({ where: { id: registeredUserId } });
       expect(checkUser).toBeNull();
       const checkAuth = await prismaClient.classicAuthMethod.findUnique({

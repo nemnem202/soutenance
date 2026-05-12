@@ -68,18 +68,13 @@ describe("FileController - Test d'Intégration Cloudinary & DB (Zéro Mock)", ()
       expect(res.status).toBe(Status.NotConnected);
     });
 
-    it("CAS NOMINAL : Changer de photo de profil", async () => {
-      console.info("Changer de photo de profil...");
+    it("CAS NOMINAL : Cycle complet (Suppression ancienne -> Upload nouvelle -> Update DB)", async () => {
       const file = getFile("default");
-      expect(testUser.id).toBeDefined();
-      expect(file).toBeDefined();
-      console.info("le fichier: ", file);
       const ctrl = new FileController({ client: prismaClient, user: { id: testUser.id }, file });
 
       const res = await handleAction("Full Update", () => ctrl.handleUserImageChange());
-      console.info("Changer de photo de profil: DONE", res);
-      expect(res.success).toBe(true);
 
+      expect(res.success).toBe(true);
       if (res.success) {
         expect(res.data.profilePicture.url).toContain("cloudinary.com");
         const updatedUser = await prismaClient.user.findUnique({

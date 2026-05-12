@@ -35,7 +35,7 @@ export const logger = {
     !isTest && console.log(...formatLog("draw", msg), ...args);
   },
   error: (msg: string, ...args: any[]) => {
-    !isTest && console.error(...formatLog("error", msg), ...args);
+    console.error(...formatLog("error", msg), ...args);
   },
   table: (data: any, msg?: string) => {
     if (msg) console.log(...formatLog("info", msg));
