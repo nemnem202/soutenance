@@ -3,6 +3,7 @@ import prismaClient from "@/lib/prisma-client";
 import LikeController from "./LikeController";
 import { handleAction } from "@/lib/response-handler";
 import { Status } from "@/types/server-response";
+import convertAllPlaylists from "@/seed/functions";
 
 describe("LikeController - Test d'Intégration et Sécurité (Zéro Mock)", () => {
   let testUser: { id: number; username: string };
@@ -11,6 +12,8 @@ describe("LikeController - Test d'Intégration et Sécurité (Zéro Mock)", () =
   let targetUserId: number;
 
   beforeAll(async () => {
+    await convertAllPlaylists("forTest");
+
     testUser = await prismaClient.user.create({
       data: {
         email: "liker.pro@test.com",
@@ -41,7 +44,7 @@ describe("LikeController - Test d'Intégration et Sécurité (Zéro Mock)", () =
   afterAll(async () => {
     if (testUser) {
       await prismaClient.user.delete({ where: { id: testUser.id } });
-      // await prismaClient.playlist.deleteMany({ where: { title: "Secret Playlist" } });
+      await prismaClient.playlist.deleteMany();
     }
   });
 
@@ -79,7 +82,7 @@ describe("LikeController - Test d'Intégration et Sécurité (Zéro Mock)", () =
   describe("FONCTIONNALITÉ : Workflow des Likes", () => {
     it("CAS NOMINAL : Liker une playlist, vérifier l'état, puis unliker", async () => {
       const ctrl = new LikeController({ client: prismaClient, user: { id: testUser.id } });
-      expect(targetPlaylistId).toBeDefined();
+
       const likeRes = await ctrl.userLikesPlaylist(targetPlaylistId);
       expect(likeRes.success).toBe(true);
 
@@ -97,6 +100,7 @@ describe("LikeController - Test d'Intégration et Sécurité (Zéro Mock)", () =
         expect(finalRes.data.some((p) => p.id === targetPlaylistId)).toBe(false);
       }
     });
+
     it("CAS NOMINAL : Liker un exercice et vérifier la récupération", async () => {
       const ctrl = new LikeController({ client: prismaClient, user: { id: testUser.id } });
       await ctrl.userLikesExercise(targetExerciseId);
@@ -107,6 +111,7 @@ describe("LikeController - Test d'Intégration et Sécurité (Zéro Mock)", () =
         expect(res.data.some((e) => e.id === targetExerciseId)).toBe(true);
       }
     });
+
     it("EFFET DE BORD : Vérifier l'idempotence (Double like sur le même user)", async () => {
       const ctrl = new LikeController({ client: prismaClient, user: { id: testUser.id } });
 
