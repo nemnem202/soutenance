@@ -115,17 +115,8 @@ export class ConnexionController extends Controller {
     const userId = this.okUser();
 
     const fileController = new FileController({ client: this.client, user: this.user });
-    try {
-      await fileController.removeUserImage(userId);
-    } catch (err) {
-      throw new AppError(Status.UnknownError, "Could not remove user image");
-    }
-
-    try {
-      await this.repository.delete(userId);
-    } catch (err) {
-      throw new AppError(Status.UnknownError, "Could not delete user");
-    }
+    await fileController.removeUserImage(userId);
+    await this.repository.delete(userId);
 
     await this.logout();
 

@@ -26,31 +26,9 @@ seed-prod:
 	docker exec -it music-sandbox-app-prod node dist/seed/seed.mjs
 	
 free-space:
-	@echo "=== Containers arrêtés ==="
-	docker container prune -f
-
-	@echo "=== Images inutilisées ==="
-	docker image prune -a -f
-
-	@echo "=== Volumes orphelins ==="
 	docker volume prune -f
-
-	@echo "=== Networks inutilisés ==="
-	docker network prune -f
-
-	@echo "=== Cache de build (BuildKit) ==="
-	docker buildx prune -a -f
-
-	@echo "=== Logs des containers (truncate) ==="
-	@for cid in $$(docker ps -q); do \
-		log=$$(docker inspect --format='{{.LogPath}}' $$cid); \
-		if [ -n "$$log" ] && [ -f "$$log" ]; then \
-			truncate -s 0 $$log && echo "Log vidé : $$log"; \
-		fi \
-	done
-
-	@echo "=== Résumé espace récupéré ==="
-	docker system df
+	docker image prune -a -f
+	docker container prune -f
 
 get-mma-grooves: 
 	docker exec music-sandbox-app-dev bash -c 'find /opt/mma/lib -name "*.mma" -exec python3 /opt/mma/mma.py -Dbo {} \; | grep -E "^[a-zA-Z0-9_-]+$" | sort -u' > all_grooves.txt

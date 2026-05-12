@@ -4,9 +4,6 @@ model Image {
     alt     String  @db.VarChar(255)
     cloudId String?
 
-    userId Int?  @unique
-    user   User? @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    playlistId Int?      @unique
-    playlist   Playlist? @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+    users     User[]
+    playlists Playlist[]
 }
