@@ -3,7 +3,8 @@ model Playlist {
     title             String                     @db.VarChar(100)
     description       String?                    @db.VarChar(500)
     visibility        Visibility                 @default(private)
-    cover             Image?
+    cover             Image                      @relation(fields: [imageId], references: [id], onDelete: Cascade)
+    imageId           Int
     createdAt         DateTime                   @default(now())
     updatedAt         DateTime                   @updatedAt
     createdExercises  Exercise[]                 @relation("Origin")
