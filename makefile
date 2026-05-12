@@ -1,3 +1,5 @@
+.PHONY: dev test coverage ci prod
+
 dev:
 	docker compose --env-file .env.dev -f docker-compose.dev.yml up --build
 test:
@@ -16,6 +18,8 @@ clear-prod:
 
 clear-test:
 	docker compose -f docker-compose.test.yml down -v
+clear-coverage:
+	docker compose -f docker-compose.coverage.yml down -v
 
 update-db:
 	pnpx prisma migrate dev

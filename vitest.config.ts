@@ -9,7 +9,9 @@ export default defineConfig({
     fileParallelism: false,
     isolate: true,
     coverage: {
+      provider: "v8",
       include: ["controllers/**/*.{ts,tsx}"],
+      reporter: ["text", "html"],
     },
   },
   resolve: {
