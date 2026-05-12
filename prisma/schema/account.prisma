@@ -1,11 +1,11 @@
 model User {
-   id             Int      @id @default(autoincrement())
-   email          String   @unique @db.VarChar(255)
-   username       String   @unique @db.VarChar(20)
-   createdAt      DateTime @default(now())
-   updatedAt      DateTime @updatedAt
-   profilePicture Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
-   imageId        Int
+   id        Int      @id @default(autoincrement())
+   email     String   @unique @db.VarChar(255)
+   username  String   @unique @db.VarChar(20)
+   createdAt DateTime @default(now())
+   updatedAt DateTime @updatedAt
+
+   profilePicture Image?
 
    authMethods              AuthMethod[]
    classicAuthMethod        ClassicAuthMethod?
@@ -16,6 +16,7 @@ model User {
    likedExercises           UserLikesExercise[]
    likingUser               UserLikesUser[]           @relation("LikingUser")
    likedByUsers             UserLikesUser[]           @relation("LikedByUsers")
+   imageId                  Int?
 }
 
 model ClassicAuthMethod {
