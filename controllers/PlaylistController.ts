@@ -69,7 +69,12 @@ export default class PlaylistController extends Controller {
 
   async removePlaylist(playlistId: number): Promise<ServerResponse<null>> {
     const userId = this.okUser();
-    return await this.repository.removePlaylist(playlistId, userId);
+    const foundedPlaylist = await this.repository.getSingleFromId(playlistId, userId);
+    if (!foundedPlaylist.success)
+      throw new AppError(Status.NotFound, "The playlist cloud not be found");
+    const fileController = new FileController({ client: this.client, user: { id: userId } });
+    await fileController.removePlaylistImage(foundedPlaylist.data.id);
+    return await this.repository.removePlaylist(foundedPlaylist.data.id, userId);
   }
 
   async addPlaylistToPlaylist(

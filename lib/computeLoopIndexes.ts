@@ -30,7 +30,7 @@ export function computeLoopIndexes(sections: SectionSchema[]): SectionWithLoopIn
     const sortedCommon = [...section.commonMeasures].sort((a, b) => a.index - b.index);
 
     if (hasVoltas) {
-      const sortedVoltas = [...section.voltas].sort((a, b) => a.volta - b.volta);
+      const sortedVoltas = [...section.voltas].sort((a, b) => a.index - b.index);
 
       for (const volta of sortedVoltas) {
         for (const m of sortedCommon) track(m.index);
@@ -69,7 +69,7 @@ export function computeLoopIndexes(sections: SectionSchema[]): SectionWithLoopIn
     ...section,
     commonMeasures: section.commonMeasures.map(inject),
     voltas: section.voltas.map((v) => ({
-      ...v,
+      volta: v.index,
       measures: v.measures.map(inject),
     })),
   }));

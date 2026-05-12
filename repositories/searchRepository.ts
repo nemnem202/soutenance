@@ -175,7 +175,7 @@ export default class SearchRepository extends Repository {
             },
           },
         },
-        midifile: true,
+
         chordsGrid: true,
         fromPlaylist: {
           select: {
@@ -194,6 +194,7 @@ export default class SearchRepository extends Repository {
         defaultConfig: {
           select: {
             bpm: true,
+            midifile: true,
           },
         },
         title: true,
@@ -214,7 +215,7 @@ export default class SearchRepository extends Repository {
           ...exercise,
           inUserPlaylists: [],
           likedByCurrentUser: !!(exercise as any).likedByUsers?.length,
-          midifileUrl: !!exercise.midifile,
+          midifileUrl: !!exercise.defaultConfig.midifile,
           likes: exercise._count.likedByUsers,
           chordsGrid: !!exercise.chordsGrid,
           cover: exercise.fromPlaylist.cover,

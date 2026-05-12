@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Intentional */
 
+const isTest = import.meta.env.MODE === "test";
 type LogLevel = "info" | "success" | "warn" | "error" | "draw";
 
 const colors = {
@@ -22,22 +23,22 @@ const formatLog = (level: LogLevel, message: string) => {
 
 export const logger = {
   info: (msg: string, ...args: any[]) => {
-    console.log(...formatLog("info", msg), ...args);
+    !isTest && console.log(...formatLog("info", msg), ...args);
   },
   success: (msg: string, ...args: any[]) => {
-    console.log(...formatLog("success", msg), ...args);
+    !isTest && console.log(...formatLog("success", msg), ...args);
   },
   warn: (msg: string, ...args: any[]) => {
-    console.warn(...formatLog("warn", msg), ...args);
+    !isTest && console.warn(...formatLog("warn", msg), ...args);
   },
   draw: (msg: string, ...args: any[]) => {
-    console.log(...formatLog("draw", msg), ...args);
+    !isTest && console.log(...formatLog("draw", msg), ...args);
   },
   error: (msg: string, ...args: any[]) => {
     console.error(...formatLog("error", msg), ...args);
   },
   table: (data: any, msg?: string) => {
     if (msg) console.log(...formatLog("info", msg));
-    console.table(data);
+    !isTest && console.table(data);
   },
 };

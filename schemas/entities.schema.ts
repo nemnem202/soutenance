@@ -108,7 +108,7 @@ export const measureSchema = z.object({
 });
 
 export const voltaSchema = z.object({
-  volta: z.int(),
+  index: z.int(),
   measures: z.array(measureSchema).max(200, "The volta has too many measures"),
 });
 

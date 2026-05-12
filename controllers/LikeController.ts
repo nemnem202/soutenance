@@ -219,6 +219,7 @@ export default class LikeController extends Controller {
         defaultConfig: {
           select: {
             bpm: true,
+            midifile: true,
           },
         },
         chordsGrid: {
@@ -231,7 +232,7 @@ export default class LikeController extends Controller {
             likedByUsers: true,
           },
         },
-        midifile: true,
+        // midifile: true,
       },
     });
 
@@ -253,7 +254,7 @@ export default class LikeController extends Controller {
         inUserPlaylists: [],
         likedByCurrentUser: true,
         likes: e._count.likedByUsers,
-        midifileUrl: !!e.midifile,
+        midifileUrl: !!e.defaultConfig.midifile,
       })),
     };
   }
