@@ -1,6 +1,9 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Intentional */
 
-const isTest = import.meta.env.MODE === "test";
+// import { env } from "./env";
+
+// const isTest = import.meta.env.MODE === "test";
+const isTest = false;
 type LogLevel = "info" | "success" | "warn" | "error" | "draw";
 
 const colors = {
