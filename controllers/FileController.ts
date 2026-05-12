@@ -59,10 +59,9 @@ export default class FileController extends Controller {
 
   async handleUserImageChange(): Promise<ServerResponse<Session>> {
     const userId = this.okUser();
-    await this.removeUserImage(userId);
     const fileUpload = await this.uploadFileAsImage();
     const update = await this.repository.updateImage(fileUpload, userId);
-
+    await this.removeUserImage(userId);
     return {
       success: true,
       status: Status.Ok,
@@ -82,6 +81,34 @@ export default class FileController extends Controller {
 
     if (existingUser?.profilePicture.cloudId) {
       await cloudinary.uploader.destroy(existingUser.profilePicture.cloudId);
+    }
+  }
+
+  async removeAllAfterTests() {
+    if (env.NODE_ENV !== "test" || !this.image_folder.toLowerCase().includes("test")) {
+      logger.warn("Tentative de suppression des assets hors environnement de test annulée.");
+      return;
+    }
+
+    try {
+      logger.info(`Nettoyage du dossier Cloudinary : ${this.image_folder}`);
+
+      await cloudinary.api.delete_resources_by_prefix(this.image_folder);
+
+      logger.info("Tous les assets de test ont été supprimés.");
+    } catch (error) {
+      logger.error("Erreur lors du nettoyage Cloudinary", error);
+    }
+  }
+
+  async removePlaylistImage(id: number) {
+    const existingPlaylist = await this.client.playlist.findUnique({
+      where: { id: id },
+      include: { cover: true },
+    });
+
+    if (existingPlaylist?.cover.cloudId) {
+      await cloudinary.uploader.destroy(existingPlaylist.cover.cloudId);
     }
   }
 }

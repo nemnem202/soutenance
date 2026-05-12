@@ -33,7 +33,7 @@ export default function RegisterForm({ onSuccess }: { onSuccess: () => void }) {
                     alt="playlist cover"
                     // src={field.value}
                     onImageChange={(source) => field.onChange(source)}
-                    canBeEdited={false}
+                    // canBeEdited={false}
                   />
                 </div>
               </div>

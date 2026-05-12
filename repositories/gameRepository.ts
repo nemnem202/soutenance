@@ -32,11 +32,6 @@ export default class GameRepository extends Repository {
             },
           },
         },
-        midifile: {
-          select: {
-            url: true,
-          },
-        },
         defaultConfig: {
           select: {
             bpm: true,
@@ -44,6 +39,11 @@ export default class GameRepository extends Repository {
             groove: true,
             timeSignatureTop: true,
             timeSignatureBottom: true,
+            midifile: {
+              select: {
+                url: true,
+              },
+            },
           },
         },
         chordsGrid: {
@@ -55,7 +55,7 @@ export default class GameRepository extends Repository {
                 index: true,
                 voltas: {
                   select: {
-                    volta: true,
+                    index: true,
                     measures: {
                       select: {
                         index: true,
@@ -192,7 +192,7 @@ export default class GameRepository extends Repository {
             label: section.label,
             type: section.type as SectionSchema["type"],
             voltas: section.voltas.map((volta) => ({
-              volta: volta.volta,
+              index: volta.index,
               measures: volta.measures.map((measure) => ({
                 index: measure.index,
                 bars: measure.bars,
@@ -213,7 +213,7 @@ export default class GameRepository extends Repository {
       status: Status.Ok,
       data: {
         ...exercise,
-        midifileUrl: exercise.midifile?.url,
+        midifileUrl: exercise.defaultConfig.midifile?.url,
         chordsGrid: chordsGrid,
       } as Exercise,
     };

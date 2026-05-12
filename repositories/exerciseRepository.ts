@@ -43,20 +43,24 @@ export default class ExerciseRepository extends Repository {
       defaultConfig: {
         create: {
           ...exercise.defaultConfig,
+          midifile: exercise.midifileUrl
+            ? {
+                connectOrCreate: {
+                  where: {
+                    url: exercise.midifileUrl,
+                  },
+                  create: {
+                    url: exercise.midifileUrl,
+                  },
+                },
+              }
+            : undefined,
         },
       },
       chordsGrid: exercise.chordsGrid
         ? {
             create: {
               ...this.chordsGridMapper(exercise.chordsGrid),
-            },
-          }
-        : undefined,
-
-      midifile: exercise.midifileUrl
-        ? {
-            create: {
-              url: exercise.midifileUrl,
             },
           }
         : undefined,
@@ -100,7 +104,7 @@ export default class ExerciseRepository extends Repository {
 
   private voltaMapper(volta: VoltaSchema): Prisma.VoltaBracketCreateWithoutSectionInput {
     return {
-      volta: volta.volta,
+      index: volta.index,
       measures: {
         create: volta.measures.map((measure) => this.measureMapper(measure)),
       },

@@ -1,212 +1,255 @@
-import argon2 from "argon2";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { COOKIE_NAME } from "@/lib/auth-utils";
-import { AppError } from "@/lib/errors";
+// controllers/connexion.test.ts
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import prismaClient from "@/lib/prisma-client";
-import { Status } from "@/types/server-response";
+import UserRepository from "@/repositories/userRepository";
+import { faker } from "@faker-js/faker";
+import fs from "node:fs";
+import path from "node:path";
 import { ConnexionController } from "./ConnexionController";
+import { handleAction } from "@/lib/response-handler";
+import { Status } from "@/types/server-response";
+import { COOKIE_NAME } from "@/lib/auth-utils";
 
-vi.mock("cloudinary", () => ({
-  v2: {
-    config: vi.fn(),
-    uploader: {
-      upload_stream: vi.fn((_options, callback) => {
-        const { PassThrough } = require("node:stream");
-        const mockStream = new PassThrough();
-
-        mockStream.on("finish", () => {
-          callback(null, {
-            secure_url: "https://res.cloudinary.com/mock/image.webp",
-            public_id: "test_public_id",
-          });
-        });
-
-        return mockStream;
-      }),
-      destroy: vi.fn().mockResolvedValue({ result: "ok" }),
-    },
-  },
-}));
-
-const mockFile = new File(["content"], "avatar.webp", { type: "image/webp" });
-
-const createMockContext = (userId: number | null = null) => {
-  const cookies: Record<string, { value: string; options: any }> = {};
-
-  return {
-    user: userId ? { id: userId } : null,
-    setCookie: vi.fn((name: string, value: string, options: any) => {
-      cookies[name] = { value, options };
-    }),
-    request: new Request("http://localhost"),
-
-    getCookie: (name: string) => cookies[name],
+describe("ConnexionController - Test d'Intégration Complet (Zéro Mock)", () => {
+  const uniqueId = faker.string.alphanumeric(8);
+  const testUsername = `User_${uniqueId}`;
+  const testEmail = `${uniqueId}@sandbox.com`;
+  const testPassword = "Password123!";
+  const otherUser = {
+    username: `Other_${uniqueId}`,
+    email: `other_${uniqueId}@sandbox.com`,
   };
-};
 
-describe("ConnexionController Integration", () => {
-  let controller: ConnexionController;
-  let context: ReturnType<typeof createMockContext>;
+  let registeredUserId: number;
+  let lastCookie: { name: string; value: string; options: any } | null = null;
 
-  beforeEach(async () => {
-    await prismaClient.classicAuthMethod.deleteMany();
-    await prismaClient.authMethod.deleteMany();
-    await prismaClient.user.deleteMany();
-    await prismaClient.image.deleteMany();
+  const mockSetCookie = (name: string, value: string, options: any) => {
+    lastCookie = { name, value, options };
+  };
+
+  const getFile = (name: "default" | "large") => {
+    const fileName = name === "large" ? "too-large-image.jpg" : "account-default-pic.webp";
+    const buffer = fs.readFileSync(path.resolve(process.cwd(), `assets/images/${fileName}`));
+    return new File([buffer], fileName, { type: name === "large" ? "image/jpeg" : "image/webp" });
+  };
+
+  beforeAll(async () => {
+    await new UserRepository(prismaClient).create(
+      otherUser.email,
+      otherUser.username,
+      "Alt",
+      "https://res.cloudinary.com/demo/image/upload/sample.jpg",
+      "sample_id",
+      testPassword
+    );
   });
 
-  describe("Register", () => {
-    it("should register a user and set a session cookie", async () => {
-      const data = {
-        username: "testuser",
-        email: "test@example.com",
-        password: "password123",
-        password_confirm: "password123",
-        agree_terms_of_service: true,
-        image: { file: mockFile, alt: "My avatar" },
-      };
+  afterAll(async () => {
+    // await prismaClient.user.deleteMany({
+    //   where: { email: { contains: uniqueId } },
+    // });
+  });
 
-      context = createMockContext();
-      controller = new ConnexionController({ client: prismaClient, context, user: null });
-
-      const result = await controller.register(data);
-
-      const user = await prismaClient.user.findUnique({
-        where: { email: data.email },
-        include: { profilePicture: true, classicAuthMethod: true },
+  describe("Méthode : register", () => {
+    it("SÉCURITÉ : Échoue si les conditions d'utilisation ne sont pas acceptées", async () => {
+      const ctrl = new ConnexionController({
+        client: prismaClient,
+        user: null,
+        setCookie: mockSetCookie,
       });
-
-      expect(user).toBeDefined();
-      expect(user?.username).toBe("testuser");
-      expect(user?.profilePicture.url).toBeDefined();
-
-      expect(context.setCookie).toHaveBeenCalledWith(
-        COOKIE_NAME,
-        expect.any(String),
-        expect.objectContaining({ httpOnly: true })
+      const res = await handleAction("Register", () =>
+        ctrl.register({
+          username: testUsername,
+          email: testEmail,
+          password: testPassword,
+          password_confirm: testPassword,
+          agree_terms_of_service: false, // <--- Fails here
+          image: { file: getFile("default"), alt: "alt" },
+        })
       );
-
-      if (!result.success) throw new Error("Le contrôleur aurait dû réussir");
-
-      expect(result.success).toBe(true);
-      expect(result.data.id).toBe(user?.id);
+      expect(res.success).toBe(false);
+      expect(res.status).toBe(Status.IncorrectRegisterData);
     });
 
-    it("should throw AppError if email already exists", async () => {
-      await prismaClient.user.create({
-        data: {
-          email: "exists@test.com",
-          username: "user1",
-          profilePicture: { create: { url: "...", alt: "..." } },
-        },
+    it("SÉCURITÉ : Échoue si le mot de passe est trop court", async () => {
+      const ctrl = new ConnexionController({
+        client: prismaClient,
+        user: null,
+        setCookie: mockSetCookie,
       });
-
-      const data = {
-        username: "user2",
-        email: "exists@test.com",
-        password: "password123",
-        password_confirm: "password123",
-        agree_terms_of_service: true,
-        image: { file: mockFile, alt: "..." },
-      };
-
-      context = createMockContext();
-      controller = new ConnexionController({ client: prismaClient, context, user: null });
-
-      await expect(controller.register(data)).rejects.toThrow(
-        new AppError(Status.ExistingEmail, "Email déjà utilisé")
+      const res = await handleAction("Register", () =>
+        ctrl.register({
+          username: testUsername,
+          email: testEmail,
+          password: "123",
+          password_confirm: "123",
+          agree_terms_of_service: true,
+          image: { file: getFile("default"), alt: "alt" },
+        })
       );
+      expect(res.success).toBe(false);
+    });
+
+    it("SÉCURITÉ : Échoue si l'image dépasse la limite (5MB)", async () => {
+      const ctrl = new ConnexionController({
+        client: prismaClient,
+        user: null,
+        setCookie: mockSetCookie,
+      });
+      const res = await handleAction("Register", () =>
+        ctrl.register({
+          username: testUsername,
+          email: testEmail,
+          password: testPassword,
+          password_confirm: testPassword,
+          agree_terms_of_service: true,
+          image: { file: getFile("large"), alt: "alt" },
+        })
+      );
+      expect(res.success).toBe(false);
+      expect(res.status).toBe(Status.IncorrectRegisterData);
+    });
+
+    it("SÉCURITÉ : Échoue si le nom d'utilisateur est déjà pris", async () => {
+      const ctrl = new ConnexionController({
+        client: prismaClient,
+        user: null,
+        setCookie: mockSetCookie,
+      });
+      const res = await handleAction("Register", () =>
+        ctrl.register({
+          username: otherUser.username,
+          email: testEmail,
+          password: testPassword,
+          password_confirm: testPassword,
+          agree_terms_of_service: true,
+          image: { file: getFile("default"), alt: "alt" },
+        })
+      );
+      expect(res.success).toBe(false);
+      expect(res.status).toBe(Status.ExistingUsername);
+    });
+
+    it("CAS NOMINAL : Réussit l'enregistrement avec upload Cloudinary réel", async () => {
+      const ctrl = new ConnexionController({
+        client: prismaClient,
+        user: null,
+        setCookie: mockSetCookie,
+      });
+      const res = await handleAction("Register", () =>
+        ctrl.register({
+          username: testUsername,
+          email: testEmail,
+          password: testPassword,
+          password_confirm: testPassword,
+          agree_terms_of_service: true,
+          image: { file: getFile("default"), alt: "Mon Avatar" },
+        })
+      );
+
+      expect(res.success).toBe(true);
+      if (res.success) {
+        expect(res.data.username).toBe(testUsername);
+        expect(res.data.profilePicture.url).toContain("cloudinary");
+        registeredUserId = res.data.id;
+      }
+      expect(lastCookie?.name).toBe(COOKIE_NAME);
     });
   });
 
-  describe("Login", () => {
-    it("should login successfully with correct credentials", async () => {
-      const hashedPassword = await argon2.hash("securepassword");
-      const _user = await prismaClient.user.create({
-        data: {
-          email: "login@test.com",
-          username: "loginuser",
-          profilePicture: { create: { url: "...", alt: "..." } },
-          classicAuthMethod: { create: { password: hashedPassword } },
-        },
+  describe("Méthode : login", () => {
+    it("SÉCURITÉ : Échoue avec un mauvais mot de passe", async () => {
+      const ctrl = new ConnexionController({
+        client: prismaClient,
+        user: null,
+        setCookie: mockSetCookie,
       });
-      context = createMockContext();
-      controller = new ConnexionController({ client: prismaClient, context, user: null });
-
-      const result = await controller.login({
-        email: "login@test.com",
-        password: "securepassword",
-        remember: true,
-      });
-      if (!result.success) throw new Error("Le contrôleur aurait dû réussir");
-      expect(result.data.username).toBe("loginuser");
-      expect(context.setCookie).toHaveBeenCalled();
-    });
-
-    it("should fail login with wrong password", async () => {
-      const hashedPassword = await argon2.hash("password");
-      await prismaClient.user.create({
-        data: {
-          email: "fail@test.com",
-          username: "fail",
-          profilePicture: { create: { url: "...", alt: "..." } },
-          classicAuthMethod: { create: { password: hashedPassword } },
-        },
-      });
-
-      context = createMockContext();
-      controller = new ConnexionController({ client: prismaClient, context, user: null });
-
-      await expect(
-        controller.login({
-          email: "fail@test.com",
-          password: "wrong_password",
+      const res = await handleAction("Login", () =>
+        ctrl.login({
+          email: testEmail,
+          password: "WrongPassword!",
           remember: false,
         })
-      ).rejects.toThrow(AppError);
-    });
-  });
-
-  describe("Logout", () => {
-    it("should clear the session cookie", async () => {
-      const user = await prismaClient.user.create({
-        data: {
-          email: "logout@test.com",
-          username: "logout-me",
-          profilePicture: { create: { url: "...", alt: "...", cloudId: "test_id" } },
-        },
-      });
-
-      context = createMockContext(user.id);
-      controller = new ConnexionController({ client: prismaClient, context, user });
-
-      await controller.logout();
-
-      expect(context.setCookie).toHaveBeenCalledWith(
-        COOKIE_NAME,
-        "",
-        expect.objectContaining({ maxAge: 0 })
       );
+      expect(res.success).toBe(false);
+      expect(res.status).toBe(Status.IncorrectPassword);
+    });
+
+    it("SÉCURITÉ : Échoue si l'email n'existe pas", async () => {
+      const ctrl = new ConnexionController({
+        client: prismaClient,
+        user: null,
+        setCookie: mockSetCookie,
+      });
+      const res = await handleAction("Login", () =>
+        ctrl.login({
+          email: "nonono@test.com",
+          password: testPassword,
+          remember: false,
+        })
+      );
+      expect(res.success).toBe(false);
+    });
+
+    it("CAS NOMINAL : Réussit la connexion et génère un JWT", async () => {
+      const ctrl = new ConnexionController({
+        client: prismaClient,
+        user: null,
+        setCookie: mockSetCookie,
+      });
+      const res = await handleAction("Login", () =>
+        ctrl.login({
+          email: testEmail,
+          password: testPassword,
+          remember: true,
+        })
+      );
+      expect(res.success).toBe(true);
+      expect(lastCookie?.value).toBeDefined();
+      expect(lastCookie?.options.maxAge).toBeGreaterThan(3600);
     });
   });
 
-  describe("Remove Account", () => {
-    it("should delete user and related images from DB", async () => {
-      const user = await prismaClient.user.create({
-        data: {
-          email: "delete@test.com",
-          username: "delete-me",
-          profilePicture: { create: { url: "...", alt: "...", cloudId: "test_id" } },
-        },
+  describe("Méthode : logout", () => {
+    it("CAS NOMINAL : Réinitialise le cookie de session", async () => {
+      const ctrl = new ConnexionController({
+        client: prismaClient,
+        user: { id: registeredUserId },
+        setCookie: mockSetCookie,
+      });
+      const res = await ctrl.logout();
+      expect(res.success).toBe(true);
+      expect(lastCookie?.options.maxAge).toBe(0);
+    });
+  });
+
+  describe("Méthode : removeAccount", () => {
+    it("SÉCURITÉ : Échoue si l'utilisateur n'est pas connecté", async () => {
+      const ctrl = new ConnexionController({
+        client: prismaClient,
+        user: null,
+        setCookie: mockSetCookie,
+      });
+      const res = await handleAction("Remove", () => ctrl.removeAccount());
+      expect(res.success).toBe(false);
+      expect(res.status).toBe(Status.NotConnected);
+    });
+
+    it("CAS NOMINAL : Supprime l'utilisateur, son image Cloudinary et ses données", async () => {
+      const ctrl = new ConnexionController({
+        client: prismaClient,
+        user: { id: registeredUserId },
+        setCookie: mockSetCookie,
       });
 
-      context = createMockContext(user.id);
-      controller = new ConnexionController({ client: prismaClient, context, user });
-
-      await controller.removeAccount();
-
-      const dbUser = await prismaClient.user.findUnique({ where: { id: user.id } });
-      expect(dbUser).toBeNull();
+      const res = await handleAction("Remove", () => ctrl.removeAccount());
+      expect(res.success).toBe(true);
+      const checkUser = await prismaClient.user.findUnique({ where: { id: registeredUserId } });
+      expect(checkUser).toBeNull();
+      const checkAuth = await prismaClient.classicAuthMethod.findUnique({
+        where: { userId: registeredUserId },
+      });
+      expect(checkAuth).toBeNull();
     });
   });
 });

@@ -215,7 +215,7 @@ export class PlaylistRepository extends Repository {
                     },
                   },
                 },
-                midifile: true,
+
                 chordsGrid: true,
                 fromPlaylist: {
                   select: {
@@ -234,6 +234,7 @@ export class PlaylistRepository extends Repository {
                 defaultConfig: {
                   select: {
                     bpm: true,
+                    midifile: true,
                   },
                 },
                 title: true,
@@ -279,7 +280,7 @@ export class PlaylistRepository extends Repository {
           chordsGrid: !!includeExercise.exercise.chordsGrid,
           likedByCurrentUser: userId ? includeExercise.exercise.likedByUsers.length > 0 : false,
           inUserPlaylists: [],
-          midifileUrl: !!includeExercise.exercise.midifile,
+          midifileUrl: !!includeExercise.exercise.defaultConfig.midifile,
           cover: includeExercise.exercise.fromPlaylist.cover,
           originPlaylist: {
             ...includeExercise.exercise.fromPlaylist,

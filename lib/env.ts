@@ -1,6 +1,7 @@
 import { logger } from "./logger";
 
 const {
+  NODE_ENV,
   POSTGRES_USER,
   POSTGRES_PASSWORD,
   POSTGRES_DB,
@@ -18,6 +19,7 @@ const {
 } = process.env;
 
 if (
+  !NODE_ENV ||
   !POSTGRES_USER ||
   !POSTGRES_PASSWORD ||
   !POSTGRES_DB ||
@@ -33,6 +35,7 @@ if (
   !CLOUD_API_SECRET ||
   !CLOUD_IMAGE_FOLDER_NAME
 ) {
+  if (!NODE_ENV) logger.error("Missing environment variable: NODE_ENV");
   if (!POSTGRES_USER) logger.error("Missing environment variable: POSTGRES_USER");
   if (!POSTGRES_PASSWORD) logger.error("Missing environment variable: POSTGRES_PASSWORD");
   if (!POSTGRES_DB) logger.error("Missing environment variable: POSTGRES_DB");
@@ -54,6 +57,7 @@ if (
 }
 
 export const env = {
+  NODE_ENV,
   POSTGRES_USER,
   POSTGRES_PASSWORD,
   POSTGRES_DB,

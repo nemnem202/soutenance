@@ -116,7 +116,7 @@ export default class MMAContentGenerator {
     if (hasVoltas) {
       const commonLines = this.renderMeasureList(section.commonMeasures, section, false, true);
 
-      const sortedVoltas = [...section.voltas].sort((a, b) => a.volta - b.volta);
+      const sortedVoltas = [...section.voltas].sort((a, b) => a.index - b.index);
 
       const voltaLines = sortedVoltas.flatMap((volta, i) => {
         const isLastVolta = i === sortedVoltas.length - 1;
