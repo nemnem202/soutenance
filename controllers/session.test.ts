@@ -3,7 +3,6 @@ import prismaClient from "@/lib/prisma-client";
 import SessionController from "./SessionController";
 import { handleAction } from "@/lib/response-handler";
 import { Status } from "@/types/server-response";
-import convertAllPlaylists from "@/seed/functions";
 
 describe("SessionController - Test d'Intégration et Sécurité (Zéro Mock)", () => {
   let testUser: {
@@ -16,7 +15,7 @@ describe("SessionController - Test d'Intégration et Sécurité (Zéro Mock)", (
   };
 
   beforeAll(async () => {
-    await convertAllPlaylists("forTest");
+    // await convertAllPlaylists("forTest");
 
     testUser = await prismaClient.user.create({
       data: {
@@ -50,7 +49,7 @@ describe("SessionController - Test d'Intégration et Sécurité (Zéro Mock)", (
     if (testUser) {
       await prismaClient.user.delete({ where: { id: testUser.id } });
     }
-    await prismaClient.playlist.deleteMany();
+    // await prismaClient.playlist.deleteMany();
   });
 
   describe("SÉCURITÉ : Validation de l'état de connexion", () => {

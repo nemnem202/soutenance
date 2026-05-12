@@ -35,7 +35,9 @@ describe("FileController - Test d'Intégration Cloudinary & DB (Zéro Mock)", ()
   });
 
   afterAll(async () => {
-    await prismaClient.user.delete({ where: { id: testUser.id } });
+    try {
+      await prismaClient.user.delete({ where: { id: testUser.id } });
+    } catch {}
   });
 
   describe("Méthode : uploadFileAsImage", () => {
