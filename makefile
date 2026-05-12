@@ -1,4 +1,4 @@
-.PHONY: dev test coverage ci prod
+.PHONY: coverage 
 
 dev:
 	docker compose --env-file .env.dev -f docker-compose.dev.yml up --build
