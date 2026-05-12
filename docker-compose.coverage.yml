@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: music-sandbox-db-test
+    env_file:
+      - .env.test.local
+    restart: unless-stopped
+    volumes:
+      - music-sandbox-data-test:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      retries: 5
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile.dev
+    image: music-sandbox-app-test
+    container_name: music-sandbox-app-test
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: test
+      CHOKIDAR_USEPOLLING: "true"
+    env_file:
+      - .env.test.local
+    ports:
+      - "${APP_PORT}:3000"
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    command: ["sh", "-c", "pnpm prisma migrate deploy && pnpm test:coverage"]
+volumes:
+  music-sandbox-data-test:

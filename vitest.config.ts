@@ -8,6 +8,11 @@ export default defineConfig({
     root: ".",
     fileParallelism: false,
     isolate: true,
+    coverage: {
+      provider: "v8",
+      include: ["controllers/**/*.{ts,tsx}"],
+      reporter: ["text", "html"],
+    },
   },
   resolve: {
     alias: {
