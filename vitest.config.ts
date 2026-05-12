@@ -8,6 +8,9 @@ export default defineConfig({
     root: ".",
     fileParallelism: false,
     isolate: true,
+    coverage: {
+      include: ["controllers/**/*.{ts,tsx}"],
+    },
   },
   resolve: {
     alias: {

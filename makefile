@@ -2,6 +2,8 @@ dev:
 	docker compose --env-file .env.dev -f docker-compose.dev.yml up --build
 test:
 	docker compose --env-file .env.test.local -f docker-compose.test.yml up --build
+coverage:
+	docker compose --env-file .env.test.local -f docker-compose.coverage.yml up --build
 ci:
 	docker compose --env-file .env.prod -f docker-compose.ci.yml up --build --exit-code-from app
 prod:
