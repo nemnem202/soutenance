@@ -15,12 +15,16 @@ interface Gameprops {
 }
 
 export default function DesktopGameControlsSection({ ...props }: Gameprops) {
+  const { midiState, dispatch } = useGame();
   return (
     <div className="hidden md:block">
       <ControlsSection>
         <SettingsButton onClick={() => props.toggleSidebar()} />
-        <PlayButton />
-        <StopButton />
+        <PlayButton
+          onClick={() => dispatch({ type: Action.TOGGLE_PLAY })}
+          isPlaying={!!midiState?.transport.isPlaying}
+        />
+        <StopButton onClick={() => dispatch({ type: Action.STOP })} />
         <Separator orientation="vertical" className="!h-6" />
         <BpmControl />
       </ControlsSection>
@@ -32,18 +36,6 @@ export function MobileGameControlSection({ ...props }: Gameprops) {
   const { activeTab } = useGame();
   const { midiState, dispatch } = useGame();
   const isHorizontal = useScreen().orientation === "horizontal";
-
-  const handlePlay = () => {
-    const status = midiState?.transport.status;
-
-    if (status === "playing" || status === "counting") {
-      dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "paused" });
-    } else {
-      // Si l'exercice a le count-in activé dans sa config
-      const nextStatus = midiState?.config.countInActive ? "counting" : "playing";
-      dispatch({ type: Action.SET_TRANSPORT_STATUS, status: nextStatus });
-    }
-  };
   return (
     <div className=" flex w-full justify-evenly">
       {isHorizontal && <div className="w-40" />}
@@ -53,7 +45,10 @@ export function MobileGameControlSection({ ...props }: Gameprops) {
       {midiState && (
         <>
           <StopButton onClick={() => dispatch({ type: Action.STOP })} />
-          <PlayButton />
+          <PlayButton
+            onClick={() => dispatch({ type: Action.TOGGLE_PLAY })}
+            isPlaying={!!midiState?.transport.isPlaying}
+          />
           <MetronomeButton />
 
           {isHorizontal &&

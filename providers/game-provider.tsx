@@ -13,11 +13,10 @@ import { convertMidiFileToState, getMidiFileFromBuffer } from "@/midi-editor/lib
 import onMidiFile from "@/telefunc/midifile.telefunc";
 import { errorToast } from "@/lib/toaster";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
-import { Action, type MidiAction } from "@/midi-editor/types/actions";
+import type { MidiAction } from "@/midi-editor/types/actions";
 import useAudio from "@/hooks/use-audio";
 import { useShortcuts } from "@/midi-editor/hooks/useShortcuts";
 import SoundEngine from "@/midi-editor/engines/sound-engine";
-import { logger } from "@/lib/logger";
 
 const tabsIds = ["piano-roll", "chords", "sheet", "guitar"] as const;
 export type TabID = (typeof tabsIds)[number];
@@ -50,34 +49,30 @@ export default function GameProvider({
   const { loadMidiFile } = useAudio();
 
   useShortcuts();
-
   useEffect(() => {
     let isMounted = true;
     async function loadResources() {
+      setMidiLoading(true);
       try {
         const response = await onMidiFile(exercise.id);
         if (response.success && isMounted) {
           const midiFile = await getMidiFileFromBuffer(response.data);
-
-          const newState = convertMidiFileToState(midiFile, exercise.chordsGrid);
-
-          dispatch({
-            type: Action.INITIALIZE_EXERCISE,
-            state: newState,
-          });
-
+          const newState = await convertMidiFileToState(midiFile);
+          useMidiStore.setState({ state: newState });
           loadMidiFile();
         }
       } catch (err) {
-        logger.info("Erreur Midi", err);
         errorToast("Erreur MIDI");
+      } finally {
+        if (isMounted) setMidiLoading(false);
       }
     }
     loadResources();
     return () => {
       isMounted = false;
+      SoundEngine.get()?.stopAndCleanup();
     };
-  }, [exercise.id, exercise.chordsGrid]);
+  }, [exercise.id, loadMidiFile]);
 
   const tabs: Tab[] = [
     { id: "piano-roll", label: instance.getItem("piano_roll") },
