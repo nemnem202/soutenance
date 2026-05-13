@@ -142,38 +142,38 @@ function SetStartButton({ measure }: { measure: MeasureWithLoopIndexes }) {
   const { size } = useScreen();
   const { dispatch, midiState } = useGame();
 
-  const handleClick = (e: MouseEvent) => {
-    e.stopPropagation();
-    if (size === "sm" && clicksIndex < 1) {
-      logger.info("Display");
-      setClicksIndex(1);
-    } else if (midiState) {
-      logger.info("Set start");
-      const smallestIndex = Math.min(...measure.inLoopIndexes);
-      dispatch({
-        type: Action.SET_TRANSPORT_START,
-        start: getFirstTickFromMeasureIndex(midiState.config.ppq, smallestIndex, {
-          top: midiState.config.signature[0],
-          bottom: midiState.config.signature[1],
-        }),
-        skipHistory: true,
-      });
-      if (!midiState.transport.isPlaying) {
-        dispatch({
-          type: Action.TOGGLE_PLAY,
-          force: true,
-        });
-      }
-      setClicksIndex(0);
-    }
-  };
-  if (!midiState?.transport.isPlaying)
+  // const handleClick = (e: MouseEvent) => {
+  //   e.stopPropagation();
+  //   if (size === "sm" && clicksIndex < 1) {
+  //     logger.info("Display");
+  //     setClicksIndex(1);
+  //   } else if (midiState) {
+  //     logger.info("Set start");
+  //     const smallestIndex = Math.min(...measure.inLoopIndexes);
+  //     dispatch({
+  //       type: Action.SET_TRANSPORT_START,
+  //       start: getFirstTickFromMeasureIndex(midiState.config.ppq, smallestIndex, {
+  //         top: midiState.config.signature[0],
+  //         bottom: midiState.config.signature[1],
+  //       }),
+  //       skipHistory: true,
+  //     });
+  //     if (!midiState.transport.isPlaying) {
+  //       dispatch({
+  //         type: Action.TOGGLE_PLAY,
+  //         force: true,
+  //       });
+  //     }
+  //     setClicksIndex(0);
+  //   }
+  // };
+  if (midiState?.transport.status !== "playing")
     return (
       <button
         type="button"
         className={`absolute flex size-full justify-center items-center bg-foreground/20 cursor-pointer transition-all opacity-0 md:group-hover/measure:opacity-100 ${clicksIndex !== 0 && "opacity-100"}`}
         onBlur={() => setClicksIndex(0)}
-        onClick={handleClick}
+        // onClick={handleClick}
       >
         <FlagTriangleRight className="fill-primary stroke-primary" />
       </button>

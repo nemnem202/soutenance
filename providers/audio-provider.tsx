@@ -3,9 +3,6 @@ import SoundEngine from "@/midi-editor/engines/sound-engine";
 import { createContext, useState, type ReactNode } from "react";
 
 interface AudioContextType {
-  loadMidiFile: () => void;
-  release: () => void;
-  setPlayhead: (tick: number) => void;
   unlockAudioContext: () => Promise<void>;
   audioLoaded: boolean;
 }
@@ -29,19 +26,8 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const loadMidiFile = () => {
-    const engine = SoundEngine.get();
-    if (engine) {
-      engine.loadNewMidi();
-    }
-  };
-  const release = () => {};
-  const setPlayhead = () => {};
-
   return (
-    <AudioContext.Provider
-      value={{ loadMidiFile, setPlayhead, release, unlockAudioContext, audioLoaded }}
-    >
+    <AudioContext.Provider value={{ unlockAudioContext, audioLoaded }}>
       <div onClickCapture={unlockAudioContext}>{children}</div>
     </AudioContext.Provider>
   );

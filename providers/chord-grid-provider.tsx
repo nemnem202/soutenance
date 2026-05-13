@@ -18,7 +18,7 @@ export default function ChordGridProvider({
   sectionsWithLoopIndexes: SectionWithLoopIndexes[];
   exercise: ExerciseSchema;
 }) {
-  const { state } = useMidiStore();
+  const state = useMidiStore().state!;
   const requestRef = useRef<number>(null);
   const [currentMeasure, setCurrentMeasure] = useState(0);
   const [currentTimeSignature, setCurrentTimeSignature] = useState<TimeSignatureSchema>({

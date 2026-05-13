@@ -261,11 +261,8 @@ export function Tab({ children }: { children: ReactNode }) {
             className={`absolute top-0 left-0 w-full transition opacity-0 group-hover:opacity-100 flex justify-between p-2`}
           >
             <div className="flex gap-3 flex-1 justify-start items-center">
-              <PlayButton
-                onClick={() => dispatch({ type: Action.TOGGLE_PLAY })}
-                isPlaying={!!midiState?.transport.isPlaying}
-              />
-              <StopButton onClick={() => dispatch({ type: Action.STOP })} />
+              <PlayButton />
+              <StopButton />
               <Separator orientation="vertical" className="!h-6" />
               <BpmControl />
             </div>

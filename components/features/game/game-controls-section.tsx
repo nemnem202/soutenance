@@ -20,11 +20,8 @@ export default function DesktopGameControlsSection({ ...props }: Gameprops) {
     <div className="hidden md:block">
       <ControlsSection>
         <SettingsButton onClick={() => props.toggleSidebar()} />
-        <PlayButton
-          onClick={() => dispatch({ type: Action.TOGGLE_PLAY })}
-          isPlaying={!!midiState?.transport.isPlaying}
-        />
-        <StopButton onClick={() => dispatch({ type: Action.STOP })} />
+        <PlayButton />
+        <StopButton />
         <Separator orientation="vertical" className="!h-6" />
         <BpmControl />
       </ControlsSection>
@@ -34,7 +31,7 @@ export default function DesktopGameControlsSection({ ...props }: Gameprops) {
 
 export function MobileGameControlSection({ ...props }: Gameprops) {
   const { activeTab } = useGame();
-  const { midiState, dispatch } = useGame();
+  const { midiState } = useGame();
   const isHorizontal = useScreen().orientation === "horizontal";
   return (
     <div className=" flex w-full justify-evenly">
@@ -44,11 +41,8 @@ export function MobileGameControlSection({ ...props }: Gameprops) {
 
       {midiState && (
         <>
-          <StopButton onClick={() => dispatch({ type: Action.STOP })} />
-          <PlayButton
-            onClick={() => dispatch({ type: Action.TOGGLE_PLAY })}
-            isPlaying={!!midiState?.transport.isPlaying}
-          />
+          <StopButton />
+          <PlayButton />
           <MetronomeButton />
 
           {isHorizontal &&
