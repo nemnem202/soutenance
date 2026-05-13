@@ -15,11 +15,13 @@ import { SidebarSlider } from "../game-assets";
 import { ParamsAccordion } from "../game-sidebar";
 import useGame from "@/hooks/use-game";
 import SoundEngine from "@/midi-editor/engines/sound-engine";
+import { Action } from "@/midi-editor/types/actions";
 
 export default function BackingTrackSettings() {
   const [backingTackActive, setBackingTrackActive] = useState(false);
   const { instance } = useLanguage();
   const { midiState } = useGame();
+  const { dispatch } = useGame();
   return (
     <ParamsAccordion title={<h3 className="title-3">{instance.getItem("backing_track")}</h3>}>
       <div className="flex flex-col gap-3">
@@ -49,7 +51,11 @@ export default function BackingTrackSettings() {
                 defaultValue={[100]}
                 disabled={!backingTackActive}
                 onValueChange={(value) =>
-                  SoundEngine.get()?.changeChannelVolume(track.channel, value[0])
+                  dispatch({
+                    type: Action.SET_TRACK_VOLUME,
+                    trackId: track.id,
+                    volume: value[0],
+                  })
                 }
               >
                 <p className="paragraph ">{track.instrument}</p>

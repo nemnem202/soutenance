@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { Button, type ButtonProps } from "./button";
 import { useLanguage } from "@/hooks/use-language";
+import useGame from "@/hooks/use-game";
+import { Action } from "@/midi-editor/types/actions";
 
 export function LikeButton({ liked = false, ...props }: ButtonProps & { liked?: boolean }) {
   return (
@@ -145,10 +147,23 @@ function IconButton({ ...props }: ButtonProps) {
   );
 }
 
-export function PlayButton({ isPlaying, ...props }: ButtonProps & { isPlaying: boolean }) {
+export function PlayButton({ ...props }: ButtonProps) {
+  const { midiState, dispatch } = useGame();
+
+  const handlePlay = () => {
+    const status = midiState?.transport.status;
+
+    if (status === "playing" || status === "counting") {
+      dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "paused" });
+    } else {
+      const nextStatus = midiState?.config.countInActive ? "counting" : "playing";
+      dispatch({ type: Action.SET_TRANSPORT_STATUS, status: nextStatus });
+    }
+  };
+
   return (
-    <IconButton {...props}>
-      {isPlaying ? (
+    <IconButton {...props} onClick={() => handlePlay()}>
+      {midiState?.transport.status === "playing" ? (
         <Pause className="fill-inherit stroke-inherit" />
       ) : (
         <Play className="fill-inherit stroke-inherit" />
@@ -166,8 +181,20 @@ export function MetronomeButton({ ...props }: ButtonProps) {
 }
 
 export function StopButton({ ...props }: ButtonProps) {
+  const { midiState, dispatch } = useGame();
+
+  const handleStop = () => {
+    const status = midiState?.transport.status;
+
+    if (status === "playing" || status === "counting") {
+      dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "paused" });
+    } else {
+      const nextStatus = midiState?.config.countInActive ? "counting" : "playing";
+      dispatch({ type: Action.SET_TRANSPORT_STATUS, status: nextStatus });
+    }
+  };
   return (
-    <IconButton {...props}>
+    <IconButton {...props} onClick={() => handleStop()}>
       <Square className="fill-inherit stroke-inherit" />
     </IconButton>
   );
