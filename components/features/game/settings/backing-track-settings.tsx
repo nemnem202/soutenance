@@ -22,42 +22,43 @@ export default function BackingTrackSettings() {
   const { midiState } = useGame();
   return (
     <ParamsAccordion title={<h3 className="title-3">{instance.getItem("backing_track")}</h3>}>
-      <div className="flex gap-4 w-full">
-        <SwitchParam
-          checked={backingTackActive}
-          order="label-switch"
-          setChecked={setBackingTrackActive}
+      <div className="flex flex-col gap-3">
+        <div className="flex gap-4 w-full">
+          <SwitchParam
+            checked={backingTackActive}
+            order="label-switch"
+            setChecked={setBackingTrackActive}
+          >
+            <p className="paragraph  text-foreground">{instance.getItem("active")}</p>
+          </SwitchParam>
+          <SwitchParam
+            checked={true}
+            setChecked={() => {}}
+            disabled={!backingTackActive}
+            order="label-switch"
+          >
+            <p className="paragraph">{instance.getItem("melody")}</p>
+          </SwitchParam>
+        </div>
+        <div
+          className={`flex flex-col w-full gap-2 py-2 ${!backingTackActive && "text-muted-foreground"}`}
         >
-          <p className="paragraph  text-foreground">{instance.getItem("active")}</p>
-        </SwitchParam>
-        <SwitchParam
-          checked={true}
-          setChecked={() => {}}
-          disabled={!backingTackActive}
-          order="label-switch"
-        >
-          <p className="paragraph">{instance.getItem("melody")}</p>
-        </SwitchParam>
-      </div>
-      <div
-        className={`flex flex-col w-full gap-2 py-2 ${!backingTackActive && "text-muted-foreground"}`}
-      >
-        {midiState?.tracks.map((track) => (
-          <>
-            <SidebarSlider
-              defaultValue={[100]}
-              disabled={!backingTackActive}
-              onValueChange={(value) =>
-                SoundEngine.get()?.changeChannelVolume(track.channel, value[0])
-              }
-            >
-              <p className="paragraph w-15">{track.instrument}</p>
-            </SidebarSlider>
-          </>
-        ))}
-
+          {midiState?.tracks.map((track) => (
+            <>
+              <SidebarSlider
+                defaultValue={[100]}
+                disabled={!backingTackActive}
+                onValueChange={(value) =>
+                  SoundEngine.get()?.changeChannelVolume(track.channel, value[0])
+                }
+              >
+                <p className="paragraph ">{track.instrument}</p>
+              </SidebarSlider>
+            </>
+          ))}
+        </div>
         <div className="w-full flex items-center">
-          <Label className="paragraph w-15" htmlFor="style-select">
+          <Label className="paragraph " htmlFor="style-select">
             {instance.getItem("style")}
           </Label>
           <Select defaultValue="original" disabled={!backingTackActive}>

@@ -69,16 +69,10 @@ export function SidebarTabButton({
 
 export function SidebarSlider({
   children,
-  // defaultValue,
-  // onValueChange = () => {},
-  // disabled = false,
-  axis = "x",
+  axis = "y",
   ...props
 }: SliderProps & {
   children: ReactNode;
-  // defaultValue: number;
-  // onValueChange?: (value: number) => void;
-  // disabled?: boolean;
   axis?: "y" | "x";
 }) {
   const [valueIsZero, setValueIsZero] = useState<boolean>(props.defaultValue?.[0] === 0);
@@ -94,9 +88,6 @@ export function SidebarSlider({
         {children}
       </Label>
       <Slider
-        // defaultValue={[defaultValue]}
-        // max={100}
-        // step={1}
         {...props}
         onValueChange={(v) => {
           if (v[0] === 0 && !valueIsZero) {
@@ -106,8 +97,6 @@ export function SidebarSlider({
           }
           props.onValueChange?.(v);
         }}
-        // disabled={disabled}
-        // id={id}
       />
     </div>
   );
