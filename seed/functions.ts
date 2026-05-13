@@ -50,15 +50,78 @@ async function createUser(): Promise<User> {
   return user;
 }
 
+async function handleDuplicateExercise(
+  exercise: ExerciseSchema,
+  currentPlaylistExerciseCount: number
+): Promise<{ shouldCreate: boolean }> {
+  const existingExercise = await prismaClient.exercise.findFirst({
+    where: {
+      title: exercise.title,
+      composer: exercise.composer,
+    },
+    include: {
+      fromPlaylist: {
+        include: {
+          _count: {
+            select: { createdExercises: true },
+          },
+        },
+      },
+    },
+  });
+
+  if (!existingExercise) {
+    return { shouldCreate: true };
+  }
+
+  const existingPlaylistCount = existingExercise.fromPlaylist._count.createdExercises;
+
+  if (currentPlaylistExerciseCount > existingPlaylistCount) {
+    const oldPlaylistId = existingExercise.originPlaylistId;
+
+    await prismaClient.exercise.delete({
+      where: { id: existingExercise.id },
+    });
+
+    const remainingExercises = await prismaClient.exercise.count({
+      where: { originPlaylistId: oldPlaylistId },
+    });
+
+    if (remainingExercises === 0) {
+      await prismaClient.playlist.delete({
+        where: { id: oldPlaylistId },
+      });
+      logger.info(`🗑️ Deleted empty playlist [ID: ${oldPlaylistId}] after duplicate removal.`);
+    }
+
+    logger.info(`♻️ Replaced duplicate: ${exercise.title} (New playlist is larger)`);
+    return { shouldCreate: true };
+  } else {
+    logger.info(`⏭️ Skipped duplicate: ${exercise.title} (Existing playlist is larger or equal)`);
+    return { shouldCreate: false };
+  }
+}
+
 async function fillPlaylist(userId: number, playlistId: number, exercises: ExerciseSchema[]) {
   const exerciseController = new ExerciseController({
     client: prismaClient,
     user: { id: userId },
   });
-  const promises = exercises.map((exercise) =>
-    exerciseController.createExercise(exercise, playlistId)
-  );
-  await Promise.all(promises);
+
+  const currentPlaylistCount = exercises.length;
+
+  for (const exercise of exercises) {
+    try {
+      const { shouldCreate } = await handleDuplicateExercise(exercise, currentPlaylistCount);
+
+      if (shouldCreate) {
+        await exerciseController.createExercise(exercise, playlistId);
+      } else {
+      }
+    } catch (error) {
+      logger.error(`Failed to process exercise ${exercise.title}:`, error);
+    }
+  }
 }
 
 async function putPlaylistInDb(playlist: PlaylistSchema, user: User) {
@@ -66,8 +129,26 @@ async function putPlaylistInDb(playlist: PlaylistSchema, user: User) {
     client: prismaClient,
     user: { id: user.id },
   });
+
   const playlistDb = await controller.createPlaylistFromSeeding(playlist, user.id);
+
   await fillPlaylist(user.id, playlistDb.id, playlist.exercises);
+
+  const exerciseCount = await prismaClient.exercise.count({
+    where: { originPlaylistId: playlistDb.id },
+  });
+
+  if (exerciseCount === 0) {
+    await prismaClient.playlist.delete({
+      where: { id: playlistDb.id },
+    });
+    logger.info(
+      `🗑️ Deleted current playlist "${playlist.title}" [ID: ${playlistDb.id}] because it contained only duplicate/inferior exercises.`
+    );
+    return null;
+  }
+
+  return playlistDb;
 }
 
 export default async function convertAllPlaylists(forTest?: "forTest") {
