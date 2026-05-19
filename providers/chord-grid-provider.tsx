@@ -3,18 +3,16 @@ import { logger } from "@/lib/logger";
 import SoundEngine from "@/midi-editor/engines/sound-engine";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { timeSignatureSchema } from "@/schemas/entities.schema";
-import type { ExerciseSchema, TimeSignatureSchema } from "@/types/entities";
+import type { ExerciseSchema, SectionSchema, TimeSignatureSchema } from "@/types/entities";
 import { createContext, type ReactNode, useContext, useEffect, useRef, useState } from "react";
 
 const ChordGridContext = createContext<{ currentMeasure: number } | null>(null);
 
 export default function ChordGridProvider({
   children,
-  sectionsWithLoopIndexes,
   exercise,
 }: {
   children: ReactNode;
-  sectionsWithLoopIndexes: SectionWithLoopIndexes[];
   exercise: ExerciseSchema;
 }) {
   const state = useMidiStore().state!;
@@ -39,7 +37,7 @@ export default function ChordGridProvider({
     return () => {
       requestRef.current && cancelAnimationFrame(requestRef.current);
     };
-  }, [state, currentMeasure, sectionsWithLoopIndexes.flatMap]);
+  }, [state, currentMeasure]);
 
   return (
     <ChordGridContext.Provider value={{ currentMeasure }}>{children}</ChordGridContext.Provider>
