@@ -48,28 +48,35 @@ export default function GameProvider({
   const state = useMidiStore((s) => s.state);
 
   useShortcuts();
+
   useEffect(() => {
     let isMounted = true;
+
     async function loadResources() {
-      setMidiLoading(true);
+      useMidiStore.setState({ state: null });
+
       try {
         const response = await onMidiFile(exercise.id);
         if (response.success && isMounted) {
           const midiFile = await getMidiFileFromBuffer(response.data);
-          const newState = await convertMidiFileToState(midiFile);
+
+          const newState = convertMidiFileToState(midiFile);
+
           useMidiStore.setState({ state: newState });
-          dispatch({ type: Action.RESET_STATE });
+
+          const engine = SoundEngine.get();
+          if (engine) {
+            dispatch({ type: Action.RESET_STATE });
+          }
         }
       } catch (err) {
-        errorToast("Erreur MIDI");
-      } finally {
-        if (isMounted) setMidiLoading(false);
+        errorToast("Erreur de chargement de l'exercice");
       }
     }
+
     loadResources();
     return () => {
       isMounted = false;
-      dispatch({ type: Action.RESET_STATE });
     };
   }, [exercise.id]);
 
