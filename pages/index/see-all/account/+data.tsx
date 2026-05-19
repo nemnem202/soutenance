@@ -13,8 +13,6 @@ async function getSeeAllData(
 ): Promise<ServerResponse<UserCardDto[]>> {
   const search = pageContext.urlParsed.search.search as UserSeeAllQUery;
 
-  logger.info("Search param: ", search);
-
   if (!search)
     return {
       success: false,

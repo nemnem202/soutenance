@@ -30,7 +30,6 @@ export default function useEditImage(props: EditableImageProps) {
     if (!inputRef.current) return;
     const file = inputRef.current.files?.[0];
     if (!file) return;
-    logger.info(`Taille originale : ${(file.size / 1024 / 1024).toFixed(2)} MB`);
     const options = {
       maxSizeMB: 1,
       maxWidthOrHeight: 1920,
@@ -42,7 +41,6 @@ export default function useEditImage(props: EditableImageProps) {
       const sizeInMegabytes = compressedFile.size / 1024 / 1024;
       if (sizeInMegabytes > 1)
         return logger.error("The image supplied is too large, please choose another one.");
-      logger.info(`Taille après conversion WebP : ${sizeInMegabytes.toFixed(2)} MB`);
       setImageFile(compressedFile);
       setImageSource(URL.createObjectURL(compressedFile));
     } catch (error) {

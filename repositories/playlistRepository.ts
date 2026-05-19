@@ -298,7 +298,6 @@ export class PlaylistRepository extends Repository {
     playlistToAddId: number,
     userId: number
   ): Promise<ServerResponse<null>> {
-    logger.info("Add playlist to playlist", targetPlaylistId, playlistToAddId);
     try {
       const exercisesIds = await this.client.exercise.findMany({
         where: {

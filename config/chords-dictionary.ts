@@ -185,7 +185,5 @@ export const findChordFromModifier = (modifier: string): ChordHarmony | null => 
   )?.[0];
 
   if (name) return CHORDS_DICTIONNARY[name];
-
-  logger.error("Could not find chord for modifier: ", modifier);
   return null;
 };

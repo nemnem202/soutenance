@@ -200,7 +200,6 @@ export function MediumDynamicPlaylistWrapper({
   const [isLoading, setIsLoading] = useState(false);
 
   const loadMoreItems = useCallback(async () => {
-    logger.info("API CALL");
     const response = await onPlaylistSeeAllRequest(searchParam, pageIndex * 40, 40);
     if (!response.success) return;
     setPlaylists((prev) => [...prev, ...response.data]);

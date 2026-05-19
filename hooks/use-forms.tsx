@@ -80,7 +80,6 @@ export function useRegisterForm({ onSuccess }: { onSuccess: () => void }) {
     loadingToast(promise, {
       loading: "Création du compte...",
       success: (user) => {
-        logger.info("SUUUUUCESS");
         setSession(user);
         reload();
         onSuccess();
