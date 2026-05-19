@@ -1,9 +1,6 @@
-import type { MeasureWithLoopIndexes, SectionWithLoopIndexes } from "@/lib/computeLoopIndexes";
-import { logger } from "@/lib/logger";
 import SoundEngine from "@/midi-editor/engines/sound-engine";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
-import { timeSignatureSchema } from "@/schemas/entities.schema";
-import type { ExerciseSchema, SectionSchema, TimeSignatureSchema } from "@/types/entities";
+import { ExerciseSchema } from "@/types/entities";
 import { createContext, type ReactNode, useContext, useEffect, useRef, useState } from "react";
 
 const ChordGridContext = createContext<{

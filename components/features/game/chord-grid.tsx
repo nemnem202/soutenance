@@ -91,10 +91,11 @@ function Section({ section }: { section: SectionSchema }) {
 
 function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: number }) {
   const { currentMeasure } = useChordGrid();
+  const { size } = useScreen();
   const isActive = measure.index === currentMeasure;
   const measureRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (isActive && measureRef.current) {
+    if (isActive && measureRef.current && size === "sm") {
       measureRef.current.scrollIntoView({
         behavior: "smooth",
         block: "start",

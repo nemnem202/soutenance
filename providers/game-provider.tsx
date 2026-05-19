@@ -60,7 +60,7 @@ export default function GameProvider({
         if (response.success && isMounted) {
           const midiFile = await getMidiFileFromBuffer(response.data);
 
-          const newState = convertMidiFileToState(midiFile);
+          const newState = convertMidiFileToState(midiFile, exercise);
 
           useMidiStore.setState({ state: newState });
 
@@ -77,6 +77,9 @@ export default function GameProvider({
     loadResources();
     return () => {
       isMounted = false;
+      SoundEngine.reset();
+      useMidiStore.getState().reset();
+      dispatch({ type: Action.RESET_STATE });
     };
   }, [exercise.id]);
 
