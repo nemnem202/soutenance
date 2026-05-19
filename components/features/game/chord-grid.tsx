@@ -6,7 +6,11 @@ import {
   type SectionWithLoopIndexes,
   type MeasureWithLoopIndexes,
 } from "@/lib/computeLoopIndexes";
+import { logger } from "@/lib/logger";
 import { musicalNotationRootNote } from "@/lib/utils";
+import { setTransportStart } from "@/midi-editor/actions/transport";
+import { getFirstTickInMeasure } from "@/midi-editor/lib/utils";
+import { Action } from "@/midi-editor/types/actions";
 import ChordGridProvider, { useChordGrid } from "@/providers/chord-grid-provider";
 import type { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
 import { FlagTriangleRight } from "lucide-react";
@@ -127,12 +131,25 @@ function SetStartButton({ measure }: { measure: MeasureSchema }) {
   const { size } = useScreen();
   const { dispatch, midiState } = useGame();
 
+  useEffect(() => {
+    if (clicksIndex === 1) {
+      logger.info("transport start: ", midiState?.measuresStarts.get(measure.index));
+      dispatch({
+        type: Action.SET_TRANSPORT_START,
+        start: midiState?.measuresStarts.get(measure.index) ?? 0,
+      });
+    }
+
+    if (clicksIndex === 2) dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "playing" });
+  }, [clicksIndex]);
+
   if (midiState?.transport.status !== "playing")
     return (
       <button
         type="button"
         className={`absolute flex size-full justify-center items-center bg-foreground/20 cursor-pointer transition-all opacity-0 md:group-hover/measure:opacity-100 ${clicksIndex !== 0 && "opacity-100"}`}
         onBlur={() => setClicksIndex(0)}
+        onClick={() => setClicksIndex((prev) => prev + 1)}
       >
         <FlagTriangleRight className="fill-primary stroke-primary" />
       </button>
