@@ -4,7 +4,6 @@ import type { Cell } from "@/types/music";
 import type { MeasureSchema, SectionSchema, TimeSignatureSchema } from "@/types/entities";
 import { MMA_GROOVES } from "@/config/grooves_dictionnary";
 import type { MMAGrooveName, MMAGrooveTitle } from "@/types/mma";
-import { SectionType } from "./generated/prisma/enums";
 
 export default class MMAContentGenerator {
   private usedFills: MMAGrooveName[] = [];
@@ -21,14 +20,13 @@ export default class MMAContentGenerator {
     const tempo: string = this.getTempo();
     const humanisation: string[] = this.getHumanisation();
     const sections: string[] = this.getSections();
-    const countIn = "Groove Metronome2-4 \n z * 2";
     const timeSignature: string = this.getTimeSignature({
       top: this.exercise.defaultConfig.timeSignatureTop,
       bottom: this.exercise.defaultConfig.timeSignatureBottom,
     });
     const end = this.getEnd();
 
-    const content = [tempo, timeSignature, ...humanisation, countIn, ...sections, end].join("\n");
+    const content = [tempo, timeSignature, ...humanisation, ...sections, end].join("\n");
 
     return content;
   }
