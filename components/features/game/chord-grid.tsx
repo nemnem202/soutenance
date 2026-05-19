@@ -109,6 +109,7 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
       className={`flex w-full h-12 relative items-center relative group/measure ${isActive && "bg-popover"}`}
       id={String(measure.index)}
     >
+      <p className="absolute top-0.5 right-0.5 paragraph-sm">{measure.index}</p>
       {volta && <VoltaBracket volta={volta} />}
       {measure.bars.left && <LeftBar bar={measure.bars.left} />}
       <div className="flex-1 max-w-[100%] flex items-center pl-1 overflow-hidden">
@@ -136,16 +137,12 @@ function SetStartButton({ measure }: { measure: MeasureSchema }) {
     e.preventDefault();
 
     if (!isPrimed) {
-      const startTick = midiState?.measuresStarts.get(measure.index) ?? 0;
-
       setPrimedMeasure(measure.index);
 
       dispatch({
-        type: Action.SET_TRANSPORT_START,
-        start: startTick,
+        type: Action.SET_TRANSPORT_START_FROM_MEASURE_INDEX,
+        measureIndex: measure.index,
       });
-
-      logger.info(`Measure ${measure.index} primed at tick ${startTick}`);
     } else {
       dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "playing" });
       setPrimedMeasure(null);

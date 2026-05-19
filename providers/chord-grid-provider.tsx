@@ -26,7 +26,6 @@ export default function ChordGridProvider({ children }: { children: ReactNode })
           requestRef.current && cancelAnimationFrame(requestRef.current);
         };
       }
-
       setCurrentMeasure(soundInstance.currentMeasure);
 
       requestRef.current = requestAnimationFrame(loop);
@@ -36,7 +35,7 @@ export default function ChordGridProvider({ children }: { children: ReactNode })
     return () => {
       requestRef.current && cancelAnimationFrame(requestRef.current);
     };
-  }, [state, currentMeasure]);
+  }, [state]);
 
   useEffect(() => {
     if (state?.transport.status === "playing") {
