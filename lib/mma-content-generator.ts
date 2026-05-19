@@ -146,7 +146,7 @@ export default class MMAContentGenerator {
         if (fill) lines.push(fill);
       }
 
-      lines.push("MIDImark $_BAR");
+      lines.push(`MIDImark Bar_${measure.index}`);
       lines.push(this.getSingleMeasure(measure, this.mmaMeasureIndex));
       this.mmaMeasureIndex++;
 

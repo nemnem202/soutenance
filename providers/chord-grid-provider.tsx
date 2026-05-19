@@ -1,7 +1,6 @@
 import type { MeasureWithLoopIndexes, SectionWithLoopIndexes } from "@/lib/computeLoopIndexes";
 import { logger } from "@/lib/logger";
 import SoundEngine from "@/midi-editor/engines/sound-engine";
-import { convertSecondsToTick, getCurrentMeasureIndex } from "@/midi-editor/lib/utils";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { timeSignatureSchema } from "@/schemas/entities.schema";
 import type { ExerciseSchema, TimeSignatureSchema } from "@/types/entities";
@@ -21,10 +20,7 @@ export default function ChordGridProvider({
   const state = useMidiStore().state!;
   const requestRef = useRef<number>(null);
   const [currentMeasure, setCurrentMeasure] = useState(0);
-  const [currentTimeSignature, setCurrentTimeSignature] = useState<TimeSignatureSchema>({
-    top: exercise.defaultConfig.timeSignatureTop ?? 4,
-    bottom: exercise.defaultConfig.timeSignatureBottom ?? 4,
-  });
+
   useEffect(() => {
     const loop = () => {
       const soundInstance = SoundEngine.get();
@@ -33,36 +29,8 @@ export default function ChordGridProvider({
           requestRef.current && cancelAnimationFrame(requestRef.current);
         };
       }
-      const time = convertSecondsToTick(
-        soundInstance.currentTime,
-        soundInstance.currentTempo,
-        state.config.ppq
-      );
 
-      const nextMeasure = getCurrentMeasureIndex(state.config.ppq, time, currentTimeSignature);
-      if (nextMeasure !== currentMeasure) {
-        const foundedMeasure: MeasureWithLoopIndexes | undefined = sectionsWithLoopIndexes
-          .flatMap((section) => [
-            ...section.commonMeasures,
-            ...section.voltas.flatMap((volta) => volta.measures),
-          ])
-          .find((measure) => measure.inLoopIndexes.includes(nextMeasure));
-
-        const cellWithTimeSigInFoundedMeasure = foundedMeasure?.cells.find(
-          (cell) => cell.timeSignatureChangeTop && timeSignatureSchema
-        );
-
-        if (cellWithTimeSigInFoundedMeasure) {
-          const timeSig = {
-            top: cellWithTimeSigInFoundedMeasure.timeSignatureChangeTop!,
-            bottom: cellWithTimeSigInFoundedMeasure.timeSignatureChangeBottom!,
-          };
-          logger.info("New time signature founded !", timeSig);
-          setCurrentTimeSignature(timeSig);
-        }
-
-        setCurrentMeasure(nextMeasure);
-      }
+      setCurrentMeasure(soundInstance.currentMeasure);
 
       requestRef.current = requestAnimationFrame(loop);
     };
@@ -71,7 +39,7 @@ export default function ChordGridProvider({
     return () => {
       requestRef.current && cancelAnimationFrame(requestRef.current);
     };
-  }, [state, currentTimeSignature, currentMeasure, sectionsWithLoopIndexes.flatMap]);
+  }, [state, currentMeasure, sectionsWithLoopIndexes.flatMap]);
 
   return (
     <ChordGridContext.Provider value={{ currentMeasure }}>{children}</ChordGridContext.Provider>
