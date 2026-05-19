@@ -6,16 +6,15 @@ import { timeSignatureSchema } from "@/schemas/entities.schema";
 import type { ExerciseSchema, SectionSchema, TimeSignatureSchema } from "@/types/entities";
 import { createContext, type ReactNode, useContext, useEffect, useRef, useState } from "react";
 
-const ChordGridContext = createContext<{ currentMeasure: number } | null>(null);
+const ChordGridContext = createContext<{
+  currentMeasure: number;
+  primedMeasure: number | null;
+  setPrimedMeasure: (index: number | null) => void;
+} | null>(null);
 
-export default function ChordGridProvider({
-  children,
-  exercise,
-}: {
-  children: ReactNode;
-  exercise: ExerciseSchema;
-}) {
+export default function ChordGridProvider({ children }: { children: ReactNode }) {
   const state = useMidiStore().state!;
+  const [primedMeasure, setPrimedMeasure] = useState<number | null>(null);
   const requestRef = useRef<number>(null);
   const [currentMeasure, setCurrentMeasure] = useState(0);
 
@@ -39,8 +38,16 @@ export default function ChordGridProvider({
     };
   }, [state, currentMeasure]);
 
+  useEffect(() => {
+    if (state?.transport.status === "playing") {
+      setPrimedMeasure(null);
+    }
+  }, [state?.transport.status]);
+
   return (
-    <ChordGridContext.Provider value={{ currentMeasure }}>{children}</ChordGridContext.Provider>
+    <ChordGridContext.Provider value={{ currentMeasure, primedMeasure, setPrimedMeasure }}>
+      {children}
+    </ChordGridContext.Provider>
   );
 }
 

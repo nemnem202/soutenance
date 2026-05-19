@@ -22,7 +22,7 @@ export default function ChordGrid() {
 
   if (!exercise.chordsGrid)
     return (
-      <ChordGridProvider exercise={exercise}>
+      <ChordGridProvider>
         <div className="size-full p-0 md:p-4 flex flex-col gap-5">
           <p className="paragraph-md text-muted-foreground">
             {instance.getItem("this_exercise_does_not_contains_chords_grid")}
@@ -32,7 +32,7 @@ export default function ChordGrid() {
     );
 
   return (
-    <ChordGridProvider exercise={exercise}>
+    <ChordGridProvider>
       <div className="size-full p-1 md:p-6 flex flex-col gap-5">
         {exercise.chordsGrid.sections
           .sort((a, b) => a.index - b.index)
@@ -126,34 +126,46 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
 }
 
 function SetStartButton({ measure }: { measure: MeasureSchema }) {
-  const { currentMeasure } = useChordGrid();
-  const [clicksIndex, setClicksIndex] = useState(0);
-  const { size } = useScreen();
+  const { primedMeasure, setPrimedMeasure } = useChordGrid();
   const { dispatch, midiState } = useGame();
 
-  useEffect(() => {
-    if (clicksIndex === 1) {
-      logger.info("transport start: ", midiState?.measuresStarts.get(measure.index));
+  const isPrimed = primedMeasure === measure.index;
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    if (!isPrimed) {
+      const startTick = midiState?.measuresStarts.get(measure.index) ?? 0;
+
+      setPrimedMeasure(measure.index);
+
       dispatch({
         type: Action.SET_TRANSPORT_START,
-        start: midiState?.measuresStarts.get(measure.index) ?? 0,
+        start: startTick,
       });
+
+      logger.info(`Measure ${measure.index} primed at tick ${startTick}`);
+    } else {
+      dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "playing" });
+      setPrimedMeasure(null);
     }
+  };
 
-    if (clicksIndex === 2) dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "playing" });
-  }, [clicksIndex]);
+  if (midiState?.transport.status === "playing") return null;
 
-  if (midiState?.transport.status !== "playing")
-    return (
-      <button
-        type="button"
-        className={`absolute flex size-full justify-center items-center bg-foreground/20 cursor-pointer transition-all opacity-0 md:group-hover/measure:opacity-100 ${clicksIndex !== 0 && "opacity-100"}`}
-        onBlur={() => setClicksIndex(0)}
-        onClick={() => setClicksIndex((prev) => prev + 1)}
-      >
-        <FlagTriangleRight className="fill-primary stroke-primary" />
-      </button>
-    );
+  return (
+    <button
+      type="button"
+      className={`absolute inset-0 z-10 flex size-full justify-center items-center bg-foreground/10 cursor-pointer transition-all 
+        ${isPrimed ? "opacity-100 bg-primary/10" : "opacity-0 md:group-hover/measure:opacity-100"}`}
+      onClick={handleClick}
+    >
+      <FlagTriangleRight
+        className={`transition-transform ${isPrimed ? "scale-125 fill-primary stroke-primary" : "fill-foreground stroke-foreground"}`}
+      />
+    </button>
+  );
 }
 
 function CellGroup({
