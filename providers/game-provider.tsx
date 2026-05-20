@@ -64,10 +64,10 @@ export default function GameProvider({
 
           useMidiStore.setState({ state: newState });
 
-          const engine = SoundEngine.get();
-          if (engine) {
-            dispatch({ type: Action.RESET_STATE });
-          }
+          // const engine = SoundEngine.get();
+          // if (engine) {
+          //   dispatch({ type: Action.RESET_STATE });
+          // }
         }
       } catch (err) {
         errorToast("Erreur de chargement de l'exercice");
