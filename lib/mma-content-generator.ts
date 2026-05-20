@@ -108,11 +108,11 @@ export default class MMAContentGenerator {
       const sectionLines = [groove, ...renderedMeasures];
 
       if (idx === firstRepeatableIdx) {
-        sectionLines.unshift("MidiMark LoopStart");
+        sectionLines.unshift("MIDImark LoopStart");
       }
 
       if (idx === lastRepeatableIdx) {
-        sectionLines.push("MidiMark LoopEnd");
+        sectionLines.push("MIDImark LoopEnd");
       }
 
       return sectionLines;
