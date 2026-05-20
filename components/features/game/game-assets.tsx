@@ -312,7 +312,7 @@ export function TrackSelect() {
       </SelectTrigger>
       <SelectContent className="z-200 ">
         <SelectGroup>
-          {state.tracks.map((track) => (
+          {state.tracks.flatMap((track) => (
             <SelectItem
               value={String(track.id)}
               key={track.id}
