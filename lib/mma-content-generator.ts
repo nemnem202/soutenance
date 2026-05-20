@@ -90,17 +90,33 @@ export default class MMAContentGenerator {
   }
 
   private getSections(): string[] {
-    return this.exercise.chordsGrid.sections
-      .sort((a, b) => a.index - b.index)
-      .flatMap((section) => {
-        const groove = this.getGroove(section.type);
+    const sortedSections = [...this.exercise.chordsGrid.sections].sort((a, b) => a.index - b.index);
 
-        const flatMeasures = this.unrollSectionMeasures(section);
+    const repeatableIndices = sortedSections
+      .map((s, idx) => (s.type !== "Intro" && s.type !== "Outro" ? idx : null))
+      .filter((idx): idx is number => idx !== null);
 
-        const renderedMeasures = this.renderFlatMeasures(flatMeasures, section);
+    const firstRepeatableIdx = repeatableIndices.length > 0 ? repeatableIndices[0] : null;
+    const lastRepeatableIdx =
+      repeatableIndices.length > 0 ? repeatableIndices[repeatableIndices.length - 1] : null;
 
-        return [groove, ...renderedMeasures];
-      });
+    return sortedSections.flatMap((section, idx) => {
+      const groove = this.getGroove(section.type);
+      const flatMeasures = this.unrollSectionMeasures(section);
+      const renderedMeasures = this.renderFlatMeasures(flatMeasures, section);
+
+      const sectionLines = [groove, ...renderedMeasures];
+
+      if (idx === firstRepeatableIdx) {
+        sectionLines.unshift("MidiMark LoopStart");
+      }
+
+      if (idx === lastRepeatableIdx) {
+        sectionLines.push("MidiMark LoopEnd");
+      }
+
+      return sectionLines;
+    });
   }
 
   private unrollSectionMeasures(section: SectionSchema): MeasureSchema[] {
@@ -110,10 +126,21 @@ export default class MMAContentGenerator {
       const sortedVoltas = [...section.voltas].sort((a, b) => a.index - b.index);
       const common = [...section.commonMeasures].sort((a, b) => a.index - b.index);
 
-      sortedVoltas.forEach((volta) => {
+      if (sortedVoltas.length === 1) {
+        const singleVolta = sortedVoltas[0];
+        const voltaMeasures = [...singleVolta.measures].sort((a, b) => a.index - b.index);
+
         flatMeasures.push(...common);
-        flatMeasures.push(...[...volta.measures].sort((a, b) => a.index - b.index));
-      });
+        flatMeasures.push(...voltaMeasures);
+
+        flatMeasures.push(...common);
+        flatMeasures.push(...voltaMeasures);
+      } else {
+        sortedVoltas.forEach((volta) => {
+          flatMeasures.push(...common);
+          flatMeasures.push(...[...volta.measures].sort((a, b) => a.index - b.index));
+        });
+      }
     } else {
       const common = [...section.commonMeasures].sort((a, b) => a.index - b.index);
       let currentLoopStart = 0;
