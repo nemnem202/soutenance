@@ -16,6 +16,7 @@ import { ParamsAccordion } from "../game-sidebar";
 import useGame from "@/hooks/use-game";
 import SoundEngine from "@/midi-editor/engines/sound-engine";
 import { Action } from "@/midi-editor/types/actions";
+import { MidiInstrumentNumber } from "@/midi-editor/types/instruments";
 
 export default function BackingTrackSettings() {
   const [backingTackActive, setBackingTrackActive] = useState(false);
@@ -57,7 +58,9 @@ export default function BackingTrackSettings() {
                   })
                 }
               >
-                <p className="paragraph ">{track.instrument}</p>
+                <p className="paragraph ">
+                  {MidiInstrumentNumber[track.id].split(/(?=[A-Z])/).join(" ")}
+                </p>
               </SidebarSlider>
             </>
           ))}

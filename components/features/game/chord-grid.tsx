@@ -1,15 +1,7 @@
 import useGame from "@/hooks/use-game";
 import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
-import {
-  computeLoopIndexes,
-  type SectionWithLoopIndexes,
-  type MeasureWithLoopIndexes,
-} from "@/lib/computeLoopIndexes";
-import { logger } from "@/lib/logger";
 import { musicalNotationRootNote } from "@/lib/utils";
-import { setTransportStart } from "@/midi-editor/actions/transport";
-import { getFirstTickInMeasure } from "@/midi-editor/lib/utils";
 import { Action } from "@/midi-editor/types/actions";
 import ChordGridProvider, { useChordGrid } from "@/providers/chord-grid-provider";
 import type { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";

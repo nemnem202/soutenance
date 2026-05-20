@@ -31,6 +31,7 @@ import { useLanguage } from "@/hooks/use-language";
 import { Separator } from "@/components/ui/separator";
 import AnimatedTabs from "@/components/organisms/animated-tabs";
 import type { TabID } from "@/providers/game-provider";
+import { MidiInstrumentNumber } from "@/midi-editor/types/instruments";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
   return (
@@ -318,7 +319,7 @@ export function TrackSelect() {
               key={track.id}
               onClick={(e) => e.stopPropagation()}
             >
-              {track.instrument}
+              {MidiInstrumentNumber[track.id].split(/(?=[A-Z])/).join(" ")}
             </SelectItem>
           ))}
         </SelectGroup>
