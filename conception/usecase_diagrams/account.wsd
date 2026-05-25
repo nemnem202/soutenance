@@ -13,15 +13,11 @@ rectangle "Système de gestion des comptes" {
         usecase "S'inscrire" as UC001
         usecase "Se connecter via Google" as UC002
         usecase "Se connecter sans google" as UC003
-        usecase "Demander vérification compositeur" as UC007
         usecase "Réinitialiser mot de passe" as UC004
         
         usecase "Se déconnecter" as UC005
         usecase "Modifier profil" as UC006
         usecase "Supprimer le profil" as UC010
-        usecase "Entrer son email" as UC007
-        usecase "Entrer son mot de passe" as UC008
-        usecase "Entrer son nom d'utilisateur" as UC009
 
         
 }
@@ -36,14 +32,6 @@ UC000 .--> UC002 : <<include>>
 UC004 .--> UC003 : <<extends>>
 
 UC006 .--> UC010 : <<include>>
-
-UC001 .--> UC007 : <<extends>>
-UC001 .--> UC008 : <<extends>>
-UC001 .--> UC009: <<extends>>
-UC004 .--> UC008 : <<extends>>
-
-UC003 .--> UC007 : <<extends>>
-UC003 .--> UC008 : <<extends>>
 
 user -- UC004
 user -- UC005

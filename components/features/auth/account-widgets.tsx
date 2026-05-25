@@ -75,7 +75,6 @@ export function MediumAccountDynamicWrapper({
   const [isLoading, setIsLoading] = useState(false);
 
   const loadMoreItems = useCallback(async () => {
-    logger.info("API CALL");
     const response = await onUserSeeAllRequest(searchParam, pageIndex * 40, 40);
     if (!response.success) return;
     setAccounts((prev) => [...prev, ...response.data]);

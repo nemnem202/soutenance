@@ -1,6 +1,6 @@
 import type * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Maximize, Minimize } from "lucide-react";
-import { type ComponentProps, type ReactNode, useEffect, useId, useState } from "react";
+import { type ComponentProps, type ReactNode, useEffect, useId, useRef, useState } from "react";
 import {
   CustomInputGroupInput,
   InputGroup,
@@ -23,7 +23,12 @@ import {
 } from "@/components/organisms/select";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { Action } from "@/midi-editor/types/actions";
-import { PlayButton, StopButton } from "@/components/ui/custom-buttons";
+import {
+  PlayButton,
+  StopButton,
+  ZoomInButton,
+  ZoomOutButton,
+} from "@/components/ui/custom-buttons";
 import { CustomInput } from "@/components/ui/custom_input";
 import { logger } from "@/lib/logger";
 import { Field, FieldLabel } from "@/components/molecules/field";
@@ -31,6 +36,7 @@ import { useLanguage } from "@/hooks/use-language";
 import { Separator } from "@/components/ui/separator";
 import AnimatedTabs from "@/components/organisms/animated-tabs";
 import type { TabID } from "@/providers/game-provider";
+import { MidiInstrumentNumber } from "@/midi-editor/types/instruments";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
   return (
@@ -211,6 +217,8 @@ export function FullScreenButton({
 export function Tab({ children }: { children: ReactNode }) {
   const [fullScreen, setFullScreen] = useState(false);
   const { activeTab, tabs, setActiveTab } = useGame();
+  const [isIdle, setIsIdle] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { midiState, dispatch } = useGame();
   const handleFullScreen = (value: boolean) => {
     if (value) {
@@ -231,6 +239,30 @@ export function Tab({ children }: { children: ReactNode }) {
     return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
   }, []);
 
+  useEffect(() => {
+    if (!fullScreen) {
+      setIsIdle(false);
+      return;
+    }
+
+    const handleMouseMove = () => {
+      setIsIdle(false);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => {
+        setIsIdle(true);
+      }, 1500);
+    };
+
+    handleMouseMove();
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [fullScreen]);
+
   const interactiveProps = { role: "region", tabIndex: 0 };
 
   if (!fullScreen) {
@@ -239,13 +271,18 @@ export function Tab({ children }: { children: ReactNode }) {
         {...interactiveProps}
         className="size-full md:bg-card md:rounded-md relative overflow-hidden group min-h-0"
       >
-        <div className="hidden md:block relative z-10">
-          <div
-            className={`absolute m-2 top-0 right-0  transition opacity-0 group-hover:opacity-100 flex  gap-3`}
-          >
+        <div className="hidden z-10 absolute p-2 top-0 right-0 inset-0 transition opacity-0 group-hover:opacity-100 md:flex flex-col justify-between items-end">
+          <div className="flex gap-3">
             {activeTab === "piano-roll" && <TrackSelect />}
             <FullScreenButton fullScreen={fullScreen} setFullScreen={handleFullScreen} />
           </div>
+          {activeTab === "piano-roll" && (
+            <div className="flex-1 max-h-[50%] relative m-1">
+              <ZoomSlider />
+            </div>
+          )}
+
+          <div></div>
         </div>
         <div className="z-0 h-full min-h-0">{children}</div>
       </div>
@@ -254,22 +291,23 @@ export function Tab({ children }: { children: ReactNode }) {
     return (
       <div
         {...interactiveProps}
-        className="inset-0 absolute top-0 left-0 z-100 bg-background group min-h-0 p-5"
+        className={`inset-0 absolute top-0 left-0 z-100 bg-background group min-h-0 p-5 transition-all ${
+          isIdle ? "cursor-none" : ""
+        }`}
       >
-        <div className="relative z-10">
-          <div
-            className={`absolute top-0 left-0 w-full transition opacity-0 group-hover:opacity-100 flex justify-between p-2`}
-          >
+        <div
+          className={`z-10 absolute top-0 left-0 w-full inset-0 transition-opacity duration-300 flex flex-col justify-between p-2 ${
+            isIdle ? "opacity-0 pointer-events-none" : "opacity-100"
+          }`}
+        >
+          <div className="flex justify-between items-center w-full ">
             <div className="flex gap-3 flex-1 justify-start items-center">
-              <PlayButton
-                onClick={() => dispatch({ type: Action.TOGGLE_PLAY })}
-                isPlaying={!!midiState?.transport.isPlaying}
-              />
-              <StopButton onClick={() => dispatch({ type: Action.STOP })} />
+              <PlayButton />
+              <StopButton />
               <Separator orientation="vertical" className="!h-6" />
               <BpmControl />
             </div>
-            <div className="flex-1 flex justify-center">
+            <div className="flex-1 flex h-fit justify-center">
               <AnimatedTabs
                 activeTab={activeTab}
                 onChange={(v) => setActiveTab(v as TabID)}
@@ -286,6 +324,12 @@ export function Tab({ children }: { children: ReactNode }) {
               <FullScreenButton fullScreen={fullScreen} setFullScreen={handleFullScreen} />
             </div>
           </div>
+          {activeTab === "piano-roll" && (
+            <div className="flex-1 max-h-[50%] relative m-1 w-full flex justify-end">
+              <ZoomSlider />
+            </div>
+          )}
+          <div></div>
         </div>
         <div className={`z-0 h-full min-h-0 ${activeTab !== "piano-roll" && "pt-12"}`}>
           {children}
@@ -315,13 +359,13 @@ export function TrackSelect() {
       </SelectTrigger>
       <SelectContent className="z-200 ">
         <SelectGroup>
-          {state.tracks.map((track) => (
+          {state.tracks.flatMap((track) => (
             <SelectItem
               value={String(track.id)}
               key={track.id}
               onClick={(e) => e.stopPropagation()}
             >
-              {track.instrument}
+              {MidiInstrumentNumber[track.id].split(/(?=[A-Z])/).join(" ")}
             </SelectItem>
           ))}
         </SelectGroup>
@@ -345,7 +389,6 @@ export function BpmControl() {
           if (value < 30) value = 30;
           if (value > 500) value = 500;
           e.currentTarget.value = value.toString();
-          logger.info("New bpm is set to: ", value);
           dispatch({ type: Action.SET_BPM, bpm: value });
         }}
         className="!w-15 min-w-0 p-0 text-center"
@@ -354,5 +397,34 @@ export function BpmControl() {
         {instance.getItem("bpm").toLowerCase()}
       </FieldLabel>
     </Field>
+  );
+}
+
+function ZoomSlider() {
+  const { dispatch, state } = useMidiStore();
+  return (
+    <div className="flex flex-col items-center justify-center h-full">
+      <ZoomInButton
+        onClick={() => {
+          dispatch({ type: Action.ZoomY, zoomY: Math.min(100, (state?.display.zoomY ?? 0) + 10) });
+        }}
+      />
+      <Slider
+        orientation="vertical"
+        min={0}
+        max={100}
+        step={1}
+        className="flex-1"
+        value={state?.display.zoomY ? [state.display.zoomY] : [0]}
+        onValueChange={(values) => {
+          dispatch({ type: Action.ZoomY, zoomY: values[0] });
+        }}
+      />
+      <ZoomOutButton
+        onClick={() => {
+          dispatch({ type: Action.ZoomY, zoomY: Math.max(0, (state?.display.zoomY ?? 0) - 10) });
+        }}
+      />
+    </div>
   );
 }

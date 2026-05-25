@@ -133,7 +133,6 @@ describe("PlaylistController - Test d'Intégration et Sécurité (Zéro Mock)", 
       );
 
       expect(res.success).toBe(true);
-      logger.info("RESPONSE", res);
       const link = await prismaClient.playlistIncludesExercise.findUnique({
         where: {
           exerciseId_playlistId: { playlistId: userAPlaylistId, exerciseId: seedExerciseId },

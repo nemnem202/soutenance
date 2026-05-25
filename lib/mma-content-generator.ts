@@ -7,12 +7,16 @@ import type { MMAGrooveName, MMAGrooveTitle } from "@/types/mma";
 
 export default class MMAContentGenerator {
   private usedFills: MMAGrooveName[] = [];
+  private mmaMeasureIndex = 1;
+
   constructor(
     private readonly exercise: ExerciseWithForcedChordGrid,
     private readonly groove: MMAGrooveTitle
   ) {}
 
   public generate(): string {
+    this.mmaMeasureIndex = 1;
+
     const tempo: string = this.getTempo();
     const humanisation: string[] = this.getHumanisation();
     const sections: string[] = this.getSections();
@@ -86,91 +90,103 @@ export default class MMAContentGenerator {
   }
 
   private getSections(): string[] {
-    const sections = this.exercise.chordsGrid.sections
-      .sort((a, b) => a.index - b.index)
-      .flatMap((section) => {
-        const groove = this.getGroove(section.type);
-        const repeat = section.voltas.length > 0 ? ["Repeat"] : [];
+    const sortedSections = [...this.exercise.chordsGrid.sections].sort((a, b) => a.index - b.index);
 
-        const measures = this.getMeasures(section);
+    const repeatableIndices = sortedSections
+      .map((s, idx) => (s.type !== "Intro" && s.type !== "Outro" ? idx : null))
+      .filter((idx): idx is number => idx !== null);
 
-        const timeSignature: string = this.getTimeSignature({
-          top: this.exercise.defaultConfig.timeSignatureTop,
-          bottom: this.exercise.defaultConfig.timeSignatureBottom,
-        });
+    const firstRepeatableIdx = repeatableIndices.length > 0 ? repeatableIndices[0] : null;
+    const lastRepeatableIdx =
+      repeatableIndices.length > 0 ? repeatableIndices[repeatableIndices.length - 1] : null;
 
-        return [
-          groove,
-          //  timeSignature,
-          ...repeat,
-          ...measures,
-        ];
-      });
+    return sortedSections.flatMap((section, idx) => {
+      const groove = this.getGroove(section.type);
+      const flatMeasures = this.unrollSectionMeasures(section);
+      const renderedMeasures = this.renderFlatMeasures(flatMeasures, section);
 
-    return sections;
-  }
+      const sectionLines = [groove, ...renderedMeasures];
 
-  private getMeasures(section: SectionSchema): string[] {
-    const hasVoltas = section.voltas.length > 0;
-
-    if (hasVoltas) {
-      const commonLines = this.renderMeasureList(section.commonMeasures, section, false, true);
-
-      const sortedVoltas = [...section.voltas].sort((a, b) => a.index - b.index);
-
-      const voltaLines = sortedVoltas.flatMap((volta, i) => {
-        const isLastVolta = i === sortedVoltas.length - 1;
-        const measures = this.renderMeasureList(volta.measures, section, isLastVolta, true);
-        return [`RepeatEnding`, ...measures];
-      });
-
-      return [...commonLines, ...voltaLines, `RepeatEnd 0`];
-    }
-
-    return this.renderMeasureList(section.commonMeasures, section, true, false);
-  }
-
-  private renderMeasureList(
-    measures: MeasureSchema[],
-    section: SectionSchema,
-    withFill: boolean,
-    ignoreRepeatBars: boolean
-  ): string[] {
-    const sorted = [...measures].sort((a, b) => a.index - b.index);
-
-    return sorted.flatMap((measure, index) => {
-      const isLast = index === sorted.length - 1;
-      const lines: string[] = [];
-
-      if (!ignoreRepeatBars && measure.bars.left === "loopOpen") {
-        lines.push("Repeat");
+      if (idx === firstRepeatableIdx) {
+        sectionLines.unshift("MIDImark LoopStart");
       }
 
-      if (isLast && withFill) {
+      if (idx === lastRepeatableIdx) {
+        sectionLines.push("MIDImark LoopEnd");
+      }
+
+      return sectionLines;
+    });
+  }
+
+  private unrollSectionMeasures(section: SectionSchema): MeasureSchema[] {
+    const flatMeasures: MeasureSchema[] = [];
+
+    if (section.voltas.length > 0) {
+      const sortedVoltas = [...section.voltas].sort((a, b) => a.index - b.index);
+      const common = [...section.commonMeasures].sort((a, b) => a.index - b.index);
+
+      if (sortedVoltas.length === 1) {
+        const singleVolta = sortedVoltas[0];
+        const voltaMeasures = [...singleVolta.measures].sort((a, b) => a.index - b.index);
+
+        flatMeasures.push(...common);
+        flatMeasures.push(...voltaMeasures);
+
+        flatMeasures.push(...common);
+        flatMeasures.push(...voltaMeasures);
+      } else {
+        sortedVoltas.forEach((volta) => {
+          flatMeasures.push(...common);
+          flatMeasures.push(...[...volta.measures].sort((a, b) => a.index - b.index));
+        });
+      }
+    } else {
+      const common = [...section.commonMeasures].sort((a, b) => a.index - b.index);
+      let currentLoopStart = 0;
+
+      for (const m of common) {
+        if (m.bars.left === "loopOpen") {
+          currentLoopStart = flatMeasures.length;
+        }
+
+        flatMeasures.push(m);
+
+        if (m.bars.right === "loopClose") {
+          const loopBody = flatMeasures.slice(currentLoopStart);
+          flatMeasures.push(...loopBody);
+          currentLoopStart = flatMeasures.length;
+        }
+      }
+    }
+
+    return flatMeasures;
+  }
+
+  private renderFlatMeasures(measures: MeasureSchema[], section: SectionSchema): string[] {
+    return measures.flatMap((measure, index) => {
+      const isLast = index === measures.length - 1;
+      const lines: string[] = [];
+
+      if (isLast) {
         const fill = this.getFill();
-        // const timeSignature: string = this.getTimeSignature({
-        //   top: this.exercise.defaultConfig.timeSignatureTop,
-        //   bottom: this.exercise.defaultConfig.timeSignatureBottom,
-        // });
         if (fill) lines.push(fill);
       }
 
-      lines.push(this.getSingleMeasure(measure, isLast && withFill ? "isLast" : undefined));
+      lines.push(`MIDImark Bar_${measure.index}`);
+      lines.push(this.getSingleMeasure(measure, this.mmaMeasureIndex));
+      this.mmaMeasureIndex++;
 
-      if (isLast && withFill) {
+      if (isLast) {
         const groove = this.getGroove(section.type);
         lines.push(groove);
-      }
-
-      if (!ignoreRepeatBars && measure.bars.right === "loopClose") {
-        lines.push("RepeatEnd");
       }
 
       return lines;
     });
   }
 
-  private getSingleMeasure(measure: MeasureSchema, isLast?: "isLast"): string {
+  private getSingleMeasure(measure: MeasureSchema, outIndex: number): string {
     const chordCells: Extract<Cell, { kind: "Chord" }>[] = measure.cells.filter(
       (c) => c.kind === "Chord"
     );
@@ -184,8 +200,8 @@ export default class MMAContentGenerator {
           return `${cell.chord.content.note}${chord?.mmaLabel ?? ""}`;
         }
       });
-    const returnValue = `${measure.index} ${values.join(" ")}`;
-    return returnValue;
+
+    return `${outIndex} ${values.join(" ")}`;
   }
 
   private getFill(): string | null {
@@ -212,7 +228,6 @@ export default class MMAContentGenerator {
   }
 
   private getEnd() {
-    // return "z";
     return "";
   }
 }

@@ -12,9 +12,6 @@ async function getSeeAllData(
   pageContext: PageContextServer
 ): Promise<ServerResponse<PlaylistCardDto[]>> {
   const search = pageContext.urlParsed.search.search as PlaylistSeeAllQUery;
-
-  logger.info("Search param: ", search);
-
   if (!search)
     return {
       success: false,

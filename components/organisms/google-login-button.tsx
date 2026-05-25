@@ -14,8 +14,6 @@ export default function GoogleLoginButton() {
       const { session } = event.data;
 
       if (!session) return;
-
-      logger.info("User connecté :", session);
       setSession(session);
       navigate("/");
       window.close();

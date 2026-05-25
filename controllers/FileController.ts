@@ -35,7 +35,6 @@ export default class FileController extends Controller {
 
     try {
       const sizeInMb = (this.file.size / (1024 * 1024)).toFixed(2);
-      logger.info(`Image requested has size of ${sizeInMb} MB`);
       const result = await new Promise<UploadApiResponse>((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
           {
@@ -86,19 +85,12 @@ export default class FileController extends Controller {
 
   async removeAllAfterTests() {
     if (env.NODE_ENV !== "test" || !this.image_folder.toLowerCase().includes("test")) {
-      logger.warn("Tentative de suppression des assets hors environnement de test annulée.");
       return;
     }
 
     try {
-      logger.info(`Nettoyage du dossier Cloudinary : ${this.image_folder}`);
-
       await cloudinary.api.delete_resources_by_prefix(this.image_folder);
-
-      logger.info("Tous les assets de test ont été supprimés.");
-    } catch (error) {
-      logger.error("Erreur lors du nettoyage Cloudinary", error);
-    }
+    } catch (error) {}
   }
 
   async removePlaylistImage(id: number) {
