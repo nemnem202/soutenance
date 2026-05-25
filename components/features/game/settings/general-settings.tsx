@@ -46,6 +46,13 @@ function DesktopInputsGroup() {
           label={instance.getItem("practice")}
           type="number"
           defaultValue={midiState?.config.transpositionPractice}
+          onChange={(e) => {
+            const value = parseInt(e.target.value);
+            dispatch({
+              type: Action.SET_TRANSPOSITION_PRACTICE,
+              transposition: Math.max(0, Math.min(12, value)),
+            });
+          }}
           containerClassName="w-full"
           icon={<p className="paragraph-sm text-muted-foreground">sem:</p>}
           tooltip={<p className="paragraph-sm">Increase the global trampose at each loop.</p>}
@@ -77,7 +84,7 @@ function DesktopInputsGroup() {
           label={instance.getItem("bpm")}
           type="number"
           disabled={!midiState}
-          value={midiState ? Math.floor(midiState.config.bpm) : undefined}
+          defaultValue={midiState?.config.bpm}
           containerClassName="w-full"
           onBlur={(e) => {
             let value = parseInt(e.currentTarget.value, 10);
@@ -96,7 +103,7 @@ function DesktopInputsGroup() {
             if (value < 30) value = 30;
             if (value > 500) value = 500;
             e.currentTarget.value = value.toString();
-            dispatch({ type: Action.SET_BPM, bpm: value });
+            dispatch({ type: Action.SET_BPM_PRACTICE, bpm: value });
           }}
           containerClassName="w-full"
           icon={<p className="paragraph-sm text-muted-foreground">+</p>}
