@@ -9,6 +9,7 @@ const ChordGridContext = createContext<{
   currentMeasure: number;
   primedMeasure: number | null;
   setPrimedMeasure: (index: number | null) => void;
+  setCurrentMeasure: (index: number) => void;
 } | null>(null);
 
 export default function ChordGridProvider({ children }: { children: ReactNode }) {
@@ -33,7 +34,9 @@ export default function ChordGridProvider({ children }: { children: ReactNode })
   }, [state?.transport.status]);
 
   return (
-    <ChordGridContext.Provider value={{ currentMeasure, primedMeasure, setPrimedMeasure }}>
+    <ChordGridContext.Provider
+      value={{ currentMeasure, primedMeasure, setPrimedMeasure, setCurrentMeasure }}
+    >
       {children}
     </ChordGridContext.Provider>
   );
