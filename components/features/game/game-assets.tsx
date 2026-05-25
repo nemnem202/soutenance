@@ -1,6 +1,6 @@
 import type * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Maximize, Minimize } from "lucide-react";
-import { type ComponentProps, type ReactNode, useEffect, useId, useState } from "react";
+import { type ComponentProps, type ReactNode, useEffect, useId, useRef, useState } from "react";
 import {
   CustomInputGroupInput,
   InputGroup,
@@ -217,6 +217,8 @@ export function FullScreenButton({
 export function Tab({ children }: { children: ReactNode }) {
   const [fullScreen, setFullScreen] = useState(false);
   const { activeTab, tabs, setActiveTab } = useGame();
+  const [isIdle, setIsIdle] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { midiState, dispatch } = useGame();
   const handleFullScreen = (value: boolean) => {
     if (value) {
@@ -236,6 +238,30 @@ export function Tab({ children }: { children: ReactNode }) {
     document.addEventListener("fullscreenchange", onFullscreenChange);
     return () => document.removeEventListener("fullscreenchange", onFullscreenChange);
   }, []);
+
+  useEffect(() => {
+    if (!fullScreen) {
+      setIsIdle(false);
+      return;
+    }
+
+    const handleMouseMove = () => {
+      setIsIdle(false);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => {
+        setIsIdle(true);
+      }, 1500);
+    };
+
+    handleMouseMove();
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [fullScreen]);
 
   const interactiveProps = { role: "region", tabIndex: 0 };
 
@@ -265,10 +291,14 @@ export function Tab({ children }: { children: ReactNode }) {
     return (
       <div
         {...interactiveProps}
-        className="inset-0 absolute top-0 left-0 z-100 bg-background group min-h-0 p-5"
+        className={`inset-0 absolute top-0 left-0 z-100 bg-background group min-h-0 p-5 transition-all ${
+          isIdle ? "cursor-none" : ""
+        }`}
       >
         <div
-          className={`z-10 absolute top-0 left-0 w-full inset-0 transition opacity-0 group-hover:opacity-100 flex flex-col justify-between p-2`}
+          className={`z-10 absolute top-0 left-0 w-full inset-0 transition-opacity duration-300 flex flex-col justify-between p-2 ${
+            isIdle ? "opacity-0 pointer-events-none" : "opacity-100"
+          }`}
         >
           <div className="flex justify-between items-center w-full ">
             <div className="flex gap-3 flex-1 justify-start items-center">
