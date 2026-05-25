@@ -37,6 +37,7 @@ import { Separator } from "@/components/ui/separator";
 import AnimatedTabs from "@/components/organisms/animated-tabs";
 import type { TabID } from "@/providers/game-provider";
 import { MidiInstrumentNumber } from "@/midi-editor/types/instruments";
+import useAudio from "@/hooks/use-audio";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
   return (
@@ -217,6 +218,7 @@ export function FullScreenButton({
 export function Tab({ children }: { children: ReactNode }) {
   const [fullScreen, setFullScreen] = useState(false);
   const { activeTab, tabs, setActiveTab } = useGame();
+  const { audioLoaded } = useAudio();
   const [isIdle, setIsIdle] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { midiState, dispatch } = useGame();
@@ -264,7 +266,12 @@ export function Tab({ children }: { children: ReactNode }) {
   }, [fullScreen]);
 
   const interactiveProps = { role: "region", tabIndex: 0 };
-
+  if (!audioLoaded)
+    return (
+      <div className="size-full flex items-center justify-center">
+        <p className="paragraph">Click anywhere to start</p>
+      </div>
+    );
   if (!fullScreen) {
     return (
       <div

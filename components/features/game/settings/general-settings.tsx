@@ -77,7 +77,7 @@ function DesktopInputsGroup() {
           label={instance.getItem("bpm")}
           type="number"
           disabled={!midiState}
-          defaultValue={midiState ? Math.floor(midiState.config.bpm) : undefined}
+          value={midiState ? Math.floor(midiState.config.bpm) : undefined}
           containerClassName="w-full"
           onBlur={(e) => {
             let value = parseInt(e.currentTarget.value, 10);

@@ -9,19 +9,20 @@ import {
 } from "@/components/ui/custom-buttons";
 import { Action } from "@/midi-editor/types/actions";
 import useScreen from "@/hooks/use-screen";
+import useAudio from "@/hooks/use-audio";
 
 interface Gameprops {
   toggleSidebar: () => void;
 }
 
 export default function DesktopGameControlsSection({ ...props }: Gameprops) {
-  const { midiState, dispatch } = useGame();
+  const { audioLoaded } = useAudio();
   return (
     <div className="hidden md:block">
       <ControlsSection>
         <SettingsButton onClick={() => props.toggleSidebar()} />
-        <PlayButton />
-        <StopButton />
+        <PlayButton disabled={!audioLoaded} />
+        <StopButton disabled={!audioLoaded} />
         <Separator orientation="vertical" className="!h-6" />
         <BpmControl />
       </ControlsSection>
