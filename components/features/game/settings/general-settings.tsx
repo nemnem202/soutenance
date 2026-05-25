@@ -52,8 +52,22 @@ function DesktopInputsGroup() {
         />
         <SmallInput
           label={instance.getItem("repeats")}
-          type="number"
-          defaultValue={midiState?.config.repeats}
+          type={midiState?.config.repeats === Infinity ? "text" : "number"}
+          value={midiState?.config.repeats === Infinity ? "∞" : (midiState?.config.repeats ?? 0)}
+          onChange={(e) => {
+            const rawValue = e.target.value;
+
+            if (rawValue === "" || rawValue === "∞" || rawValue.toLowerCase() === "infinity") {
+              dispatch({ type: Action.SET_REPEATS, repeats: Infinity });
+              return;
+            }
+
+            let value = parseInt(rawValue, 10);
+            if (isNaN(value) || value < 0) value = 0;
+            if (value > 30) value = Infinity;
+
+            dispatch({ type: Action.SET_REPEATS, repeats: value });
+          }}
           containerClassName="w-full"
           icon={<p className="paragraph-sm text-muted-foreground">x</p>}
         />
