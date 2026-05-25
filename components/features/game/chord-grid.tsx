@@ -3,7 +3,7 @@ import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
 import { logger } from "@/lib/logger";
 import { musicalNotationRootNote } from "@/lib/utils";
-import SoundEngine from "@/midi-editor/engines/sound/sound-engine";
+import SoundEngine from "@/midi-editor/engines/sound-engine";
 import { Action } from "@/midi-editor/types/actions";
 import ChordGridProvider, { useChordGrid } from "@/providers/chord-grid-provider";
 import type { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";

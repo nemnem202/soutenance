@@ -15,7 +15,7 @@ import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { Action, type MidiAction } from "@/midi-editor/types/actions";
 import useAudio from "@/hooks/use-audio";
 import { useShortcuts } from "@/midi-editor/hooks/useShortcuts";
-import SoundEngine from "@/midi-editor/engines/sound/sound-engine";
+import SoundEngine from "@/midi-editor/engines/sound-engine";
 import { useData } from "vike-react/useData";
 import { Data } from "@/pages/game/@id/+data";
 

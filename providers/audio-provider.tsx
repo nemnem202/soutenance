@@ -1,5 +1,5 @@
 import { logger } from "@/lib/logger";
-import SoundEngine from "@/midi-editor/engines/sound/sound-engine";
+import SoundEngine from "@/midi-editor/engines/sound-engine";
 import { createContext, useState, type ReactNode } from "react";
 
 interface AudioContextType {
