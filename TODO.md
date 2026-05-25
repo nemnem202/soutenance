@@ -1,3 +1,9 @@
+- optimiser le changement de mesure du chord grid grace a un callback
+
+
+- corriger tous les diagrammes use case (include extends > mécompréhension)
+
+
 - optimiser l'envoi d'images cote frontend
 - retirer tous les style inline inutiles
 - retirer les duplicatas d'imports de ma font zing rust

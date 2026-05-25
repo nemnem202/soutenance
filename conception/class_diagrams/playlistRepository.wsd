@@ -1,0 +1,28 @@
+@startuml
+abstract class Repository {
+  # client : PrismaClient
+}
+
+class PlaylistRepository {
+  + create(playlist, userId) : Playlist
+  + getSortedByPopularity(userId, start, length) : ServerResponse<PlaylistCardDto[]>
+  + getDiscover(userId, start, length) : ServerResponse<PlaylistCardDto[]>
+  + getUserPlaylists(userId) : ServerResponse<PlaylistCardDto[]>
+  + getSingleFromId(playlistId, userId) : ServerResponse<PlaylistDetailDto>
+  + addPlaylistToPlaylist(targetId, addId, userId) : ServerResponse<null>
+  + addExerciseToPlaylist(targetId, exerciseId, userId) : ServerResponse<null>
+  + addManyExercisesToPlaylist(targetId, ids[], userId) : ServerResponse<null>
+  + removeExerciseFromPlaylist(targetId, exerciseId, userId) : ServerResponse<null>
+  + removePlaylist(playlistId, userId) : ServerResponse<null>
+  + getRecent(userId, start, length) : ServerResponse<PlaylistCardDto[]>
+}
+
+class PlaylistCardDto
+class PlaylistDetailDto
+class Playlist
+
+Repository <|-- PlaylistRepository
+PlaylistRepository ..> PlaylistCardDto
+PlaylistRepository ..> PlaylistDetailDto
+PlaylistRepository ..> Playlist
+@enduml

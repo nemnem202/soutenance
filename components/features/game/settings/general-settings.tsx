@@ -62,7 +62,6 @@ function DesktopInputsGroup() {
             if (value < 30) value = 30;
             if (value > 500) value = 500;
             e.currentTarget.value = value.toString();
-            logger.info("New bpm is set to: ", value);
             dispatch({ type: Action.SET_BPM, bpm: value });
           }}
         />

@@ -10,13 +10,14 @@ import { useLanguage } from "@/hooks/use-language";
 import type { Exercise } from "@/types/entities";
 import type { State as MidiState } from "@/midi-editor/types/instance";
 import { convertMidiFileToState, getMidiFileFromBuffer } from "@/midi-editor/lib/midiconverter";
-import onMidiFile from "@/telefunc/midifile.telefunc";
 import { errorToast } from "@/lib/toaster";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
-import type { MidiAction } from "@/midi-editor/types/actions";
+import { Action, type MidiAction } from "@/midi-editor/types/actions";
 import useAudio from "@/hooks/use-audio";
 import { useShortcuts } from "@/midi-editor/hooks/useShortcuts";
 import SoundEngine from "@/midi-editor/engines/sound-engine";
+import { useData } from "vike-react/useData";
+import { Data } from "@/pages/game/@id/+data";
 
 const tabsIds = ["piano-roll", "chords", "sheet", "guitar"] as const;
 export type TabID = (typeof tabsIds)[number];
@@ -46,33 +47,42 @@ export default function GameProvider({
   const [midiLoading, setMidiLoading] = useState(true);
   const dispatch = useMidiStore((s) => s.dispatch);
   const state = useMidiStore((s) => s.state);
-  const { loadMidiFile } = useAudio();
 
   useShortcuts();
+
+  const { midiBase64 } = useData<Data>();
+
   useEffect(() => {
     let isMounted = true;
+    useMidiStore.setState({ state: null });
+
     async function loadResources() {
-      setMidiLoading(true);
       try {
-        const response = await onMidiFile(exercise.id);
-        if (response.success && isMounted) {
-          const midiFile = await getMidiFileFromBuffer(response.data);
-          const newState = await convertMidiFileToState(midiFile);
-          useMidiStore.setState({ state: newState });
-          loadMidiFile();
+        const binaryStr = atob(midiBase64);
+        const bytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) {
+          bytes[i] = binaryStr.charCodeAt(i);
         }
+
+        const midiFile = await getMidiFileFromBuffer(bytes);
+        if (!isMounted) return;
+
+        const newState = convertMidiFileToState(midiFile, exercise);
+        useMidiStore.setState({ state: newState });
       } catch (err) {
-        errorToast("Erreur MIDI");
-      } finally {
-        if (isMounted) setMidiLoading(false);
+        errorToast("Erreur de chargement de l'exercice");
       }
     }
+
     loadResources();
+
     return () => {
       isMounted = false;
-      SoundEngine.get()?.stopAndCleanup();
+      SoundEngine.reset();
+      useMidiStore.getState().reset();
+      dispatch({ type: Action.RESET_STATE });
     };
-  }, [exercise.id, loadMidiFile]);
+  }, [exercise.id]);
 
   const tabs: Tab[] = [
     { id: "piano-roll", label: instance.getItem("piano_roll") },

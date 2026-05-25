@@ -13,9 +13,13 @@ import {
   Square,
   X,
   Timer,
+  ZoomIn,
+  ZoomOut,
 } from "lucide-react";
 import { Button, type ButtonProps } from "./button";
 import { useLanguage } from "@/hooks/use-language";
+import useGame from "@/hooks/use-game";
+import { Action } from "@/midi-editor/types/actions";
 
 export function LikeButton({ liked = false, ...props }: ButtonProps & { liked?: boolean }) {
   return (
@@ -145,10 +149,18 @@ function IconButton({ ...props }: ButtonProps) {
   );
 }
 
-export function PlayButton({ isPlaying, ...props }: ButtonProps & { isPlaying: boolean }) {
+export function PlayButton({ ...props }: ButtonProps) {
+  const { dispatch, midiState } = useGame();
+  const handlePlay = () => {
+    if (midiState?.transport.status === "playing") {
+      dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "paused" });
+    } else {
+      dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "playing" });
+    }
+  };
   return (
-    <IconButton {...props}>
-      {isPlaying ? (
+    <IconButton {...props} onClick={() => handlePlay()}>
+      {midiState?.transport.status === "playing" ? (
         <Pause className="fill-inherit stroke-inherit" />
       ) : (
         <Play className="fill-inherit stroke-inherit" />
@@ -166,8 +178,12 @@ export function MetronomeButton({ ...props }: ButtonProps) {
 }
 
 export function StopButton({ ...props }: ButtonProps) {
+  const { dispatch } = useGame();
   return (
-    <IconButton {...props}>
+    <IconButton
+      {...props}
+      onClick={() => dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "reset" })}
+    >
       <Square className="fill-inherit stroke-inherit" />
     </IconButton>
   );
@@ -177,6 +193,22 @@ export function SettingsButton({ ...props }: ButtonProps) {
   return (
     <IconButton {...props}>
       <Settings className="stroke-inherit" />
+    </IconButton>
+  );
+}
+
+export function ZoomInButton({ ...props }: ButtonProps) {
+  return (
+    <IconButton {...props}>
+      <ZoomIn className="stroke-inherit" />
+    </IconButton>
+  );
+}
+
+export function ZoomOutButton({ ...props }: ButtonProps) {
+  return (
+    <IconButton {...props}>
+      <ZoomOut className="stroke-inherit" />
     </IconButton>
   );
 }

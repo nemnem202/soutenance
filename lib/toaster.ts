@@ -24,7 +24,6 @@ export const loadingToast = <T>(
   options: LoadingToastOptions<T> = {}
 ) => {
   const handledPromise = promise.then((res) => {
-    logger.info("response: ", res);
     if (!res.success) throw res;
 
     return res.data;

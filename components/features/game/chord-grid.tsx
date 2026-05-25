@@ -1,39 +1,22 @@
 import useGame from "@/hooks/use-game";
 import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
-import {
-  computeLoopIndexes,
-  type SectionWithLoopIndexes,
-  type MeasureWithLoopIndexes,
-} from "@/lib/computeLoopIndexes";
 import { logger } from "@/lib/logger";
 import { musicalNotationRootNote } from "@/lib/utils";
-import { getFirstTickFromMeasureIndex } from "@/midi-editor/lib/utils";
+import SoundEngine from "@/midi-editor/engines/sound-engine";
 import { Action } from "@/midi-editor/types/actions";
 import ChordGridProvider, { useChordGrid } from "@/providers/chord-grid-provider";
-import type { BarsSchema, CellSchema } from "@/types/entities";
+import type { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
 import { FlagTriangleRight } from "lucide-react";
-import React, {
-  type MouseEvent,
-  useMemo,
-  useState,
-  type ReactNode,
-  useRef,
-  useEffect,
-} from "react";
+import React, { useState, type ReactNode, useRef, useEffect } from "react";
 
 export default function ChordGrid() {
   const { exercise } = useGame();
   const { instance } = useLanguage();
 
-  const sectionsWithLoopIndexes = useMemo(
-    () => (exercise.chordsGrid ? computeLoopIndexes(exercise.chordsGrid.sections) : []),
-    [exercise.chordsGrid]
-  );
-
   if (!exercise.chordsGrid)
     return (
-      <ChordGridProvider sectionsWithLoopIndexes={sectionsWithLoopIndexes} exercise={exercise}>
+      <ChordGridProvider>
         <div className="size-full p-0 md:p-4 flex flex-col gap-5">
           <p className="paragraph-md text-muted-foreground">
             {instance.getItem("this_exercise_does_not_contains_chords_grid")}
@@ -43,9 +26,9 @@ export default function ChordGrid() {
     );
 
   return (
-    <ChordGridProvider sectionsWithLoopIndexes={sectionsWithLoopIndexes} exercise={exercise}>
+    <ChordGridProvider>
       <div className="size-full p-1 md:p-6 flex flex-col gap-5">
-        {sectionsWithLoopIndexes
+        {exercise.chordsGrid.sections
           .sort((a, b) => a.index - b.index)
           .map((section) => (
             <Section section={section} key={section.index} />
@@ -55,7 +38,7 @@ export default function ChordGrid() {
   );
 }
 
-function Section({ section }: { section: SectionWithLoopIndexes }) {
+function Section({ section }: { section: SectionSchema }) {
   const commonMeasuresCount = section.commonMeasures.length;
   const firstVoltaStartColumn = (commonMeasuresCount % 4) + 1;
 
@@ -76,7 +59,7 @@ function Section({ section }: { section: SectionWithLoopIndexes }) {
               <MeasureBlock
                 measure={measure}
                 key={measure.index}
-                volta={index === 0 ? section.voltas[0].volta : undefined}
+                volta={index === 0 ? section.voltas[0].index : undefined}
               />
             ))}
       </div>
@@ -90,7 +73,7 @@ function Section({ section }: { section: SectionWithLoopIndexes }) {
                   key={measure.index}
                   style={index === 0 ? { gridColumnStart: firstVoltaStartColumn } : {}}
                 >
-                  <MeasureBlock measure={measure} volta={index === 0 ? volta.volta : undefined} />
+                  <MeasureBlock measure={measure} volta={index === 0 ? volta.index : undefined} />
                 </div>
               ))}
           </React.Fragment>
@@ -100,12 +83,13 @@ function Section({ section }: { section: SectionWithLoopIndexes }) {
   );
 }
 
-function MeasureBlock({ measure, volta }: { measure: MeasureWithLoopIndexes; volta?: number }) {
+function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: number }) {
   const { currentMeasure } = useChordGrid();
-  const isActive = measure.inLoopIndexes.includes(currentMeasure);
+  const { size } = useScreen();
+  const isActive = measure.index === currentMeasure;
   const measureRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (isActive && measureRef.current) {
+    if (isActive && measureRef.current && size === "sm") {
       measureRef.current.scrollIntoView({
         behavior: "smooth",
         block: "start",
@@ -120,6 +104,7 @@ function MeasureBlock({ measure, volta }: { measure: MeasureWithLoopIndexes; vol
       className={`flex w-full h-12 relative items-center relative group/measure ${isActive && "bg-popover"}`}
       id={String(measure.index)}
     >
+      <p className="absolute top-0.5 right-0.5 paragraph-sm">{measure.index}</p>
       {volta && <VoltaBracket volta={volta} />}
       {measure.bars.left && <LeftBar bar={measure.bars.left} />}
       <div className="flex-1 max-w-[100%] flex items-center pl-1 overflow-hidden">
@@ -136,48 +121,45 @@ function MeasureBlock({ measure, volta }: { measure: MeasureWithLoopIndexes; vol
   );
 }
 
-function SetStartButton({ measure }: { measure: MeasureWithLoopIndexes }) {
-  const { currentMeasure } = useChordGrid();
-  const [clicksIndex, setClicksIndex] = useState(0);
-  const { size } = useScreen();
+function SetStartButton({ measure }: { measure: MeasureSchema }) {
+  const { primedMeasure, setPrimedMeasure, setCurrentMeasure } = useChordGrid();
   const { dispatch, midiState } = useGame();
 
-  const handleClick = (e: MouseEvent) => {
+  const isPrimed = primedMeasure === measure.index;
+
+  const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (size === "sm" && clicksIndex < 1) {
-      logger.info("Display");
-      setClicksIndex(1);
-    } else if (midiState) {
-      logger.info("Set start");
-      const smallestIndex = Math.min(...measure.inLoopIndexes);
+    e.preventDefault();
+
+    if (!isPrimed) {
+      SoundEngine.get()?.setCurrentMeasure(measure.index);
+      setCurrentMeasure(measure.index);
+      setPrimedMeasure(measure.index);
       dispatch({
-        type: Action.SET_TRANSPORT_START,
-        start: getFirstTickFromMeasureIndex(midiState.config.ppq, smallestIndex, {
-          top: midiState.config.signature[0],
-          bottom: midiState.config.signature[1],
-        }),
-        skipHistory: true,
+        type: Action.SET_TRANSPORT_START_FROM_MEASURE_INDEX,
+        measureIndex: measure.index,
       });
-      if (!midiState.transport.isPlaying) {
-        dispatch({
-          type: Action.TOGGLE_PLAY,
-          force: true,
-        });
-      }
-      setClicksIndex(0);
+      logger.info("Set start measure", measure.index);
+    } else {
+      dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "playing" });
+      setPrimedMeasure(null);
     }
   };
-  if (!midiState?.transport.isPlaying)
-    return (
-      <button
-        type="button"
-        className={`absolute flex size-full justify-center items-center bg-foreground/20 cursor-pointer transition-all opacity-0 md:group-hover/measure:opacity-100 ${clicksIndex !== 0 && "opacity-100"}`}
-        onBlur={() => setClicksIndex(0)}
-        onClick={handleClick}
-      >
-        <FlagTriangleRight className="fill-primary stroke-primary" />
-      </button>
-    );
+
+  if (midiState?.transport.status === "playing") return null;
+
+  return (
+    <button
+      type="button"
+      className={`absolute inset-0 z-10 flex size-full justify-center items-center bg-foreground/10 cursor-pointer transition-all 
+        ${isPrimed ? "opacity-100 bg-primary/10" : "opacity-0 md:group-hover/measure:opacity-100"}`}
+      onClick={handleClick}
+    >
+      <FlagTriangleRight
+        className={`transition-transform ${isPrimed ? "scale-125 fill-primary stroke-primary" : "fill-foreground stroke-foreground"}`}
+      />
+    </button>
+  );
 }
 
 function CellGroup({
@@ -186,7 +168,7 @@ function CellGroup({
   isActive,
 }: {
   cell: CellSchema;
-  measure: MeasureWithLoopIndexes;
+  measure: MeasureSchema;
   isActive: boolean;
 }) {
   const renderCellContent = (): ReactNode => {

@@ -309,8 +309,6 @@ export default class SearchRepository extends Repository {
         rank: index + 1,
       }));
 
-    logger.info("Top ranked item :", slice[0]);
-
     const usersArray = slice.filter(
       (e): e is UserCardDto & { rank: number; score: number } =>
         "username" in e && !("visibility" in e) && !("midifileUrl" in e)
