@@ -16,7 +16,10 @@ export default function GeneralSettings() {
         <SwitchParam
           checked={!!midiState?.config.countIn}
           order="label-switch"
-          setChecked={() => {}}
+          setChecked={() => {
+            if (!midiState) return;
+            dispatch({ type: Action.SET_COUNT_INT, countin: !midiState.config.countIn });
+          }}
         >
           <p className="paragraph text-foreground">{instance.getItem("count_before_play")}</p>
         </SwitchParam>
