@@ -14,7 +14,7 @@ import { useLanguage } from "@/hooks/use-language";
 import { SidebarSlider } from "../game-assets";
 import { ParamsAccordion } from "../game-sidebar";
 import useGame from "@/hooks/use-game";
-import SoundEngine from "@/midi-editor/engines/sound-engine";
+import SoundEngine from "@/midi-editor/engines/sound/sound-engine";
 import { Action } from "@/midi-editor/types/actions";
 import { MidiInstrumentNumber } from "@/midi-editor/types/instruments";
 
