@@ -23,7 +23,12 @@ import {
 } from "@/components/organisms/select";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { Action } from "@/midi-editor/types/actions";
-import { PlayButton, StopButton } from "@/components/ui/custom-buttons";
+import {
+  PlayButton,
+  StopButton,
+  ZoomInButton,
+  ZoomOutButton,
+} from "@/components/ui/custom-buttons";
 import { CustomInput } from "@/components/ui/custom_input";
 import { logger } from "@/lib/logger";
 import { Field, FieldLabel } from "@/components/molecules/field";
@@ -240,13 +245,18 @@ export function Tab({ children }: { children: ReactNode }) {
         {...interactiveProps}
         className="size-full md:bg-card md:rounded-md relative overflow-hidden group min-h-0"
       >
-        <div className="hidden md:block relative z-10">
-          <div
-            className={`absolute m-2 top-0 right-0  transition opacity-0 group-hover:opacity-100 flex  gap-3`}
-          >
+        <div className="hidden z-10 absolute p-2 top-0 right-0 inset-0 transition opacity-0 group-hover:opacity-100 md:flex flex-col justify-between items-end">
+          <div className="flex gap-3">
             {activeTab === "piano-roll" && <TrackSelect />}
             <FullScreenButton fullScreen={fullScreen} setFullScreen={handleFullScreen} />
           </div>
+          {activeTab === "piano-roll" && (
+            <div className="flex-1 max-h-[50%] relative m-1">
+              <ZoomSlider />
+            </div>
+          )}
+
+          <div></div>
         </div>
         <div className="z-0 h-full min-h-0">{children}</div>
       </div>
@@ -351,5 +361,15 @@ export function BpmControl() {
         {instance.getItem("bpm").toLowerCase()}
       </FieldLabel>
     </Field>
+  );
+}
+
+function ZoomSlider() {
+  return (
+    <div className="flex flex-col items-center justify-center h-full flex-1">
+      <ZoomInButton />
+      <Slider orientation="vertical" min={0} max={100} className="flex-1" />
+      <ZoomOutButton />
+    </div>
   );
 }

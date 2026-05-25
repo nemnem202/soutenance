@@ -17,28 +17,8 @@ export default function ChordGridProvider({ children }: { children: ReactNode })
   const requestRef = useRef<number>(null);
   const [currentMeasure, setCurrentMeasure] = useState(SoundEngine.get()?.currentMeasure ?? 0);
 
-  // useEffect(() => {
-  //   const loop = () => {
-  //     const soundInstance = SoundEngine.get();
-  //     if (!soundInstance) {
-  //       return () => {
-  //         requestRef.current && cancelAnimationFrame(requestRef.current);
-  //       };
-  //     }
-  //     setCurrentMeasure(soundInstance.currentMeasure);
-
-  //     requestRef.current = requestAnimationFrame(loop);
-  //   };
-  //   requestRef.current = requestAnimationFrame(loop);
-
-  //   return () => {
-  //     requestRef.current && cancelAnimationFrame(requestRef.current);
-  //   };
-  // }, [state]);
-
   useEffect(() => {
     SoundEngine.onMeasureChange = (measure: number) => {
-      logger.info("Current measure changed:", measure);
       setCurrentMeasure(measure);
     };
     return () => {

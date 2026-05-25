@@ -13,6 +13,8 @@ import {
   Square,
   X,
   Timer,
+  ZoomIn,
+  ZoomOut,
 } from "lucide-react";
 import { Button, type ButtonProps } from "./button";
 import { useLanguage } from "@/hooks/use-language";
@@ -191,6 +193,22 @@ export function SettingsButton({ ...props }: ButtonProps) {
   return (
     <IconButton {...props}>
       <Settings className="stroke-inherit" />
+    </IconButton>
+  );
+}
+
+export function ZoomInButton({ ...props }: ButtonProps) {
+  return (
+    <IconButton {...props}>
+      <ZoomIn className="stroke-inherit" />
+    </IconButton>
+  );
+}
+
+export function ZoomOutButton({ ...props }: ButtonProps) {
+  return (
+    <IconButton {...props}>
+      <ZoomOut className="stroke-inherit" />
     </IconButton>
   );
 }

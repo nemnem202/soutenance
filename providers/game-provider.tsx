@@ -58,7 +58,6 @@ export default function GameProvider({
 
     async function loadResources() {
       try {
-        // Décoder le base64 → buffer
         const binaryStr = atob(midiBase64);
         const bytes = new Uint8Array(binaryStr.length);
         for (let i = 0; i < binaryStr.length; i++) {
