@@ -267,17 +267,17 @@ export function Tab({ children }: { children: ReactNode }) {
         {...interactiveProps}
         className="inset-0 absolute top-0 left-0 z-100 bg-background group min-h-0 p-5"
       >
-        <div className="relative z-10">
-          <div
-            className={`absolute top-0 left-0 w-full transition opacity-0 group-hover:opacity-100 flex justify-between p-2`}
-          >
+        <div
+          className={`z-10 absolute top-0 left-0 w-full inset-0 transition opacity-0 group-hover:opacity-100 flex flex-col justify-between p-2`}
+        >
+          <div className="flex justify-between items-center w-full ">
             <div className="flex gap-3 flex-1 justify-start items-center">
               <PlayButton />
               <StopButton />
               <Separator orientation="vertical" className="!h-6" />
               <BpmControl />
             </div>
-            <div className="flex-1 flex justify-center">
+            <div className="flex-1 flex h-fit justify-center">
               <AnimatedTabs
                 activeTab={activeTab}
                 onChange={(v) => setActiveTab(v as TabID)}
@@ -294,6 +294,12 @@ export function Tab({ children }: { children: ReactNode }) {
               <FullScreenButton fullScreen={fullScreen} setFullScreen={handleFullScreen} />
             </div>
           </div>
+          {activeTab === "piano-roll" && (
+            <div className="flex-1 max-h-[50%] relative m-1 w-full flex justify-end">
+              <ZoomSlider />
+            </div>
+          )}
+          <div></div>
         </div>
         <div className={`z-0 h-full min-h-0 ${activeTab !== "piano-roll" && "pt-12"}`}>
           {children}
@@ -365,11 +371,30 @@ export function BpmControl() {
 }
 
 function ZoomSlider() {
+  const { dispatch, state } = useMidiStore();
   return (
-    <div className="flex flex-col items-center justify-center h-full flex-1">
-      <ZoomInButton />
-      <Slider orientation="vertical" min={0} max={100} className="flex-1" />
-      <ZoomOutButton />
+    <div className="flex flex-col items-center justify-center h-full">
+      <ZoomInButton
+        onClick={() => {
+          dispatch({ type: Action.ZoomY, zoomY: Math.min(100, (state?.display.zoomY ?? 0) + 10) });
+        }}
+      />
+      <Slider
+        orientation="vertical"
+        min={0}
+        max={100}
+        step={1}
+        className="flex-1"
+        value={state?.display.zoomY ? [state.display.zoomY] : [0]}
+        onValueChange={(values) => {
+          dispatch({ type: Action.ZoomY, zoomY: values[0] });
+        }}
+      />
+      <ZoomOutButton
+        onClick={() => {
+          dispatch({ type: Action.ZoomY, zoomY: Math.max(0, (state?.display.zoomY ?? 0) - 10) });
+        }}
+      />
     </div>
   );
 }
