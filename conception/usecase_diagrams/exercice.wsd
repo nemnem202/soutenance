@@ -68,47 +68,47 @@ rectangle "Gestion de l'exercise" {
 ' --- Relations principales ---
 user -- UC01_ModifierExercise
 
-UC01_ModifierExercise .--> UC03_ModifierNom : <<include..
-UC01_ModifierExercise .--> UC04_ModifierVisibilite : <<include..
-UC01_ModifierExercise .--> UC05_ModifierCredits : <<include..
-UC01_ModifierExercise .--> UC02_GererModules: <<include..
+UC01_ModifierExercise .--> UC03_ModifierNom : <<include>>
+UC01_ModifierExercise .--> UC04_ModifierVisibilite : <<include>>
+UC01_ModifierExercise .--> UC05_ModifierCredits : <<include>>
+UC01_ModifierExercise .--> UC02_GererModules: <<include>>
 
 ' --- Relations pour le module Partition ---
-UC02_GererModules .--> UC06_ModifierModulePartition : <<include..
-UC06_ModifierModulePartition .-> UC07_ModifierPartition : <<include..
-UC06_ModifierModulePartition .-> UC08_ModifierGrilleAccords : <<include..
-UC06_ModifierModulePartition .-> UC09_ChoisirVoicings : <<include..
-UC06_ModifierModulePartition .-> UC10_DefinirVoicings : <<include..
-UC06_ModifierModulePartition .-> UC11_ModifierMelodie : <<include..
-UC06_ModifierModulePartition .-> UC12_ChangerModeAffichage : <<include..
+UC02_GererModules .--> UC06_ModifierModulePartition : <<include>>
+UC06_ModifierModulePartition .-> UC07_ModifierPartition : <<include>>
+UC06_ModifierModulePartition .-> UC08_ModifierGrilleAccords : <<include>>
+UC06_ModifierModulePartition .-> UC09_ChoisirVoicings : <<include>>
+UC06_ModifierModulePartition .-> UC10_DefinirVoicings : <<include>>
+UC06_ModifierModulePartition .-> UC11_ModifierMelodie : <<include>>
+UC06_ModifierModulePartition .-> UC12_ChangerModeAffichage : <<include>>
 
 ' --- Relations pour le module Accompagnement ---
-UC02_GererModules .--> UC13_ModifierModuleAccompagnement : <<include..
-UC13_ModifierModuleAccompagnement .-> UC14_AjouterPiste : <<include..
-UC13_ModifierModuleAccompagnement .-> UC15_RetirerPiste : <<include..
-UC13_ModifierModuleAccompagnement .-> UC16_ModifierMidiAccompagnement : <<include..
-UC13_ModifierModuleAccompagnement .-->UC26_UtiliserSampler  : <<extends..
+UC02_GererModules .--> UC13_ModifierModuleAccompagnement : <<include>>
+UC13_ModifierModuleAccompagnement .-> UC14_AjouterPiste : <<include>>
+UC13_ModifierModuleAccompagnement .-> UC15_RetirerPiste : <<include>>
+UC13_ModifierModuleAccompagnement .-> UC16_ModifierMidiAccompagnement : <<include>>
+UC13_ModifierModuleAccompagnement .-->UC26_UtiliserSampler  : <<extends>>
 
 ' --- Relations pour le module Contrôleur MIDI ---
-UC02_GererModules .--> UC17_ModifierModuleControleurMidi : <<include..
-UC17_ModifierModuleControleurMidi .-> UC18_ActiverControleMidi : <<include..
-UC17_ModifierModuleControleurMidi .-> UC19_DesactiverControleMidi : <<include..
-UC17_ModifierModuleControleurMidi .-> UC20_ModifierSonMidi : <<include..
-UC17_ModifierModuleControleurMidi .-> UC21_ActiverRetourErreur : <<include..
-UC17_ModifierModuleControleurMidi .-->UC26_UtiliserSampler : <<extends..
+UC02_GererModules .--> UC17_ModifierModuleControleurMidi : <<include>>
+UC17_ModifierModuleControleurMidi .-> UC18_ActiverControleMidi : <<include>>
+UC17_ModifierModuleControleurMidi .-> UC19_DesactiverControleMidi : <<include>>
+UC17_ModifierModuleControleurMidi .-> UC20_ModifierSonMidi : <<include>>
+UC17_ModifierModuleControleurMidi .-> UC21_ActiverRetourErreur : <<include>>
+UC17_ModifierModuleControleurMidi .-->UC26_UtiliserSampler : <<extends>>
 
 ' --- Relations pour le module Lecture ---
-UC02_GererModules .--> UC22_ModifierModuleLecture : <<include..
-UC22_ModifierModuleLecture .-> UC23_ModifierBpm : <<include..
-UC22_ModifierModuleLecture .-> UC24_LancerLecture : <<include..
-UC22_ModifierModuleLecture .-> UC25_StopperLecture : <<include..
+UC02_GererModules .--> UC22_ModifierModuleLecture : <<include>>
+UC22_ModifierModuleLecture .-> UC23_ModifierBpm : <<include>>
+UC22_ModifierModuleLecture .-> UC24_LancerLecture : <<include>>
+UC22_ModifierModuleLecture .-> UC25_StopperLecture : <<include>>
 
 ' --- Relations pour l'outil Sampler ---
-UC26_UtiliserSampler .-> UC27_ImporterSample : <<include..
-UC26_UtiliserSampler .-> UC28_UtiliserBanquePublique : <<include..
-UC26_UtiliserSampler .-> UC29_UtiliserBanquePrivee : <<include..
-UC26_UtiliserSampler .-> UC30_UtiliserMixer : <<include..
-UC30_UtiliserMixer .-> UC31_AjouterEffet : <<include..
-UC30_UtiliserMixer .-> UC32_RetirerEffet : <<include..
+UC26_UtiliserSampler .-> UC27_ImporterSample : <<include>>
+UC26_UtiliserSampler .-> UC28_UtiliserBanquePublique : <<include>>
+UC26_UtiliserSampler .-> UC29_UtiliserBanquePrivee : <<include>>
+UC26_UtiliserSampler .-> UC30_UtiliserMixer : <<include>>
+UC30_UtiliserMixer .-> UC31_AjouterEffet : <<include>>
+UC30_UtiliserMixer .-> UC32_RetirerEffet : <<include>>
 
 @enduml
