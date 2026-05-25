@@ -15,7 +15,7 @@ export default function ChordGridProvider({ children }: { children: ReactNode })
   const state = useMidiStore().state!;
   const [primedMeasure, setPrimedMeasure] = useState<number | null>(null);
   const requestRef = useRef<number>(null);
-  const [currentMeasure, setCurrentMeasure] = useState(0);
+  const [currentMeasure, setCurrentMeasure] = useState(SoundEngine.get()?.currentMeasure ?? 0);
 
   // useEffect(() => {
   //   const loop = () => {
