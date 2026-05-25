@@ -1,6 +1,6 @@
 import useAudio from "@/hooks/use-audio";
 import { logger } from "@/lib/logger";
-import SoundEngine from "@/midi-editor/engines/sound-engine";
+import SoundEngine from "@/midi-editor/engines/sound/sound-engine";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { ExerciseSchema } from "@/types/entities";
 import { createContext, type ReactNode, useContext, useEffect, useRef, useState } from "react";
