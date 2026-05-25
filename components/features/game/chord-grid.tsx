@@ -1,6 +1,7 @@
 import useGame from "@/hooks/use-game";
 import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
+import { logger } from "@/lib/logger";
 import { musicalNotationRootNote } from "@/lib/utils";
 import SoundEngine from "@/midi-editor/engines/sound-engine";
 import { Action } from "@/midi-editor/types/actions";
@@ -138,6 +139,7 @@ function SetStartButton({ measure }: { measure: MeasureSchema }) {
         type: Action.SET_TRANSPORT_START_FROM_MEASURE_INDEX,
         measureIndex: measure.index,
       });
+      logger.info("Set start measure", measure.index);
     } else {
       dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "playing" });
       setPrimedMeasure(null);
