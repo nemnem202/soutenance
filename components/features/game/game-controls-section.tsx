@@ -6,10 +6,13 @@ import {
   PlayButton,
   SettingsButton,
   StopButton,
+  ZoomInButton,
+  ZoomOutButton,
 } from "@/components/ui/custom-buttons";
 import { Action } from "@/midi-editor/types/actions";
 import useScreen from "@/hooks/use-screen";
 import useAudio from "@/hooks/use-audio";
+import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 
 interface Gameprops {
   toggleSidebar: () => void;
@@ -31,12 +34,35 @@ export default function DesktopGameControlsSection({ ...props }: Gameprops) {
 }
 
 export function MobileGameControlSection({ ...props }: Gameprops) {
-  const { activeTab } = useGame();
-  const { midiState } = useGame();
+  const { activeTab, midiState } = useGame();
+  const { state, dispatch } = useMidiStore();
   const isHorizontal = useScreen().orientation === "horizontal";
   return (
     <div className=" flex w-full justify-evenly">
-      {isHorizontal && <div className="w-40" />}
+      {isHorizontal && activeTab === "piano-roll"
+        ? (
+            <div className="flex gap-1 border rounded-md">
+              <ZoomInButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  dispatch({
+                    type: Action.ZoomY,
+                    zoomY: Math.min(100, (state?.display.zoomY ?? 0) + 10),
+                  });
+                }}
+              />
+              <ZoomOutButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  dispatch({
+                    type: Action.ZoomY,
+                    zoomY: Math.max(0, (state?.display.zoomY ?? 0) - 10),
+                  });
+                }}
+              />
+            </div>
+          )!
+        : isHorizontal && <div className="w-40" />}
 
       <SettingsButton onClick={() => props.toggleSidebar()} />
 
