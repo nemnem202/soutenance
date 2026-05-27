@@ -19,7 +19,7 @@ import SoundEngine from "@/midi-editor/engines/sound/sound-engine";
 import { useData } from "vike-react/useData";
 import { Data } from "@/pages/game/@id/+data";
 
-const tabsIds = ["piano-roll", "chords", "sheet", "guitar"] as const;
+const tabsIds = ["piano-roll", "chords-grid", "chords-carousel", "sheet", "guitar"] as const;
 export type TabID = (typeof tabsIds)[number];
 export type Tab = { id: TabID; label: string; disabled?: boolean };
 
@@ -43,7 +43,7 @@ export default function GameProvider({
   children: ReactNode;
 }) {
   const { instance } = useLanguage();
-  const [activeTab, setActiveTab] = useState<TabID>("chords");
+  const [activeTab, setActiveTab] = useState<TabID>("chords-grid");
   const [midiLoading, setMidiLoading] = useState(true);
   const dispatch = useMidiStore((s) => s.dispatch);
   const state = useMidiStore((s) => s.state);
@@ -86,7 +86,7 @@ export default function GameProvider({
 
   const tabs: Tab[] = [
     { id: "piano-roll", label: instance.getItem("piano_roll") },
-    { id: "chords", label: instance.getItem("chords") },
+    { id: "chords-grid", label: instance.getItem("chords") },
     { id: "sheet", label: instance.getItem("sheet"), disabled: true },
     { id: "guitar", label: instance.getItem("guitar"), disabled: true },
   ];

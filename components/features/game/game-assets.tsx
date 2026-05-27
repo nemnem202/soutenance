@@ -1,5 +1,5 @@
 import type * as CheckboxPrimitive from "@radix-ui/react-checkbox";
-import { Maximize, Minimize } from "lucide-react";
+import { Columns3, Grid3X3, Maximize, Minimize } from "lucide-react";
 import { type ComponentProps, type ReactNode, useEffect, useId, useRef, useState } from "react";
 import {
   CustomInputGroupInput,
@@ -288,8 +288,10 @@ export function Tab({ children }: { children: ReactNode }) {
               <ZoomSlider />
             </div>
           )}
-
-          <div></div>
+          {(activeTab === "chords-grid" || activeTab === "chords-carousel") && (
+            <ChordDisplaySelector />
+          )}
+          {activeTab === "piano-roll" && <div />}
         </div>
         <div className="z-0 h-full min-h-0">{children}</div>
       </div>
@@ -432,6 +434,30 @@ function ZoomSlider() {
           dispatch({ type: Action.ZoomY, zoomY: Math.max(0, (state?.display.zoomY ?? 0) - 10) });
         }}
       />
+    </div>
+  );
+}
+
+export function ChordDisplaySelector() {
+  const { setActiveTab, activeTab } = useGame();
+
+  return (
+    <div className="border rounded-md flex items-center h-10 overflow-hidden ">
+      <button
+        type="button"
+        onClick={() => setActiveTab("chords-carousel")}
+        className={`cursor-pointer w-full h-full flex justify-center items-center px-2 ${activeTab === "chords-grid" && "text-muted-foreground bg-popover"}`}
+      >
+        <Columns3 />
+      </button>
+      <Separator orientation="vertical" />
+      <button
+        type="button"
+        onClick={() => setActiveTab("chords-grid")}
+        className={`cursor-pointer w-full h-full flex justify-center items-center px-2 ${activeTab === "chords-carousel" && "text-muted-foreground bg-popover"}`}
+      >
+        <Grid3X3 />
+      </button>
     </div>
   );
 }

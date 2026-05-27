@@ -122,8 +122,8 @@ function TabBar() {
       />
       <SidebarTabButton
         text={instance.getItem("chords")}
-        isActive={activeTab === "chords"}
-        onClick={() => setActiveTab("chords")}
+        isActive={activeTab === "chords-grid"}
+        onClick={() => setActiveTab("chords-grid")}
       />
       <SidebarTabButton
         text={instance.getItem("sheet")}

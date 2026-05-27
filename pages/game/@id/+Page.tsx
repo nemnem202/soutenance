@@ -85,7 +85,7 @@ function GameView({ toggleSidebar }: { toggleSidebar: () => void }) {
           }
         />
         <Tab>
-          {activeTab === "chords" && <ChordTab />}
+          {(activeTab === "chords-grid" || activeTab === "chords-carousel") && <ChordTab />}
           {activeTab === "piano-roll" && (
             <ClientOnly>
               {!audioLoaded ? (
