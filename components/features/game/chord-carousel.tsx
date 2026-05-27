@@ -5,8 +5,13 @@ import useChordCarousel from "@/hooks/use-chord-carousel";
 import { chordToString } from "@/lib/utils";
 import { useData } from "vike-react/useData";
 import type { Data } from "@/pages/game/@id/+data";
-import type { ChordsGridSchema } from "@/types/entities";
+import type { ChordsGridSchema, MeasureSchema } from "@/types/entities";
 import type { Chord } from "@/types/music";
+import { CellKind } from "@/lib/generated/prisma/enums";
+import { useChordGrid } from "@/providers/chord-grid-provider";
+import { useEffect, useRef } from "react";
+import useScreen from "@/hooks/use-screen";
+import useCarousel from "embla-carousel-react";
 
 export interface ChordCarouselProps {
   carouselRef: EmblaViewportRefType;
@@ -14,11 +19,30 @@ export interface ChordCarouselProps {
   axis: "x" | "y";
 }
 
-export default function ChordCarousel({ ...props }: ChordCarouselProps) {
+export default function ChordCarousel() {
   const { exercise } = useData<Data>();
-  if (!exercise.success || !exercise.data.chordsGrid) return null;
+  const { size } = useScreen();
 
-  return <ChordCarouselContent {...props} chordsGrid={exercise.data.chordsGrid} />;
+  const { currentMeasure } = useChordGrid();
+  const initialMeasureRef = useRef(currentMeasure);
+
+  const [carouselRef, api] = useCarousel({
+    loop: true,
+    align: "center",
+    startIndex: initialMeasureRef.current,
+  });
+
+  if (!exercise.success || !exercise.data.chordsGrid) return null;
+  const axis = size === "sm" ? "y" : "x";
+
+  return (
+    <ChordCarouselContent
+      carouselRef={carouselRef}
+      api={api}
+      axis={axis}
+      chordsGrid={exercise.data.chordsGrid}
+    />
+  );
 }
 
 function ChordCarouselContent({
@@ -27,21 +51,17 @@ function ChordCarouselContent({
   axis,
   chordsGrid,
 }: ChordCarouselProps & { chordsGrid: ChordsGridSchema }) {
+  const { currentMeasure } = useChordGrid();
   const { springWidth } = useChordCarousel({ carouselRef, api, axis });
-  const getChordsFromChordsGrid = (grid: ChordsGridSchema): Chord[] => {
-    const measures = grid.sections.flatMap((section) => [
-      ...section.commonMeasures,
-      ...section.voltas.flatMap((volta) => [...volta.measures]),
-    ]);
 
-    return measures
-      .sort((a, b) => a.index - b.index)
-      .flatMap((measure) => measure.cells)
-      .filter((cell) => cell.kind === "Chord")
-      .sort((a, b) => a.index - b.index)
-      .flatMap((cell) => cell.chord);
-  };
-  const chords = getChordsFromChordsGrid(chordsGrid);
+  const measures: MeasureSchema[] = chordsGrid.sections.flatMap((section) => [
+    ...section.commonMeasures,
+    ...section.voltas.flatMap((volta) => volta.measures),
+  ]);
+
+  useEffect(() => {
+    api?.scrollTo(currentMeasure);
+  }, [currentMeasure]);
 
   return (
     <div className="flex items-center justify-center size-full">
@@ -55,13 +75,19 @@ function ChordCarouselContent({
             <div
               className={`flex gap-8 ${axis === "y" ? "flex-col touch-pan-x h-full" : "flex-row touch-pan-y"}`}
             >
-              {chords.map((chord, index) => (
-                <div className="flex-none min-w-0 font-mono text-[5rem]" key={index}>
+              {measures.map((measure) => (
+                <div className="flex-none min-w-0 font-mono text-[5rem]" key={measure.index}>
                   <div
                     className={`embla__slide__number rounded-[1.8rem] text-[6rem] font-semibold flex items-center justify-center h-fit select-none px-[3rem] min-w-[5ch] max-w-[20ch] flex-none min-w-0 font-mono text-[5rem] ${axis === "y" ? "w-full" : ""}`}
                     style={{ opacity: 0, transform: "scale(0)" }}
                   >
-                    <span className="whitespace-nowrap ">{chordToString(chord)}</span>
+                    {measure.cells.map((cell) => (
+                      <>
+                        {cell.kind === CellKind.Chord && (
+                          <span className="whitespace-nowrap ">{chordToString(cell.chord)}</span>
+                        )}
+                      </>
+                    ))}
                   </div>
                 </div>
               ))}

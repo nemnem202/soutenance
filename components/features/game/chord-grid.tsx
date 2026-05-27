@@ -16,25 +16,21 @@ export default function ChordGrid() {
 
   if (!exercise.chordsGrid)
     return (
-      <ChordGridProvider>
-        <div className="size-full p-0 md:p-4 flex flex-col gap-5">
-          <p className="paragraph-md text-muted-foreground">
-            {instance.getItem("this_exercise_does_not_contains_chords_grid")}
-          </p>
-        </div>
-      </ChordGridProvider>
+      <div className="size-full p-0 md:p-4 flex flex-col gap-5">
+        <p className="paragraph-md text-muted-foreground">
+          {instance.getItem("this_exercise_does_not_contains_chords_grid")}
+        </p>
+      </div>
     );
 
   return (
-    <ChordGridProvider>
-      <div className="size-full p-1 md:p-6 flex flex-col gap-5">
-        {exercise.chordsGrid.sections
-          .sort((a, b) => a.index - b.index)
-          .map((section) => (
-            <Section section={section} key={section.index} />
-          ))}
-      </div>
-    </ChordGridProvider>
+    <div className="size-full p-1 md:p-6 flex flex-col gap-5">
+      {exercise.chordsGrid.sections
+        .sort((a, b) => a.index - b.index)
+        .map((section) => (
+          <Section section={section} key={section.index} />
+        ))}
+    </div>
   );
 }
 

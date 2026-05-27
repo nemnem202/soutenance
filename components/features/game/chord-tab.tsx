@@ -9,29 +9,15 @@ import ChordCarousel from "./chord-carousel";
 import ChordGrid from "./chord-grid";
 import { ChordDisplaySelector } from "./game-assets";
 import useGame from "@/hooks/use-game";
+import ChordGridProvider from "@/providers/chord-grid-provider";
 
 export default function ChordTab() {
   const { activeTab, tabs, setActiveTab } = useGame();
-  const { size } = useScreen();
-  const axis = size === "sm" ? "y" : "x";
-  const [carouselRef, api] = useCarousel({ loop: true, align: "center", axis });
-  // const handleClickNext = () => {
-  //   if (activeTab === "chords-carousel") {
-  //     api?.scrollNext();
-  //   }
-  // };
-  // const handleClickPrev = () => {
-  //   if (activeTab === "chords-carousel") {
-  //     api?.scrollPrev();
-  //   }
-  // };
   return (
     <div className="h-full w-full flex flex-col justify-between overflow-auto">
-      {activeTab === "chords-grid" ? (
-        <ChordGrid />
-      ) : (
-        <ChordCarousel key={axis} api={api} carouselRef={carouselRef} axis={axis} />
-      )}
+      <ChordGridProvider>
+        {activeTab === "chords-grid" ? <ChordGrid /> : <ChordCarousel />}
+      </ChordGridProvider>
     </div>
   );
 }
