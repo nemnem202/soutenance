@@ -4,6 +4,7 @@ import useScreen from "@/hooks/use-screen";
 import { logger } from "@/lib/logger";
 import { musicalNotationRootNote } from "@/lib/utils";
 import SoundEngine from "@/midi-editor/engines/sound/sound-engine";
+import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { Action } from "@/midi-editor/types/actions";
 import ChordGridProvider, { useChordGrid } from "@/providers/chord-grid-provider";
 import type { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
@@ -80,9 +81,9 @@ function Section({ section }: { section: SectionSchema }) {
 }
 
 function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: number }) {
-  const { currentMeasure } = useChordGrid();
+  const { state } = useMidiStore();
   const { size } = useScreen();
-  const isActive = measure.index === currentMeasure;
+  const isActive = measure.index === state?.transport.currentMeasureIndex;
   const measureRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (isActive && measureRef.current && size === "sm") {
@@ -118,7 +119,7 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
 }
 
 function SetStartButton({ measure }: { measure: MeasureSchema }) {
-  const { primedMeasure, setPrimedMeasure, setCurrentMeasure } = useChordGrid();
+  const { primedMeasure, setPrimedMeasure } = useChordGrid();
   const { dispatch, midiState } = useGame();
 
   const isPrimed = primedMeasure === measure.index;
@@ -128,8 +129,6 @@ function SetStartButton({ measure }: { measure: MeasureSchema }) {
     e.preventDefault();
 
     if (!isPrimed) {
-      SoundEngine.get()?.setCurrentMeasure(measure.index);
-      setCurrentMeasure(measure.index);
       setPrimedMeasure(measure.index);
       dispatch({
         type: Action.SET_TRANSPORT_START_FROM_MEASURE_INDEX,

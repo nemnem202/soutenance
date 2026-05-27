@@ -12,6 +12,7 @@ import { useChordGrid } from "@/providers/chord-grid-provider";
 import { useEffect, useRef } from "react";
 import useScreen from "@/hooks/use-screen";
 import useCarousel from "embla-carousel-react";
+import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 
 export interface ChordCarouselProps {
   carouselRef: EmblaViewportRefType;
@@ -22,9 +23,8 @@ export interface ChordCarouselProps {
 export default function ChordCarousel() {
   const { exercise } = useData<Data>();
   const { size } = useScreen();
-
-  const { currentMeasure } = useChordGrid();
-  const initialMeasureRef = useRef(currentMeasure);
+  const { state } = useMidiStore();
+  const initialMeasureRef = useRef(state?.transport.currentMeasureIndex ?? 0);
 
   const [carouselRef, api] = useCarousel({
     loop: true,
@@ -51,7 +51,7 @@ function ChordCarouselContent({
   axis,
   chordsGrid,
 }: ChordCarouselProps & { chordsGrid: ChordsGridSchema }) {
-  const { currentMeasure } = useChordGrid();
+  const { state } = useMidiStore();
   const { springWidth } = useChordCarousel({ carouselRef, api, axis });
 
   const measures: MeasureSchema[] = chordsGrid.sections.flatMap((section) => [
@@ -60,8 +60,8 @@ function ChordCarouselContent({
   ]);
 
   useEffect(() => {
-    api?.scrollTo(currentMeasure);
-  }, [currentMeasure]);
+    api?.scrollTo(state?.transport.currentMeasureIndex ?? 0);
+  }, [state?.transport.currentMeasureIndex]);
 
   return (
     <div className="flex items-center justify-center size-full">
