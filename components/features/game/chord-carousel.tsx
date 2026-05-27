@@ -78,16 +78,18 @@ function ChordCarouselContent({
               {measures.map((measure) => (
                 <div className="flex-none min-w-0 font-mono text-[5rem]" key={measure.index}>
                   <div
-                    className={`embla__slide__number rounded-[1.8rem] text-[6rem] font-semibold flex items-center justify-center h-fit select-none px-[3rem] min-w-[5ch] max-w-[20ch] flex-none min-w-0 font-mono text-[5rem] ${axis === "y" ? "w-full" : ""}`}
+                    className={`embla__slide__number rounded-[1.8rem] text-[6rem] font-semibold flex gap-20 items-center justify-center h-fit select-none px-[3rem] flex-none min-w-0 font-mono text-[5rem] ${axis === "y" ? "w-full" : ""}`}
                     style={{ opacity: 0, transform: "scale(0)" }}
                   >
-                    {measure.cells.map((cell) => (
-                      <>
-                        {cell.kind === CellKind.Chord && (
-                          <span className="whitespace-nowrap ">{chordToString(cell.chord)}</span>
-                        )}
-                      </>
-                    ))}
+                    {measure.cells.map((cell) => {
+                      if (cell.kind === CellKind.Chord) {
+                        return (
+                          <span className="whitespace-nowrap flex" key={cell.index}>
+                            {chordToString(cell.chord)}
+                          </span>
+                        );
+                      }
+                    })}
                   </div>
                 </div>
               ))}

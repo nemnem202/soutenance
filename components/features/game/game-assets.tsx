@@ -461,3 +461,19 @@ export function ChordDisplaySelector() {
     </div>
   );
 }
+
+export function RepeatsDisplay() {
+  const { state } = useMidiStore();
+
+  if (!state || !state.config.loop || state.config.repeats === 0) return null;
+  return (
+    <>
+      <Separator orientation="vertical" className="!h-6" />
+      <div className="flex">
+        <p className="font-mono semibold text-muted-foreground">
+          {state.config.loop.currentRepeatIndex}/{state.config.repeats}
+        </p>
+      </div>
+    </>
+  );
+}

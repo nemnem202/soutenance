@@ -1,5 +1,5 @@
 import { Separator } from "@/components/ui/separator";
-import { BpmControl, ControlsSection, TrackSelect } from "./game-assets";
+import { BpmControl, ControlsSection, RepeatsDisplay, TrackSelect } from "./game-assets";
 import useGame from "@/hooks/use-game";
 import {
   MetronomeButton,
@@ -28,6 +28,7 @@ export default function DesktopGameControlsSection({ ...props }: Gameprops) {
         <StopButton disabled={!audioLoaded} />
         <Separator orientation="vertical" className="!h-6" />
         <BpmControl />
+        <RepeatsDisplay />
       </ControlsSection>
     </div>
   );

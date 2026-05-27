@@ -100,7 +100,7 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
       className={`flex w-full h-12 relative items-center relative group/measure ${isActive && "bg-popover"}`}
       id={String(measure.index)}
     >
-      <p className="absolute top-0.5 right-0.5 paragraph-sm">{measure.index}</p>
+      {/* <p className="absolute top-0.5 right-0.5 paragraph-sm">{measure.index}</p> */}
       {volta && <VoltaBracket volta={volta} />}
       {measure.bars.left && <LeftBar bar={measure.bars.left} />}
       <div className="flex-1 max-w-[100%] flex items-center pl-1 overflow-hidden">
