@@ -35,7 +35,7 @@ export default function DesktopGameControlsSection({ ...props }: Gameprops) {
 }
 
 export function MobileGameControlSection({ ...props }: Gameprops) {
-  const { activeTab, midiState } = useGame();
+  const { activeTab } = useGame();
   const { state, dispatch } = useMidiStore();
   const isHorizontal = useScreen().orientation === "horizontal";
   return (
@@ -67,7 +67,7 @@ export function MobileGameControlSection({ ...props }: Gameprops) {
 
       <SettingsButton onClick={() => props.toggleSidebar()} />
 
-      {midiState && (
+      {state && (
         <>
           <StopButton />
           <PlayButton />

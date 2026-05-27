@@ -83,7 +83,7 @@ function Section({ section }: { section: SectionSchema }) {
 function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: number }) {
   const { state } = useMidiStore();
   const { size } = useScreen();
-  const isActive = measure.index === state?.transport.currentMeasureIndex;
+  const [isActive, setIsActive] = useState(false);
   const measureRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (isActive && measureRef.current && size === "sm") {
@@ -94,6 +94,12 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
       });
     }
   }, [isActive]);
+  useEffect(() => {
+    if (!state) return;
+    setIsActive(measure.index === state.transport.currentMeasureIndex);
+    if (measure.index === state.transport.currentMeasureIndex)
+      logger.info("Current measure changed", measure.index, state.transport.currentMeasureIndex);
+  }, [state?.transport.currentMeasureIndex]);
 
   return (
     <div
@@ -120,7 +126,7 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
 
 function SetStartButton({ measure }: { measure: MeasureSchema }) {
   const { primedMeasure, setPrimedMeasure } = useChordGrid();
-  const { dispatch, midiState } = useGame();
+  const { dispatch, state } = useMidiStore();
 
   const isPrimed = primedMeasure === measure.index;
 
@@ -134,14 +140,13 @@ function SetStartButton({ measure }: { measure: MeasureSchema }) {
         type: Action.SET_TRANSPORT_START_FROM_MEASURE_INDEX,
         measureIndex: measure.index,
       });
-      logger.info("Set start measure", measure.index);
     } else {
       dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "playing" });
       setPrimedMeasure(null);
     }
   };
 
-  if (midiState?.transport.status === "playing") return null;
+  if (state?.transport.status === "playing") return null;
 
   return (
     <button

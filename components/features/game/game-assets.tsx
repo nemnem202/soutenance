@@ -221,7 +221,6 @@ export function Tab({ children }: { children: ReactNode }) {
   const { audioLoaded } = useAudio();
   const [isIdle, setIsIdle] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const { midiState, dispatch } = useGame();
   const handleFullScreen = (value: boolean) => {
     if (value) {
       document.documentElement.requestFullscreen?.().catch(() => {});
@@ -385,14 +384,14 @@ export function TrackSelect() {
 
 export function BpmControl() {
   const { instance } = useLanguage();
-  const { midiState, dispatch } = useGame();
+  const { state, dispatch } = useMidiStore();
   return (
     <Field className="flex flex-row items-center justify-center !w-min">
       <CustomInput
         id="bpm"
         type="number"
-        disabled={!midiState}
-        defaultValue={midiState ? Math.floor(midiState.config.bpm) : undefined}
+        disabled={!state}
+        defaultValue={state ? Math.floor(state.config.bpm) : undefined}
         onBlur={(e) => {
           let value = parseInt(e.currentTarget.value, 10);
           if (value < 30) value = 30;

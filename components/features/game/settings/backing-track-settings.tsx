@@ -17,11 +17,12 @@ import useGame from "@/hooks/use-game";
 import SoundEngine from "@/midi-editor/engines/sound/sound-engine";
 import { Action } from "@/midi-editor/types/actions";
 import { MidiInstrumentNumber } from "@/midi-editor/types/instruments";
+import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 
 export default function BackingTrackSettings() {
   const [backingTackActive, setBackingTrackActive] = useState(false);
   const { instance } = useLanguage();
-  const { midiState, dispatch } = useGame();
+  const { state, dispatch } = useMidiStore();
   return (
     <ParamsAccordion title={<h3 className="title-3">{instance.getItem("backing_track")}</h3>}>
       <div className="flex flex-col gap-3">
@@ -45,7 +46,7 @@ export default function BackingTrackSettings() {
         <div
           className={`flex flex-col w-full gap-2 py-2 ${!backingTackActive && "text-muted-foreground"}`}
         >
-          {midiState?.tracks.map((track) => (
+          {state?.tracks.map((track) => (
             <>
               <SidebarSlider
                 defaultValue={[100]}
