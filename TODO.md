@@ -1,6 +1,9 @@
+- retirer la logique des events pour les diagrammes d'accords et uniquement se baser sur la current mesure
+
+
 - transposition
 - midi
-- diagrammes d'accords
+
 
 - securite des cookies en prod
 - unplugin-font

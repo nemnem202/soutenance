@@ -137,12 +137,6 @@ function SetStartButton({ measure }: { measure: MeasureSchema }) {
         type: Action.SET_TRANSPORT_START_FROM_MEASURE_INDEX,
         measureIndex: measure.index,
       });
-      dispatch({
-        type: Action.SET_CURRENT_CHORDS,
-        chords: measure.cells.flatMap((c) =>
-          c.kind === "Chord" && c.chord.content.note !== "%" ? [c.chord] : []
-        ),
-      });
     } else {
       dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "playing" });
       setPrimedMeasure(null);

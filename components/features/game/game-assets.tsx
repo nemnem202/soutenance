@@ -40,6 +40,8 @@ import { MidiInstrumentNumber } from "@/midi-editor/types/instruments";
 import useAudio from "@/hooks/use-audio";
 import PianoChordDiagram from "./piano-chord-diagram";
 import { ClientOnly } from "vike-react/ClientOnly";
+import { Chord } from "@/types/music";
+import { MeasureSchema } from "@/types/entities";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
   return (
@@ -485,6 +487,29 @@ export function RepeatsDisplay() {
 
 export function ChordsDiagramsView() {
   const { state } = useMidiStore();
+  const { exercise } = useGame();
+  const [currentChords, setCurrentChords] = useState<Chord[]>([]);
+
+  // useEffect(() => {
+  //   if (!state?.transport.currentMeasureIndex || !exercise.chordsGrid) return;
+  //   const allMeasures: MeasureSchema[] = exercise.chordsGrid.sections.flatMap((section) => [
+  //     ...section.commonMeasures,
+  //     ...section.voltas.flatMap((volta) => volta.measures),
+  //   ]);
+
+  //   const currentMeasure = allMeasures.find((m) => m.index === state.transport.currentMeasureIndex);
+
+  //   if (!currentMeasure) return;
+
+  //   const chords = currentMeasure.cells
+  //     .filter((cell) => cell.kind === "Chord")
+  //     .map((cell) => cell.chord);
+  //   setCurrentChords(chords);
+  // }, [state?.transport.currentMeasureIndex, exercise]);
+
+  // useEffect(() => {
+  //   logger.info("Current chords", currentChords);
+  // }, [currentChords]);
 
   if (!state || (!state?.config.displayPianoDiagrams && !state?.config.displayGuitarDiagrams))
     return null;
@@ -492,7 +517,7 @@ export function ChordsDiagramsView() {
   return (
     <ClientOnly>
       <div className="h-30 w-full flex justify-evenly gap-2">
-        {state.transport.currentChords.map((c, index) => (
+        {currentChords.map((c, index) => (
           <PianoChordDiagram chord={c} key={index} />
         ))}
       </div>
