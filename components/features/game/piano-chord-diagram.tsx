@@ -130,7 +130,9 @@ export default function PianoChordDiagram({ chord }: { chord: Chord }) {
     }
   }
 
-  return <div ref={containerRef} className="flex-1 overflow-hidden w-100 rounded-md" />;
+  return (
+    <div ref={containerRef} className="overflow-hidden md:w-100 md:h-20 w-50 h-10 rounded-md" />
+  );
 }
 
 function whiteIndexToAbsoluteSemitone(whiteIndex: number): number {

@@ -297,7 +297,7 @@ export function Tab({ children }: { children: ReactNode }) {
     return (
       <div
         {...interactiveProps}
-        className="size-full md:bg-card md:rounded-md relative overflow-hidden group min-h-0"
+        className="md:size-full md:bg-card md:rounded-md relative overflow-hidden group min-h-0"
       >
         <div className="hidden z-10 absolute p-2 top-0 right-0 inset-0 transition opacity-0 group-hover:opacity-100 md:flex flex-col justify-between items-end">
           <div className="flex gap-3">
@@ -314,7 +314,7 @@ export function Tab({ children }: { children: ReactNode }) {
           )}
           {activeTab === "piano-roll" && <div />}
         </div>
-        <div className="z-0 h-full min-h-0">{children}</div>
+        <div className="z-0 h-full min-h-0 flex flex-col justify-end">{children}</div>
       </div>
     );
   } else {
@@ -362,7 +362,7 @@ export function Tab({ children }: { children: ReactNode }) {
           <div></div>
         </div>
         <div
-          className={`z-0 h-full min-h-0 ${activeTab !== "piano-roll" && "pt-12"} flex flex-col gap-5`}
+          className={`z-0 md:h-full md:min-h-0 ${activeTab !== "piano-roll" && "pt-12"} flex flex-col gap-5`}
         >
           {children}
           <ChordsDiagramsView />
@@ -576,9 +576,9 @@ export function ChordsDiagramsView() {
 
   return (
     <ClientOnly>
-      <div className="h-30 w-full flex justify-center gap-2">
+      <div className="h-30 w-full flex md:flex-row flex-col justify-center gap-2 md:pb-0 pb-5">
         {currentChords.map((c, index) => (
-          <div key={index} className="flex flex-col w-100 items-center">
+          <div key={index} className="flex flex-col items-center">
             <p className="whitespace-nowrap font-mono bold text-primary">{chordToString(c)}</p>
             <PianoChordDiagram chord={c} />
           </div>
