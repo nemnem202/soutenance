@@ -174,7 +174,7 @@ export default class MMAContentGenerator {
       }
 
       lines.push(`MIDImark Bar_${measure.index}`);
-      lines.push(this.getSingleMeasure(measure, this.mmaMeasureIndex));
+      lines.push(...this.getSingleMeasure(measure, this.mmaMeasureIndex));
       this.mmaMeasureIndex++;
 
       if (isLast) {
@@ -186,7 +186,7 @@ export default class MMAContentGenerator {
     });
   }
 
-  private getSingleMeasure(measure: MeasureSchema, outIndex: number): string {
+  private getSingleMeasure(measure: MeasureSchema, outIndex: number): string[] {
     const chordCells: Extract<Cell, { kind: "Chord" }>[] = measure.cells.filter(
       (c) => c.kind === "Chord"
     );
@@ -200,8 +200,14 @@ export default class MMAContentGenerator {
           return `${cell.chord.content.note}${chord?.mmaLabel ?? ""}`;
         }
       });
+    const filtered = chordCells.filter((c) => c.chord.content.note !== "%");
 
-    return `${outIndex} ${values.join(" ")}`;
+    return [
+      ...(filtered.length > 0
+        ? [`MIDImark Chords_${JSON.stringify(filtered.map((c) => c.chord))}`]
+        : []),
+      `${outIndex} ${values.join(" ")}`,
+    ];
   }
 
   private getFill(): string | null {

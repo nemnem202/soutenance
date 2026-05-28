@@ -340,7 +340,7 @@ export function Tab({ children }: { children: ReactNode }) {
           <div></div>
         </div>
         <div
-          className={`z-0 h-full min-h-0 ${activeTab !== "piano-roll" && "pt-12"} flex flex-col`}
+          className={`z-0 h-full min-h-0 ${activeTab !== "piano-roll" && "pt-12"} flex flex-col gap-5`}
         >
           {children}
           <ChordsDiagramsView />
@@ -484,6 +484,11 @@ export function RepeatsDisplay() {
 export function ChordsDiagramsView() {
   const { state } = useMidiStore();
 
-  if (!state?.config.displayPianoDiagrams && !state?.config.displayGuitarDiagrams) return null;
-  return <div className="h-50 w-full bg-primary overflow-hidden rounded-md"></div>;
+  if (!state || (!state?.config.displayPianoDiagrams && !state?.config.displayGuitarDiagrams))
+    return null;
+  return (
+    <div className="h-50 w-full bg-primary overflow-hidden rounded-md">
+      {state.transport.currentChords.map((c) => c.content.note + c.content.modifier)}
+    </div>
+  );
 }
