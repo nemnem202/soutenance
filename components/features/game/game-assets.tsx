@@ -38,6 +38,8 @@ import AnimatedTabs from "@/components/organisms/animated-tabs";
 import type { TabID } from "@/providers/game-provider";
 import { MidiInstrumentNumber } from "@/midi-editor/types/instruments";
 import useAudio from "@/hooks/use-audio";
+import PianoChordDiagram from "./piano-chord-diagram";
+import { ClientOnly } from "vike-react/ClientOnly";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
   return (
@@ -487,8 +489,12 @@ export function ChordsDiagramsView() {
   if (!state || (!state?.config.displayPianoDiagrams && !state?.config.displayGuitarDiagrams))
     return null;
   return (
-    <div className="h-50 w-full bg-primary overflow-hidden rounded-md">
-      {state.transport.currentChords.map((c) => c.content.note + c.content.modifier)}
-    </div>
+    <ClientOnly>
+      <div className="h-50 w-full bg-primary overflow-hidden rounded-md">
+        {state.transport.currentChords.map((c, index) => (
+          <PianoChordDiagram chord={c} key={index} />
+        ))}
+      </div>
+    </ClientOnly>
   );
 }
