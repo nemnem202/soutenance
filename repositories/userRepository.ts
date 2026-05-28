@@ -43,7 +43,6 @@ export default class UserRepository extends Repository {
   }
 
   async updateImage(fileUpload: { url: string; imageId: string }, userId: number) {
-    // 1. Récupérer l'imageId actuel du user
     const user = await this.client.user.findUnique({
       where: { id: userId },
       select: { imageId: true },
@@ -51,13 +50,11 @@ export default class UserRepository extends Repository {
 
     if (!user) throw new Error(`User ${userId} not found`);
 
-    // 2. Mettre à jour l'Image directement
     await this.client.image.update({
       where: { id: user.imageId },
       data: { url: fileUpload.url, cloudId: fileUpload.imageId },
     });
 
-    // 3. Retourner le user avec la relation à jour
     const updatedUser = await this.client.user.findUnique({
       where: { id: userId },
       include: { profilePicture: true },
