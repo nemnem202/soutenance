@@ -1,4 +1,3 @@
-- affichage transposition
 - midi-backup
 
 - midi
