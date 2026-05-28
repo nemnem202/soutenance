@@ -1,6 +1,14 @@
 import type * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Columns3, Grid3X3, Maximize, Minimize } from "lucide-react";
-import { type ComponentProps, type ReactNode, useEffect, useId, useRef, useState } from "react";
+import {
+  type ComponentProps,
+  type ReactNode,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   CustomInputGroupInput,
   InputGroup,
@@ -41,8 +49,8 @@ import useAudio from "@/hooks/use-audio";
 import PianoChordDiagram from "./piano-chord-diagram";
 import { ClientOnly } from "vike-react/ClientOnly";
 import { Chord } from "@/types/music";
-import { ChordSchema, MeasureSchema } from "@/types/entities";
-import { chordToString } from "@/lib/utils";
+import { CellSchema, ChordSchema, MeasureSchema } from "@/types/entities";
+import { chordCellsWithTransposition, chordToString } from "@/lib/utils";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
   return (
@@ -297,7 +305,7 @@ export function Tab({ children }: { children: ReactNode }) {
     return (
       <div
         {...interactiveProps}
-        className="size-full md:bg-card md:rounded-md relative overflow-hidden group min-h-0"
+        className="md:size-full md:bg-card md:rounded-md relative overflow-hidden group min-h-0"
       >
         <div className="hidden z-10 absolute p-2 top-0 right-0 inset-0 transition opacity-0 group-hover:opacity-100 md:flex flex-col justify-between items-end">
           <div className="flex gap-3">
@@ -314,7 +322,7 @@ export function Tab({ children }: { children: ReactNode }) {
           )}
           {activeTab === "piano-roll" && <div />}
         </div>
-        <div className="z-0 h-full min-h-0">{children}</div>
+        <div className="z-0 h-full min-h-0 flex flex-col justify-end">{children}</div>
       </div>
     );
   } else {
@@ -362,7 +370,7 @@ export function Tab({ children }: { children: ReactNode }) {
           <div></div>
         </div>
         <div
-          className={`z-0 h-full min-h-0 ${activeTab !== "piano-roll" && "pt-12"} flex flex-col gap-5`}
+          className={`z-0 md:h-full md:min-h-0 ${activeTab !== "piano-roll" && "pt-12"} flex flex-col gap-5`}
         >
           {children}
           <ChordsDiagramsView />
@@ -503,46 +511,129 @@ export function RepeatsDisplay() {
   );
 }
 
+// export function ChordsDiagramsView() {
+//   const { state } = useMidiStore();
+//   const { exercise } = useGame();
+//   const [currentChords, setCurrentChords] = useState<Chord[]>([]);
+
+//   useEffect(() => {
+//     if (!state || !exercise.chordsGrid) return;
+
+//     const allMeasures: MeasureSchema[] = exercise.chordsGrid.sections.flatMap((section) => [
+//       ...section.commonMeasures,
+//       ...section.voltas.flatMap((volta) => volta.measures),
+//     ]);
+
+//     const currentMeasureIndex = state.transport.currentMeasureIndex;
+//     const currentMeasure = allMeasures.find((m) => m.index === currentMeasureIndex);
+
+//     if (!currentMeasure) return;
+
+//     const rawChords = currentMeasure.cells
+//       .filter((cell) => cell.kind === "Chord" && cell.chord)
+//       // @ts-expect-error
+//       .map((cell) => cell.chord!);
+
+//     const isPreviousChordInvalid = (prevChord: ChordSchema): boolean => {
+//       return false;
+//     };
+
+//     const findFallbackChordInPreviousMeasures = (startIndex: number): ChordSchema | null => {
+//       for (let i = startIndex - 1; i >= 0; i--) {
+//         const prevMeasure = allMeasures.find((m) => m.index === i);
+//         if (prevMeasure) {
+//           const chordCell = prevMeasure.cells.find(
+//             (cell) => cell.kind === "Chord" && cell.chord && cell.chord.content.note !== "%"
+//           );
+//           // @ts-expect-error
+//           if (chordCell && chordCell.chord) {
+//             // @ts-expect-error
+//             return chordCell.chord;
+//           }
+//         }
+//       }
+//       return null;
+//     };
+
+//     const processedChords: ChordSchema[] = [];
+
+//     rawChords.forEach((chord, index) => {
+//       if (chord.content.note === "%") {
+//         if (index > 0) {
+//           const prevChord = processedChords[processedChords.length - 1];
+
+//           if (!isPreviousChordInvalid(prevChord)) {
+//             processedChords.push(chord);
+//           }
+//         } else {
+//           const fallbackChord = findFallbackChordInPreviousMeasures(currentMeasureIndex);
+//           if (fallbackChord) {
+//             processedChords.push(fallbackChord);
+//           }
+//         }
+//       } else {
+//         processedChords.push(chord);
+//       }
+//     });
+
+//     setCurrentChords(processedChords);
+//   }, [state?.transport.currentMeasureIndex, exercise]);
+
+//   if (!state || (!state?.config.displayPianoDiagrams && !state?.config.displayGuitarDiagrams))
+//     return null;
+
+//   return (
+//     <ClientOnly>
+//       <div className="h-30 w-full flex md:flex-row flex-col justify-center gap-2 md:pb-0 pb-5">
+//         {currentChords.map((c, index) => (
+//           <div key={index} className="flex flex-col items-center">
+//             <p className="whitespace-nowrap font-mono bold text-primary">{chordToString(c)}</p>
+//             <PianoChordDiagram chord={c} />
+//           </div>
+//         ))}
+//       </div>
+//     </ClientOnly>
+//   );
+// }
+
 export function ChordsDiagramsView() {
   const { state } = useMidiStore();
   const { exercise } = useGame();
-  const [currentChords, setCurrentChords] = useState<Chord[]>([]);
 
-  useEffect(() => {
-    if (!state || !exercise.chordsGrid) return;
-
-    const allMeasures: MeasureSchema[] = exercise.chordsGrid.sections.flatMap((section) => [
+  const allMeasures = useMemo<MeasureSchema[]>(() => {
+    if (!exercise.chordsGrid) return [];
+    return exercise.chordsGrid.sections.flatMap((section) => [
       ...section.commonMeasures,
       ...section.voltas.flatMap((volta) => volta.measures),
     ]);
+  }, [exercise.chordsGrid]);
+
+  const currentChords = useMemo<Chord[]>(() => {
+    if (!state || !allMeasures.length) return [];
 
     const currentMeasureIndex = state.transport.currentMeasureIndex;
     const currentMeasure = allMeasures.find((m) => m.index === currentMeasureIndex);
+    if (!currentMeasure) return [];
 
-    if (!currentMeasure) return;
+    // Applique la transposition comme dans MeasureBlock
+    const transposedCells = chordCellsWithTransposition(
+      currentMeasure.cells,
+      state.config.transposition ?? 0
+    );
 
-    const rawChords = currentMeasure.cells
+    const rawChords = transposedCells
       .filter((cell) => cell.kind === "Chord" && cell.chord)
       // @ts-expect-error
-      .map((cell) => cell.chord!);
+      .map((cell) => (cell as CellSchema).chord!);
 
-    const isPreviousChordInvalid = (prevChord: ChordSchema): boolean => {
-      return false;
-    };
-
-    const findFallbackChordInPreviousMeasures = (startIndex: number): ChordSchema | null => {
+    const findFallbackChord = (startIndex: number): ChordSchema | null => {
       for (let i = startIndex - 1; i >= 0; i--) {
         const prevMeasure = allMeasures.find((m) => m.index === i);
-        if (prevMeasure) {
-          const chordCell = prevMeasure.cells.find(
-            (cell) => cell.kind === "Chord" && cell.chord && cell.chord.content.note !== "%"
-          );
-          // @ts-expect-error
-          if (chordCell && chordCell.chord) {
-            // @ts-expect-error
-            return chordCell.chord;
-          }
-        }
+        const chordCell = prevMeasure?.cells.find(
+          (cell) => cell.kind === "Chord" && cell.chord?.content.note !== "%"
+        );
+        // @ts-expect-error
+        if (chordCell?.chord) return (chordCell as CellSchema).chord;
       }
       return null;
     };
@@ -552,35 +643,30 @@ export function ChordsDiagramsView() {
     rawChords.forEach((chord, index) => {
       if (chord.content.note === "%") {
         if (index > 0) {
-          const prevChord = processedChords[processedChords.length - 1];
-
-          if (!isPreviousChordInvalid(prevChord)) {
-            processedChords.push(chord);
-          }
+          processedChords.push(processedChords[processedChords.length - 1]);
         } else {
-          const fallbackChord = findFallbackChordInPreviousMeasures(currentMeasureIndex);
-          if (fallbackChord) {
-            processedChords.push(fallbackChord);
-          }
+          const fallback = findFallbackChord(currentMeasureIndex);
+          if (fallback) processedChords.push(fallback);
         }
       } else {
         processedChords.push(chord);
       }
     });
 
-    setCurrentChords(processedChords);
-  }, [state?.transport.currentMeasureIndex, exercise]);
+    return processedChords;
+  }, [state?.transport.currentMeasureIndex, state?.config.transposition, allMeasures]);
 
-  if (!state || (!state?.config.displayPianoDiagrams && !state?.config.displayGuitarDiagrams))
+  if (!state || (!state.config.displayPianoDiagrams && !state.config.displayGuitarDiagrams)) {
     return null;
+  }
 
   return (
     <ClientOnly>
-      <div className="h-30 w-full flex justify-center gap-2">
-        {currentChords.map((c, index) => (
-          <div key={index} className="flex flex-col w-100 items-center">
-            <p className="whitespace-nowrap font-mono bold text-primary">{chordToString(c)}</p>
-            <PianoChordDiagram chord={c} />
+      <div className="h-30 w-full flex md:flex-row flex-col justify-center gap-2 md:pb-0 pb-5">
+        {currentChords.map((chord, index) => (
+          <div key={index} className="flex flex-col items-center">
+            <p className="whitespace-nowrap font-mono bold text-primary">{chordToString(chord)}</p>
+            <PianoChordDiagram chord={chord} />
           </div>
         ))}
       </div>

@@ -23,6 +23,8 @@ import {
 import type { Dispatch, MouseEvent, SetStateAction } from "react";
 import type { UserCardDto } from "@/types/dtos/user";
 import type { PlaylistCardDto } from "@/types/dtos/playlist";
+import { CellSchema } from "@/types/entities";
+import { indexesOfNotes, notesByIndex } from "@/schemas/entities.schema";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -167,4 +169,30 @@ export const generateImageVariations = (url: string, resolutions: [number, numbe
 
 export const musicalNotationRootNote = (note: Note): string => {
   return note.replace("b", "♭").replace("#", "♯");
+};
+export const chordCellsWithTransposition = (
+  cells: CellSchema[],
+  transposition: number
+): CellSchema[] => {
+  return cells.map((c) => {
+    if (c.kind === "Chord" && c.chord.content.note !== "%") {
+      const noteIndex = indexesOfNotes[c.chord.content.note];
+
+      const afterTranspose = (((noteIndex + transposition) % 12) + 12) % 12;
+
+      const newNote = notesByIndex[afterTranspose];
+
+      return {
+        ...c,
+        chord: {
+          ...c.chord,
+          content: {
+            ...c.chord.content,
+            note: newNote,
+          },
+        },
+      };
+    }
+    return c;
+  });
 };

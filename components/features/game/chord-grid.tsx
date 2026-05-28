@@ -2,14 +2,14 @@ import useGame from "@/hooks/use-game";
 import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
 import { logger } from "@/lib/logger";
-import { musicalNotationRootNote } from "@/lib/utils";
+import { chordCellsWithTransposition, musicalNotationRootNote } from "@/lib/utils";
 import SoundEngine from "@/midi-editor/engines/sound/sound-engine";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { Action } from "@/midi-editor/types/actions";
 import ChordGridProvider, { useChordGrid } from "@/providers/chord-grid-provider";
 import type { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
 import { FlagTriangleRight } from "lucide-react";
-import React, { useState, type ReactNode, useRef, useEffect } from "react";
+import React, { useState, type ReactNode, useRef, useEffect, useMemo } from "react";
 
 export default function ChordGrid() {
   const { exercise } = useGame();
@@ -99,6 +99,13 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
     setIsActive(measure.index === state.transport.currentMeasureIndex);
   }, [state?.transport.currentMeasureIndex]);
 
+  const cells = useMemo(
+    () =>
+      chordCellsWithTransposition(measure.cells, state?.config.transposition ?? 0).sort(
+        (a, b) => a.index - b.index
+      ),
+    [measure.cells, state?.config.transposition]
+  );
   return (
     <div
       ref={measureRef}
@@ -108,11 +115,9 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
       {volta && <VoltaBracket volta={volta} />}
       {measure.bars.left && <LeftBar bar={measure.bars.left} />}
       <div className="flex-1 max-w-[100%] flex items-center pl-1 overflow-hidden">
-        {measure.cells
-          .sort((a, b) => a.index - b.index)
-          .map((cell, index) => (
-            <CellGroup cell={cell} measure={measure} key={index} isActive={isActive} />
-          ))}
+        {cells.map((cell, index) => (
+          <CellGroup cell={cell} measure={measure} key={index} isActive={isActive} />
+        ))}
       </div>
 
       {measure.bars.right && <RightBar bar={measure.bars.right} />}
