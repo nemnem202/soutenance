@@ -71,7 +71,7 @@ export default function PianoChordDiagram({ chord }: { chord: Chord }) {
     if (rawIntervals.length === 0 || rootAsIndex < 0) return;
 
     const absoluteIntervals = rawIntervals.map((i) => i + rootAsIndex);
-    // ✅ on ajoute la root elle-même comme position absolue
+
     const highlightedAbsolute = new Set([rootAsIndex, ...absoluteIntervals]);
 
     const maxInterval = Math.max(...absoluteIntervals);
@@ -85,7 +85,6 @@ export default function PianoChordDiagram({ chord }: { chord: Chord }) {
     const blackH = H * 0.62;
     const primaryColor = getPrimaryColor();
 
-    // White keys — on compare la position absolue, pas le modulo
     for (let i = 0; i < totalWhiteKeys; i++) {
       const absoluteSemitone = whiteIndexToAbsoluteSemitone(i);
       const isHighlighted = highlightedAbsolute.has(absoluteSemitone);
@@ -99,7 +98,6 @@ export default function PianoChordDiagram({ chord }: { chord: Chord }) {
       gfx.stroke({ color: 0x000000, width: 1, pixelLine: true });
     }
 
-    // Black keys
     for (let octave = 0; octave < numberOfOctaves; octave++) {
       for (const semitone of BLACK_SEMITONES) {
         const absoluteSemitone = octave * 12 + semitone;
@@ -114,7 +112,7 @@ export default function PianoChordDiagram({ chord }: { chord: Chord }) {
     }
   }
 
-  return <div ref={containerRef} style={{ width: "100%", height: "100%", overflow: "hidden" }} />;
+  return <div ref={containerRef} className="flex-1 overflow-hidden max-w-200 rounded-md" />;
 }
 
 function whiteIndexToAbsoluteSemitone(whiteIndex: number): number {

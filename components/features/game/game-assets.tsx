@@ -490,7 +490,7 @@ export function ChordsDiagramsView() {
     return null;
   return (
     <ClientOnly>
-      <div className="h-50 w-full bg-primary overflow-hidden rounded-md">
+      <div className="h-30 w-full flex justify-evenly">
         {state.transport.currentChords.map((c, index) => (
           <PianoChordDiagram chord={c} key={index} />
         ))}
