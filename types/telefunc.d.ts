@@ -1,3 +1,4 @@
+import { CookieOptions } from "express";
 import "telefunc";
 
 declare module "telefunc" {
@@ -5,7 +6,7 @@ declare module "telefunc" {
     interface Context {
       user: null | { id: number };
       request: Request;
-      setCookie: (name: string, value: string, options: Record<string, unknown>) => void;
+      setCookie: (name: string, value: string, options: CookieOptions) => void;
     }
   }
 }

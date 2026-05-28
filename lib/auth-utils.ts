@@ -1,14 +1,15 @@
 import { SignJWT } from "jose";
 import { env } from "./env";
+import { CookieOptions } from "express";
 
 export const COOKIE_NAME = "token";
 
-export const getCookieOptions = (remember: boolean) => ({
+export const getCookieOptions = (remember: boolean): CookieOptions => ({
   httpOnly: true,
-  secure: false,
+  secure: process.env.NODE_ENV === "prod",
   path: "/",
-  maxAge: remember ? 365 * 24 * 3600 : 3600, // En secondes
-  sameSite: "lax" as const,
+  maxAge: remember ? 365 * 24 * 3600 : 3600,
+  sameSite: process.env.NODE_ENV === "prod" ? "strict" : "lax",
 });
 
 export async function generateJwt(userId: number, remember: boolean): Promise<string> {

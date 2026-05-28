@@ -1,6 +1,7 @@
 import { enhance, type UniversalHandler } from "@universal-middleware/core";
 import { telefunc } from "telefunc";
 import getCurrentUserFromCookie from "../middlewares/getCurrentUser";
+import { CookieOptions } from "express";
 
 export const telefuncHandler: UniversalHandler = enhance(
   async (request, context, runtime) => {
@@ -15,7 +16,7 @@ export const telefuncHandler: UniversalHandler = enhance(
         ...runtime,
         user,
         request,
-        setCookie: (name: string, value: string, options: Record<string, unknown>) => {
+        setCookie: (name: string, value: string, options: CookieOptions) => {
           const parts = [`${name}=${value}`];
           if (options.httpOnly) parts.push("HttpOnly");
           if (options.secure) parts.push("Secure");
