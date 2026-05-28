@@ -1,7 +1,8 @@
+- corriger affichage diagrammes d'accord en mobile
+- midi-backup
+
 - midi
 
-
-- securite des cookies en prod // ?
 - unplugin-font
 - implementer websocket avec socket.io
 
