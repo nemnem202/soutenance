@@ -1,5 +1,5 @@
 import type * as CheckboxPrimitive from "@radix-ui/react-checkbox";
-import { Maximize, Minimize } from "lucide-react";
+import { Columns3, Grid3X3, Maximize, Minimize } from "lucide-react";
 import { type ComponentProps, type ReactNode, useEffect, useId, useRef, useState } from "react";
 import {
   CustomInputGroupInput,
@@ -37,6 +37,12 @@ import { Separator } from "@/components/ui/separator";
 import AnimatedTabs from "@/components/organisms/animated-tabs";
 import type { TabID } from "@/providers/game-provider";
 import { MidiInstrumentNumber } from "@/midi-editor/types/instruments";
+import useAudio from "@/hooks/use-audio";
+import PianoChordDiagram from "./piano-chord-diagram";
+import { ClientOnly } from "vike-react/ClientOnly";
+import { Chord } from "@/types/music";
+import { ChordSchema, MeasureSchema } from "@/types/entities";
+import { chordToString } from "@/lib/utils";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
   return (
@@ -114,6 +120,8 @@ export function SmallInput({
   align = "inline-start",
   containerClassName,
   tooltip,
+  defaultValue,
+  onBlur,
   ...props
 }: {
   label: string;
@@ -124,6 +132,15 @@ export function SmallInput({
 } & ComponentProps<"input">) {
   const id = useId();
   const isMobile = useScreen().size === "sm";
+
+  const [localValue, setLocalValue] = useState(defaultValue ?? "");
+
+  useEffect(() => {
+    if (defaultValue !== undefined) {
+      setLocalValue(defaultValue);
+    }
+  }, [defaultValue]);
+
   if (tooltip && !isMobile) {
     return (
       <Tooltip>
@@ -136,6 +153,9 @@ export function SmallInput({
               <CustomInputGroupInput
                 id={id}
                 {...props}
+                value={localValue}
+                onChange={(e) => setLocalValue(e.target.value)}
+                onBlur={onBlur}
                 className={`paragraph-sm h-6 full !rounded-xs text-left! ${!icon && "pl-1"}`}
               />
               {icon ? (
@@ -161,6 +181,9 @@ export function SmallInput({
           <CustomInputGroupInput
             id={id}
             {...props}
+            value={localValue}
+            onChange={(e) => setLocalValue(e.target.value)}
+            onBlur={onBlur}
             className={`paragraph-sm h-6 full !rounded-xs text-left! ${!icon && "pl-1"}`}
           />
           {icon ? (
@@ -217,9 +240,9 @@ export function FullScreenButton({
 export function Tab({ children }: { children: ReactNode }) {
   const [fullScreen, setFullScreen] = useState(false);
   const { activeTab, tabs, setActiveTab } = useGame();
+  const { audioLoaded } = useAudio();
   const [isIdle, setIsIdle] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const { midiState, dispatch } = useGame();
   const handleFullScreen = (value: boolean) => {
     if (value) {
       document.documentElement.requestFullscreen?.().catch(() => {});
@@ -264,7 +287,12 @@ export function Tab({ children }: { children: ReactNode }) {
   }, [fullScreen]);
 
   const interactiveProps = { role: "region", tabIndex: 0 };
-
+  if (!audioLoaded)
+    return (
+      <div className="size-full flex items-center justify-center">
+        <p className="paragraph">Click anywhere to start</p>
+      </div>
+    );
   if (!fullScreen) {
     return (
       <div
@@ -281,8 +309,10 @@ export function Tab({ children }: { children: ReactNode }) {
               <ZoomSlider />
             </div>
           )}
-
-          <div></div>
+          {(activeTab === "chords-grid" || activeTab === "chords-carousel") && (
+            <ChordDisplaySelector />
+          )}
+          {activeTab === "piano-roll" && <div />}
         </div>
         <div className="z-0 h-full min-h-0">{children}</div>
       </div>
@@ -331,8 +361,11 @@ export function Tab({ children }: { children: ReactNode }) {
           )}
           <div></div>
         </div>
-        <div className={`z-0 h-full min-h-0 ${activeTab !== "piano-roll" && "pt-12"}`}>
+        <div
+          className={`z-0 h-full min-h-0 ${activeTab !== "piano-roll" && "pt-12"} flex flex-col gap-5`}
+        >
           {children}
+          <ChordsDiagramsView />
         </div>
       </div>
     );
@@ -376,14 +409,14 @@ export function TrackSelect() {
 
 export function BpmControl() {
   const { instance } = useLanguage();
-  const { midiState, dispatch } = useGame();
+  const { state, dispatch } = useMidiStore();
   return (
     <Field className="flex flex-row items-center justify-center !w-min">
       <CustomInput
         id="bpm"
         type="number"
-        disabled={!midiState}
-        defaultValue={midiState ? Math.floor(midiState.config.bpm) : undefined}
+        disabled={!state}
+        defaultValue={state ? Math.floor(state.config.bpm) : undefined}
         onBlur={(e) => {
           let value = parseInt(e.currentTarget.value, 10);
           if (value < 30) value = 30;
@@ -426,5 +459,131 @@ function ZoomSlider() {
         }}
       />
     </div>
+  );
+}
+
+export function ChordDisplaySelector() {
+  const { setActiveTab, activeTab } = useGame();
+
+  return (
+    <div className="border rounded-md flex items-center h-10 overflow-hidden ">
+      <button
+        type="button"
+        onClick={() => setActiveTab("chords-carousel")}
+        className={`cursor-pointer w-full h-full flex justify-center items-center px-2 ${activeTab === "chords-grid" && "text-muted-foreground bg-popover"}`}
+      >
+        <Columns3 />
+      </button>
+      <Separator orientation="vertical" />
+      <button
+        type="button"
+        onClick={() => setActiveTab("chords-grid")}
+        className={`cursor-pointer w-full h-full flex justify-center items-center px-2 ${activeTab === "chords-carousel" && "text-muted-foreground bg-popover"}`}
+      >
+        <Grid3X3 />
+      </button>
+    </div>
+  );
+}
+
+export function RepeatsDisplay() {
+  const { state } = useMidiStore();
+
+  if (!state || !state.config.loop || state.config.repeats === 0) return null;
+  return (
+    <>
+      <Separator orientation="vertical" className="!h-6" />
+      <div className="flex">
+        <p className="font-mono semibold text-muted-foreground whitespace-nowrap">
+          {state.config.loop.currentRepeatIndex}/
+          {state.config.repeats !== Infinity ? state.config.repeats : "∞"}
+        </p>
+      </div>
+    </>
+  );
+}
+
+export function ChordsDiagramsView() {
+  const { state } = useMidiStore();
+  const { exercise } = useGame();
+  const [currentChords, setCurrentChords] = useState<Chord[]>([]);
+
+  useEffect(() => {
+    if (!state || !exercise.chordsGrid) return;
+
+    const allMeasures: MeasureSchema[] = exercise.chordsGrid.sections.flatMap((section) => [
+      ...section.commonMeasures,
+      ...section.voltas.flatMap((volta) => volta.measures),
+    ]);
+
+    const currentMeasureIndex = state.transport.currentMeasureIndex;
+    const currentMeasure = allMeasures.find((m) => m.index === currentMeasureIndex);
+
+    if (!currentMeasure) return;
+
+    const rawChords = currentMeasure.cells
+      .filter((cell) => cell.kind === "Chord" && cell.chord)
+      // @ts-expect-error
+      .map((cell) => cell.chord!);
+
+    const isPreviousChordInvalid = (prevChord: ChordSchema): boolean => {
+      return false;
+    };
+
+    const findFallbackChordInPreviousMeasures = (startIndex: number): ChordSchema | null => {
+      for (let i = startIndex - 1; i >= 0; i--) {
+        const prevMeasure = allMeasures.find((m) => m.index === i);
+        if (prevMeasure) {
+          const chordCell = prevMeasure.cells.find(
+            (cell) => cell.kind === "Chord" && cell.chord && cell.chord.content.note !== "%"
+          );
+          // @ts-expect-error
+          if (chordCell && chordCell.chord) {
+            // @ts-expect-error
+            return chordCell.chord;
+          }
+        }
+      }
+      return null;
+    };
+
+    const processedChords: ChordSchema[] = [];
+
+    rawChords.forEach((chord, index) => {
+      if (chord.content.note === "%") {
+        if (index > 0) {
+          const prevChord = processedChords[processedChords.length - 1];
+
+          if (!isPreviousChordInvalid(prevChord)) {
+            processedChords.push(chord);
+          }
+        } else {
+          const fallbackChord = findFallbackChordInPreviousMeasures(currentMeasureIndex);
+          if (fallbackChord) {
+            processedChords.push(fallbackChord);
+          }
+        }
+      } else {
+        processedChords.push(chord);
+      }
+    });
+
+    setCurrentChords(processedChords);
+  }, [state?.transport.currentMeasureIndex, exercise]);
+
+  if (!state || (!state?.config.displayPianoDiagrams && !state?.config.displayGuitarDiagrams))
+    return null;
+
+  return (
+    <ClientOnly>
+      <div className="h-30 w-full flex justify-center gap-2">
+        {currentChords.map((c, index) => (
+          <div key={index} className="flex flex-col w-100 items-center">
+            <p className="whitespace-nowrap font-mono bold text-primary">{chordToString(c)}</p>
+            <PianoChordDiagram chord={c} />
+          </div>
+        ))}
+      </div>
+    </ClientOnly>
   );
 }

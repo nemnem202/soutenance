@@ -7,14 +7,15 @@ import type { LoginData, RegisterData, Session } from "@/types/auth";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Controller, type ControllerDeps } from "./Controller";
 import FileController from "./FileController";
+import { CookieOptions } from "express";
 
 interface ConnexionDeps extends ControllerDeps {
-  setCookie: (name: string, value: string, options: Record<string, unknown>) => void;
+  setCookie: (name: string, value: string, options: CookieOptions) => void;
 }
 
 export class ConnexionController extends Controller {
   private repository: UserRepository;
-  private setCookie: (name: string, value: string, options: Record<string, unknown>) => void;
+  private setCookie: (name: string, value: string, options: CookieOptions) => void;
 
   constructor(deps: ConnexionDeps) {
     super(deps);

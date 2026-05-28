@@ -20,6 +20,7 @@ import { Button, type ButtonProps } from "./button";
 import { useLanguage } from "@/hooks/use-language";
 import useGame from "@/hooks/use-game";
 import { Action } from "@/midi-editor/types/actions";
+import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 
 export function LikeButton({ liked = false, ...props }: ButtonProps & { liked?: boolean }) {
   return (
@@ -150,9 +151,9 @@ function IconButton({ ...props }: ButtonProps) {
 }
 
 export function PlayButton({ ...props }: ButtonProps) {
-  const { dispatch, midiState } = useGame();
+  const { dispatch, state } = useMidiStore();
   const handlePlay = () => {
-    if (midiState?.transport.status === "playing") {
+    if (state?.transport.status === "playing") {
       dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "paused" });
     } else {
       dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "playing" });
@@ -160,7 +161,7 @@ export function PlayButton({ ...props }: ButtonProps) {
   };
   return (
     <IconButton {...props} onClick={() => handlePlay()}>
-      {midiState?.transport.status === "playing" ? (
+      {state?.transport.status === "playing" ? (
         <Pause className="fill-inherit stroke-inherit" />
       ) : (
         <Play className="fill-inherit stroke-inherit" />
@@ -178,7 +179,7 @@ export function MetronomeButton({ ...props }: ButtonProps) {
 }
 
 export function StopButton({ ...props }: ButtonProps) {
-  const { dispatch } = useGame();
+  const { dispatch } = useMidiStore();
   return (
     <IconButton
       {...props}

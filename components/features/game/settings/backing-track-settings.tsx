@@ -13,43 +13,39 @@ import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/hooks/use-language";
 import { SidebarSlider } from "../game-assets";
 import { ParamsAccordion } from "../game-sidebar";
-import useGame from "@/hooks/use-game";
-import SoundEngine from "@/midi-editor/engines/sound-engine";
 import { Action } from "@/midi-editor/types/actions";
 import { MidiInstrumentNumber } from "@/midi-editor/types/instruments";
+import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 
 export default function BackingTrackSettings() {
-  const [backingTackActive, setBackingTrackActive] = useState(false);
+  // const [backingTackActive, setBackingTrackActive] = useState(false);
   const { instance } = useLanguage();
-  const { midiState, dispatch } = useGame();
+  const { state, dispatch } = useMidiStore();
   return (
     <ParamsAccordion title={<h3 className="title-3">{instance.getItem("backing_track")}</h3>}>
       <div className="flex flex-col gap-3">
         <div className="flex gap-4 w-full">
-          <SwitchParam
+          {/* <SwitchParam
             checked={backingTackActive}
             order="label-switch"
             setChecked={setBackingTrackActive}
           >
             <p className="paragraph  text-foreground">{instance.getItem("active")}</p>
-          </SwitchParam>
-          <SwitchParam
+          </SwitchParam> */}
+          {/* <SwitchParam
             checked={true}
             setChecked={() => {}}
             disabled={!backingTackActive}
             order="label-switch"
           >
             <p className="paragraph">{instance.getItem("melody")}</p>
-          </SwitchParam>
+          </SwitchParam> */}
         </div>
-        <div
-          className={`flex flex-col w-full gap-2 py-2 ${!backingTackActive && "text-muted-foreground"}`}
-        >
-          {midiState?.tracks.map((track) => (
+        <div className={`flex flex-col w-full gap-2 py-2`}>
+          {state?.tracks.map((track) => (
             <>
               <SidebarSlider
                 defaultValue={[100]}
-                disabled={!backingTackActive}
                 onValueChange={(value) =>
                   dispatch({
                     type: Action.CHANGE_TRACK_VOLUME,
@@ -69,7 +65,7 @@ export default function BackingTrackSettings() {
           <Label className="paragraph " htmlFor="style-select">
             {instance.getItem("style")}
           </Label>
-          <Select defaultValue="original" disabled={!backingTackActive}>
+          <Select defaultValue="original">
             <SelectTrigger className="w-full max-w-30" id="style-select">
               <SelectValue className="text-left" />
             </SelectTrigger>

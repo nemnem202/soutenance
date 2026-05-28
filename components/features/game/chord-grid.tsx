@@ -3,7 +3,8 @@ import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
 import { logger } from "@/lib/logger";
 import { musicalNotationRootNote } from "@/lib/utils";
-import SoundEngine from "@/midi-editor/engines/sound-engine";
+import SoundEngine from "@/midi-editor/engines/sound/sound-engine";
+import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { Action } from "@/midi-editor/types/actions";
 import ChordGridProvider, { useChordGrid } from "@/providers/chord-grid-provider";
 import type { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
@@ -16,25 +17,21 @@ export default function ChordGrid() {
 
   if (!exercise.chordsGrid)
     return (
-      <ChordGridProvider>
-        <div className="size-full p-0 md:p-4 flex flex-col gap-5">
-          <p className="paragraph-md text-muted-foreground">
-            {instance.getItem("this_exercise_does_not_contains_chords_grid")}
-          </p>
-        </div>
-      </ChordGridProvider>
+      <div className="size-full p-0 md:p-4 flex flex-col gap-5">
+        <p className="paragraph-md text-muted-foreground">
+          {instance.getItem("this_exercise_does_not_contains_chords_grid")}
+        </p>
+      </div>
     );
 
   return (
-    <ChordGridProvider>
-      <div className="size-full p-1 md:p-6 flex flex-col gap-5">
-        {exercise.chordsGrid.sections
-          .sort((a, b) => a.index - b.index)
-          .map((section) => (
-            <Section section={section} key={section.index} />
-          ))}
-      </div>
-    </ChordGridProvider>
+    <div className="size-full p-1 md:p-6 flex flex-col gap-5">
+      {exercise.chordsGrid.sections
+        .sort((a, b) => a.index - b.index)
+        .map((section) => (
+          <Section section={section} key={section.index} />
+        ))}
+    </div>
   );
 }
 
@@ -84,9 +81,9 @@ function Section({ section }: { section: SectionSchema }) {
 }
 
 function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: number }) {
-  const { currentMeasure } = useChordGrid();
+  const { state } = useMidiStore();
   const { size } = useScreen();
-  const isActive = measure.index === currentMeasure;
+  const [isActive, setIsActive] = useState(false);
   const measureRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (isActive && measureRef.current && size === "sm") {
@@ -97,14 +94,17 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
       });
     }
   }, [isActive]);
+  useEffect(() => {
+    if (!state) return;
+    setIsActive(measure.index === state.transport.currentMeasureIndex);
+  }, [state?.transport.currentMeasureIndex]);
 
   return (
     <div
       ref={measureRef}
-      className={`flex w-full h-12 relative items-center relative group/measure ${isActive && "bg-popover"}`}
+      className={`flex w-full h-12 relative items-center relative group/measure ${isActive && state?.config.currentMeasureOverline && "bg-popover"}`}
       id={String(measure.index)}
     >
-      <p className="absolute top-0.5 right-0.5 paragraph-sm">{measure.index}</p>
       {volta && <VoltaBracket volta={volta} />}
       {measure.bars.left && <LeftBar bar={measure.bars.left} />}
       <div className="flex-1 max-w-[100%] flex items-center pl-1 overflow-hidden">
@@ -122,8 +122,8 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
 }
 
 function SetStartButton({ measure }: { measure: MeasureSchema }) {
-  const { primedMeasure, setPrimedMeasure, setCurrentMeasure } = useChordGrid();
-  const { dispatch, midiState } = useGame();
+  const { primedMeasure, setPrimedMeasure } = useChordGrid();
+  const { dispatch, state } = useMidiStore();
 
   const isPrimed = primedMeasure === measure.index;
 
@@ -132,21 +132,18 @@ function SetStartButton({ measure }: { measure: MeasureSchema }) {
     e.preventDefault();
 
     if (!isPrimed) {
-      SoundEngine.get()?.setCurrentMeasure(measure.index);
-      setCurrentMeasure(measure.index);
       setPrimedMeasure(measure.index);
       dispatch({
         type: Action.SET_TRANSPORT_START_FROM_MEASURE_INDEX,
         measureIndex: measure.index,
       });
-      logger.info("Set start measure", measure.index);
     } else {
       dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "playing" });
       setPrimedMeasure(null);
     }
   };
 
-  if (midiState?.transport.status === "playing") return null;
+  if (state?.transport.status === "playing") return null;
 
   return (
     <button
@@ -186,7 +183,7 @@ function CellGroup({
 
   return (
     <div
-      data-cellGroup={measure.index}
+      data-cellgroup={measure.index}
       className={`px-0.5 md:px-2 h-full flex justify-between items-center  gap-1 ${cell.kind === "Chord" ? "flex-1" : "!w-0 w-auto flex-1"}`}
       style={{ maxWidth: `${100 / measure.cells.length}%` }}
     >
