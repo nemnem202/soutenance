@@ -46,10 +46,8 @@ export default function GameSidebar({
       <div className="w-full h-full">
         <div className="w-fullflex flex-col">
           <div className="h-20 p-4 flex items-center justify-between w-full md:flex-wrap gap-2">
-            <h2 className="headline !text-[2rem] hidden md:block">
-              {instance.getItem("settings")}
-            </h2>
-            <PresetSelect />
+            <h2 className="headline !text-[2rem]">{instance.getItem("settings")}</h2>
+            {/* <PresetSelect /> */}
 
             <div className="md:hidden">
               <button type="button" onClick={() => setOpen(false)} className="cursor-pointer">
@@ -122,8 +120,8 @@ function TabBar() {
       />
       <SidebarTabButton
         text={instance.getItem("chords")}
-        isActive={activeTab === "chords"}
-        onClick={() => setActiveTab("chords")}
+        isActive={activeTab === "chords-grid"}
+        onClick={() => setActiveTab("chords-grid")}
       />
       <SidebarTabButton
         text={instance.getItem("sheet")}

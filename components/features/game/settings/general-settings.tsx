@@ -6,13 +6,22 @@ import useGame from "@/hooks/use-game";
 import { logger } from "@/lib/logger";
 import { Action } from "@/midi-editor/types/actions";
 import SizeAdapter from "@/components/molecules/size-adapter";
+import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 
 export default function GeneralSettings() {
   const { instance } = useLanguage();
+  const { state, dispatch } = useMidiStore();
   return (
     <ParamsAccordion title={<h3 className="title-3">{instance.getItem("general")}</h3>}>
       <div className="mb-2">
-        <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
+        <SwitchParam
+          checked={!!state?.config.countIn}
+          order="label-switch"
+          setChecked={() => {
+            if (!state) return;
+            dispatch({ type: Action.SET_COUNT_INT, countin: !state.config.countIn });
+          }}
+        >
           <p className="paragraph text-foreground">{instance.getItem("count_before_play")}</p>
         </SwitchParam>
       </div>
@@ -23,29 +32,62 @@ export default function GeneralSettings() {
 
 function DesktopInputsGroup() {
   const { instance } = useLanguage();
-  const { midiState, dispatch } = useGame();
+  const { state, dispatch } = useMidiStore();
   return (
     <div className={`flex flex-col w-full py-2`}>
       <div className="grid gap-3 grid-cols-3">
         <SmallInput
           label={instance.getItem("transpose")}
           type="number"
-          defaultValue={0}
+          value={state?.config.transposition}
+          defaultValue={state?.config.transposition}
+          onBlur={(e) => {
+            const value = parseInt(e.target.value);
+            if (Number.isNaN(value)) return;
+            dispatch({
+              type: Action.SET_TRANSPOSITION,
+              transposition: Math.max(0, Math.min(12, value)),
+            });
+          }}
           containerClassName="w-full"
           icon={<p className="paragraph-sm text-muted-foreground">sem:</p>}
         />
         <SmallInput
           label={instance.getItem("practice")}
           type="number"
-          defaultValue={0}
+          value={state?.config.transpositionPractice}
+          defaultValue={state?.config.transpositionPractice}
+          onBlur={(e) => {
+            const value = parseInt(e.target.value);
+            if (Number.isNaN(value)) return;
+            dispatch({
+              type: Action.SET_TRANSPOSITION_PRACTICE,
+              transposition: Math.max(0, Math.min(12, value)),
+            });
+          }}
           containerClassName="w-full"
           icon={<p className="paragraph-sm text-muted-foreground">sem:</p>}
           tooltip={<p className="paragraph-sm">Increase the global trampose at each loop.</p>}
         />
         <SmallInput
           label={instance.getItem("repeats")}
-          type="number"
-          defaultValue={3}
+          type={state?.config.repeats === Infinity ? "text" : "number"}
+          value={state?.config.repeats === Infinity ? "∞" : (state?.config.repeats ?? 0)}
+          defaultValue={state?.config.repeats === Infinity ? "∞" : (state?.config.repeats ?? 0)}
+          onBlur={(e) => {
+            const rawValue = e.target.value;
+
+            if (rawValue === "" || rawValue === "∞" || rawValue.toLowerCase() === "infinity") {
+              dispatch({ type: Action.SET_REPEATS, repeats: Infinity });
+              return;
+            }
+
+            let value = parseInt(rawValue, 10);
+            if (isNaN(value) || value < 0) value = 0;
+            if (value > 30) value = Infinity;
+
+            dispatch({ type: Action.SET_REPEATS, repeats: value });
+          }}
           containerClassName="w-full"
           icon={<p className="paragraph-sm text-muted-foreground">x</p>}
         />
@@ -54,8 +96,9 @@ function DesktopInputsGroup() {
         <SmallInput
           label={instance.getItem("bpm")}
           type="number"
-          disabled={!midiState}
-          defaultValue={midiState ? Math.floor(midiState.config.bpm) : undefined}
+          disabled={!state}
+          value={state?.config.bpm}
+          defaultValue={state?.config.bpm}
           containerClassName="w-full"
           onBlur={(e) => {
             let value = parseInt(e.currentTarget.value, 10);
@@ -68,7 +111,15 @@ function DesktopInputsGroup() {
         <SmallInput
           label={instance.getItem("bpm_practice")}
           type="number"
-          defaultValue={0}
+          value={state?.config.bpmPractice}
+          defaultValue={state?.config.bpmPractice}
+          onBlur={(e) => {
+            let value = parseInt(e.currentTarget.value, 10);
+            if (value < 30) value = 30;
+            if (value > 500) value = 500;
+            e.currentTarget.value = value.toString();
+            dispatch({ type: Action.SET_BPM_PRACTICE, bpm: value });
+          }}
           containerClassName="w-full"
           icon={<p className="paragraph-sm text-muted-foreground">+</p>}
           tooltip={<p className="paragraph-sm ">Increase the Bpm at each loop.</p>}
@@ -79,23 +130,57 @@ function DesktopInputsGroup() {
 }
 
 function MobileInputsGroup() {
-  const { midiState, dispatch } = useGame();
+  const { state, dispatch } = useMidiStore();
   const { instance } = useLanguage();
-  if (midiState)
+  if (state)
     return (
       <div className={`flex flex-col w-full py-2 gap-5`}>
-        <SidebarSlider defaultValue={[0]} axis="y" min={-11} max={11} step={1}>
-          <p className="paragraph w-15">{instance.getItem("transpose")}</p>
+        <SidebarSlider
+          onValueChange={(value) =>
+            dispatch({ type: Action.SET_TRANSPOSITION, transposition: value[0] })
+          }
+          defaultValue={[state.config.transposition]}
+          axis="y"
+          min={-11}
+          max={11}
+          step={1}
+        >
+          <div className="w-full flex gap-2">
+            <p className="paragraph">{instance.getItem("transpose")}:</p>
+            <p className="paragaph text-primary">{state.config.transposition}</p>
+          </div>
         </SidebarSlider>
-        <SidebarSlider defaultValue={[0]} axis="y" min={-11} max={11} step={1}>
-          <p className="paragraph w-15">{instance.getItem("practice")}</p>
+        <SidebarSlider
+          onValueChange={(value) =>
+            dispatch({ type: Action.SET_TRANSPOSITION_PRACTICE, transposition: value[0] })
+          }
+          defaultValue={[state.config.transpositionPractice]}
+          axis="y"
+          min={-11}
+          max={11}
+          step={1}
+        >
+          <div className="w-full flex gap-2">
+            <p className="paragraph">{instance.getItem("practice")}:</p>
+            <p className="paragaph text-primary">{state.config.transpositionPractice}</p>
+          </div>
         </SidebarSlider>
-        <SidebarSlider defaultValue={[1]} axis="y" min={1} max={100} step={1}>
-          <p className="paragraph w-15">{instance.getItem("repeats")}</p>
+        <SidebarSlider
+          onValueChange={(value) => dispatch({ type: Action.SET_REPEATS, repeats: value[0] })}
+          defaultValue={[state.config.repeats]}
+          axis="y"
+          min={1}
+          max={100}
+          step={1}
+        >
+          <div className="w-full flex gap-2">
+            <p className="paragraph">{instance.getItem("repeats")}:</p>
+            <p className="paragaph text-primary">{state.config.repeats}</p>
+          </div>
         </SidebarSlider>
         <SidebarSlider
           onValueChange={(value) => dispatch({ type: Action.SET_BPM, bpm: value[0] })}
-          defaultValue={[midiState?.config.bpm]}
+          defaultValue={[state?.config.bpm]}
           axis="y"
           min={30}
           max={500}
@@ -103,11 +188,21 @@ function MobileInputsGroup() {
         >
           <div className="w-full flex gap-2">
             <p className="paragraph">{instance.getItem("bpm")}:</p>
-            <p className="paragaph text-primary">{midiState.config.bpm}</p>
+            <p className="paragaph text-primary">{state.config.bpm}</p>
           </div>
         </SidebarSlider>
-        <SidebarSlider defaultValue={[0]} axis="y" min={5} max={200} step={1}>
-          <p className="paragraph w-15">{instance.getItem("bpm_practice")}</p>
+        <SidebarSlider
+          onValueChange={(value) => dispatch({ type: Action.SET_BPM_PRACTICE, bpm: value[0] })}
+          defaultValue={[state.config.bpmPractice]}
+          axis="y"
+          min={5}
+          max={200}
+          step={1}
+        >
+          <div className="w-full flex gap-2">
+            <p className="paragraph">{instance.getItem("bpm_practice")}:</p>
+            <p className="paragaph text-primary">{state.config.bpmPractice}</p>
+          </div>
         </SidebarSlider>
       </div>
     );

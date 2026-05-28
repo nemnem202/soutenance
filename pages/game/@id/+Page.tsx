@@ -1,6 +1,6 @@
 import { type Dispatch, type SetStateAction, useState } from "react";
 import ChordTab from "@/components/features/game/chord-tab";
-import { Tab } from "@/components/features/game/game-assets";
+import { ChordsDiagramsView, Tab } from "@/components/features/game/game-assets";
 import DesktopGameControlsSection, {
   MobileGameControlSection,
 } from "@/components/features/game/game-controls-section";
@@ -85,7 +85,7 @@ function GameView({ toggleSidebar }: { toggleSidebar: () => void }) {
           }
         />
         <Tab>
-          {activeTab === "chords" && <ChordTab />}
+          {(activeTab === "chords-grid" || activeTab === "chords-carousel") && <ChordTab />}
           {activeTab === "piano-roll" && (
             <ClientOnly>
               {!audioLoaded ? (
@@ -98,6 +98,7 @@ function GameView({ toggleSidebar }: { toggleSidebar: () => void }) {
             </ClientOnly>
           )}
         </Tab>
+        <ChordsDiagramsView />
       </div>
     </div>
   );

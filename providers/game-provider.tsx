@@ -8,18 +8,18 @@ import {
 } from "react";
 import { useLanguage } from "@/hooks/use-language";
 import type { Exercise } from "@/types/entities";
-import type { State as MidiState } from "@/midi-editor/types/instance";
+import type { State as state } from "@/midi-editor/types/instance";
 import { convertMidiFileToState, getMidiFileFromBuffer } from "@/midi-editor/lib/midiconverter";
 import { errorToast } from "@/lib/toaster";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { Action, type MidiAction } from "@/midi-editor/types/actions";
 import useAudio from "@/hooks/use-audio";
 import { useShortcuts } from "@/midi-editor/hooks/useShortcuts";
-import SoundEngine from "@/midi-editor/engines/sound-engine";
+import SoundEngine from "@/midi-editor/engines/sound/sound-engine";
 import { useData } from "vike-react/useData";
 import { Data } from "@/pages/game/@id/+data";
 
-const tabsIds = ["piano-roll", "chords", "sheet", "guitar"] as const;
+const tabsIds = ["piano-roll", "chords-grid", "chords-carousel", "sheet", "guitar"] as const;
 export type TabID = (typeof tabsIds)[number];
 export type Tab = { id: TabID; label: string; disabled?: boolean };
 
@@ -28,9 +28,7 @@ export interface GameContextType {
   tabs: Tab[];
   activeTab: TabID;
   setActiveTab: Dispatch<SetStateAction<TabID>>;
-  midiState: MidiState | null;
   midiLoading: boolean;
-  dispatch: (action: MidiAction) => void;
 }
 
 export const GameContext = createContext<GameContextType | null>(null);
@@ -43,7 +41,7 @@ export default function GameProvider({
   children: ReactNode;
 }) {
   const { instance } = useLanguage();
-  const [activeTab, setActiveTab] = useState<TabID>("chords");
+  const [activeTab, setActiveTab] = useState<TabID>("chords-grid");
   const [midiLoading, setMidiLoading] = useState(true);
   const dispatch = useMidiStore((s) => s.dispatch);
   const state = useMidiStore((s) => s.state);
@@ -78,7 +76,7 @@ export default function GameProvider({
 
     return () => {
       isMounted = false;
-      SoundEngine.reset();
+      // SoundEngine.reset();
       useMidiStore.getState().reset();
       dispatch({ type: Action.RESET_STATE });
     };
@@ -86,7 +84,7 @@ export default function GameProvider({
 
   const tabs: Tab[] = [
     { id: "piano-roll", label: instance.getItem("piano_roll") },
-    { id: "chords", label: instance.getItem("chords") },
+    { id: "chords-grid", label: instance.getItem("chords") },
     { id: "sheet", label: instance.getItem("sheet"), disabled: true },
     { id: "guitar", label: instance.getItem("guitar"), disabled: true },
   ];
@@ -96,9 +94,7 @@ export default function GameProvider({
     tabs,
     activeTab,
     setActiveTab,
-    midiState: state,
     midiLoading,
-    dispatch,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

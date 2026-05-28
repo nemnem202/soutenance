@@ -6,7 +6,7 @@ class SoundEngine {
   - context: AudioContext
   - synth: WorkerSynthesizer
   - sequencer: Sequencer
-  - midiState: State
+  - state: State
   - actionsDirtyFlags: Set<Action>
   --
   + initAudio(): SoundEngine  {static}
