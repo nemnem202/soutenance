@@ -488,9 +488,10 @@ export function ChordsDiagramsView() {
 
   if (!state || (!state?.config.displayPianoDiagrams && !state?.config.displayGuitarDiagrams))
     return null;
+
   return (
     <ClientOnly>
-      <div className="h-30 w-full flex justify-evenly">
+      <div className="h-30 w-full flex justify-evenly gap-2">
         {state.transport.currentChords.map((c, index) => (
           <PianoChordDiagram chord={c} key={index} />
         ))}
