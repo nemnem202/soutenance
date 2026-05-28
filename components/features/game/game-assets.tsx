@@ -339,8 +339,11 @@ export function Tab({ children }: { children: ReactNode }) {
           )}
           <div></div>
         </div>
-        <div className={`z-0 h-full min-h-0 ${activeTab !== "piano-roll" && "pt-12"}`}>
+        <div
+          className={`z-0 h-full min-h-0 ${activeTab !== "piano-roll" && "pt-12"} flex flex-col`}
+        >
           {children}
+          <ChordsDiagramsView />
         </div>
       </div>
     );
@@ -476,4 +479,11 @@ export function RepeatsDisplay() {
       </div>
     </>
   );
+}
+
+export function ChordsDiagramsView() {
+  const { state } = useMidiStore();
+
+  if (!state?.config.displayPianoDiagrams && !state?.config.displayGuitarDiagrams) return null;
+  return <div className="h-50 w-full bg-primary overflow-hidden rounded-md"></div>;
 }
