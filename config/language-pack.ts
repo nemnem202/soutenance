@@ -905,4 +905,11 @@ export const languagePack: Record<string, Record<Language, string>> = {
     de: "Playlist aus Favoriten entfernen",
     zh: "从喜欢中移除播放列表",
   },
+  enabled: {
+    fr: "Activé",
+    en: "Enabled",
+    es: "Activado",
+    de: "Aktiviert",
+    zh: "已启用",
+  },
 } as const;

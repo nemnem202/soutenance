@@ -15,9 +15,13 @@ import { ParamsAccordion } from "../game-sidebar";
 
 export default function MidiSettings() {
   const { instance } = useLanguage();
+
   return (
     <ParamsAccordion title={<h3 className="title-3">{instance.getItem("midi")}</h3>}>
       <div className="gap-2 flex flex-col">
+        <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
+          <p className="paragraph w-38 text-foreground">{instance.getItem("enabled")}</p>
+        </SwitchParam>
         <div className="w-full flex items-center">
           <Label className="paragraph w-25" htmlFor="style-select">
             {instance.getItem("midi_inputs")}
