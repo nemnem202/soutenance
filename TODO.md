@@ -1,4 +1,4 @@
-- corriger affichage diagrammes d'accord en mobile
+- affichage transposition
 - midi-backup
 
 - midi
