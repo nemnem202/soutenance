@@ -97,8 +97,6 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
   useEffect(() => {
     if (!state) return;
     setIsActive(measure.index === state.transport.currentMeasureIndex);
-    if (measure.index === state.transport.currentMeasureIndex)
-      logger.info("Current measure changed", measure.index, state.transport.currentMeasureIndex);
   }, [state?.transport.currentMeasureIndex]);
 
   return (
@@ -186,7 +184,7 @@ function CellGroup({
 
   return (
     <div
-      data-cellGroup={measure.index}
+      data-cellgroup={measure.index}
       className={`px-0.5 md:px-2 h-full flex justify-between items-center  gap-1 ${cell.kind === "Chord" ? "flex-1" : "!w-0 w-auto flex-1"}`}
       style={{ maxWidth: `${100 / measure.cells.length}%` }}
     >
