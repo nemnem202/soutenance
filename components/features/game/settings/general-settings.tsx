@@ -39,9 +39,11 @@ function DesktopInputsGroup() {
         <SmallInput
           label={instance.getItem("transpose")}
           type="number"
+          value={state?.config.transposition}
           defaultValue={state?.config.transposition}
-          onChange={(e) => {
+          onBlur={(e) => {
             const value = parseInt(e.target.value);
+            if (Number.isNaN(value)) return;
             dispatch({
               type: Action.SET_TRANSPOSITION,
               transposition: Math.max(0, Math.min(12, value)),
@@ -53,9 +55,11 @@ function DesktopInputsGroup() {
         <SmallInput
           label={instance.getItem("practice")}
           type="number"
+          value={state?.config.transpositionPractice}
           defaultValue={state?.config.transpositionPractice}
-          onChange={(e) => {
+          onBlur={(e) => {
             const value = parseInt(e.target.value);
+            if (Number.isNaN(value)) return;
             dispatch({
               type: Action.SET_TRANSPOSITION_PRACTICE,
               transposition: Math.max(0, Math.min(12, value)),
@@ -69,7 +73,8 @@ function DesktopInputsGroup() {
           label={instance.getItem("repeats")}
           type={state?.config.repeats === Infinity ? "text" : "number"}
           value={state?.config.repeats === Infinity ? "∞" : (state?.config.repeats ?? 0)}
-          onChange={(e) => {
+          defaultValue={state?.config.repeats === Infinity ? "∞" : (state?.config.repeats ?? 0)}
+          onBlur={(e) => {
             const rawValue = e.target.value;
 
             if (rawValue === "" || rawValue === "∞" || rawValue.toLowerCase() === "infinity") {
@@ -92,6 +97,7 @@ function DesktopInputsGroup() {
           label={instance.getItem("bpm")}
           type="number"
           disabled={!state}
+          value={state?.config.bpm}
           defaultValue={state?.config.bpm}
           containerClassName="w-full"
           onBlur={(e) => {
@@ -105,6 +111,7 @@ function DesktopInputsGroup() {
         <SmallInput
           label={instance.getItem("bpm_practice")}
           type="number"
+          value={state?.config.bpmPractice}
           defaultValue={state?.config.bpmPractice}
           onBlur={(e) => {
             let value = parseInt(e.currentTarget.value, 10);

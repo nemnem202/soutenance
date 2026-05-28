@@ -120,6 +120,8 @@ export function SmallInput({
   align = "inline-start",
   containerClassName,
   tooltip,
+  defaultValue,
+  onBlur,
   ...props
 }: {
   label: string;
@@ -130,6 +132,15 @@ export function SmallInput({
 } & ComponentProps<"input">) {
   const id = useId();
   const isMobile = useScreen().size === "sm";
+
+  const [localValue, setLocalValue] = useState(defaultValue ?? "");
+
+  useEffect(() => {
+    if (defaultValue !== undefined) {
+      setLocalValue(defaultValue);
+    }
+  }, [defaultValue]);
+
   if (tooltip && !isMobile) {
     return (
       <Tooltip>
@@ -142,6 +153,9 @@ export function SmallInput({
               <CustomInputGroupInput
                 id={id}
                 {...props}
+                value={localValue}
+                onChange={(e) => setLocalValue(e.target.value)}
+                onBlur={onBlur}
                 className={`paragraph-sm h-6 full !rounded-xs text-left! ${!icon && "pl-1"}`}
               />
               {icon ? (
@@ -167,6 +181,9 @@ export function SmallInput({
           <CustomInputGroupInput
             id={id}
             {...props}
+            value={localValue}
+            onChange={(e) => setLocalValue(e.target.value)}
+            onBlur={onBlur}
             className={`paragraph-sm h-6 full !rounded-xs text-left! ${!icon && "pl-1"}`}
           />
           {icon ? (
