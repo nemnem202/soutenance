@@ -59,8 +59,9 @@ export default class FileController extends Controller {
   async handleUserImageChange(): Promise<ServerResponse<Session>> {
     const userId = this.okUser();
     const fileUpload = await this.uploadFileAsImage();
-    const update = await this.repository.updateImage(fileUpload, userId);
     await this.removeUserImage(userId);
+    const update = await this.repository.updateImage(fileUpload, userId);
+
     return {
       success: true,
       status: Status.Ok,
