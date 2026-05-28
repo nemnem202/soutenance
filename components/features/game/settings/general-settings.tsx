@@ -40,6 +40,13 @@ function DesktopInputsGroup() {
           label={instance.getItem("transpose")}
           type="number"
           defaultValue={state?.config.transposition}
+          onChange={(e) => {
+            const value = parseInt(e.target.value);
+            dispatch({
+              type: Action.SET_TRANSPOSITION,
+              transposition: Math.max(0, Math.min(12, value)),
+            });
+          }}
           containerClassName="w-full"
           icon={<p className="paragraph-sm text-muted-foreground">sem:</p>}
         />

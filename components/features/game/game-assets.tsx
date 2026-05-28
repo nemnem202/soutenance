@@ -41,7 +41,8 @@ import useAudio from "@/hooks/use-audio";
 import PianoChordDiagram from "./piano-chord-diagram";
 import { ClientOnly } from "vike-react/ClientOnly";
 import { Chord } from "@/types/music";
-import { MeasureSchema } from "@/types/entities";
+import { ChordSchema, MeasureSchema } from "@/types/entities";
+import { chordToString } from "@/lib/utils";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
   return (
@@ -490,35 +491,80 @@ export function ChordsDiagramsView() {
   const { exercise } = useGame();
   const [currentChords, setCurrentChords] = useState<Chord[]>([]);
 
-  // useEffect(() => {
-  //   if (!state?.transport.currentMeasureIndex || !exercise.chordsGrid) return;
-  //   const allMeasures: MeasureSchema[] = exercise.chordsGrid.sections.flatMap((section) => [
-  //     ...section.commonMeasures,
-  //     ...section.voltas.flatMap((volta) => volta.measures),
-  //   ]);
+  useEffect(() => {
+    if (!state || !exercise.chordsGrid) return;
 
-  //   const currentMeasure = allMeasures.find((m) => m.index === state.transport.currentMeasureIndex);
+    const allMeasures: MeasureSchema[] = exercise.chordsGrid.sections.flatMap((section) => [
+      ...section.commonMeasures,
+      ...section.voltas.flatMap((volta) => volta.measures),
+    ]);
 
-  //   if (!currentMeasure) return;
+    const currentMeasureIndex = state.transport.currentMeasureIndex;
+    const currentMeasure = allMeasures.find((m) => m.index === currentMeasureIndex);
 
-  //   const chords = currentMeasure.cells
-  //     .filter((cell) => cell.kind === "Chord")
-  //     .map((cell) => cell.chord);
-  //   setCurrentChords(chords);
-  // }, [state?.transport.currentMeasureIndex, exercise]);
+    if (!currentMeasure) return;
 
-  // useEffect(() => {
-  //   logger.info("Current chords", currentChords);
-  // }, [currentChords]);
+    const rawChords = currentMeasure.cells
+      .filter((cell) => cell.kind === "Chord" && cell.chord)
+      // @ts-expect-error
+      .map((cell) => cell.chord!);
+
+    const isPreviousChordInvalid = (prevChord: ChordSchema): boolean => {
+      return false;
+    };
+
+    const findFallbackChordInPreviousMeasures = (startIndex: number): ChordSchema | null => {
+      for (let i = startIndex - 1; i >= 0; i--) {
+        const prevMeasure = allMeasures.find((m) => m.index === i);
+        if (prevMeasure) {
+          const chordCell = prevMeasure.cells.find(
+            (cell) => cell.kind === "Chord" && cell.chord && cell.chord.content.note !== "%"
+          );
+          // @ts-expect-error
+          if (chordCell && chordCell.chord) {
+            // @ts-expect-error
+            return chordCell.chord;
+          }
+        }
+      }
+      return null;
+    };
+
+    const processedChords: ChordSchema[] = [];
+
+    rawChords.forEach((chord, index) => {
+      if (chord.content.note === "%") {
+        if (index > 0) {
+          const prevChord = processedChords[processedChords.length - 1];
+
+          if (!isPreviousChordInvalid(prevChord)) {
+            processedChords.push(chord);
+          }
+        } else {
+          const fallbackChord = findFallbackChordInPreviousMeasures(currentMeasureIndex);
+          if (fallbackChord) {
+            processedChords.push(fallbackChord);
+          }
+        }
+      } else {
+        processedChords.push(chord);
+      }
+    });
+
+    setCurrentChords(processedChords);
+  }, [state?.transport.currentMeasureIndex, exercise]);
 
   if (!state || (!state?.config.displayPianoDiagrams && !state?.config.displayGuitarDiagrams))
     return null;
 
   return (
     <ClientOnly>
-      <div className="h-30 w-full flex justify-evenly gap-2">
+      <div className="h-30 w-full flex justify-center gap-2">
         {currentChords.map((c, index) => (
-          <PianoChordDiagram chord={c} key={index} />
+          <div key={index} className="flex flex-col w-100 items-center">
+            <p className="whitespace-nowrap font-mono bold text-primary">{chordToString(c)}</p>
+            <PianoChordDiagram chord={c} />
+          </div>
         ))}
       </div>
     </ClientOnly>

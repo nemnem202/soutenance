@@ -20,6 +20,7 @@ export default function PianoChordDiagram({ chord }: { chord: Chord }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const appRef = useRef<Application | null>(null);
   const gfxRef = useRef<Graphics | null>(null);
+  const isDestroyedRef = useRef(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -33,9 +34,10 @@ export default function PianoChordDiagram({ chord }: { chord: Chord }) {
         backgroundColor: 0xffffff,
         resizeTo: containerRef.current,
         antialias: false,
-        preference: "webgl",
+        preference: "canvas",
       })
       .then(() => {
+        if (isDestroyedRef.current) return;
         if (!containerRef.current) return;
         containerRef.current.appendChild(app.canvas);
 
@@ -49,13 +51,29 @@ export default function PianoChordDiagram({ chord }: { chord: Chord }) {
       });
 
     return () => {
-      appRef.current?.destroy(true, { children: true, texture: true });
-      appRef.current = null;
+      isDestroyedRef.current = true;
+
+      const app = appRef.current;
       gfxRef.current = null;
+      appRef.current = null;
+
+      if (app) {
+        try {
+          app.ticker.stop();
+          app.renderer?.off("resize", drawDiagram);
+          // ✅ on retire le canvas manuellement avant destroy
+          const canvas = app.canvas;
+          canvas?.parentNode?.removeChild(canvas);
+          app.destroy(false, { children: true, texture: true }); // ✅ false = ne détruit pas le canvas DOM
+        } catch (e) {
+          // silent — le composant est déjà démonté
+        }
+      }
     };
   }, []);
 
   useEffect(() => {
+    if (isDestroyedRef.current) return;
     drawDiagram();
   }, [chord]);
 
@@ -112,7 +130,7 @@ export default function PianoChordDiagram({ chord }: { chord: Chord }) {
     }
   }
 
-  return <div ref={containerRef} className="flex-1 overflow-hidden max-w-200 rounded-md" />;
+  return <div ref={containerRef} className="flex-1 overflow-hidden w-100 rounded-md" />;
 }
 
 function whiteIndexToAbsoluteSemitone(whiteIndex: number): number {
