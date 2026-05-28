@@ -469,8 +469,9 @@ export function RepeatsDisplay() {
     <>
       <Separator orientation="vertical" className="!h-6" />
       <div className="flex">
-        <p className="font-mono semibold text-muted-foreground">
-          {state.config.loop.currentRepeatIndex}/{state.config.repeats}
+        <p className="font-mono semibold text-muted-foreground whitespace-nowrap">
+          {state.config.loop.currentRepeatIndex}/
+          {state.config.repeats !== Infinity ? state.config.repeats : "∞"}
         </p>
       </div>
     </>
