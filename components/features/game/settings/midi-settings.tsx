@@ -55,7 +55,7 @@ export default function MidiSettings() {
             </SelectContent>
           </Select>
         </div>
-        <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
+        {/* <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
           <p className="paragraph w-38 text-foreground">
             {instance.getItem("highlight_wrong_notes")}
           </p>
@@ -69,7 +69,7 @@ export default function MidiSettings() {
           <p className="paragraph w-38 text-foreground">
             {instance.getItem("highlight_missed_notes")}
           </p>
-        </SwitchParam>
+        </SwitchParam> */}
       </div>
     </ParamsAccordion>
   );
