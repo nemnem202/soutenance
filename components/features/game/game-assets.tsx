@@ -307,7 +307,7 @@ export function Tab({ children }: { children: ReactNode }) {
         {...interactiveProps}
         className="md:size-full md:bg-card md:rounded-md relative overflow-hidden group min-h-0"
       >
-        <div className="hidden z-10 absolute p-2 top-0 right-0 inset-0 transition opacity-0 group-hover:opacity-100 md:flex flex-col justify-between items-end">
+        {/* <div className="hidden z-10 absolute p-2 top-0 right-0 inset-0 transition opacity-0 group-hover:opacity-100 md:flex flex-col justify-between items-end">
           <div className="flex gap-3">
             {activeTab === "piano-roll" && <TrackSelect />}
             <FullScreenButton fullScreen={fullScreen} setFullScreen={handleFullScreen} />
@@ -319,6 +319,29 @@ export function Tab({ children }: { children: ReactNode }) {
           )}
           {(activeTab === "chords-grid" || activeTab === "chords-carousel") && (
             <ChordDisplaySelector />
+          )}
+          {activeTab === "piano-roll" && <div />}
+        </div> */}
+        <div
+          // Ajout de pointer-events-none pour que les clics passent à travers la zone vide
+          className="hidden z-10 absolute p-2 top-0 right-0 inset-0 transition opacity-0 group-hover:opacity-100 md:flex flex-col justify-between items-end pointer-events-none"
+        >
+          {/* On remet pointer-events-auto sur les blocs de boutons réels */}
+          <div className="flex gap-3 pointer-events-auto">
+            {activeTab === "piano-roll" && <TrackSelect />}
+            <FullScreenButton fullScreen={fullScreen} setFullScreen={handleFullScreen} />
+          </div>
+
+          {activeTab === "piano-roll" && (
+            <div className="flex-1 max-h-[50%] relative m-1 pointer-events-auto">
+              <ZoomSlider />
+            </div>
+          )}
+
+          {(activeTab === "chords-grid" || activeTab === "chords-carousel") && (
+            <div className="pointer-events-auto">
+              <ChordDisplaySelector />
+            </div>
           )}
           {activeTab === "piano-roll" && <div />}
         </div>
