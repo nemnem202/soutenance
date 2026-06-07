@@ -17,16 +17,37 @@ function getScreen(pageContext: PageContextServer): ScreenSizeType {
   return "lg";
 }
 
+// export async function getAuthenticatedSession(
+//   cookieHeader: string | undefined
+// ): Promise<Session | null> {
+//   if (!cookieHeader) return null;
+//   const user = await getCurrentUserFromCookie(cookieHeader);
+//   if (!user) return null;
+
+//   const controller = new SessionController({ client: prismaClient, user });
+//   const response = await controller.getSession();
+//   return response.success ? response.data : null;
+// }
+
 export async function getAuthenticatedSession(
   cookieHeader: string | undefined
 ): Promise<Session | null> {
   if (!cookieHeader) return null;
-  const user = await getCurrentUserFromCookie(cookieHeader);
-  if (!user) return null;
 
-  const controller = new SessionController({ client: prismaClient, user });
-  const response = await controller.getSession();
-  return response.success ? response.data : null;
+  try {
+    const user = await getCurrentUserFromCookie(cookieHeader);
+    if (!user) return null;
+
+    const controller = new SessionController({ client: prismaClient, user });
+    const response = await controller.getSession();
+
+    return response.success ? response.data : null;
+  } catch (error) {
+    // Optionnel : tu peux logguer l'erreur ici pour le debug,
+    // mais on renvoie null pour dire "pas de session valide"
+    console.warn("Session invalide ou expirée :", error);
+    return null;
+  }
 }
 
 export async function getGlobalData(pageContext: PageContextServer) {
