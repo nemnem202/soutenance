@@ -109,14 +109,14 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
   return (
     <div
       ref={measureRef}
-      className={`flex w-full h-12 relative items-center relative group/measure ${isActive && state?.config.currentMeasureOverline && "bg-popover"}`}
+      className={`flex w-full h-12 relative items-center relative group/measure ${isActive && state?.config.currentMeasureOverline && "bg-foreground/20"}`}
       id={String(measure.index)}
     >
       {volta && <VoltaBracket volta={volta} />}
       {measure.bars.left && <LeftBar bar={measure.bars.left} />}
       <div className="flex-1 max-w-[100%] flex items-center pl-1 overflow-hidden">
         {cells.map((cell, index) => (
-          <CellGroup cell={cell} measure={measure} key={index} isActive={isActive} />
+          <CellGroup cell={cell} measure={measure} key={index} />
         ))}
       </div>
 
@@ -164,19 +164,11 @@ function SetStartButton({ measure }: { measure: MeasureSchema }) {
   );
 }
 
-function CellGroup({
-  cell,
-  measure,
-  isActive,
-}: {
-  cell: CellSchema;
-  measure: MeasureSchema;
-  isActive: boolean;
-}) {
+function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureSchema }) {
   const renderCellContent = (): ReactNode => {
     switch (cell.kind) {
       case "Chord":
-        return <ChordCell cell={cell} isActive={isActive} />;
+        return <ChordCell cell={cell} />;
       case "Empty":
         return <EmptyCell cell={cell} />;
       case "Spacer":
@@ -205,11 +197,9 @@ type ChordCellType = Extract<CellSchema, { kind: "Chord" }>;
 type EmptyCellType = Extract<CellSchema, { kind: "Empty" }>;
 type SpacerCellType = Extract<CellSchema, { kind: "Spacer" }>;
 
-function ChordCell({ cell, isActive }: { cell: ChordCellType; isActive: boolean }) {
+function ChordCell({ cell }: { cell: ChordCellType }) {
   return (
-    <div
-      className={`h-min w-full flex items-center text-foreground md:bg-transparent ${isActive ? "bg-popover" : "bg-background"}`}
-    >
+    <div className={`h-min w-full flex items-center text-foreground md:bg-transparent`}>
       <p className="whitespace-nowrap font-mono semibold text-xl md:text-3xl flex h-fit lg:gap-1 ">
         <span>{musicalNotationRootNote(cell.chord.content.note)}</span>
         {cell.chord.content.modifier && (

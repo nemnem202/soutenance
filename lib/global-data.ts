@@ -21,12 +21,19 @@ export async function getAuthenticatedSession(
   cookieHeader: string | undefined
 ): Promise<Session | null> {
   if (!cookieHeader) return null;
-  const user = await getCurrentUserFromCookie(cookieHeader);
-  if (!user) return null;
 
-  const controller = new SessionController({ client: prismaClient, user });
-  const response = await controller.getSession();
-  return response.success ? response.data : null;
+  try {
+    const user = await getCurrentUserFromCookie(cookieHeader);
+    if (!user) return null;
+
+    const controller = new SessionController({ client: prismaClient, user });
+    const response = await controller.getSession();
+
+    return response.success ? response.data : null;
+  } catch (error) {
+    console.warn("Session invalide ou expirée :", error);
+    return null;
+  }
 }
 
 export async function getGlobalData(pageContext: PageContextServer) {
