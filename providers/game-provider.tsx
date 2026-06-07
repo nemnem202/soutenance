@@ -18,6 +18,7 @@ import { useShortcuts } from "@/midi-editor/hooks/useShortcuts";
 import SoundEngine from "@/midi-editor/engines/sound/sound-engine";
 import { useData } from "vike-react/useData";
 import { Data } from "@/pages/game/@id/+data";
+import { logger } from "@/lib/logger";
 
 const tabsIds = ["piano-roll", "chords-grid", "chords-carousel", "sheet", "guitar"] as const;
 export type TabID = (typeof tabsIds)[number];
@@ -75,10 +76,10 @@ export default function GameProvider({
     loadResources();
 
     return () => {
-      isMounted = false;
-      // SoundEngine.reset();
-      useMidiStore.getState().reset();
+      logger.info("Reset");
       dispatch({ type: Action.RESET_STATE });
+      isMounted = false;
+      useMidiStore.getState().reset();
     };
   }, [exercise.id]);
 

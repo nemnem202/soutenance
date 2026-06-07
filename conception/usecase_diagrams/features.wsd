@@ -1,52 +1,47 @@
-@startuml Exercise
-
-title Diagramme de Use Case - Gestion des features
+@startuml
 
 left to right direction
+skinparam packageStyle rectangle
 
-skinparam PackageStyle rect
+actor "Visiteur" as V
+actor "Utilisateur connecté" as U
 
-actor "Visiteur" as visiteur
-actor "Utilisateur\nConnecté" as user
+U -|> V
 
+rectangle "Gestion des features" {
 
-rectangle "Système de gestion des features" {
-        usecase "chercher un exercise" as UC001
-        usecase "Utiliser l'exercise sans pouvoir le modifier" as UC002
-        usecase "Enregistrer l'exercise dans l'une des playlist propriétaire " as UC004
-        usecase "Créer une nouvelle playlist propriétaire" as UC005
-        usecase "Liker une playlist ou un exercise" as UC007
-        usecase "Enregistrer l'élément dans les likes" as UC008
-        usecase "Créer un exercise" as UC009
-        usecase "Importer un partition au format xml ou un lien ireal pro" as UC010
-        usecase "Importer la playlist" as UC011
-        usecase "Importer l'exercise" as UC012
-        usecase "Enregistrer la playlist en tant que playlist propriétaire" as UC013
-        usecase "Importer des samples dans la limite de stockage autorisée" as UC014
-        usecase "Modifier un exercisec" as UC015
+  usecase "Rechercher un exercice" as UC1
+  usecase "Jouer un exercice" as UC2
+
+  usecase "Liker un utilisateur" as UC3
+  usecase "Liker un exercice" as UC4
+  usecase "Liker une playlist" as UC5
+  usecase "Enregistrer dans les favoris" as UC6
+
+  usecase "Créer une playlist" as UC7
+  usecase "Créer un exercice" as UC8
+  usecase "Enregistrer dans une playlist" as UC9
+
+  usecase "Configurer un exercice" as UC10
+  usecase "Enregistrer sa configuration" as UC11
+
+  V --> UC1
+  V --> UC2
+
+  U --> UC3
+  U --> UC4
+  U --> UC5
+  U --> UC7
+  U --> UC8
+  U --> UC10
+
+  UC3 ..> UC6 : <<include>>
+  UC4 ..> UC6 : <<include>>
+  UC5 ..> UC6 : <<include>>
+
+  UC8 ..> UC9 : <<include>>
+
+  UC10 ..> UC11 : <<include>>
 }
-
-visiteur -- UC001
-
-UC001 .--> UC002 : <<include>>
-
-user -- UC007
-user -- UC011
-user -- UC012
-user -- UC005
-user -- UC009
-user -- UC014
-
-UC012 .--> UC004 : <<extends>>
-UC009 .--> UC004 : <<extends>>
-UC007 .--> UC008 : <<extends>>
-
-UC009 .--> UC010 : <<include>>
-
-UC011 .--> UC013 : <<extends>>
-
-UC004 .--> UC015 : <<include>>
-
-user -|> visiteur
 
 @enduml
