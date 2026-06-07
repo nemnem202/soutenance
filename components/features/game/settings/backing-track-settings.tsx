@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import SwitchParam from "@/components/molecules/switch-param";
 import {
   Select,
@@ -16,31 +16,27 @@ import { ParamsAccordion } from "../game-sidebar";
 import { Action } from "@/midi-editor/types/actions";
 import { MidiInstrumentNumber } from "@/midi-editor/types/instruments";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
+import { MMA_GROOVES } from "@/config/grooves_dictionnary";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Check, ChevronsUpDown } from "lucide-react";
+import {
+  Command,
+  CommandItem,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandList,
+} from "@/components/ui/command";
+import { cn } from "@/lib/utils";
 
 export default function BackingTrackSettings() {
-  // const [backingTackActive, setBackingTrackActive] = useState(false);
   const { instance } = useLanguage();
   const { state, dispatch } = useMidiStore();
   return (
     <ParamsAccordion title={<h3 className="title-3">{instance.getItem("backing_track")}</h3>}>
       <div className="flex flex-col gap-3">
-        <div className="flex gap-4 w-full">
-          {/* <SwitchParam
-            checked={backingTackActive}
-            order="label-switch"
-            setChecked={setBackingTrackActive}
-          >
-            <p className="paragraph  text-foreground">{instance.getItem("active")}</p>
-          </SwitchParam> */}
-          {/* <SwitchParam
-            checked={true}
-            setChecked={() => {}}
-            disabled={!backingTackActive}
-            order="label-switch"
-          >
-            <p className="paragraph">{instance.getItem("melody")}</p>
-          </SwitchParam> */}
-        </div>
+        <div className="flex gap-4 w-full"></div>
         <div className={`flex flex-col w-full gap-2 py-2`}>
           {state?.tracks.map((track) => (
             <>
@@ -61,25 +57,99 @@ export default function BackingTrackSettings() {
             </>
           ))}
         </div>
-        <div className="w-full flex items-center">
+        <div className="w-full flex items-center gap-2">
           <Label className="paragraph " htmlFor="style-select">
             {instance.getItem("style")}
           </Label>
-          <Select defaultValue="original">
+          <StyleSelectCombobox />
+          {/* <Select defaultValue="original">
             <SelectTrigger className="w-full max-w-30" id="style-select">
               <SelectValue className="text-left" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>{instance.getItem("styles")}</SelectLabel>
-                <SelectItem value="original">{instance.getItem("original")}</SelectItem>
-                <SelectItem value="swing">Bossa nova</SelectItem>
-                <SelectItem value="blues">Blues</SelectItem>
+                <SelectItem value="original">
+                  {instance.getItem("original")} {`(${state?.config.groove})`}
+                </SelectItem>
+                {Array.from(MMA_GROOVES.entries()).map(([title]) => (
+                  <SelectItem key={title} value={title}>
+                    {title}
+                  </SelectItem>
+                ))}
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
         </div>
       </div>
     </ParamsAccordion>
+  );
+}
+
+export function StyleSelectCombobox() {
+  const { instance } = useLanguage();
+  const { state, dispatch } = useMidiStore();
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("original");
+
+  const options = useMemo(() => {
+    const originalLabel = `${instance.getItem("original")} (${state?.config.groove})`;
+    const grooveOptions = Array.from(MMA_GROOVES.entries()).map(([title]) => ({
+      value: title.toLowerCase(),
+      label: title,
+    }));
+
+    return [{ value: "original", label: originalLabel }, ...grooveOptions];
+  }, [instance, state, MMA_GROOVES]);
+
+  const selectedOption = options.find((opt) => opt.value === value);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-full max-w-30 justify-between text-left font-normal"
+          id="style-select"
+        >
+          <span className="truncate">
+            {selectedOption ? selectedOption.label : instance.getItem("styles")}
+          </span>
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+
+      <PopoverContent className="w-[200px] p-0 z-100" align="start">
+        <Command>
+          <CommandInput placeholder={`${instance.getItem("styles")}...`} />
+
+          <CommandList className="max-h-[250px] overflow-y-auto">
+            <CommandEmpty>Aucun résultat trouvé.</CommandEmpty>
+            <CommandGroup>
+              {options.map((option) => (
+                <CommandItem
+                  key={option.value}
+                  value={option.value}
+                  onSelect={(currentValue) => {
+                    setValue(currentValue === value ? "" : currentValue);
+                    setOpen(false);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === option.value ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {option.label}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 }
