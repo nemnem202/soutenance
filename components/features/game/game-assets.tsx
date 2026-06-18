@@ -51,6 +51,7 @@ import { ClientOnly } from "vike-react/ClientOnly";
 import { Chord } from "@/types/music";
 import { CellSchema, ChordSchema, MeasureSchema } from "@/types/entities";
 import { chordCellsWithTransposition, chordToString } from "@/lib/utils";
+import { trackIsDrums } from "@/midi-editor/lib/utils";
 
 export function ControlsSection({ children }: { children: ReactNode }) {
   return (
@@ -423,15 +424,18 @@ export function TrackSelect() {
       </SelectTrigger>
       <SelectContent className="z-200 ">
         <SelectGroup>
-          {state.tracks.flatMap((track) => (
-            <SelectItem
-              value={String(track.id)}
-              key={track.id}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {MidiInstrumentNumber[track.id].split(/(?=[A-Z])/).join(" ")}
-            </SelectItem>
-          ))}
+          {state.tracks.flatMap(
+            (track) =>
+              !trackIsDrums(track.family) && (
+                <SelectItem
+                  value={String(track.id)}
+                  key={track.id}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {MidiInstrumentNumber[track.id].split(/(?=[A-Z])/).join(" ")}
+                </SelectItem>
+              )
+          )}
         </SelectGroup>
       </SelectContent>
     </Select>
