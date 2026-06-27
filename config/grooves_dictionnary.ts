@@ -1,4 +1,5 @@
-import type { MMAGroove, MMAGrooveTitle } from "@/types/mma";
+import { MMAGrooveTitle } from "@/lib/generated/prisma/enums";
+import type { MMAGroove } from "@/types/mma";
 
 export const MMA_GROOVES: Map<MMAGrooveTitle, MMAGroove> = new Map([
   [
@@ -63,7 +64,7 @@ export const MMA_GROOVES: Map<MMAGrooveTitle, MMAGroove> = new Map([
     },
   ],
   [
-    "8Beat",
+    MMAGrooveTitle.EightBeat,
     {
       family: "Rock",
       sections: {
@@ -80,7 +81,7 @@ export const MMA_GROOVES: Map<MMAGrooveTitle, MMAGroove> = new Map([
     },
   ],
   [
-    "16Beat",
+    MMAGrooveTitle.SixteenBeat,
     {
       family: "Rock",
       sections: { default: "16Beat01", plus: null, A: "16beat1A", B: "16beat1B", C: null, D: null },
@@ -90,7 +91,7 @@ export const MMA_GROOVES: Map<MMAGrooveTitle, MMAGroove> = new Map([
     },
   ],
   [
-    "50sRock",
+    MMAGrooveTitle.FiftyRock,
     {
       family: "Rock",
       sections: {
@@ -249,7 +250,7 @@ export const MMA_GROOVES: Map<MMAGrooveTitle, MMAGroove> = new Map([
     },
   ],
   [
-    "04JAZZ01",
+    MMAGrooveTitle.ZeroFourJazzZeroOne,
     {
       family: "Jazz",
       sections: { default: "04JAZZ01", plus: null, A: null, B: null, C: null, D: null },

@@ -1,5 +1,6 @@
 import * as z from "zod";
 import { imageSchema, titleSchema } from "./common.schema";
+import { MMAGrooveTitle } from "@/lib/generated/prisma/enums";
 
 export const timeSignatureSchema = z.object({
   top: z.int().min(1).max(32),
@@ -11,7 +12,7 @@ export const keysSchema = z.string();
 export const configSchema = z.object({
   bpm: z.number().int().min(10).max(500),
   key: z.string().max(50),
-  groove: z.string().max(100),
+  groove: z.enum(MMAGrooveTitle),
   timeSignatureTop: z.number().int().min(1).max(32),
   timeSignatureBottom: z.number().int().min(1).max(32),
 });

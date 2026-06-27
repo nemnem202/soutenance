@@ -319,7 +319,7 @@ function convertSong(song: SongIreal): ExerciseSchema {
 
   const config: ConfigSchema = {
     bpm,
-    groove,
+    groove: "BossaNova",
     key,
     timeSignatureBottom: globalTimeSignature.bottom,
     timeSignatureTop: globalTimeSignature.top,
