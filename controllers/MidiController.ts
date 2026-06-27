@@ -61,6 +61,7 @@ export default class MidiController extends Controller {
     groove: MMAGrooveTitle
   ): Promise<Buffer> {
     const start = Date.now();
+    logger.info("Midi file generation asked for ", exercise.title, " with groove: ", groove);
     const content = new MMAContentGenerator(exercise, groove).generate();
     const buffer = await this.generateMidiBuffer(content);
     return buffer;
