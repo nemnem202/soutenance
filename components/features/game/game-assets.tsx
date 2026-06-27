@@ -407,7 +407,7 @@ export function Tab({ children }: { children: ReactNode }) {
 export function TrackSelect() {
   const { state, dispatch } = useMidiStore();
 
-  if (!state) return;
+  if (!state || state.tracks.filter((t) => trackIsDrums(t.family)).length <= 1) return;
 
   return (
     <Select
