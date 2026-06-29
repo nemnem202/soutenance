@@ -5,22 +5,21 @@ import { logger } from "@/lib/logger";
 import type { ChordsGridSchema, ExerciseSchema } from "@/types/entities";
 import { Status, type ServerResponse } from "@/types/server-response";
 import { Controller } from "./Controller";
-import GameRepository from "@/repositories/gameRepository";
 import MMAContentGenerator from "@/lib/mma-content-generator";
 import { AppError } from "@/lib/errors";
 import { MMAGrooveTitle } from "@/lib/generated/prisma/enums";
+import ExerciseRepository from "@/repositories/exerciseRepository";
 
 export type ExerciseWithForcedChordGrid = ExerciseSchema & { chordsGrid: ChordsGridSchema };
 
 export default class MidiController extends Controller {
-  private gameRepository = new GameRepository(this.client);
-  // private midiFileRepository = new this.midiFileRepository()
+  private exerciseRepository = new ExerciseRepository(this.client);
 
   public async getMidiFile(
     exerciseId: number,
     groove?: MMAGrooveTitle
   ): Promise<ServerResponse<Buffer>> {
-    const request = await this.gameRepository.findOne(exerciseId, this.user?.id ?? null);
+    const request = await this.exerciseRepository.findOne(exerciseId, this.user?.id ?? null);
 
     if (!request.success) return request;
 
