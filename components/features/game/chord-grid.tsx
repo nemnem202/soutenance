@@ -43,7 +43,7 @@ function Section({ section }: { section: SectionSchema }) {
     <div className="flex flex-col gap-2">
       {section.type !== "Generic" && <SectionLabel label={section.type} />}
 
-      <div className="w-full grid grid-cols-4 gap-y-2">
+      <div className="w-full grid grid-cols-4 gap-y-8">
         {section.commonMeasures
           .sort((a, b) => a.index - b.index)
           .map((measure) => (
@@ -60,7 +60,7 @@ function Section({ section }: { section: SectionSchema }) {
               />
             ))}
       </div>
-      <div className="w-full grid grid-cols-4 gap-y-2">
+      <div className="w-full grid grid-cols-4 gap-y-8">
         {section.voltas.slice(1).map((volta, index) => (
           <React.Fragment key={index}>
             {volta.measures
@@ -114,7 +114,7 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
     >
       {volta && <VoltaBracket volta={volta} />}
       {measure.bars.left && <LeftBar bar={measure.bars.left} />}
-      <div className="flex-1 max-w-[100%] flex items-center pl-1 overflow-hidden">
+      <div className="flex-1 max-w-[100%] flex items-center pl-1">
         {cells.map((cell, index) => (
           <CellGroup cell={cell} measure={measure} key={index} />
         ))}
@@ -181,7 +181,7 @@ function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureSchema
   return (
     <div
       data-cellgroup={measure.index}
-      className={`px-0.5 md:px-2 h-full flex justify-between items-center  gap-1 ${cell.kind === "Chord" ? "flex-1" : "!w-0 w-auto flex-1"}`}
+      className={`px-0.5 md:px-2 h-full flex justify-between items-center relative gap-1 ${cell.kind === "Chord" ? "flex-1" : "!w-0 w-auto flex-1"} `}
       style={{ maxWidth: `${100 / measure.cells.length}%` }}
     >
       {cell.timeSignatureChangeBottom && cell.timeSignatureChangeTop && (
@@ -189,6 +189,12 @@ function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureSchema
       )}
 
       {renderCellContent()}
+
+      {cell.isCodaSymbol && (
+        <div className="absolute left-0 -top-full text-2xl h-8 leading-none flex items-end music text-secondary opacity-60">
+          {String.fromCodePoint(0x1d10c)}
+        </div>
+      )}
     </div>
   );
 }

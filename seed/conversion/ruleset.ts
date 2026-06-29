@@ -44,7 +44,13 @@ function filterEmptyMeasures(measures: MeasureSchema[]) {
 
 function removeUselessEmptyCells(measures: MeasureSchema[]) {
   for (const measure of measures) {
+    const hasCoda = measure.cells.some((c: any) => c.isCodaSymbol);
+    const hasSegno = measure.cells.some((c: any) => c.isSegnoSymbol);
     measure.cells = filterUselessCells(measure.cells);
+    if (measure.cells.length > 0) {
+      if (hasCoda) (measure.cells[0] as any).isCodaSymbol = true;
+      if (hasSegno) (measure.cells[0] as any).isSegnoSymbol = true;
+    }
   }
 }
 

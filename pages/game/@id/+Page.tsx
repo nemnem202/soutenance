@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import ChordTab from "@/components/features/game/chord-tab";
 import { ChordsDiagramsView, Tab } from "@/components/features/game/game-assets";
 import DesktopGameControlsSection, {
@@ -22,6 +22,7 @@ import { Spinner } from "@/components/ui/spinner";
 import useAudio from "@/hooks/use-audio";
 import useScreen from "@/hooks/use-screen";
 import { useFullscreenOnInteraction } from "@/hooks/use-full-screen";
+import { logger } from "@/lib/logger";
 
 export default function Page() {
   const { exercise } = useData<Data>();
@@ -38,6 +39,10 @@ export default function Page() {
 function GameContent() {
   const { exercise } = useGame();
   const [sidebarOpen, setOpen] = useState(false);
+
+  useEffect(() => {
+    logger.info("Exercise: ", exercise);
+  }, []);
 
   return (
     <div className="flex flex-row w-screen h-[100dvh] overflow-hidden">

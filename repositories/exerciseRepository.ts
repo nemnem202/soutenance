@@ -3,13 +3,314 @@ import type {
   CellSchema,
   ChordSchema,
   ChordsGridSchema,
+  Exercise,
   ExerciseSchema,
   MeasureSchema,
+  SectionSchema,
   VoltaSchema,
 } from "@/types/entities";
 import { Repository } from "./repository";
+import { ServerResponse, Status } from "@/types/server-response";
+import { Filters } from "@/types/navigation";
 
 export default class ExerciseRepository extends Repository {
+  async findOne(id: number, userId: number | null): Promise<ServerResponse<Exercise>> {
+    const exercise = await this.client.exercise.findFirst({
+      where: {
+        id: id,
+        OR: [
+          {
+            fromPlaylist: {
+              visibility: "public",
+            },
+          },
+          { authorId: id },
+        ],
+      },
+      select: {
+        id: true,
+        title: true,
+        composer: true,
+        author: {
+          select: {
+            id: true,
+            username: true,
+            profilePicture: {
+              select: {
+                alt: true,
+                url: true,
+              },
+            },
+          },
+        },
+        defaultConfig: {
+          select: {
+            bpm: true,
+            key: true,
+            groove: true,
+            timeSignatureTop: true,
+            timeSignatureBottom: true,
+            midifile: {
+              select: {
+                url: true,
+              },
+            },
+          },
+        },
+        chordsGrid: {
+          select: {
+            sections: {
+              select: {
+                type: true,
+                label: true,
+                index: true,
+                voltas: {
+                  select: {
+                    index: true,
+                    measures: {
+                      select: {
+                        index: true,
+                        bars: {
+                          select: {
+                            left: true,
+                            right: true,
+                          },
+                        },
+                        cells: {
+                          select: {
+                            index: true,
+                            timeSignatureChangeTop: true,
+                            timeSignatureChangeBottom: true,
+                            keychange: true,
+                            isCodaSymbol: true,
+                            isSegnoSymbol: true,
+                            kind: true,
+                            chord: {
+                              select: {
+                                modifier: true,
+                                note: true,
+                                over: {
+                                  select: {
+                                    modifier: true,
+                                    note: true,
+                                  },
+                                },
+                                alternate: {
+                                  select: {
+                                    modifier: true,
+                                    note: true,
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                commonMeasures: {
+                  select: {
+                    index: true,
+
+                    bars: {
+                      select: {
+                        left: true,
+                        right: true,
+                      },
+                    },
+                    cells: {
+                      select: {
+                        index: true,
+                        timeSignatureChangeTop: true,
+                        timeSignatureChangeBottom: true,
+                        keychange: true,
+                        kind: true,
+                        chord: {
+                          select: {
+                            modifier: true,
+                            note: true,
+                            over: {
+                              select: {
+                                modifier: true,
+                                note: true,
+                              },
+                            },
+                            alternate: {
+                              select: {
+                                modifier: true,
+                                note: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!exercise)
+      return {
+        success: false,
+        status: Status.NotFound,
+        title: "The exercise could not be found.",
+        description: "It has either been removed or defined as private.",
+      };
+
+    const mapCells = (cells: any[]): CellSchema[] => {
+      return cells.map((cell) => {
+        const base = {
+          index: cell.index,
+          keychange: cell.keychange,
+          timeSignatureChangeTop: cell.timeSignatureChangeTop,
+          timeSignatureChangeBottom: cell.timeSignatureChangeBottom,
+          isCodaSymbol: cell.isCodaSymbol,
+          isSegnoSymbol: cell.isSegnoSymbol,
+        };
+
+        if (cell.kind === "Chord" && cell.chord) {
+          return {
+            ...base,
+            kind: "Chord",
+            chord: {
+              content: {
+                note: cell.chord.note,
+                modifier: cell.chord.modifier,
+              },
+              over: cell.chord.over
+                ? { note: cell.chord.over.note, modifier: cell.chord.over.modifier }
+                : undefined,
+              alt: cell.chord.alternate
+                ? { note: cell.chord.alternate.note, modifier: cell.chord.alternate.modifier }
+                : undefined,
+            },
+          } as CellSchema;
+        }
+
+        return {
+          ...base,
+          kind: cell.kind as "Spacer" | "Empty",
+        } as CellSchema;
+      });
+    };
+
+    const chordsGrid: ChordsGridSchema | null = exercise.chordsGrid
+      ? {
+          sections: exercise.chordsGrid.sections.map((section) => ({
+            index: section.index,
+            label: section.label,
+            type: section.type as SectionSchema["type"],
+            voltas: section.voltas.map((volta) => ({
+              index: volta.index,
+              measures: volta.measures.map((measure) => ({
+                index: measure.index,
+                bars: measure.bars,
+                cells: mapCells(measure.cells),
+              })),
+            })),
+            commonMeasures: section.commonMeasures.map((measure) => ({
+              index: measure.index,
+              bars: measure.bars,
+              cells: mapCells(measure.cells),
+            })),
+          })),
+        }
+      : null;
+
+    return {
+      success: true,
+      status: Status.Ok,
+      data: {
+        ...exercise,
+        midifileUrl: exercise.defaultConfig.midifile?.url,
+        chordsGrid: chordsGrid,
+      } as Exercise,
+    };
+  }
+
+  async findManyByFilters(filters: Filters): Promise<ServerResponse<Exercise[]>> {
+    const { search, groove, key, bpmMin, bpmMax, sectionTypes, chordNotes } = filters;
+    const whereClause: any = {};
+
+    // 1. Recherche textuelle
+    if (search) {
+      whereClause.OR = [
+        { title: { contains: search, mode: "insensitive" } },
+        { composer: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
+    // 2. Filtres defaultConfig
+    if (groove || key || bpmMin !== undefined || bpmMax !== undefined) {
+      whereClause.defaultConfig = {};
+      if (groove) whereClause.defaultConfig.groove = groove;
+      if (key) whereClause.defaultConfig.key = key;
+      if (bpmMin !== undefined || bpmMax !== undefined) {
+        whereClause.defaultConfig.bpm = {};
+        if (bpmMin !== undefined) whereClause.defaultConfig.bpm.gte = bpmMin;
+        if (bpmMax !== undefined) whereClause.defaultConfig.bpm.lte = bpmMax;
+      }
+    }
+
+    // 3. MULTIPLES SECTIONS : "ET" LOGIQUE
+    // On crée un tableau de conditions que l'exercice doit TOUTES remplir
+    if (sectionTypes && sectionTypes.length > 0) {
+      whereClause.AND = sectionTypes.map((type) => ({
+        chordsGrid: {
+          sections: {
+            some: { type: type },
+          },
+        },
+      }));
+    }
+
+    // 4. Filtre par notes d'accords
+    if (chordNotes && chordNotes.length > 0) {
+      const chordCondition = { chord: { note: { in: chordNotes } } };
+
+      const chordGridCondition = {
+        chordsGrid: {
+          sections: {
+            some: {
+              OR: [
+                { commonMeasures: { some: { cells: { some: chordCondition } } } },
+                { voltas: { some: { measures: { some: { cells: { some: chordCondition } } } } } },
+              ],
+            },
+          },
+        },
+      };
+
+      // On combine proprement avec le AND des sections si existant
+      if (whereClause.AND) {
+        whereClause.AND.push(chordGridCondition);
+      } else {
+        whereClause.AND = [chordGridCondition];
+      }
+    }
+
+    const exercises = await this.client.exercise.findMany({
+      where: whereClause,
+      select: {
+        id: true,
+        title: true,
+        composer: true,
+        defaultConfig: {
+          select: { bpm: true, key: true, groove: true },
+        },
+      },
+      take: 50,
+    });
+
+    return { success: true, status: Status.Ok, data: exercises as any[] };
+  }
+
   async create(exercise: ExerciseSchema, playlistId: number, userId: number) {
     await this.client.playlist.update({
       where: { id: playlistId },
@@ -126,6 +427,8 @@ export default class ExerciseRepository extends Repository {
       keychange: cell.keychange,
       timeSignatureChangeBottom: cell.timeSignatureChangeBottom,
       timeSignatureChangeTop: cell.timeSignatureChangeTop,
+      isCodaSymbol: cell.isCodaSymbol,
+      isSegnoSymbol: cell.isSegnoSymbol,
     };
   }
 

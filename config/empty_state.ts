@@ -2,6 +2,7 @@ import { State } from "@/midi-editor/types/instance";
 
 const EMPTY_STATE: State = {
   config: {
+    groove: "BossaNova",
     bpm: 120,
     bpmPractice: 0,
     countIn: false,
