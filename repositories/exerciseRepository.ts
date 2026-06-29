@@ -11,6 +11,7 @@ import type {
 } from "@/types/entities";
 import { Repository } from "./repository";
 import { ServerResponse, Status } from "@/types/server-response";
+import { Filters } from "@/types/navigation";
 
 export default class ExerciseRepository extends Repository {
   async findOne(id: number, userId: number | null): Promise<ServerResponse<Exercise>> {
@@ -227,6 +228,83 @@ export default class ExerciseRepository extends Repository {
         chordsGrid: chordsGrid,
       } as Exercise,
     };
+  }
+
+  async findManyByFilters(filters: Filters): Promise<ServerResponse<Exercise[]>> {
+    const { search, groove, key, bpmMin, bpmMax, sectionTypes, chordNotes } = filters;
+    const whereClause: any = {};
+
+    // 1. Recherche textuelle
+    if (search) {
+      whereClause.OR = [
+        { title: { contains: search, mode: "insensitive" } },
+        { composer: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
+    // 2. Filtres defaultConfig
+    if (groove || key || bpmMin !== undefined || bpmMax !== undefined) {
+      whereClause.defaultConfig = {};
+      if (groove) whereClause.defaultConfig.groove = groove;
+      if (key) whereClause.defaultConfig.key = key;
+      if (bpmMin !== undefined || bpmMax !== undefined) {
+        whereClause.defaultConfig.bpm = {};
+        if (bpmMin !== undefined) whereClause.defaultConfig.bpm.gte = bpmMin;
+        if (bpmMax !== undefined) whereClause.defaultConfig.bpm.lte = bpmMax;
+      }
+    }
+
+    // 3. MULTIPLES SECTIONS : "ET" LOGIQUE
+    // On crée un tableau de conditions que l'exercice doit TOUTES remplir
+    if (sectionTypes && sectionTypes.length > 0) {
+      whereClause.AND = sectionTypes.map((type) => ({
+        chordsGrid: {
+          sections: {
+            some: { type: type },
+          },
+        },
+      }));
+    }
+
+    // 4. Filtre par notes d'accords
+    if (chordNotes && chordNotes.length > 0) {
+      const chordCondition = { chord: { note: { in: chordNotes } } };
+
+      const chordGridCondition = {
+        chordsGrid: {
+          sections: {
+            some: {
+              OR: [
+                { commonMeasures: { some: { cells: { some: chordCondition } } } },
+                { voltas: { some: { measures: { some: { cells: { some: chordCondition } } } } } },
+              ],
+            },
+          },
+        },
+      };
+
+      // On combine proprement avec le AND des sections si existant
+      if (whereClause.AND) {
+        whereClause.AND.push(chordGridCondition);
+      } else {
+        whereClause.AND = [chordGridCondition];
+      }
+    }
+
+    const exercises = await this.client.exercise.findMany({
+      where: whereClause,
+      select: {
+        id: true,
+        title: true,
+        composer: true,
+        defaultConfig: {
+          select: { bpm: true, key: true, groove: true },
+        },
+      },
+      take: 50,
+    });
+
+    return { success: true, status: Status.Ok, data: exercises as any[] };
   }
 
   async create(exercise: ExerciseSchema, playlistId: number, userId: number) {
