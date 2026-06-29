@@ -82,6 +82,8 @@ export default class ExerciseRepository extends Repository {
                             timeSignatureChangeTop: true,
                             timeSignatureChangeBottom: true,
                             keychange: true,
+                            isCodaSymbol: true,
+                            isSegnoSymbol: true,
                             kind: true,
                             chord: {
                               select: {
@@ -168,6 +170,8 @@ export default class ExerciseRepository extends Repository {
           keychange: cell.keychange,
           timeSignatureChangeTop: cell.timeSignatureChangeTop,
           timeSignatureChangeBottom: cell.timeSignatureChangeBottom,
+          isCodaSymbol: cell.isCodaSymbol,
+          isSegnoSymbol: cell.isSegnoSymbol,
         };
 
         if (cell.kind === "Chord" && cell.chord) {
@@ -423,6 +427,8 @@ export default class ExerciseRepository extends Repository {
       keychange: cell.keychange,
       timeSignatureChangeBottom: cell.timeSignatureChangeBottom,
       timeSignatureChangeTop: cell.timeSignatureChangeTop,
+      isCodaSymbol: cell.isCodaSymbol,
+      isSegnoSymbol: cell.isSegnoSymbol,
     };
   }
 

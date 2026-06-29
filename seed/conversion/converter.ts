@@ -426,7 +426,12 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
     }
 
     if (parsedBars.isEmpty && !cellIreal.chord) {
-      currentMeasure.cells.push({ kind: "Empty", index: cellIreal.index });
+      currentMeasure.cells.push({
+        kind: "Empty",
+        index: cellIreal.index,
+        isCodaSymbol: false,
+        isSegnoSymbol: false,
+      });
     } else {
       currentMeasure.cells.push(convertCell(cellIreal));
     }

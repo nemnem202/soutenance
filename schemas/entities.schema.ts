@@ -132,6 +132,8 @@ export const cellSchema = z.discriminatedUnion("kind", [
     keychange: z.string().max(50).nullable().optional(),
     timeSignatureChangeTop: z.number().int().nullable().optional(),
     timeSignatureChangeBottom: z.number().int().nullable().optional(),
+    isCodaSymbol: z.boolean(),
+    isSegnoSymbol: z.boolean(),
   }),
   z.object({
     index: z.number().int(),
@@ -139,6 +141,8 @@ export const cellSchema = z.discriminatedUnion("kind", [
     keychange: z.string().max(50).nullable().optional(),
     timeSignatureChangeTop: z.number().int().nullable().optional(),
     timeSignatureChangeBottom: z.number().int().nullable().optional(),
+    isCodaSymbol: z.boolean(),
+    isSegnoSymbol: z.boolean(),
   }),
 ]);
 

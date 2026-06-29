@@ -110,6 +110,8 @@ model Cell {
     chordId                   Int?
     timeSignatureChangeTop    Int?
     timeSignatureChangeBottom Int?
+    isCodaSymbol              Boolean  @default(false)
+    isSegnoSymbol             Boolean  @default(false)
 }
 
 model Chord {
