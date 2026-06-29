@@ -80,8 +80,9 @@ const SECTION_ANNOT_MAP: Record<string, SectionType> = {
   "*S": SectionType.Solo,
   "*R": SectionType.Refrain,
   "*M": SectionType.Melody,
-  "*O": SectionType.Outro,
   "*X": SectionType.Tacet,
+  "*Q": SectionType.Outro,
+  "*O": SectionType.Outro,
 };
 
 const IGNORED_ANNOTATIONS = new Set([
@@ -92,7 +93,7 @@ const IGNORED_ANNOTATIONS = new Set([
   "NO",
   "NE",
   "NA",
-  "*Q",
+  // "*Q",
   "*Z",
   "*N",
   "*H",
@@ -271,21 +272,22 @@ function getSectionLabel(type: SectionType, index: number): string {
 }
 
 function convertCell(cellIreal: CellIreal): CellSchema {
-  const { chord, spacer } = cellIreal;
-
-  const { annots } = cellIreal;
+  const { chord, spacer, annots } = cellIreal;
   const parsed = parseAnnotations(annots);
 
   if (spacer > 0)
     return {
       kind: "Spacer",
       index: cellIreal.index,
-    };
+    } as any;
+
   if (chord === null)
     return {
       kind: "Empty",
       index: cellIreal.index,
-    };
+      isCodaSymbol: parsed.isCoda,
+      isSegnoSymbol: parsed.isSegno,
+    } as any;
 
   return {
     index: cellIreal.index,
@@ -294,6 +296,8 @@ function convertCell(cellIreal: CellIreal): CellSchema {
     keychange: null,
     timeSignatureChangeBottom: parsed.timeSignatureChange?.bottom,
     timeSignatureChangeTop: parsed.timeSignatureChange?.top,
+    isCodaSymbol: parsed.isCoda,
+    isSegnoSymbol: parsed.isSegno,
   };
 }
 
@@ -345,6 +349,7 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
   let currentVolta: VoltaSchema | null = null;
   let measureIndex = 0;
   let sectionIndex = 0;
+  let codaCount = 0;
 
   function ensureSection(type: SectionType = SectionType.Generic) {
     if (!currentSection) {
@@ -375,12 +380,26 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
     const parsedAnnots = parseAnnotations(cellIreal.annots);
     const parsedBars = parseBars(cellIreal.bars);
 
-    if (parsedAnnots.sectionType !== null) {
+    // CORRECTION : Gérer le coda APRÈS avoir déterminé s'il y a un changement de section
+    let effectiveSectionType = parsedAnnots.sectionType;
+
+    if (parsedAnnots.isCoda) {
+      codaCount++;
+      // Ne transforme en Outro que si c'est le 2ème coda ET qu'il n'y a pas déjà un type de section défini
+      if (codaCount === 2 && effectiveSectionType === null) {
+        effectiveSectionType = SectionType.Outro;
+      }
+    }
+
+    if (effectiveSectionType !== null) {
       pushMeasure();
       if (currentSection) sections.push(currentSection);
       currentSection = null;
-      ensureSection(parsedAnnots.sectionType);
+      ensureSection(effectiveSectionType);
       currentVolta = null;
+    } else {
+      // S'assurer qu'on a bien une section courante
+      ensureSection();
     }
 
     const section = ensureSection();
@@ -423,7 +442,6 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
 
   return sections;
 }
-
 export function convertPlaylist(playlistIreal: PlaylistIreal): {
   playlist: PlaylistSchema;
   failures: { title: string; error: string }[];
