@@ -4,10 +4,9 @@ import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
 import { logger } from "@/lib/logger";
 import { chordCellsWithTransposition, musicalNotationRootNote } from "@/lib/utils";
-import SoundEngine from "@/midi-editor/engines/sound/sound-engine";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { Action } from "@/midi-editor/types/actions";
-import ChordGridProvider, { useChordGrid } from "@/providers/chord-grid-provider";
+import { useChordGrid } from "@/providers/chord-grid-provider";
 import type { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
 import { FlagTriangleRight } from "lucide-react";
 import React, { useState, type ReactNode, useRef, useEffect, useMemo } from "react";
@@ -60,8 +59,6 @@ function Section({ section }: { section: SectionSchema }) {
                 volta={index === 0 ? section.voltas[0].index : undefined}
               />
             ))}
-      </div>
-      <div className="w-full grid grid-cols-4 gap-y-8">
         {section.voltas.slice(1).map((volta, index) => (
           <React.Fragment key={index}>
             {volta.measures
