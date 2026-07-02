@@ -12,97 +12,31 @@ import type {
 import { Repository } from "./repository";
 import { ServerResponse, Status } from "@/types/server-response";
 import { Filters } from "@/types/navigation";
+import { logger } from "@/lib/logger";
+
+type CellWithRelations = Prisma.CellGetPayload<{
+  include: { chord: { include: { over: true; alternate: true } } };
+}>;
 
 export default class ExerciseRepository extends Repository {
   async findOne(id: number, userId: number | null): Promise<ServerResponse<Exercise>> {
     const exercise = await this.client.exercise.findFirst({
-      where: {
-        id: id,
-        OR: [
-          {
-            fromPlaylist: {
-              visibility: "public",
-            },
-          },
-          { authorId: id },
-        ],
-      },
-      select: {
-        id: true,
-        title: true,
-        composer: true,
-        author: {
-          select: {
-            id: true,
-            username: true,
-            profilePicture: {
-              select: {
-                alt: true,
-                url: true,
-              },
-            },
-          },
-        },
-        defaultConfig: {
-          select: {
-            bpm: true,
-            key: true,
-            groove: true,
-            timeSignatureTop: true,
-            timeSignatureBottom: true,
-            midifile: {
-              select: {
-                url: true,
-              },
-            },
-          },
-        },
+      where: { id, OR: [{ fromPlaylist: { visibility: "public" } }, { authorId: userId || 0 }] },
+      include: {
+        author: { include: { profilePicture: true } },
+        defaultConfig: { include: { midifile: true } },
         chordsGrid: {
-          select: {
+          include: {
             sections: {
-              select: {
-                type: true,
-                label: true,
-                index: true,
+              include: {
                 voltas: {
-                  select: {
-                    index: true,
+                  include: {
                     measures: {
-                      select: {
-                        index: true,
-                        bars: {
-                          select: {
-                            left: true,
-                            right: true,
-                          },
-                        },
+                      include: {
+                        bars: true,
                         cells: {
-                          select: {
-                            index: true,
-                            timeSignatureChangeTop: true,
-                            timeSignatureChangeBottom: true,
-                            keychange: true,
-                            isCodaSymbol: true,
-                            isSegnoSymbol: true,
-                            kind: true,
-                            chord: {
-                              select: {
-                                modifier: true,
-                                note: true,
-                                over: {
-                                  select: {
-                                    modifier: true,
-                                    note: true,
-                                  },
-                                },
-                                alternate: {
-                                  select: {
-                                    modifier: true,
-                                    note: true,
-                                  },
-                                },
-                              },
-                            },
+                          include: {
+                            chord: { include: { over: true, alternate: true } },
                           },
                         },
                       },
@@ -110,42 +44,9 @@ export default class ExerciseRepository extends Repository {
                   },
                 },
                 commonMeasures: {
-                  select: {
-                    index: true,
-
-                    bars: {
-                      select: {
-                        left: true,
-                        right: true,
-                      },
-                    },
-                    cells: {
-                      select: {
-                        index: true,
-                        timeSignatureChangeTop: true,
-                        timeSignatureChangeBottom: true,
-                        keychange: true,
-                        kind: true,
-                        chord: {
-                          select: {
-                            modifier: true,
-                            note: true,
-                            over: {
-                              select: {
-                                modifier: true,
-                                note: true,
-                              },
-                            },
-                            alternate: {
-                              select: {
-                                modifier: true,
-                                note: true,
-                              },
-                            },
-                          },
-                        },
-                      },
-                    },
+                  include: {
+                    bars: true,
+                    cells: { include: { chord: { include: { over: true, alternate: true } } } },
                   },
                 },
               },
@@ -163,15 +64,27 @@ export default class ExerciseRepository extends Repository {
         description: "It has either been removed or defined as private.",
       };
 
-    const mapCells = (cells: any[]): CellSchema[] => {
+    const mapCells = (cells: CellWithRelations[]): CellSchema[] => {
       return cells.map((cell) => {
+        const navigation =
+          cell.navigationOrigin && cell.navigationTarget
+            ? {
+                origin: cell.navigationOrigin,
+                target: cell.navigationTarget,
+              }
+            : undefined;
+
         const base = {
           index: cell.index,
           keychange: cell.keychange,
           timeSignatureChangeTop: cell.timeSignatureChangeTop,
           timeSignatureChangeBottom: cell.timeSignatureChangeBottom,
-          isCodaSymbol: cell.isCodaSymbol,
-          isSegnoSymbol: cell.isSegnoSymbol,
+          isCodaSymbol: cell.isCodaSymbol ?? false,
+          isSegnoSymbol: cell.isSegnoSymbol ?? false,
+          isFermataSymbol: cell.isFermataSymbol ?? false,
+          isFineSymbol: cell.isFineSymbol ?? false,
+          isBreakSymbol: cell.isBreakSymbol ?? false,
+          navigation: navigation,
         };
 
         if (cell.kind === "Chord" && cell.chord) {
@@ -413,9 +326,34 @@ export default class ExerciseRepository extends Repository {
   }
 
   private cellMapper(cell: CellSchema): Prisma.CellCreateWithoutMeasureInput {
+    const {
+      index,
+      kind,
+      isBreakSymbol,
+      isCodaSymbol,
+      isFermataSymbol,
+      isFineSymbol,
+      isSegnoSymbol,
+      keychange,
+      timeSignatureChangeBottom,
+      timeSignatureChangeTop,
+    } = cell;
+
+    if (cell.navigation) logger.info("CELL NAVIGATION: ", cell.navigation);
     return {
-      kind: cell.kind,
-      index: cell.index,
+      index,
+      kind,
+      isBreakSymbol,
+      isCodaSymbol,
+      isFermataSymbol,
+      isFineSymbol,
+      isSegnoSymbol,
+      keychange,
+      timeSignatureChangeBottom,
+      timeSignatureChangeTop,
+      navigationOrigin: cell.navigation?.origin,
+      navigationTarget: cell.navigation?.target,
+      rhythmGrouping: cell.rhythmGrouping,
       chord:
         cell.kind === "Chord"
           ? {
@@ -424,11 +362,6 @@ export default class ExerciseRepository extends Repository {
               },
             }
           : undefined,
-      keychange: cell.keychange,
-      timeSignatureChangeBottom: cell.timeSignatureChangeBottom,
-      timeSignatureChangeTop: cell.timeSignatureChangeTop,
-      isCodaSymbol: cell.isCodaSymbol,
-      isSegnoSymbol: cell.isSegnoSymbol,
     };
   }
 

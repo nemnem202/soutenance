@@ -63,12 +63,12 @@ model ChordsGrid {
 }
 
 model Section {
-    id    Int         @id @default(autoincrement())
-    index Int
-    type  SectionType
-    label String      @db.VarChar(50)
-
-    chordsGrid   ChordsGrid @relation(fields: [chordsGridId], references: [id], onDelete: Cascade)
+    id           Int         @id @default(autoincrement())
+    index        Int
+    type         SectionType
+    label        String      @db.VarChar(50)
+    repeatCount  Int?
+    chordsGrid   ChordsGrid  @relation(fields: [chordsGridId], references: [id], onDelete: Cascade)
     chordsGridId Int
 
     commonMeasures Measure[]
@@ -112,6 +112,17 @@ model Cell {
     timeSignatureChangeBottom Int?
     isCodaSymbol              Boolean  @default(false)
     isSegnoSymbol             Boolean  @default(false)
+    isFermataSymbol           Boolean  @default(false)
+    isFineSymbol              Boolean  @default(false)
+    isBreakSymbol             Boolean  @default(false)
+    navigationOrigin          String?
+    navigationTarget          String?
+    rhythmGrouping            String?
+}
+
+enum JumpOrigin {
+    DC
+    DS
 }
 
 model Chord {

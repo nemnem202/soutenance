@@ -1,12 +1,12 @@
+import MUSICAL_SYMBOLS from "@/config/musical-symbols";
 import useGame from "@/hooks/use-game";
 import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
 import { logger } from "@/lib/logger";
 import { chordCellsWithTransposition, musicalNotationRootNote } from "@/lib/utils";
-import SoundEngine from "@/midi-editor/engines/sound/sound-engine";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { Action } from "@/midi-editor/types/actions";
-import ChordGridProvider, { useChordGrid } from "@/providers/chord-grid-provider";
+import { useChordGrid } from "@/providers/chord-grid-provider";
 import type { BarsSchema, CellSchema, MeasureSchema, SectionSchema } from "@/types/entities";
 import { FlagTriangleRight } from "lucide-react";
 import React, { useState, type ReactNode, useRef, useEffect, useMemo } from "react";
@@ -59,8 +59,6 @@ function Section({ section }: { section: SectionSchema }) {
                 volta={index === 0 ? section.voltas[0].index : undefined}
               />
             ))}
-      </div>
-      <div className="w-full grid grid-cols-4 gap-y-8">
         {section.voltas.slice(1).map((volta, index) => (
           <React.Fragment key={index}>
             {volta.measures
@@ -184,17 +182,14 @@ function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureSchema
       className={`px-0.5 md:px-2 h-full flex justify-between items-center relative gap-1 ${cell.kind === "Chord" ? "flex-1" : "!w-0 w-auto flex-1"} `}
       style={{ maxWidth: `${100 / measure.cells.length}%` }}
     >
+      <Annots cell={cell} />
       {cell.timeSignatureChangeBottom && cell.timeSignatureChangeTop && (
         <TimeSignature top={cell.timeSignatureChangeTop} bottom={cell.timeSignatureChangeBottom} />
       )}
 
       {renderCellContent()}
 
-      {cell.isCodaSymbol && (
-        <div className="absolute left-0 -top-full text-2xl h-8 leading-none flex items-end music text-secondary opacity-60">
-          {String.fromCodePoint(0x1d10c)}
-        </div>
-      )}
+      <Comment cell={cell} />
     </div>
   );
 }
@@ -202,6 +197,34 @@ function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureSchema
 type ChordCellType = Extract<CellSchema, { kind: "Chord" }>;
 type EmptyCellType = Extract<CellSchema, { kind: "Empty" }>;
 type SpacerCellType = Extract<CellSchema, { kind: "Spacer" }>;
+
+function Annots({ cell }: { cell: CellSchema }) {
+  if (cell.isCodaSymbol || cell.isFermataSymbol || cell.isSegnoSymbol)
+    return (
+      <div className="absolute left-0 -top-full text-2xl h-8 leading-none flex items-end music text-secondary opacity-60">
+        <p>
+          {cell.isCodaSymbol && String.fromCodePoint(MUSICAL_SYMBOLS.coda)}
+          {cell.isFermataSymbol && String.fromCodePoint(MUSICAL_SYMBOLS.fermata)}
+          {cell.isSegnoSymbol && String.fromCodePoint(MUSICAL_SYMBOLS.segno)}
+        </p>
+      </div>
+    );
+}
+
+function Comment({ cell }: { cell: CellSchema }) {
+  if (cell.isBreakSymbol || cell.isFineSymbol || cell.navigation || cell.rhythmGrouping)
+    return (
+      <div className="absolute right-0 -bottom-1/2 font-mono text-sm flex justify-start w-full items-end text-secondary opacity-60">
+        <p>
+          {cell.isBreakSymbol && "Break"}
+          {cell.isFineSymbol && "Fine"}
+          {cell.navigation &&
+            cell.navigation.origin.split("").join(".") + ". => " + cell.navigation.target}
+          {cell.rhythmGrouping && cell.rhythmGrouping}
+        </p>
+      </div>
+    );
+}
 
 function ChordCell({ cell }: { cell: ChordCellType }) {
   return (

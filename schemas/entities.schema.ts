@@ -102,6 +102,16 @@ export const barsSchema = z.object({
   right: z.enum(["single", "double", "loopClose", "final"]).optional().nullable(),
 });
 
+export const jumpOriginSchema = z.enum(["DC", "DS"]);
+export const jumpTargetSchema = z.enum(["Fine", "Coda", "1stEnding", "2ndEnding", "3rdEnding"]);
+
+export const navigationSchema = z.object({
+  origin: jumpOriginSchema,
+  target: jumpTargetSchema,
+});
+
+export const rhythmGroupingSchema = z.enum(["3+2", "2+3", "4+3", "3+4"]);
+
 export const chordchema = z.string();
 
 export const chordContentSchema = z.object({
@@ -115,35 +125,24 @@ export const chordSchema = z.object({
   alt: chordContentSchema.nullable().optional(),
 });
 
+const cellBaseSchema = z.object({
+  index: z.number().int(),
+  keychange: z.string().max(50).nullable().optional(),
+  timeSignatureChangeTop: z.number().int().nullable().optional(),
+  timeSignatureChangeBottom: z.number().int().nullable().optional(),
+  isCodaSymbol: z.boolean(),
+  isSegnoSymbol: z.boolean(),
+  isFermataSymbol: z.boolean(),
+  isFineSymbol: z.boolean(),
+  isBreakSymbol: z.boolean(),
+  navigation: navigationSchema.nullable().optional(),
+  rhythmGrouping: rhythmGroupingSchema.nullable().optional(),
+});
+
 export const cellSchema = z.discriminatedUnion("kind", [
-  z.object({
-    index: z.number().int(),
-    kind: z.literal("Chord"),
-    chord: chordSchema,
-    keychange: z.string().max(50).nullable().optional(),
-    timeSignatureChangeTop: z.number().int().nullable().optional(),
-    timeSignatureChangeBottom: z.number().int().nullable().optional(),
-    isCodaSymbol: z.boolean(),
-    isSegnoSymbol: z.boolean(),
-  }),
-  z.object({
-    index: z.number().int(),
-    kind: z.literal("Spacer"),
-    keychange: z.string().max(50).nullable().optional(),
-    timeSignatureChangeTop: z.number().int().nullable().optional(),
-    timeSignatureChangeBottom: z.number().int().nullable().optional(),
-    isCodaSymbol: z.boolean(),
-    isSegnoSymbol: z.boolean(),
-  }),
-  z.object({
-    index: z.number().int(),
-    kind: z.literal("Empty"),
-    keychange: z.string().max(50).nullable().optional(),
-    timeSignatureChangeTop: z.number().int().nullable().optional(),
-    timeSignatureChangeBottom: z.number().int().nullable().optional(),
-    isCodaSymbol: z.boolean(),
-    isSegnoSymbol: z.boolean(),
-  }),
+  cellBaseSchema.extend({ kind: z.literal("Chord"), chord: chordSchema }),
+  cellBaseSchema.extend({ kind: z.literal("Spacer") }),
+  cellBaseSchema.extend({ kind: z.literal("Empty") }),
 ]);
 
 export const measureSchema = z.object({
@@ -163,6 +162,7 @@ export const sectionSchema = z.object({
   type: sectionType,
   commonMeasures: z.array(measureSchema).max(200, "The section has too many measures."),
   voltas: z.array(voltaSchema),
+  repeatCount: z.number().int().min(2).max(8).nullable().optional(),
 });
 
 export const chordsGridSchema = z.object({

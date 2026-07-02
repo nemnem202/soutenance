@@ -15,8 +15,9 @@ import type {
 import type { Note } from "@/types/music";
 import type { CellIreal, ChordIreal, PlaylistIreal, SongIreal } from "./chart_decoder";
 import applyRuleset from "./ruleset";
+import { logger } from "@/lib/logger";
 
-class IrealConversionError extends Error {
+export class IrealConversionError extends Error {
   constructor(context: string, message: string) {
     super(`[${context}] ${message}`);
     this.name = "IrealConversionError";
@@ -249,6 +250,79 @@ function parseBars(bars: string): ParsedBars {
   };
 }
 
+type ParsedComments = {
+  isFineSymbol: boolean;
+  isBreakSymbol: boolean;
+  navigation: {
+    origin: "DC" | "DS";
+    target: "Fine" | "Coda" | "1stEnding" | "2ndEnding" | "3rdEnding";
+  } | null;
+  repeatCount: number | null;
+  rhythmGrouping: "3+2" | "2+3" | "4+3" | "3+4" | null;
+};
+
+const ENDING_MAP: Record<string, "1stEnding" | "2ndEnding" | "3rdEnding"> = {
+  "1st": "1stEnding",
+  "2nd": "2ndEnding",
+  "3rd": "3rdEnding",
+};
+
+function parseComments(comments: string[]): ParsedComments {
+  const result: ParsedComments = {
+    isFineSymbol: false,
+    isBreakSymbol: false,
+    navigation: null,
+    repeatCount: null,
+    rhythmGrouping: null,
+  };
+
+  for (const raw of comments) {
+    const text = raw.trim();
+
+    if (/^fine$/i.test(text)) {
+      result.isFineSymbol = true;
+      continue;
+    }
+
+    if (/^break$/i.test(text)) {
+      result.isBreakSymbol = true;
+      continue;
+    }
+
+    // D.C./D.S. al Fine | al Coda | al 1st/2nd/3rd ending
+    const navMatch = text.match(/^D\.?\s*(C|S)\.?\s+al\s+(Fine|Coda|1st|2nd|3rd)(\s+end(ing)?)?$/i);
+    if (navMatch) {
+      const origin = navMatch[1].toUpperCase() === "C" ? "DC" : "DS";
+      const rawTarget = navMatch[2];
+      const target =
+        rawTarget.toLowerCase() === "fine"
+          ? "Fine"
+          : rawTarget.toLowerCase() === "coda"
+            ? "Coda"
+            : ENDING_MAP[rawTarget.toLowerCase()];
+      result.navigation = { origin, target };
+      continue;
+    }
+
+    // Répétitions : 3x .. 8x
+    const repeatMatch = text.match(/^([3-8])x$/i);
+    if (repeatMatch) {
+      result.repeatCount = parseInt(repeatMatch[1], 10);
+      continue;
+    }
+
+    // Groupements rythmiques
+    if (["3+2", "2+3", "4+3", "3+4"].includes(text)) {
+      result.rhythmGrouping = text as ParsedComments["rhythmGrouping"];
+      continue;
+    }
+  }
+
+  if (result.navigation) logger.info("Comment navigation found: ", result.navigation);
+
+  return result;
+}
+
 function getSectionLabel(type: SectionType, index: number): string {
   const LABELS: Record<SectionType, string> = {
     [SectionType.Generic]: "Section",
@@ -272,32 +346,31 @@ function getSectionLabel(type: SectionType, index: number): string {
 }
 
 function convertCell(cellIreal: CellIreal): CellSchema {
-  const { chord, spacer, annots } = cellIreal;
-  const parsed = parseAnnotations(annots);
+  const { chord, spacer, annots, comments } = cellIreal;
+  const parsedAnnots = parseAnnotations(annots);
+  const parsedComments = parseComments(comments);
 
-  if (spacer > 0)
-    return {
-      kind: "Spacer",
-      index: cellIreal.index,
-    } as any;
+  const commonFields = {
+    isCodaSymbol: parsedAnnots.isCoda,
+    isSegnoSymbol: parsedAnnots.isSegno,
+    isFermataSymbol: parsedAnnots.isFermata,
+    isFineSymbol: parsedComments.isFineSymbol,
+    isBreakSymbol: parsedComments.isBreakSymbol,
+    navigation: parsedComments.navigation,
+    rhythmGrouping: parsedComments.rhythmGrouping,
+  };
 
-  if (chord === null)
-    return {
-      kind: "Empty",
-      index: cellIreal.index,
-      isCodaSymbol: parsed.isCoda,
-      isSegnoSymbol: parsed.isSegno,
-    } as any;
+  if (spacer > 0) return { kind: "Spacer", index: cellIreal.index, ...commonFields };
+  if (chord === null) return { kind: "Empty", index: cellIreal.index, ...commonFields };
 
   return {
     index: cellIreal.index,
     kind: "Chord",
     chord: validateAndConvertChord(chord),
     keychange: null,
-    timeSignatureChangeBottom: parsed.timeSignatureChange?.bottom,
-    timeSignatureChangeTop: parsed.timeSignatureChange?.top,
-    isCodaSymbol: parsed.isCoda,
-    isSegnoSymbol: parsed.isSegno,
+    timeSignatureChangeBottom: parsedAnnots.timeSignatureChange?.bottom,
+    timeSignatureChangeTop: parsedAnnots.timeSignatureChange?.top,
+    ...commonFields,
   };
 }
 
@@ -349,7 +422,6 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
   let currentVolta: VoltaSchema | null = null;
   let measureIndex = 0;
   let sectionIndex = 0;
-  let codaCount = 0;
 
   function ensureSection(type: SectionType = SectionType.Generic) {
     if (!currentSection) {
@@ -359,6 +431,7 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
         label: getSectionLabel(type, sectionIndex),
         commonMeasures: [],
         voltas: [],
+        repeatCount: null,
       };
     }
     return currentSection;
@@ -379,17 +452,9 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
   for (const cellIreal of cells) {
     const parsedAnnots = parseAnnotations(cellIreal.annots);
     const parsedBars = parseBars(cellIreal.bars);
+    const parsedComments = parseComments(cellIreal.comments);
 
-    // CORRECTION : Gérer le coda APRÈS avoir déterminé s'il y a un changement de section
     let effectiveSectionType = parsedAnnots.sectionType;
-
-    if (parsedAnnots.isCoda) {
-      codaCount++;
-      // Ne transforme en Outro que si c'est le 2ème coda ET qu'il n'y a pas déjà un type de section défini
-      if (codaCount === 2 && effectiveSectionType === null) {
-        effectiveSectionType = SectionType.Outro;
-      }
-    }
 
     if (effectiveSectionType !== null) {
       pushMeasure();
@@ -398,7 +463,6 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
       ensureSection(effectiveSectionType);
       currentVolta = null;
     } else {
-      // S'assurer qu'on a bien une section courante
       ensureSection();
     }
 
@@ -431,6 +495,9 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
         index: cellIreal.index,
         isCodaSymbol: false,
         isSegnoSymbol: false,
+        isFermataSymbol: false,
+        isBreakSymbol: false,
+        isFineSymbol: false,
       });
     } else {
       currentMeasure.cells.push(convertCell(cellIreal));
@@ -438,6 +505,11 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
 
     if (parsedBars.rightBar !== null) {
       currentMeasure.bars.right = parsedBars.rightBar;
+
+      if (parsedComments.repeatCount !== null) {
+        section.repeatCount = parsedComments.repeatCount;
+      }
+
       pushMeasure();
     }
   }
