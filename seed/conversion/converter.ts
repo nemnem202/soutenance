@@ -15,6 +15,7 @@ import type {
 import type { Note } from "@/types/music";
 import type { CellIreal, ChordIreal, PlaylistIreal, SongIreal } from "./chart_decoder";
 import applyRuleset from "./ruleset";
+import { logger } from "@/lib/logger";
 
 export class IrealConversionError extends Error {
   constructor(context: string, message: string) {
@@ -316,6 +317,8 @@ function parseComments(comments: string[]): ParsedComments {
       continue;
     }
   }
+
+  if (result.navigation) logger.info("Comment navigation found: ", result.navigation);
 
   return result;
 }

@@ -13,7 +13,10 @@ import { Repository } from "./repository";
 import { ServerResponse, Status } from "@/types/server-response";
 import { Filters } from "@/types/navigation";
 import { logger } from "@/lib/logger";
-import { Cpu } from "lucide-react";
+
+type CellWithRelations = Prisma.CellGetPayload<{
+  include: { chord: { include: { over: true; alternate: true } } };
+}>;
 
 export default class ExerciseRepository extends Repository {
   async findOne(id: number, userId: number | null): Promise<ServerResponse<Exercise>> {
@@ -31,7 +34,11 @@ export default class ExerciseRepository extends Repository {
                     measures: {
                       include: {
                         bars: true,
-                        cells: { include: { chord: { include: { over: true, alternate: true } } } },
+                        cells: {
+                          include: {
+                            chord: { include: { over: true, alternate: true } },
+                          },
+                        },
                       },
                     },
                   },
@@ -57,18 +64,27 @@ export default class ExerciseRepository extends Repository {
         description: "It has either been removed or defined as private.",
       };
 
-    const mapCells = (cells: any[]): CellSchema[] => {
+    const mapCells = (cells: CellWithRelations[]): CellSchema[] => {
       return cells.map((cell) => {
+        const navigation =
+          cell.navigationOrigin && cell.navigationTarget
+            ? {
+                origin: cell.navigationOrigin,
+                target: cell.navigationTarget,
+              }
+            : undefined;
+
         const base = {
           index: cell.index,
           keychange: cell.keychange,
           timeSignatureChangeTop: cell.timeSignatureChangeTop,
           timeSignatureChangeBottom: cell.timeSignatureChangeBottom,
-          isCodaSymbol: cell.isCodaSymbol ?? false, // Ajout de fallback si undefined
-          isSegnoSymbol: cell.isSegnoSymbol ?? false, // Ajout de fallback si undefined
+          isCodaSymbol: cell.isCodaSymbol ?? false,
+          isSegnoSymbol: cell.isSegnoSymbol ?? false,
           isFermataSymbol: cell.isFermataSymbol ?? false,
-          isFineSymbol: cell.isFineSymbol ?? false, // <--- AJOUTÉ
-          isBreakSymbol: cell.isBreakSymbol ?? false, // <--- AJOUTÉ
+          isFineSymbol: cell.isFineSymbol ?? false,
+          isBreakSymbol: cell.isBreakSymbol ?? false,
+          navigation: navigation,
         };
 
         if (cell.kind === "Chord" && cell.chord) {
@@ -87,7 +103,7 @@ export default class ExerciseRepository extends Repository {
                 ? { note: cell.chord.alternate.note, modifier: cell.chord.alternate.modifier }
                 : undefined,
             },
-          } as CellSchema; // Assertion pour aider le compilateur si nécessaire
+          } as CellSchema;
         }
 
         return {
@@ -322,6 +338,8 @@ export default class ExerciseRepository extends Repository {
       timeSignatureChangeBottom,
       timeSignatureChangeTop,
     } = cell;
+
+    if (cell.navigation) logger.info("CELL NAVIGATION: ", cell.navigation);
     return {
       index,
       kind,

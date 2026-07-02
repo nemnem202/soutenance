@@ -188,6 +188,8 @@ function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureSchema
       )}
 
       {renderCellContent()}
+
+      <Comment cell={cell} />
     </div>
   );
 }
@@ -197,15 +199,29 @@ type EmptyCellType = Extract<CellSchema, { kind: "Empty" }>;
 type SpacerCellType = Extract<CellSchema, { kind: "Spacer" }>;
 
 function Annots({ cell }: { cell: CellSchema }) {
-  if (cell.isSegnoSymbol) logger.info("Segno symbol at: ", cell.index);
-  if (cell.isCodaSymbol) logger.info("Coda symbol at: ", cell.index);
-  if (cell.isFermataSymbol) logger.info("Fermata symbol at: ", cell.index);
   if (cell.isCodaSymbol || cell.isFermataSymbol || cell.isSegnoSymbol)
     return (
       <div className="absolute left-0 -top-full text-2xl h-8 leading-none flex items-end music text-secondary opacity-60">
-        {cell.isCodaSymbol && String.fromCodePoint(MUSICAL_SYMBOLS.coda)}
-        {cell.isFermataSymbol && String.fromCodePoint(MUSICAL_SYMBOLS.fermata)}
-        {cell.isSegnoSymbol && String.fromCodePoint(MUSICAL_SYMBOLS.segno)}
+        <p>
+          {cell.isCodaSymbol && String.fromCodePoint(MUSICAL_SYMBOLS.coda)}
+          {cell.isFermataSymbol && String.fromCodePoint(MUSICAL_SYMBOLS.fermata)}
+          {cell.isSegnoSymbol && String.fromCodePoint(MUSICAL_SYMBOLS.segno)}
+        </p>
+      </div>
+    );
+}
+
+function Comment({ cell }: { cell: CellSchema }) {
+  if (cell.isBreakSymbol || cell.isFineSymbol || cell.navigation || cell.rhythmGrouping)
+    return (
+      <div className="absolute right-0 -bottom-1/2 font-mono text-sm flex justify-start w-full items-end text-secondary opacity-60">
+        <p>
+          {cell.isBreakSymbol && "Break"}
+          {cell.isFineSymbol && "Fine"}
+          {cell.navigation &&
+            cell.navigation.origin.split("").join(".") + ". => " + cell.navigation.target}
+          {cell.rhythmGrouping && cell.rhythmGrouping}
+        </p>
       </div>
     );
 }
