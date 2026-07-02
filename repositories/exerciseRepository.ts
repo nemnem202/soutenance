@@ -13,6 +13,7 @@ import { Repository } from "./repository";
 import { ServerResponse, Status } from "@/types/server-response";
 import { Filters } from "@/types/navigation";
 import { logger } from "@/lib/logger";
+import { Cpu } from "lucide-react";
 
 export default class ExerciseRepository extends Repository {
   async findOne(id: number, userId: number | null): Promise<ServerResponse<Exercise>> {
@@ -63,9 +64,11 @@ export default class ExerciseRepository extends Repository {
           keychange: cell.keychange,
           timeSignatureChangeTop: cell.timeSignatureChangeTop,
           timeSignatureChangeBottom: cell.timeSignatureChangeBottom,
-          isCodaSymbol: cell.isCodaSymbol,
-          isSegnoSymbol: cell.isSegnoSymbol,
-          isFermataSymbol: cell.isFermataSymbol,
+          isCodaSymbol: cell.isCodaSymbol ?? false, // Ajout de fallback si undefined
+          isSegnoSymbol: cell.isSegnoSymbol ?? false, // Ajout de fallback si undefined
+          isFermataSymbol: cell.isFermataSymbol ?? false,
+          isFineSymbol: cell.isFineSymbol ?? false, // <--- AJOUTÉ
+          isBreakSymbol: cell.isBreakSymbol ?? false, // <--- AJOUTÉ
         };
 
         if (cell.kind === "Chord" && cell.chord) {
@@ -84,7 +87,7 @@ export default class ExerciseRepository extends Repository {
                 ? { note: cell.chord.alternate.note, modifier: cell.chord.alternate.modifier }
                 : undefined,
             },
-          } as CellSchema;
+          } as CellSchema; // Assertion pour aider le compilateur si nécessaire
         }
 
         return {
@@ -307,10 +310,32 @@ export default class ExerciseRepository extends Repository {
   }
 
   private cellMapper(cell: CellSchema): Prisma.CellCreateWithoutMeasureInput {
-    cell.isFermataSymbol && logger.info("Fermata symbol at", cell.index);
+    const {
+      index,
+      kind,
+      isBreakSymbol,
+      isCodaSymbol,
+      isFermataSymbol,
+      isFineSymbol,
+      isSegnoSymbol,
+      keychange,
+      timeSignatureChangeBottom,
+      timeSignatureChangeTop,
+    } = cell;
     return {
-      kind: cell.kind,
-      index: cell.index,
+      index,
+      kind,
+      isBreakSymbol,
+      isCodaSymbol,
+      isFermataSymbol,
+      isFineSymbol,
+      isSegnoSymbol,
+      keychange,
+      timeSignatureChangeBottom,
+      timeSignatureChangeTop,
+      navigationOrigin: cell.navigation?.origin,
+      navigationTarget: cell.navigation?.target,
+      rhythmGrouping: cell.rhythmGrouping,
       chord:
         cell.kind === "Chord"
           ? {
@@ -319,12 +344,6 @@ export default class ExerciseRepository extends Repository {
               },
             }
           : undefined,
-      keychange: cell.keychange,
-      timeSignatureChangeBottom: cell.timeSignatureChangeBottom,
-      timeSignatureChangeTop: cell.timeSignatureChangeTop,
-      isCodaSymbol: cell.isCodaSymbol,
-      isSegnoSymbol: cell.isSegnoSymbol,
-      isFermataSymbol: cell.isFermataSymbol,
     };
   }
 

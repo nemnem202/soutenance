@@ -100,44 +100,29 @@ model VoltaBracket {
 }
 
 model Cell {
-    id                        Int             @id @default(autoincrement())
+    id                        Int         @id @default(autoincrement())
     index                     Int
     kind                      CellKind
-    keychange                 String?         @db.VarChar(50)
-    measure                   Measure         @relation(fields: [measureId], references: [id], onDelete: Cascade)
+    keychange                 String?     @db.VarChar(50)
+    measure                   Measure     @relation(fields: [measureId], references: [id], onDelete: Cascade)
     measureId                 Int
-    chord                     Chord?          @relation(fields: [chordId], references: [id], onDelete: Cascade)
+    chord                     Chord?      @relation(fields: [chordId], references: [id], onDelete: Cascade)
     chordId                   Int?
     timeSignatureChangeTop    Int?
     timeSignatureChangeBottom Int?
-    isCodaSymbol              Boolean         @default(false)
-    isSegnoSymbol             Boolean         @default(false)
-    isFermataSymbol           Boolean         @default(false)
-    isFineSymbol              Boolean         @default(false)
-    isBreakSymbol             Boolean         @default(false)
+    isCodaSymbol              Boolean     @default(false)
+    isSegnoSymbol             Boolean     @default(false)
+    isFermataSymbol           Boolean     @default(false)
+    isFineSymbol              Boolean     @default(false)
+    isBreakSymbol             Boolean     @default(false)
     navigationOrigin          JumpOrigin?
-    navigationTarget          JumpTarget?
-    rhythmGrouping            RhythmGrouping?
+    navigationTarget          String?
+    rhythmGrouping            String?
 }
 
 enum JumpOrigin {
     DC
     DS
-}
-
-enum JumpTarget {
-    Fine
-    Coda
-    FirstEnding
-    SecondEnding
-    ThirdEnding
-}
-
-enum RhythmGrouping {
-    ThreeTwo  @map("3+2")
-    TwoThree  @map("2+3")
-    FourThree @map("4+3")
-    ThreeFour @map("3+4")
 }
 
 model Chord {

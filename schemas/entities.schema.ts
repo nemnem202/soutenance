@@ -133,11 +133,9 @@ const cellBaseSchema = z.object({
   isCodaSymbol: z.boolean(),
   isSegnoSymbol: z.boolean(),
   isFermataSymbol: z.boolean(),
-
-  // Nouveaux champs
-  isFineSymbol: z.boolean().default(false),
-  isBreakSymbol: z.boolean().default(false),
-  navigation: navigationSchema.nullable().optional(), // ex: {origin: "DS", target: "Coda"}
+  isFineSymbol: z.boolean(),
+  isBreakSymbol: z.boolean(),
+  navigation: navigationSchema.nullable().optional(),
   rhythmGrouping: rhythmGroupingSchema.nullable().optional(),
 });
 
