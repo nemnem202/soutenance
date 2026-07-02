@@ -380,6 +380,13 @@ export const languagePack: Record<string, Record<Language, string>> = {
     de: "MIDI-Eingänge",
     zh: "MIDI 输入",
   },
+  no_midi_inputs: {
+    fr: "Aucune entrée MIDI",
+    en: "No MIDI inputs",
+    es: "Sin entradas MIDI",
+    de: "Keine MIDI-Eingänge",
+    zh: "没有 MIDI 输入",
+  },
   sound_preset: {
     fr: "Préréglage de sortie",
     en: "Output preset",
