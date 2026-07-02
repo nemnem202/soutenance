@@ -3,7 +3,9 @@ import { AppError } from "@/lib/errors";
 import { getAuthenticatedSession, getGlobalData } from "@/lib/global-data";
 import prismaClient from "@/lib/prisma-client";
 import { handleAction } from "@/lib/response-handler";
-import ExerciseRepository from "@/repositories/exerciseRepository";
+import { convertMidiFileToState, getMidiFileFromBuffer } from "@/midi-editor/lib/midiconverter";
+import { State } from "@/midi-editor/types/instance";
+import GameRepository from "@/repositories/gameRepository";
 import { Session } from "@/types/auth";
 import type { Exercise } from "@/types/entities";
 import { type ServerResponse, Status } from "@/types/server-response";
@@ -46,7 +48,7 @@ async function getExercise(
       status: Status.BadRequest,
       title: "Incorrect Exercise id",
     };
-  const repository = new ExerciseRepository(prismaClient);
+  const repository = new GameRepository(prismaClient);
   return handleAction("get Exercise from id", () => repository.findOne(id, userId));
 }
 

@@ -3,8 +3,7 @@ import type { ExerciseWithForcedChordGrid } from "@/controllers/MidiController";
 import type { Cell } from "@/types/music";
 import type { MeasureSchema, SectionSchema, TimeSignatureSchema } from "@/types/entities";
 import { MMA_GROOVES } from "@/config/grooves_dictionnary";
-import type { MMAGrooveName } from "@/types/mma";
-import { MMAGrooveTitle } from "./generated/prisma/enums";
+import type { MMAGrooveName, MMAGrooveTitle } from "@/types/mma";
 
 export default class MMAContentGenerator {
   private usedFills: MMAGrooveName[] = [];
