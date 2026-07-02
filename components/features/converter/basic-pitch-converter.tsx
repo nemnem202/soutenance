@@ -2,10 +2,11 @@ import { useState, ChangeEvent } from "react";
 import { ClientOnly } from "vike-react/ClientOnly";
 import {
   BasicPitch,
-  noteFramesToTime,
   outputToNotesPoly,
   addPitchBendsToNoteEvents,
+  noteFramesToTime,
 } from "@spotify/basic-pitch";
+import { Note } from "@tonejs/midi/dist/Note";
 
 export default function BasicPitchConverter() {
   const [progress, setProgress] = useState(0);
@@ -22,8 +23,6 @@ export default function BasicPitchConverter() {
     // 1. Décodage en audioBuffer
     const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
-    // 2. FORCER LE MONO :
-    // Si le fichier est stéréo, on extrait le canal gauche (ou on mixe les deux)
     let monoBuffer: AudioBuffer;
     if (audioBuffer.numberOfChannels > 1) {
       const offlineCtx = new OfflineAudioContext(1, audioBuffer.length, 22050);
@@ -56,6 +55,35 @@ export default function BasicPitchConverter() {
     );
 
     console.log("Notes générées :", notes);
+
+    const { Midi } = await import("@tonejs/midi");
+
+    const midiFile = new Midi();
+
+    const track = midiFile.addTrack();
+
+    notes.forEach((note) => {
+      track.addNote({
+        midi: note.pitchMidi,
+        time: note.startTimeSeconds,
+        duration: note.durationSeconds,
+        velocity: note.amplitude,
+      });
+    });
+    const midiArray = midiFile.toArray();
+
+    const blob = new Blob([midiArray as any], { type: "audio/midi" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "output.mid";
+    document.body.appendChild(a);
+    a.click();
+
+    // Nettoyage
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
