@@ -81,6 +81,7 @@ export function StyleSelectCombobox() {
   const { state, dispatch } = useMidiStore();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("original");
+  const [value, setValue] = useState("original");
 
   const options = useMemo(() => {
     const originalLabel = `${instance.getItem("original")} (${state?.config.groove})`;
@@ -88,7 +89,14 @@ export function StyleSelectCombobox() {
       value: title.toLowerCase(),
       label: title,
     }));
+  const options = useMemo(() => {
+    const originalLabel = `${instance.getItem("original")} (${state?.config.groove})`;
+    const grooveOptions = Array.from(MMA_GROOVES.entries()).map(([title]) => ({
+      value: title.toLowerCase(),
+      label: title,
+    }));
 
+    return [{ value: "original", label: originalLabel }, ...grooveOptions];
     return [{ value: "original", label: originalLabel }, ...grooveOptions];
   }, [instance, state, MMA_GROOVES]);
 
@@ -101,6 +109,7 @@ export function StyleSelectCombobox() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
+          className="w-full max-w-30 justify-between text-left font-normal"
           className="w-full max-w-30 justify-between text-left font-normal"
           id="style-select"
         >
@@ -123,6 +132,7 @@ export function StyleSelectCombobox() {
                   key={option.value}
                   value={option.value}
                   onSelect={(currentValue) => {
+                    setValue(currentValue === value ? "" : currentValue);
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
