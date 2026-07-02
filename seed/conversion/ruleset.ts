@@ -50,34 +50,38 @@ function filterEmptyMeasures(measures: MeasureSchema[]) {
 
 function removeUselessEmptyCells(measures: MeasureSchema[]) {
   for (const measure of measures) {
-    const codaCellIndex = measure.cells.find((c) => c.isCodaSymbol)?.index;
-    const segnoCellIndex = measure.cells.find((c) => c.isSegnoSymbol)?.index;
-    const fermataCellIndex = measure.cells.find((c) => c.isFermataSymbol)?.index;
-
-    measure.cells = filterUselessCells(measure.cells);
-
-    for (const cell of measure.cells) {
-      cell.isCodaSymbol = false;
-      cell.isSegnoSymbol = false;
-      cell.isFermataSymbol = false;
-    }
-
-    if (measure.cells.length > 0) {
-      const target = measure.cells.find((c) => c.index === fermataCellIndex) ?? measure.cells[0];
-      // idem pour coda / segno, ou réutiliser target si les index coïncident
-      if (fermataCellIndex !== undefined) target.isFermataSymbol = true;
-      if (codaCellIndex !== undefined) {
-        (measure.cells.find((c) => c.index === codaCellIndex) ?? measure.cells[0]).isCodaSymbol =
-          true;
-      }
-      if (segnoCellIndex !== undefined) {
-        (measure.cells.find((c) => c.index === segnoCellIndex) ?? measure.cells[0]).isSegnoSymbol =
-          true;
-      }
-    }
+    measure.cells = filterAndPreserveSymbols(measure.cells);
   }
 }
 
+function filterAndPreserveSymbols(cells: Cell[]): Cell[] {
+  const kept = filterUselessCells(cells);
+  const keptSet = new Set(kept);
+
+  let lastKeptCell: Cell | null = null;
+
+  for (const cell of cells) {
+    if (keptSet.has(cell)) {
+      lastKeptCell = cell;
+      continue;
+    }
+
+    // Cette cellule va être supprimée : si elle porte un symbole,
+    // on le reporte sur la dernière cellule survivante rencontrée avant elle.
+    if (cell.isCodaSymbol || cell.isSegnoSymbol || cell.isFermataSymbol) {
+      // Fallback : s'il n'y a aucune cellule survivante avant elle,
+      // on reporte sur la première cellule survivante de la mesure.
+      const target = lastKeptCell ?? kept[0] ?? null;
+      if (target) {
+        if (cell.isCodaSymbol) target.isCodaSymbol = true;
+        if (cell.isSegnoSymbol) target.isSegnoSymbol = true;
+        if (cell.isFermataSymbol) target.isFermataSymbol = true;
+      }
+    }
+  }
+
+  return kept;
+}
 function filterUselessCells(cells: Cell[]): Cell[] {
   const chordCells = cells.filter((c) => c.kind === "Chord");
   if (chordCells.length === 1) {
