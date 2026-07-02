@@ -25,8 +25,8 @@ type MidiContextType = {
   setMidiEnabled: Dispatch<SetStateAction<boolean>>;
   midiInputs: MidiInput[];
   updateMidiInputs: Dispatch<SetStateAction<MidiInput[]>>;
-  outputInstrument: MidiInstrumentNumber | null;
-  setOutputInstrument: Dispatch<SetStateAction<MidiInstrumentNumber | null>>;
+  outputInstrument: MidiInstrumentNumber;
+  setOutputInstrument: Dispatch<SetStateAction<MidiInstrumentNumber>>;
   // Permet aux composants de s'abonner à des messages
   onMidiMessage: (callback: MidiCallback) => void;
 };
@@ -36,7 +36,9 @@ export const MidiContext = createContext<MidiContextType | null>(null);
 export default function MidiProvider({ children }: { children: ReactNode }) {
   const [midiEnabled, setMidiEnabled] = useState<boolean>(false);
   const [midiInputs, updateMidiInputs] = useState<MidiInput[]>([]);
-  const [outputInstrument, setOutputInstrument] = useState<MidiInstrumentNumber | null>(null);
+  const [outputInstrument, setOutputInstrument] = useState<MidiInstrumentNumber>(
+    MidiInstrumentNumber.BrightAcousticPiano
+  );
 
   const noteOn = (note: number, velocity: number) => {
     SoundEngine.noteOn(note, velocity);
