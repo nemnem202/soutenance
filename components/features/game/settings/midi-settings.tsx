@@ -21,7 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/organisms/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MidiInstrumentNumber } from "@/midi-editor/types/instruments";
+import PLAYABLE_INSTRUMENTS from "@/config/playable-instruments";
 
 export default function MidiSettings() {
   const { instance } = useLanguage();
@@ -31,7 +31,6 @@ export default function MidiSettings() {
     outputInstrument,
     setOutputInstrument,
     midiEnabled,
-    onMidiMessage,
     setMidiEnabled,
   } = useMidi();
   return (
@@ -49,7 +48,7 @@ export default function MidiSettings() {
               {midiInputs.length > 0 ? (
                 midiInputs.map((input) => (
                   <DropdownMenuCheckboxItem
-                    defaultChecked={input.enabled}
+                    checked={input.enabled}
                     onCheckedChange={(v) =>
                       updateMidiInputs([
                         ...midiInputs.map((i) => {
@@ -72,24 +71,26 @@ export default function MidiSettings() {
           <Label className="paragraph w-25" htmlFor="style-select">
             {instance.getItem("sound_preset")}
           </Label>
-          <Select defaultValue="Piano grand" disabled={!midiEnabled}>
+          <Select
+            defaultValue="Piano grand"
+            disabled={!midiEnabled}
+            onValueChange={(v) => {
+              setOutputInstrument(parseInt(v));
+            }}
+          >
             <SelectTrigger
               className="w-full max-w-40"
               id="style-select"
-              defaultValue={MidiInstrumentNumber.BrightAcousticPiano.toString()}
+              defaultValue={outputInstrument ? outputInstrument.toString() : undefined}
             >
               <SelectValue className="text-left" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>{instance.getItem("sounds")}</SelectLabel>
-                <SelectItem value={MidiInstrumentNumber.BrightAcousticPiano.toString()}>
-                  Piano Bright
-                </SelectItem>
-                <SelectItem value={MidiInstrumentNumber.ElectricPiano1.toString()}>
-                  Electric Piano
-                </SelectItem>
-                <SelectItem value={MidiInstrumentNumber.RockOrgan.toString()}>Organ</SelectItem>
+                {PLAYABLE_INSTRUMENTS.map(([name, value]) => (
+                  <SelectItem value={value.toString()}>{name}</SelectItem>
+                ))}
               </SelectGroup>
             </SelectContent>
           </Select>

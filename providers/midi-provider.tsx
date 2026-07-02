@@ -1,4 +1,5 @@
 import { logger } from "@/lib/logger";
+import SoundEngine from "@/midi-editor/engines/sound/sound-engine";
 import { MidiInstrumentNumber } from "@/midi-editor/types/instruments";
 import {
   createContext,
@@ -17,7 +18,6 @@ export type MidiInput = {
   enabled: boolean;
 };
 
-// Type pour votre callback personnalisé
 type MidiCallback = (event: MIDIMessageEvent) => void;
 
 type MidiContextType = {
@@ -39,11 +39,11 @@ export default function MidiProvider({ children }: { children: ReactNode }) {
   const [outputInstrument, setOutputInstrument] = useState<MidiInstrumentNumber | null>(null);
 
   const noteOn = (note: number, velocity: number) => {
-    logger.info("Note on", note, "velocity", velocity);
+    SoundEngine.noteOn(note, velocity);
   };
 
   const noteOff = (note: number) => {
-    logger.info("Note off", note);
+    SoundEngine.noteOff(note);
   };
 
   // Utilisation d'un ref pour stocker le callback afin d'éviter de redéclencher les effets
