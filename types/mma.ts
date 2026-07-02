@@ -11,6 +11,24 @@ export type MMAGrooveFamily =
   | "Metal"
   | "Shuffle";
 
+export type MMAGrooveTitle =
+  | "JazzBasie"
+  | "JazzWaltz"
+  | "BossaNova"
+  | "Ballad"
+  | "Metal"
+  | "Shuffle"
+  | "Bebop"
+  | "8Beat"
+  | "16Beat"
+  | "50sRock"
+  | "Mambo"
+  | "Salsa"
+  | "Techno"
+  | "04JAZZ01"
+  | "AFRO01"
+  | "FUS01";
+
 export type MMAGrooveName = string;
 
 export type MMAGroove = {

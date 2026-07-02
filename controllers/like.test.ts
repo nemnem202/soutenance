@@ -142,7 +142,7 @@ describe("LikeController - Test d'Intégration et Sécurité (Zéro Mock)", () =
           defaultConfig: {
             create: {
               bpm: 100,
-              groove: "JazzBasie",
+              groove: "Jazz",
               key: "C",
               timeSignatureBottom: 4,
               timeSignatureTop: 4,

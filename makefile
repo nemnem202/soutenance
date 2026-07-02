@@ -30,10 +30,6 @@ seed-dev:
 
 seed-prod:
 	docker exec -it music-sandbox-app-prod node dist/seed/seed.mjs
-
-reset-db: 
-	docker exec -it music-sandbox-app-dev pnpm prisma migrate reset --force
-
 	
 free-space:
 	docker volume prune -f

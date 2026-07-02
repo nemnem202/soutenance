@@ -30,7 +30,6 @@ export interface GameContextType {
   activeTab: TabID;
   setActiveTab: Dispatch<SetStateAction<TabID>>;
   midiLoading: boolean;
-  setMidiLoading: Dispatch<SetStateAction<boolean>>;
 }
 
 export const GameContext = createContext<GameContextType | null>(null);
@@ -97,7 +96,6 @@ export default function GameProvider({
     activeTab,
     setActiveTab,
     midiLoading,
-    setMidiLoading,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

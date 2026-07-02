@@ -11,13 +11,6 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: "Bravura";
-  src: url("/assets/fonts/Bravura.otf") format("opentype");
-  font-weight: normal;
-  font-style: normal;
-}
-
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -182,10 +175,6 @@
     @apply text-[0.615rem];
     font-family: var(--general-font);
   }
-
-.music {
-  font-family: Bravura, sans-serif;
-}
 }
 
 @layer base {
