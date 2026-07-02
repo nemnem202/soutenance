@@ -1,3 +1,4 @@
+import MUSICAL_SYMBOLS from "@/config/musical-symbols";
 import useGame from "@/hooks/use-game";
 import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
@@ -184,17 +185,12 @@ function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureSchema
       className={`px-0.5 md:px-2 h-full flex justify-between items-center relative gap-1 ${cell.kind === "Chord" ? "flex-1" : "!w-0 w-auto flex-1"} `}
       style={{ maxWidth: `${100 / measure.cells.length}%` }}
     >
+      <Annots cell={cell} />
       {cell.timeSignatureChangeBottom && cell.timeSignatureChangeTop && (
         <TimeSignature top={cell.timeSignatureChangeTop} bottom={cell.timeSignatureChangeBottom} />
       )}
 
       {renderCellContent()}
-
-      {cell.isCodaSymbol && (
-        <div className="absolute left-0 -top-full text-2xl h-8 leading-none flex items-end music text-secondary opacity-60">
-          {String.fromCodePoint(0x1d10c)}
-        </div>
-      )}
     </div>
   );
 }
@@ -202,6 +198,17 @@ function CellGroup({ cell, measure }: { cell: CellSchema; measure: MeasureSchema
 type ChordCellType = Extract<CellSchema, { kind: "Chord" }>;
 type EmptyCellType = Extract<CellSchema, { kind: "Empty" }>;
 type SpacerCellType = Extract<CellSchema, { kind: "Spacer" }>;
+
+function Annots({ cell }: { cell: CellSchema }) {
+  if (cell.isCodaSymbol || cell.isFermataSymbol || cell.isSegnoSymbol)
+    return (
+      <div className="absolute left-0 -top-full text-2xl h-8 leading-none flex items-end music text-secondary opacity-60">
+        {cell.isCodaSymbol && String.fromCodePoint(MUSICAL_SYMBOLS.coda)}
+        {cell.isFermataSymbol && String.fromCodePoint(MUSICAL_SYMBOLS.fermata)}
+        {cell.isSegnoSymbol && String.fromCodePoint(MUSICAL_SYMBOLS.segno)}
+      </div>
+    );
+}
 
 function ChordCell({ cell }: { cell: ChordCellType }) {
   return (
