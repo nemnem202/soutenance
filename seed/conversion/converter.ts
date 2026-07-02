@@ -287,7 +287,8 @@ function convertCell(cellIreal: CellIreal): CellSchema {
       index: cellIreal.index,
       isCodaSymbol: parsed.isCoda,
       isSegnoSymbol: parsed.isSegno,
-    } as any;
+      isFermataSymbol: parsed.isFermata,
+    };
 
   return {
     index: cellIreal.index,
@@ -380,7 +381,6 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
     const parsedAnnots = parseAnnotations(cellIreal.annots);
     const parsedBars = parseBars(cellIreal.bars);
 
-    // CORRECTION : Gérer le coda APRÈS avoir déterminé s'il y a un changement de section
     let effectiveSectionType = parsedAnnots.sectionType;
 
     if (effectiveSectionType !== null) {
