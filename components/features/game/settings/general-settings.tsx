@@ -86,6 +86,9 @@ function DesktopInputsGroup() {
             if (isNaN(value) || value < 0) value = 0;
             if (value > 30) value = Infinity;
 
+            if (state && state.transport.status !== "reset") {
+              dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "reset" });
+            }
             dispatch({ type: Action.SET_REPEATS, repeats: value });
           }}
           containerClassName="w-full"
@@ -166,7 +169,12 @@ function MobileInputsGroup() {
           </div>
         </SidebarSlider>
         <SidebarSlider
-          onValueChange={(value) => dispatch({ type: Action.SET_REPEATS, repeats: value[0] })}
+          onValueChange={(value) => {
+            dispatch({ type: Action.SET_REPEATS, repeats: value[0] });
+            if (state.transport.status !== "reset") {
+              dispatch({ type: Action.SET_TRANSPORT_STATUS, status: "reset" });
+            }
+          }}
           defaultValue={[state.config.repeats]}
           axis="y"
           min={1}
