@@ -12,68 +12,87 @@ import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/hooks/use-language";
 
 import { ParamsAccordion } from "../game-sidebar";
+import { useMidi } from "@/providers/midi-provider";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/organisms/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { MidiInstrumentNumber } from "@/midi-editor/types/instruments";
 
 export default function MidiSettings() {
   const { instance } = useLanguage();
-
+  const {
+    midiEnlabed,
+    setMidiEnlabed,
+    midiInputs,
+    updateMidiInputs,
+    outputInstrument,
+    setOutputInstrument,
+  } = useMidi();
   return (
     <ParamsAccordion title={<h3 className="title-3">{instance.getItem("midi")}</h3>}>
       <div className="gap-2 flex flex-col">
-        <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
+        <SwitchParam checked={midiEnlabed} order="label-switch" setChecked={setMidiEnlabed}>
           <p className="paragraph w-38 text-foreground">{instance.getItem("enabled")}</p>
         </SwitchParam>
         <div className="w-full flex items-center">
-          <Label className="paragraph w-25" htmlFor="style-select">
-            {instance.getItem("midi_inputs")}
-          </Label>
-          <Select defaultValue="Keysation mk3">
-            <SelectTrigger className="w-full max-w-40" id="style-select">
-              <SelectValue className="text-left" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>{instance.getItem("midi_inputs")}</SelectLabel>
-                <SelectItem value="Keysation mk3">Keysation mk3</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild disabled={!midiEnlabed}>
+              <Button variant={"outline"}> {instance.getItem("midi_inputs")}</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {midiInputs.length > 0 ? (
+                midiInputs.map((input) => (
+                  <DropdownMenuCheckboxItem
+                    defaultChecked={input.enlabed}
+                    onCheckedChange={(v) =>
+                      updateMidiInputs([
+                        ...midiInputs.map((i) => {
+                          if (i.id === input.id) input.enlabed = v;
+                          return i;
+                        }),
+                      ])
+                    }
+                  >
+                    {input.title}
+                  </DropdownMenuCheckboxItem>
+                ))
+              ) : (
+                <DropdownMenuItem>{instance.getItem("no_midi_inputs")}</DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         <div className="w-full flex items-center">
           <Label className="paragraph w-25" htmlFor="style-select">
             {instance.getItem("sound_preset")}
           </Label>
-          <Select defaultValue="Piano grand">
-            <SelectTrigger className="w-full max-w-40" id="style-select">
+          <Select defaultValue="Piano grand" disabled={!midiEnlabed}>
+            <SelectTrigger
+              className="w-full max-w-40"
+              id="style-select"
+              defaultValue={MidiInstrumentNumber.BrightAcousticPiano.toString()}
+            >
               <SelectValue className="text-left" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>{instance.getItem("sounds")}</SelectLabel>
-                <SelectItem value="Piano grand">Piano grand</SelectItem>
-                <SelectItem value="Piano electric">Piano electric</SelectItem>
-                <SelectItem value="Synth pad">Synth pad</SelectItem>
-                <SelectItem value="Strings">Strings</SelectItem>
-                <SelectItem value="Vibraphone">Vibraphone</SelectItem>
-                <SelectItem value="Organ">Organ</SelectItem>
+                <SelectItem value={MidiInstrumentNumber.BrightAcousticPiano.toString()}>
+                  Piano Bright
+                </SelectItem>
+                <SelectItem value={MidiInstrumentNumber.ElectricPiano1.toString()}>
+                  Electric Piano
+                </SelectItem>
+                <SelectItem value={MidiInstrumentNumber.RockOrgan.toString()}>Organ</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
         </div>
-        {/* <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
-          <p className="paragraph w-38 text-foreground">
-            {instance.getItem("highlight_wrong_notes")}
-          </p>
-        </SwitchParam>
-        <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
-          <p className="paragraph w-38 text-foreground">
-            {instance.getItem("highlight_correct_notes")}
-          </p>
-        </SwitchParam>
-        <SwitchParam checked={true} order="label-switch" setChecked={() => {}}>
-          <p className="paragraph w-38 text-foreground">
-            {instance.getItem("highlight_missed_notes")}
-          </p>
-        </SwitchParam> */}
       </div>
     </ParamsAccordion>
   );
