@@ -37,9 +37,9 @@ export async function getAuthenticatedSession(
 }
 
 export async function getGlobalData(pageContext: PageContextServer) {
-  const user = await getCurrentUserFromCookie(pageContext.headers.cookie);
-  const session = await getAuthenticatedSession(pageContext.headers.cookie);
-  const preferredLanguage = getPreferredLanguage(pageContext.headers["accept-language"]);
+  const user = await getCurrentUserFromCookie(pageContext.headers?.cookie);
+  const session = await getAuthenticatedSession(pageContext.headers?.cookie);
+  const preferredLanguage = getPreferredLanguage(pageContext.headers?.["accept-language"] ?? null);
   const screen = getScreen(pageContext);
   const sessionController = new SessionController({ client: prismaClient, user });
   const userPlaylists = user

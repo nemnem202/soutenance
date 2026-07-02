@@ -6,19 +6,19 @@ import LikeController from "@/controllers/LikeController";
 import getCurrentUserFromCookie from "@/middlewares/getCurrentUser";
 
 async function getFavoritesPlaylists(pageContext: PageContextServer) {
-  const user = await getCurrentUserFromCookie(pageContext.headers.cookie);
+  const user = await getCurrentUserFromCookie(pageContext.headers?.cookie);
   const repo = new LikeController({ client: prismaClient, user });
   return handleAction("Get searched playlists", () => repo.getPlaylists());
 }
 
 async function getFavoritesExercises(pageContext: PageContextServer) {
-  const user = await getCurrentUserFromCookie(pageContext.headers.cookie);
+  const user = await getCurrentUserFromCookie(pageContext.headers?.cookie);
   const repo = new LikeController({ client: prismaClient, user });
   return handleAction("Get searched exercises", () => repo.getExercises());
 }
 
 async function getFavoritesUsers(pageContext: PageContextServer) {
-  const user = await getCurrentUserFromCookie(pageContext.headers.cookie);
+  const user = await getCurrentUserFromCookie(pageContext.headers?.cookie);
   const repo = new LikeController({ client: prismaClient, user });
   return handleAction("Get searched users", () => repo.getUsers());
 }

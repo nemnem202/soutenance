@@ -20,7 +20,7 @@ async function getSeeAllData(
       title: "Page not found",
     };
 
-  const session = await getAuthenticatedSession(pageContext.headers.cookie);
+  const session = await getAuthenticatedSession(pageContext.headers?.cookie);
   const userId = session?.id ?? null;
   const repo = new UserRepository(prismaClient);
 
