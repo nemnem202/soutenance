@@ -50,14 +50,30 @@ function filterEmptyMeasures(measures: MeasureSchema[]) {
 
 function removeUselessEmptyCells(measures: MeasureSchema[]) {
   for (const measure of measures) {
-    const hasCoda = measure.cells.some((c) => c.isCodaSymbol);
-    const hasSegno = measure.cells.some((c) => c.isSegnoSymbol);
-    const hasFermata = measure.cells.some((c) => c.isFermataSymbol);
+    const codaCellIndex = measure.cells.find((c) => c.isCodaSymbol)?.index;
+    const segnoCellIndex = measure.cells.find((c) => c.isSegnoSymbol)?.index;
+    const fermataCellIndex = measure.cells.find((c) => c.isFermataSymbol)?.index;
+
     measure.cells = filterUselessCells(measure.cells);
+
+    for (const cell of measure.cells) {
+      cell.isCodaSymbol = false;
+      cell.isSegnoSymbol = false;
+      cell.isFermataSymbol = false;
+    }
+
     if (measure.cells.length > 0) {
-      if (hasCoda) measure.cells[0].isCodaSymbol = true;
-      if (hasSegno) measure.cells[0].isSegnoSymbol = true;
-      if (hasFermata) measure.cells[0].isFermataSymbol = true;
+      const target = measure.cells.find((c) => c.index === fermataCellIndex) ?? measure.cells[0];
+      // idem pour coda / segno, ou réutiliser target si les index coïncident
+      if (fermataCellIndex !== undefined) target.isFermataSymbol = true;
+      if (codaCellIndex !== undefined) {
+        (measure.cells.find((c) => c.index === codaCellIndex) ?? measure.cells[0]).isCodaSymbol =
+          true;
+      }
+      if (segnoCellIndex !== undefined) {
+        (measure.cells.find((c) => c.index === segnoCellIndex) ?? measure.cells[0]).isSegnoSymbol =
+          true;
+      }
     }
   }
 }

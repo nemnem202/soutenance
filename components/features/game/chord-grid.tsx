@@ -202,6 +202,7 @@ type SpacerCellType = Extract<CellSchema, { kind: "Spacer" }>;
 function Annots({ cell }: { cell: CellSchema }) {
   if (cell.isSegnoSymbol) logger.info("Segno symbol at: ", cell.index);
   if (cell.isCodaSymbol) logger.info("Coda symbol at: ", cell.index);
+  if (cell.isFermataSymbol) logger.info("Fermata symbol at: ", cell.index);
   if (cell.isCodaSymbol || cell.isFermataSymbol || cell.isSegnoSymbol)
     return (
       <div className="absolute left-0 -top-full text-2xl h-8 leading-none flex items-end music text-secondary opacity-60">
