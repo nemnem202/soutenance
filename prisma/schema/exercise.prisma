@@ -112,6 +112,7 @@ model Cell {
     timeSignatureChangeBottom Int?
     isCodaSymbol              Boolean  @default(false)
     isSegnoSymbol             Boolean  @default(false)
+    isFermataSymbol           Boolean  @default(false)
 }
 
 model Chord {
