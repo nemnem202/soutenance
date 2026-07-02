@@ -44,9 +44,15 @@ export default function MidiSettings() {
     <ParamsAccordion title={<h3 className="title-3">{instance.getItem("midi")}</h3>}>
       <div className="gap-2 flex flex-col">
         <SwitchParam checked={midiEnabled} order="label-switch" setChecked={setMidiEnabled}>
-          <p className="paragraph w-38 text-foreground">{instance.getItem("enabled")}</p>
+          <p className="paragraph text-foreground">{instance.getItem("enabled")}</p>
         </SwitchParam>
-        <div className="w-full flex items-center">
+        <div className="w-full flex flex-col gap-1">
+          <Label className="paragraph" htmlFor="style-select">
+            {instance.getItem("sound_preset")}
+          </Label>
+          <InstrumentSelect />
+        </div>
+        <div className="w-full flex justify-end mt-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild disabled={!midiEnabled}>
               <Button variant={"outline"}> {instance.getItem("midi_inputs")}</Button>
@@ -73,12 +79,6 @@ export default function MidiSettings() {
               )}
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
-        <div className="w-full flex items-center">
-          <Label className="paragraph w-25" htmlFor="style-select">
-            {instance.getItem("sound_preset")}
-          </Label>
-          <InstrumentSelect />
         </div>
       </div>
     </ParamsAccordion>
@@ -127,7 +127,7 @@ export function InstrumentSelect() {
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0">
+      <PopoverContent className="p-0">
         <Command>
           <CommandInput placeholder="Rechercher un instrument..." />
           <CommandList className="max-h-[300px] overflow-y-auto">
