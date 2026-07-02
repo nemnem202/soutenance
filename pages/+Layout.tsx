@@ -6,6 +6,7 @@ import ScreenSizeProvider from "@/providers/screen-size-provider";
 import SessionProvider from "@/providers/session-provider";
 import AudioProvider from "@/providers/audio-provider";
 import { logger } from "@/lib/logger";
+import MidiProvider from "@/providers/midi-provider";
 
 export default function Layout({ children }: { children: ReactNode }) {
   useEffect(() => {
@@ -18,8 +19,10 @@ export default function Layout({ children }: { children: ReactNode }) {
       <ScreenSizeProvider>
         <LanguagesProvider>
           <SessionProvider>
-            <Toaster />
-            <TooltipProvider>{children}</TooltipProvider>
+            <MidiProvider>
+              <Toaster />
+              <TooltipProvider>{children}</TooltipProvider>
+            </MidiProvider>
           </SessionProvider>
         </LanguagesProvider>
       </ScreenSizeProvider>
