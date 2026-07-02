@@ -1,4 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
+import SwitchParam from "@/components/molecules/switch-param";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/organisms/select";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/hooks/use-language";
 import { SidebarSlider } from "../game-assets";
@@ -19,6 +29,13 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
+import useGame from "@/hooks/use-game";
+import { MMAGrooveTitle } from "@/lib/generated/prisma/enums";
+import onMidiFile from "@/telefunc/midifile.telefunc";
+import { Midi } from "@tonejs/midi";
+import { logger } from "@/lib/logger";
+import { errorToast } from "@/lib/toaster";
+import { convertMidiFileToState, getMidiFileFromBuffer } from "@/midi-editor/lib/midiconverter";
 
 export default function BackingTrackSettings() {
   const { instance } = useLanguage();
@@ -80,27 +97,43 @@ export function StyleSelectCombobox() {
   const { instance } = useLanguage();
   const { state, dispatch } = useMidiStore();
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("original");
-  const [value, setValue] = useState("original");
+  const { exercise, setMidiLoading } = useGame();
+  const [value, setValue] = useState<MMAGrooveTitle>(exercise.defaultConfig.groove);
 
-  const options = useMemo(() => {
-    const originalLabel = `${instance.getItem("original")} (${state?.config.groove})`;
-    const grooveOptions = Array.from(MMA_GROOVES.entries()).map(([title]) => ({
-      value: title.toLowerCase(),
-      label: title,
-    }));
-  const options = useMemo(() => {
-    const originalLabel = `${instance.getItem("original")} (${state?.config.groove})`;
-    const grooveOptions = Array.from(MMA_GROOVES.entries()).map(([title]) => ({
-      value: title.toLowerCase(),
-      label: title,
-    }));
+  const options = useMemo<{ value: MMAGrooveTitle; label: string }[]>(() => {
+    const originalLabel = `${instance.getItem("original")} (${exercise.defaultConfig.groove})`;
+    const grooveOptions = Array.from(MMA_GROOVES.entries())
+      .filter(([title]) => title !== exercise.defaultConfig.groove)
+      .map(([title]) => ({
+        value: title,
+        label: title,
+      }));
 
-    return [{ value: "original", label: originalLabel }, ...grooveOptions];
-    return [{ value: "original", label: originalLabel }, ...grooveOptions];
+    return [{ value: exercise.defaultConfig.groove, label: originalLabel }, ...grooveOptions];
   }, [instance, state, MMA_GROOVES]);
 
   const selectedOption = options.find((opt) => opt.value === value);
+
+  const updateGroove = async () => {
+    setMidiLoading(true);
+    if (value === exercise.defaultConfig.groove) return setMidiLoading(false);
+
+    const file = await onMidiFile(exercise.id, value);
+
+    if (file.success) {
+      const midi = await getMidiFileFromBuffer(file.data);
+      const newState = await convertMidiFileToState(midi, exercise, state ?? undefined, value);
+      useMidiStore.setState({ state: newState });
+      dispatch({ type: Action.RESET_STATE });
+    } else {
+      errorToast(file.title, file.description);
+    }
+    setMidiLoading(false);
+  };
+
+  useEffect(() => {
+    updateGroove();
+  }, [value]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -109,8 +142,7 @@ export function StyleSelectCombobox() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full max-w-30 justify-between text-left font-normal"
-          className="w-full max-w-30 justify-between text-left font-normal"
+          className="w-full max-w-50 justify-between text-left font-normal"
           id="style-select"
         >
           <span className="truncate">
@@ -132,8 +164,7 @@ export function StyleSelectCombobox() {
                   key={option.value}
                   value={option.value}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
-                    setValue(currentValue === value ? "" : currentValue);
+                    setValue(currentValue as MMAGrooveTitle);
                     setOpen(false);
                   }}
                 >
