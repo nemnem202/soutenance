@@ -26,33 +26,34 @@ import { MidiInstrumentNumber } from "@/midi-editor/types/instruments";
 export default function MidiSettings() {
   const { instance } = useLanguage();
   const {
-    midiEnlabed,
-    setMidiEnlabed,
     midiInputs,
     updateMidiInputs,
     outputInstrument,
     setOutputInstrument,
+    midiEnabled,
+    onMidiMessage,
+    setMidiEnabled,
   } = useMidi();
   return (
     <ParamsAccordion title={<h3 className="title-3">{instance.getItem("midi")}</h3>}>
       <div className="gap-2 flex flex-col">
-        <SwitchParam checked={midiEnlabed} order="label-switch" setChecked={setMidiEnlabed}>
+        <SwitchParam checked={midiEnabled} order="label-switch" setChecked={setMidiEnabled}>
           <p className="paragraph w-38 text-foreground">{instance.getItem("enabled")}</p>
         </SwitchParam>
         <div className="w-full flex items-center">
           <DropdownMenu>
-            <DropdownMenuTrigger asChild disabled={!midiEnlabed}>
+            <DropdownMenuTrigger asChild disabled={!midiEnabled}>
               <Button variant={"outline"}> {instance.getItem("midi_inputs")}</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               {midiInputs.length > 0 ? (
                 midiInputs.map((input) => (
                   <DropdownMenuCheckboxItem
-                    defaultChecked={input.enlabed}
+                    defaultChecked={input.enabled}
                     onCheckedChange={(v) =>
                       updateMidiInputs([
                         ...midiInputs.map((i) => {
-                          if (i.id === input.id) input.enlabed = v;
+                          if (i.id === input.id) input.enabled = v;
                           return i;
                         }),
                       ])
@@ -71,7 +72,7 @@ export default function MidiSettings() {
           <Label className="paragraph w-25" htmlFor="style-select">
             {instance.getItem("sound_preset")}
           </Label>
-          <Select defaultValue="Piano grand" disabled={!midiEnlabed}>
+          <Select defaultValue="Piano grand" disabled={!midiEnabled}>
             <SelectTrigger
               className="w-full max-w-40"
               id="style-select"

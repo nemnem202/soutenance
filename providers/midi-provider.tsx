@@ -7,58 +7,117 @@ import {
   SetStateAction,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 
 export type MidiInput = {
   title: string;
   id: string;
-  enlabed: boolean;
+  enabled: boolean;
 };
 
+// Type pour votre callback personnalisé
+type MidiCallback = (event: MIDIMessageEvent) => void;
+
 type MidiContextType = {
-  midiEnlabed: boolean;
-  setMidiEnlabed: Dispatch<SetStateAction<boolean>>;
+  midiEnabled: boolean;
+  setMidiEnabled: Dispatch<SetStateAction<boolean>>;
   midiInputs: MidiInput[];
   updateMidiInputs: Dispatch<SetStateAction<MidiInput[]>>;
   outputInstrument: MidiInstrumentNumber | null;
   setOutputInstrument: Dispatch<SetStateAction<MidiInstrumentNumber | null>>;
+  // Permet aux composants de s'abonner à des messages
+  onMidiMessage: (callback: MidiCallback) => void;
 };
 
 export const MidiContext = createContext<MidiContextType | null>(null);
 
 export default function MidiProvider({ children }: { children: ReactNode }) {
-  const [midiEnlabed, setMidiEnlabed] = useState<boolean>(false);
+  const [midiEnabled, setMidiEnabled] = useState<boolean>(false);
   const [midiInputs, updateMidiInputs] = useState<MidiInput[]>([]);
   const [outputInstrument, setOutputInstrument] = useState<MidiInstrumentNumber | null>(null);
 
-  const enlabeMidi = () => {
-    logger.info("Enlabe midi");
+  const noteOn = (note: number, velocity: number) => {
+    logger.info("Note on", note, "velocity", velocity);
   };
-  const disableMidi = () => {
-    logger.info("Disable midi");
+
+  const noteOff = (note: number) => {
+    logger.info("Note off", note);
+  };
+
+  // Utilisation d'un ref pour stocker le callback afin d'éviter de redéclencher les effets
+  const callbackRef = useRef<MidiCallback | null>((event) => {
+    if (!event.data) return;
+    const command = event.data[0];
+    const note = event.data[1];
+    const velocity = event.data.length > 2 ? event.data[2] : 0;
+
+    switch (command) {
+      case 144: // noteOn
+        if (velocity > 0) {
+          noteOn(note, velocity);
+        } else {
+          noteOff(note);
+        }
+        break;
+      case 128: // noteOff
+        noteOff(note);
+        break;
+      // we could easily expand this switch statement to cover other types of commands such as controllers or sysex
+    }
+  });
+
+  const onMidiMessage = (callback: MidiCallback) => {
+    callbackRef.current = callback;
+  };
+
+  const handleMidiEvent = (event: MIDIMessageEvent) => {
+    if (callbackRef.current) {
+      callbackRef.current(event);
+    }
   };
 
   useEffect(() => {
-    if (midiEnlabed) {
-      enlabeMidi();
-    } else {
-      disableMidi();
-    }
-    return () => {
-      if (midiEnlabed) disableMidi();
+    let midiAccess: MIDIAccess | null = null;
+
+    const setupMidi = async () => {
+      try {
+        const access = await navigator.requestMIDIAccess();
+        midiAccess = access;
+
+        const inputs: MidiInput[] = Array.from(access.inputs.values()).map((input) => {
+          input.onmidimessage = handleMidiEvent;
+          return { title: input.name || "Unknown", id: input.id, enabled: true };
+        });
+
+        updateMidiInputs(inputs);
+        logger.info("MIDI initialized");
+      } catch (err) {
+        logger.error("MIDI access denied", err);
+      }
     };
-  }, [midiEnlabed]);
+
+    if (midiEnabled) {
+      setupMidi();
+    }
+
+    return () => {
+      // Nettoyage : retirer les écouteurs si nécessaire
+      midiAccess?.inputs.forEach((input) => (input.onmidimessage = null));
+    };
+  }, [midiEnabled]);
 
   return (
     <MidiContext.Provider
       value={{
-        midiEnlabed,
+        midiEnabled,
+        setMidiEnabled,
         midiInputs,
-        outputInstrument,
-        setMidiEnlabed,
         updateMidiInputs,
+        outputInstrument,
         setOutputInstrument,
+        onMidiMessage,
       }}
     >
       {children}
