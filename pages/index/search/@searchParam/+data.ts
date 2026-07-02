@@ -5,21 +5,21 @@ import { handleAction } from "@/lib/response-handler";
 import SearchRepository from "@/repositories/searchRepository";
 
 async function getSearchedPlaylists(query: string, pageContext: PageContextServer) {
-  const session = await getAuthenticatedSession(pageContext.headers.cookie);
+  const session = await getAuthenticatedSession(pageContext.headers?.cookie);
   const userId = session?.id ?? null;
   const repo = new SearchRepository(prismaClient);
   return handleAction("Get searched playlists", () => repo.getPlaylists(query, userId));
 }
 
 async function getSearchedExercises(query: string, pageContext: PageContextServer) {
-  const session = await getAuthenticatedSession(pageContext.headers.cookie);
+  const session = await getAuthenticatedSession(pageContext.headers?.cookie);
   const userId = session?.id ?? null;
   const repo = new SearchRepository(prismaClient);
   return handleAction("Get searched exercises", () => repo.getExercises(query, userId));
 }
 
 async function getSearchedUsers(query: string, pageContext: PageContextServer) {
-  const session = await getAuthenticatedSession(pageContext.headers.cookie);
+  const session = await getAuthenticatedSession(pageContext.headers?.cookie);
   const userId = session?.id ?? null;
   const repo = new SearchRepository(prismaClient);
   return handleAction("Get searched users", () => repo.getUsers(query, userId));

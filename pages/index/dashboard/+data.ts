@@ -9,7 +9,7 @@ import type { UserDetailsDto } from "@/types/dtos/user";
 async function getUserAccount(
   pageContext: PageContextServer
 ): Promise<ServerResponse<UserDetailsDto>> {
-  const session = await getAuthenticatedSession(pageContext.headers.cookie);
+  const session = await getAuthenticatedSession(pageContext.headers?.cookie);
   if (!session?.id)
     return {
       success: false,

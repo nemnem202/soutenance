@@ -6,21 +6,21 @@ import { PlaylistRepository } from "@/repositories/playlistRepository";
 import UserRepository from "@/repositories/userRepository";
 
 async function getPopularPlaylists(pageContext: PageContextServer) {
-  const session = await getAuthenticatedSession(pageContext.headers.cookie);
+  const session = await getAuthenticatedSession(pageContext.headers?.cookie);
   const userId = session?.id ?? null;
   const repo = new PlaylistRepository(prismaClient);
   return handleAction("Get popular playlists", () => repo.getSortedByPopularity(userId));
 }
 
 async function getDiscoverPlaylists(pageContext: PageContextServer) {
-  const session = await getAuthenticatedSession(pageContext.headers.cookie);
+  const session = await getAuthenticatedSession(pageContext.headers?.cookie);
   const userId = session?.id ?? null;
   const repo = new PlaylistRepository(prismaClient);
   return handleAction("Get discover playlists", () => repo.getDiscover(userId));
 }
 
 async function getRecommendedUsers(pageContext: PageContextServer) {
-  const session = await getAuthenticatedSession(pageContext.headers.cookie);
+  const session = await getAuthenticatedSession(pageContext.headers?.cookie);
   const userId = session?.id ?? null;
   const repo = new UserRepository(prismaClient);
   return handleAction("Get recommended users", () => repo.getRecommended(userId));

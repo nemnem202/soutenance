@@ -51,7 +51,7 @@ async function getExercise(
 }
 
 export default async function data(pageContext: PageContextServer) {
-  const session = await getAuthenticatedSession(pageContext.headers.cookie);
+  const session = await getAuthenticatedSession(pageContext.headers?.cookie);
   const [globalData, { exercise, midiBase64 }] = await Promise.all([
     getGlobalData(pageContext),
     getMidiBuffer(pageContext, session),
