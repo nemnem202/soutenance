@@ -298,6 +298,7 @@ function convertCell(cellIreal: CellIreal): CellSchema {
     timeSignatureChangeTop: parsed.timeSignatureChange?.top,
     isCodaSymbol: parsed.isCoda,
     isSegnoSymbol: parsed.isSegno,
+    isFermataSymbol: parsed.isFermata,
   };
 }
 
@@ -349,7 +350,6 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
   let currentVolta: VoltaSchema | null = null;
   let measureIndex = 0;
   let sectionIndex = 0;
-  let codaCount = 0;
 
   function ensureSection(type: SectionType = SectionType.Generic) {
     if (!currentSection) {
@@ -382,14 +382,6 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
 
     // CORRECTION : Gérer le coda APRÈS avoir déterminé s'il y a un changement de section
     let effectiveSectionType = parsedAnnots.sectionType;
-
-    if (parsedAnnots.isCoda) {
-      codaCount++;
-      // Ne transforme en Outro que si c'est le 2ème coda ET qu'il n'y a pas déjà un type de section défini
-      if (codaCount === 2 && effectiveSectionType === null) {
-        effectiveSectionType = SectionType.Outro;
-      }
-    }
 
     if (effectiveSectionType !== null) {
       pushMeasure();
@@ -431,6 +423,7 @@ function buildSections(cells: CellIreal[]): SectionSchema[] {
         index: cellIreal.index,
         isCodaSymbol: false,
         isSegnoSymbol: false,
+        isFermataSymbol: false,
       });
     } else {
       currentMeasure.cells.push(convertCell(cellIreal));

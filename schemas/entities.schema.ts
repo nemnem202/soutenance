@@ -125,6 +125,7 @@ export const cellSchema = z.discriminatedUnion("kind", [
     timeSignatureChangeBottom: z.number().int().nullable().optional(),
     isCodaSymbol: z.boolean(),
     isSegnoSymbol: z.boolean(),
+    isFermataSymbol: z.boolean(),
   }),
   z.object({
     index: z.number().int(),
@@ -134,6 +135,7 @@ export const cellSchema = z.discriminatedUnion("kind", [
     timeSignatureChangeBottom: z.number().int().nullable().optional(),
     isCodaSymbol: z.boolean(),
     isSegnoSymbol: z.boolean(),
+    isFermataSymbol: z.boolean(),
   }),
   z.object({
     index: z.number().int(),
@@ -143,6 +145,7 @@ export const cellSchema = z.discriminatedUnion("kind", [
     timeSignatureChangeBottom: z.number().int().nullable().optional(),
     isCodaSymbol: z.boolean(),
     isSegnoSymbol: z.boolean(),
+    isFermataSymbol: z.boolean(),
   }),
 ]);
 

@@ -4,7 +4,7 @@ import convertAllPlaylists from "./functions";
 async function seed() {
   try {
     logger.info("Seeding ...");
-    await convertAllPlaylists();
+    await convertAllPlaylists("forTest");
     logger.success("Db is seeded.");
   } catch (err) {
     logger.error("Seed Error: ", err);

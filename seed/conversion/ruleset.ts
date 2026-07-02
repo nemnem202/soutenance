@@ -1,4 +1,10 @@
-import type { ChordsGridSchema, Config, ExerciseSchema, MeasureSchema } from "@/types/entities";
+import type {
+  CellSchema,
+  ChordsGridSchema,
+  Config,
+  ExerciseSchema,
+  MeasureSchema,
+} from "@/types/entities";
 import type { Cell } from "@/types/music";
 
 export default function applyRuleset(exercise: ExerciseSchema) {
@@ -44,12 +50,14 @@ function filterEmptyMeasures(measures: MeasureSchema[]) {
 
 function removeUselessEmptyCells(measures: MeasureSchema[]) {
   for (const measure of measures) {
-    const hasCoda = measure.cells.some((c: any) => c.isCodaSymbol);
-    const hasSegno = measure.cells.some((c: any) => c.isSegnoSymbol);
+    const hasCoda = measure.cells.some((c) => c.isCodaSymbol);
+    const hasSegno = measure.cells.some((c) => c.isSegnoSymbol);
+    const hasFermata = measure.cells.some((c) => c.isFermataSymbol);
     measure.cells = filterUselessCells(measure.cells);
     if (measure.cells.length > 0) {
-      if (hasCoda) (measure.cells[0] as any).isCodaSymbol = true;
-      if (hasSegno) (measure.cells[0] as any).isSegnoSymbol = true;
+      if (hasCoda) measure.cells[0].isCodaSymbol = true;
+      if (hasSegno) measure.cells[0].isSegnoSymbol = true;
+      if (hasFermata) measure.cells[0].isFermataSymbol = true;
     }
   }
 }
