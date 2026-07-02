@@ -27,7 +27,6 @@ type MidiContextType = {
   updateMidiInputs: Dispatch<SetStateAction<MidiInput[]>>;
   outputInstrument: MidiInstrumentNumber;
   setOutputInstrument: Dispatch<SetStateAction<MidiInstrumentNumber>>;
-  // Permet aux composants de s'abonner à des messages
   onMidiMessage: (callback: MidiCallback) => void;
 };
 
@@ -39,6 +38,7 @@ export default function MidiProvider({ children }: { children: ReactNode }) {
   const [outputInstrument, setOutputInstrument] = useState<MidiInstrumentNumber>(
     MidiInstrumentNumber.BrightAcousticPiano
   );
+  const inputsRef = useRef<MidiInput[]>([]);
 
   const noteOn = (note: number, velocity: number) => {
     SoundEngine.noteOn(note, velocity);
@@ -73,6 +73,12 @@ export default function MidiProvider({ children }: { children: ReactNode }) {
   };
 
   const handleMidiEvent = (event: MIDIMessageEvent) => {
+    const input = event.target as MIDIInput;
+
+    const inputState = inputsRef.current.find((i) => i.id === input.id);
+
+    if (!inputState || !inputState.enabled) return;
+
     if (callbackRef.current) {
       callbackRef.current(event);
     }
@@ -103,7 +109,6 @@ export default function MidiProvider({ children }: { children: ReactNode }) {
     }
 
     return () => {
-      // Nettoyage : retirer les écouteurs si nécessaire
       midiAccess?.inputs.forEach((input) => (input.onmidimessage = null));
     };
   }, [midiEnabled]);
@@ -111,6 +116,10 @@ export default function MidiProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (outputInstrument) SoundEngine.changeUserInstrument(outputInstrument);
   }, [outputInstrument]);
+
+  useEffect(() => {
+    inputsRef.current = midiInputs;
+  }, [midiInputs]);
 
   return (
     <MidiContext.Provider
