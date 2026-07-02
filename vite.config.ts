@@ -24,8 +24,7 @@ export default defineConfig({
     include: ["@tonejs/midi"],
   },
   ssr: {
-    noExternal: ["@tonejs/midi"], // ❌ retire ça si tu l'avais
-    external: ["@tonejs/midi"], // ✅ remplace par ça
+    external: ["@tonejs/midi"],
   },
-  assetsInclude: ["**/*.sf3", "**/*.mid"],
+  assetsInclude: ["**/*.sf3", "**/*.mid", "**/*.json", "**/*.bin"],
 });
