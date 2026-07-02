@@ -46,7 +46,6 @@ export default function MidiProvider({ children }: { children: ReactNode }) {
     SoundEngine.noteOff(note);
   };
 
-  // Utilisation d'un ref pour stocker le callback afin d'éviter de redéclencher les effets
   const callbackRef = useRef<MidiCallback | null>((event) => {
     if (!event.data) return;
     const command = event.data[0];
@@ -54,17 +53,16 @@ export default function MidiProvider({ children }: { children: ReactNode }) {
     const velocity = event.data.length > 2 ? event.data[2] : 0;
 
     switch (command) {
-      case 144: // noteOn
+      case 144:
         if (velocity > 0) {
           noteOn(note, velocity);
         } else {
           noteOff(note);
         }
         break;
-      case 128: // noteOff
+      case 128:
         noteOff(note);
         break;
-      // we could easily expand this switch statement to cover other types of commands such as controllers or sysex
     }
   });
 
@@ -107,6 +105,10 @@ export default function MidiProvider({ children }: { children: ReactNode }) {
       midiAccess?.inputs.forEach((input) => (input.onmidimessage = null));
     };
   }, [midiEnabled]);
+
+  useEffect(() => {
+    if (outputInstrument) SoundEngine.changeUserInstrument(outputInstrument);
+  }, [outputInstrument]);
 
   return (
     <MidiContext.Provider
