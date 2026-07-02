@@ -1,14 +1,4 @@
-import { useMemo, useState } from "react";
-import SwitchParam from "@/components/molecules/switch-param";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/organisms/select";
+import { useEffect, useMemo, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/hooks/use-language";
 import { SidebarSlider } from "../game-assets";
@@ -121,7 +111,7 @@ export function StyleSelectCombobox() {
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-[200px] p-0 z-100" align="start">
+      <PopoverContent className="w-[200px] p-0" align="start">
         <Command>
           <CommandInput placeholder={`${instance.getItem("styles")}...`} />
 
