@@ -279,7 +279,10 @@ function convertCell(cellIreal: CellIreal): CellSchema {
     return {
       kind: "Spacer",
       index: cellIreal.index,
-    } as any;
+      isCodaSymbol: parsed.isCoda,
+      isSegnoSymbol: parsed.isSegno,
+      isFermataSymbol: parsed.isFermata,
+    };
 
   if (chord === null)
     return {
