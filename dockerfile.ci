@@ -6,11 +6,18 @@ RUN npm install -g pnpm
 
 
 ARG MMA_VERSION=25.05.0
-RUN wget https://www.mellowood.ca/mma/mma-bin-${MMA_VERSION}.tar.gz && \
+# Python and mma install
+RUN wget https://www.mellowood.ca/mma/mma-bin-25.05.0.tar.gz && \
     mkdir -p /opt/mma && \
-    tar -xzvf mma-bin-${MMA_VERSION}.tar.gz -C /opt/mma --strip-components=1 && \
-    rm mma-bin-${MMA_VERSION}.tar.gz && \
+    tar -xzvf mma-bin-25.05.0.tar.gz -C /opt/mma --strip-components=1 && \
+    rm mma-bin-25.05.0.tar.gz && \
     cd /opt/mma && python3 mma.py -G
+
+# music21 install
+RUN apk add --no-cache python3-dev py3-pip
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN pip install --no-cache-dir music21
 
 WORKDIR /app
 

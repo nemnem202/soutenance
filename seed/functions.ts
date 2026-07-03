@@ -171,6 +171,7 @@ export default async function convertAllPlaylists(forTest?: "forTest") {
       if (converted.failures.length > 0) {
         fails++;
         logger.info(`⚠️ [${index}] FAILED items in: ${irealPlaylist.title}`);
+        forTest && logger.info(`Fail: `, converted.failures);
         continue;
       }
 
@@ -178,7 +179,7 @@ export default async function convertAllPlaylists(forTest?: "forTest") {
       if (!verifyPlaylist.success) {
         fails++;
         logger.info(`❌ [${index}] VALIDATION ERROR: ${converted.playlist.title}`);
-
+        forTest && logger.info(`Fail: `, verifyPlaylist.error);
         continue;
       }
 

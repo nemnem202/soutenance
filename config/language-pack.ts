@@ -919,4 +919,11 @@ export const languagePack: Record<string, Record<Language, string>> = {
     de: "Aktiviert",
     zh: "已启用",
   },
+  start_building_your_own_exercise: {
+    fr: "Commencez à créer votre propre exercice",
+    en: "Start building your own exercise",
+    es: "Comienza a crear tu propio ejercicio",
+    de: "Beginnen Sie, Ihre eigene Übung zu erstellen",
+    zh: "开始创建您自己的练习",
+  },
 } as const;
