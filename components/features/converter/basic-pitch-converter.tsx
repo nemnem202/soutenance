@@ -6,7 +6,6 @@ import {
   addPitchBendsToNoteEvents,
   noteFramesToTime,
 } from "@spotify/basic-pitch";
-import { Note } from "@tonejs/midi/dist/Note";
 
 export default function BasicPitchConverter() {
   const [progress, setProgress] = useState(0);
