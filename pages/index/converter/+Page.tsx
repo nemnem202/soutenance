@@ -5,7 +5,7 @@ import MusicFileConverter from "@/components/features/converter/music-file-conve
 
 export default function Page() {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-3">
       <MidiFileToChordGridConverter />
       <MusicFileConverter />
       <BasicPitchConverter />

@@ -2,7 +2,6 @@ import MUSICAL_SYMBOLS from "@/config/musical-symbols";
 import useGame from "@/hooks/use-game";
 import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
-import { logger } from "@/lib/logger";
 import { chordCellsWithTransposition, musicalNotationRootNote } from "@/lib/utils";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { Action } from "@/midi-editor/types/actions";

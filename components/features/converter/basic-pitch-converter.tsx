@@ -6,6 +6,7 @@ import {
   addPitchBendsToNoteEvents,
   noteFramesToTime,
 } from "@spotify/basic-pitch";
+import { Label } from "@/components/ui/label";
 
 export default function BasicPitchConverter() {
   const [progress, setProgress] = useState(0);
@@ -87,8 +88,11 @@ export default function BasicPitchConverter() {
 
   return (
     <ClientOnly>
-      <input type="file" accept="audio/*" onChange={handleFileChange} />
-      <p>Progression : {Math.round(progress)}%</p>
+      <div className="p-3 border rounded-md">
+        <Label htmlFor="audio-file-input">Audio File input</Label>
+        <input type="file" accept="audio/*" onChange={handleFileChange} id="audio-file-input" />
+        <p>Progression : {Math.round(progress)}%</p>
+      </div>
     </ClientOnly>
   );
 }

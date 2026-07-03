@@ -14,9 +14,9 @@ export default function MusicFileConverter() {
   };
 
   return (
-    <>
+    <div className="p-3 border rounded-md">
       <Label htmlFor="music-file-input">Music File input</Label>
       <input type="file" onChange={handleFileChange} id="music-file-input" />
-    </>
+    </div>
   );
 }

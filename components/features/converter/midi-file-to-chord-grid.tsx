@@ -10,14 +10,14 @@ export default function MidiFileToChordGridConverter() {
   };
 
   return (
-    <>
-      <Label htmlFor="music-file-input">Midi File input</Label>
+    <div className="p-3 border rounded-md">
+      <Label htmlFor="midi-file-input">Midi File input</Label>
       <input
         type="file"
         accept=".mid,.midi,audio/midi,application/x-midi"
         onChange={handleFileChange}
-        id="music-file-input"
+        id="midi-file-input"
       />
-    </>
+    </div>
   );
 }
