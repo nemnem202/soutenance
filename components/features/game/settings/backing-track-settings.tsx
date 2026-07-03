@@ -35,7 +35,7 @@ import onMidiFile from "@/telefunc/midifile.telefunc";
 import { Midi } from "@tonejs/midi";
 import { logger } from "@/lib/logger";
 import { errorToast } from "@/lib/toaster";
-import { convertMidiFileToState, getMidiFileFromBuffer } from "@/midi-editor/lib/midiconverter";
+import { convertMidiFileToState, getMidiFileFromBuffer } from "@/converters/midiconverter";
 
 export default function BackingTrackSettings() {
   const { instance } = useLanguage();
