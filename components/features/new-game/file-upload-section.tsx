@@ -108,7 +108,8 @@ export function FileUploadSection({
         "rounded-lg relative border border-dashed p-8 text-center transition-colors",
         isDragging
           ? "border-primary bg-primary/5"
-          : "border-muted-foreground/25 hover:border-muted-foreground/50"
+          : "border-muted-foreground/25 hover:border-muted-foreground/50",
+        className
       )}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
