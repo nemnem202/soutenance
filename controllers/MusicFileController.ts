@@ -4,6 +4,47 @@ import { spawn } from "node:child_process";
 import { logger } from "@/lib/logger";
 import { randomBytes } from "node:crypto";
 import { unlink, writeFile } from "node:fs/promises";
+import { AppError } from "@/lib/errors";
+
+const ALLOWED_EXTENSIONS = new Set([
+  ".xml",
+  ".mxl",
+  ".musicxml",
+  ".mid",
+  ".midi",
+  ".abc",
+  ".krn",
+  ".mei",
+]);
+
+const MAX_FILE_SIZE = 20 * 1024 * 1024;
+
+function isValidZip(buffer: Buffer): boolean {
+  // .mxl est un zip, signature PK\x03\x04
+  return buffer.length > 4 && buffer[0] === 0x50 && buffer[1] === 0x4b;
+}
+
+function isLikelyXml(buffer: Buffer): boolean {
+  const start = buffer.subarray(0, 200).toString("utf-8").trimStart();
+  return (
+    start.startsWith("<?xml") ||
+    start.startsWith("<score-partwise") ||
+    start.startsWith("<score-timewise")
+  );
+}
+
+function isValidMidi(buffer: Buffer): boolean {
+  // signature MIDI = "MThd"
+  return buffer.length > 4 && buffer.subarray(0, 4).toString("ascii") === "MThd";
+}
+
+const magicChecks: Record<string, (b: Buffer) => boolean> = {
+  ".mxl": isValidZip,
+  ".mid": isValidMidi,
+  ".midi": isValidMidi,
+  ".xml": isLikelyXml,
+  ".musicxml": isLikelyXml,
+};
 
 export type JsonAndMidiOutput = {
   json: JSON;
@@ -26,13 +67,21 @@ export default class MusicFileController extends Controller {
     const time = Date.now();
     const arrayBuffer = await this.file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+    this.applySecurity(buffer);
+    return this.processFile(time, buffer);
+  }
 
-    const mxlPath = `/tmp/${randomBytes(8).toString("hex")}.mxl`;
-    await writeFile(mxlPath, buffer);
+  private async processFile(
+    time: number,
+    buffer: Buffer
+  ): Promise<ServerResponse<JsonAndMidiOutput>> {
+    const ext = this.getExtension(this.file.name);
+    const filePath = `/tmp/${randomBytes(8).toString("hex")}${ext}`;
+    await writeFile(filePath, buffer);
 
     try {
       const result = await new Promise<{ chords: unknown; midi: string }>((resolve, reject) => {
-        const pythonProcess = spawn("python3", ["/app/lib/process_music.py", mxlPath]);
+        const pythonProcess = spawn("python3", ["/app/lib/process_music.py", filePath]);
 
         let resultData = "";
         let errorData = "";
@@ -70,7 +119,38 @@ export default class MusicFileController extends Controller {
         data: { json: result.chords as JSON, midiFile: midiBuffer },
       };
     } finally {
-      await unlink(mxlPath).catch(() => {});
+      await unlink(filePath).catch(() => {});
     }
+  }
+
+  private async applySecurity(buffer: Buffer) {
+    const ext = this.getExtension(this.file.name);
+
+    if (!ALLOWED_EXTENSIONS.has(ext)) {
+      logger.error(`[MusicFileController] : extension refusée: ${ext}`);
+      return {
+        success: false,
+        status: Status.BadRequest, // adapte selon ton enum Status
+        error: `Format de fichier non supporté: ${ext}`,
+      };
+    }
+
+    if (this.file.size > MAX_FILE_SIZE) {
+      return {
+        success: false,
+        status: Status.BadRequest,
+        error: `Fichier trop volumineux (max ${MAX_FILE_SIZE / 1024 / 1024} Mo)`,
+      };
+    }
+
+    const check = magicChecks[ext];
+    if (check && !check(buffer)) {
+      throw new AppError(Status.BadRequest, "Invalid file");
+    }
+  }
+
+  private getExtension(filename: string): string {
+    const idx = filename.lastIndexOf(".");
+    return idx === -1 ? "" : filename.slice(idx).toLowerCase();
   }
 }
