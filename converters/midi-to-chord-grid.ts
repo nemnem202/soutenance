@@ -1,10 +1,10 @@
-import { ChordsGridSchema } from "@/types/entities";
+import { ChordsGridSchema, MeasureSchema } from "@/types/entities";
 import { getMidiFileFromBuffer } from "./midiconverter";
 import { Midi } from "@tonejs/midi";
 import { Note } from "@tonejs/midi/dist/Note";
-import { Chord } from "@/types/music";
+import { Chord as ChordType } from "@/types/music";
 import { logger } from "@/lib/logger";
-import { CHORDS_DICTIONNARY } from "@/config/chords-dictionary";
+import { Chord } from "tonal";
 import { notesByIndex } from "@/schemas/entities.schema";
 
 type Measure = {
@@ -13,7 +13,7 @@ type Measure = {
   endTick: number;
   duration: number;
   notes: Note[];
-  chords?: Chord[];
+  chords?: ChordType[];
 };
 
 type MeasureMap = Map<number, Measure>;
@@ -26,8 +26,8 @@ export default async function convertMidiFileToChordGrid(
   const notes = midi.tracks.flatMap((t) => t.notes);
   const measureMap = extractMeasureMap(midi, notes);
   defineChords(measureMap);
-  logger.info("MeasuresMap: ", Array.from(measureMap));
-  return null;
+  logMeasureMapSummary(measureMap);
+  return convertToChordsGrid(measureMap);
 }
 
 function extractMeasureMap(midi: Midi, notes: Note[]): MeasureMap {
@@ -46,8 +46,6 @@ function extractMeasureMap(midi: Midi, notes: Note[]): MeasureMap {
 
   let measureIndex = 0;
   let currentTick = 0;
-
-  // define measures positions
 
   for (let i = 0; i < sortedTS.length; i++) {
     const { timeSignature } = sortedTS[i];
@@ -73,12 +71,9 @@ function extractMeasureMap(midi: Midi, notes: Note[]): MeasureMap {
   }
 
   const measures = Array.from(measureMap.values());
-
   const sortedNotes = [...notes].sort((a, b) => a.ticks - b.ticks);
 
   let measurePointer = 0;
-
-  // fill measure with notes
 
   for (const note of sortedNotes) {
     while (measurePointer < measures.length - 1 && note.ticks >= measures[measurePointer].endTick) {
@@ -95,9 +90,9 @@ function extractMeasureMap(midi: Midi, notes: Note[]): MeasureMap {
 }
 
 function defineChords(measureMap: MeasureMap) {
-  for (const [startTick, measure] of measureMap) {
-    const overlappingNotes = getOverlappingNotes(measure.notes);
-    addChordsToMeasure(measure, overlappingNotes);
+  for (const measure of measureMap.values()) {
+    const overlappingBlocks = getOverlappingNotes(measure.notes);
+    addChordsToMeasure(measure, overlappingBlocks);
   }
 }
 
@@ -108,76 +103,128 @@ type Block = {
 };
 
 function getOverlappingNotes(notes: Note[]): Block[] {
-  const notesCopy = [...notes];
+  if (notes.length === 0) return [];
+
   const blocks: Block[] = [];
+  let currentBlock: Block = {
+    startTick: notes[0].ticks,
+    endTick: notes[0].ticks + notes[0].durationTicks,
+    notes: [notes[0]],
+  };
 
-  while (notesCopy.length) {
-    const firstNote = notesCopy[0];
-    const compaptibleBlock = blocks.find(
-      (b) => b.startTick <= firstNote.ticks && b.endTick >= firstNote.ticks
-    );
+  for (let i = 1; i < notes.length; i++) {
+    const note = notes[i];
 
-    if (compaptibleBlock) {
-      compaptibleBlock.notes.push(firstNote);
-      if (compaptibleBlock.endTick < firstNote.ticks + firstNote.durationTicks)
-        compaptibleBlock.endTick = firstNote.ticks + firstNote.durationTicks;
+    if (note.ticks <= currentBlock.endTick) {
+      currentBlock.notes.push(note);
+      currentBlock.endTick = Math.max(currentBlock.endTick, note.ticks + note.durationTicks);
     } else {
-      blocks.push({
-        endTick: firstNote.ticks + firstNote.durationTicks,
-        startTick: firstNote.ticks,
-        notes: [firstNote],
-      });
+      blocks.push(currentBlock);
+      currentBlock = {
+        startTick: note.ticks,
+        endTick: note.ticks + note.durationTicks,
+        notes: [note],
+      };
     }
-    notesCopy.shift();
   }
+  blocks.push(currentBlock);
 
   return blocks;
 }
 
-function addChordsToMeasure(measure: Measure, overlappingNotes: Block[]) {
-  const chords: Chord[] = overlappingNotes.map((block) => findChordFromNotes(block.notes));
-  measure.chords = chords;
+function addChordsToMeasure(measure: Measure, overlappingBlocks: Block[]) {
+  measure.chords = overlappingBlocks.flatMap((block) => [...findChordFromNotes(block.notes)]);
 }
 
-function findChordFromNotes(notes: Note[]): Chord {
-  const midiNotes = notes.map((n) => n.midi % 11);
-  logger.info("Modulo midi notes", midiNotes);
-  let filtered: number[] = [];
-  midiNotes.forEach((midi) => {
-    if (!filtered.some((f) => f === midi)) {
-      filtered.push(midi);
-    }
+function findChordFromNotes(notes: Note[]): ChordType[] {
+  const midiNotes = notes.map((n) => n.midi % 12);
+
+  const chords = Chord.detect(midiNotes.map((n) => notesByIndex[n]));
+
+  return chords.map((c) => {
+    const chord = Chord.get(c);
+    const chordType: ChordType = {
+      content: {
+        note: chord.tonic ?? "",
+        modifier: chord.aliases[0],
+      },
+      over:
+        chord.tonic === chord.root
+          ? {
+              note: chord.root,
+              modifier: "",
+            }
+          : undefined,
+    };
+
+    return chordType;
   });
+}
 
-  filtered.sort((a, b) => a - b);
+function logMeasureMapSummary(measureMap: MeasureMap) {
+  const rows = Array.from(measureMap.values()).map((measure) => ({
+    mesure: measure.measureIndex,
+    ticks: `${measure.startTick} → ${measure.endTick}`,
+    accords:
+      measure.chords?.map((c) => `${c.content.note}${c.content.modifier}`).join("  |  ") ||
+      "(silence)",
+  }));
 
-  const minValue = filtered[0];
+  logger.info(`Grille d'accords extraite — ${rows.length} mesures`);
+  console.table(rows);
+}
 
-  filtered = filtered.map((v) => v - minValue);
+function convertToChordsGrid(measureMap: MeasureMap): ChordsGridSchema {
+  const measures = Array.from(measureMap.values());
 
-  let chordsExactMatch: string | null = null;
+  const measureObjects: MeasureSchema[] = measures.map((m) => ({
+    index: m.measureIndex,
+    bars: { left: "single", right: "single" }, // Valeurs par défaut
+    cells:
+      m.chords && m.chords.length > 0
+        ? m.chords.map((chord, idx) => ({
+            kind: "Chord" as const,
+            index: idx,
+            isCodaSymbol: false,
+            isSegnoSymbol: false,
+            isFermataSymbol: false,
+            isFineSymbol: false,
+            isBreakSymbol: false,
+            chord: {
+              content: {
+                note: chord.content.note as any, // Cast sécurisé selon votre schema
+                modifier: chord.content.modifier,
+              },
+              over: chord.over
+                ? {
+                    note: chord.over.note as any,
+                    modifier: chord.over.modifier,
+                  }
+                : null,
+            },
+          }))
+        : [
+            {
+              kind: "Empty" as const,
+              index: 0,
+              isCodaSymbol: false,
+              isSegnoSymbol: false,
+              isFermataSymbol: false,
+              isFineSymbol: false,
+              isBreakSymbol: false,
+            },
+          ],
+  }));
 
-  for (const [chordName, harmony] of Object.entries(CHORDS_DICTIONNARY)) {
-    if (!harmony) continue;
-    const isExactMatch = filtered.every((f) => harmony.intervals.includes(f));
-    if (!isExactMatch) continue;
-    chordsExactMatch = chordName;
-    break;
-  }
-
-  if (!chordsExactMatch) {
-    return {
-      content: {
-        note: "Unknown",
-        modifier: "",
+  return {
+    sections: [
+      {
+        index: 0,
+        label: "Main",
+        type: "Generic",
+        commonMeasures: measureObjects,
+        voltas: [],
       },
-    };
-  } else {
-    return {
-      content: {
-        note: notesByIndex[minValue],
-        modifier: chordsExactMatch,
-      },
-    };
-  }
+    ],
+  };
 }

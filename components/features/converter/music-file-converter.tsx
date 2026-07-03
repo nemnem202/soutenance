@@ -1,5 +1,4 @@
 import { ChangeEvent } from "react";
-import { ClientOnly } from "vike-react/ClientOnly";
 import onMusicFile from "@/telefunc/music-file.telefunc";
 import { logger } from "@/lib/logger";
 import { Label } from "@/components/ui/label";
@@ -15,9 +14,9 @@ export default function MusicFileConverter() {
   };
 
   return (
-    <ClientOnly>
+    <>
       <Label htmlFor="music-file-input">Music File input</Label>
       <input type="file" onChange={handleFileChange} id="music-file-input" />
-    </ClientOnly>
+    </>
   );
 }
