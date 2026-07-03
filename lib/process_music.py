@@ -4,8 +4,9 @@ import base64
 from music21 import converter
 import io
 
-def process_music(input_path):
-    score = converter.parse(input_path)
+def process_music():
+    input_data = sys.stdin.buffer.read()
+    score = converter.parse(input_data)
 
     chords = [{"figure": c.figure, "measure": c.measureNumber} 
               for c in score.flatten().getElementsByClass(['ChordSymbol'])]
