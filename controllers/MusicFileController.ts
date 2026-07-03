@@ -80,7 +80,7 @@ export default class MusicFileController extends Controller {
     await writeFile(filePath, buffer);
 
     try {
-      const result = await new Promise<{ chords: unknown; midi: string }>((resolve, reject) => {
+      const result = await new Promise<{ content: unknown; midi: string }>((resolve, reject) => {
         const pythonProcess = spawn("python3", ["/app/lib/process_music.py", filePath]);
 
         let resultData = "";
@@ -116,7 +116,7 @@ export default class MusicFileController extends Controller {
       return {
         success: true,
         status: Status.Ok,
-        data: { json: result.chords as JSON, midiFile: midiBuffer },
+        data: { json: result.content as JSON, midiFile: midiBuffer },
       };
     } finally {
       await unlink(filePath).catch(() => {});
