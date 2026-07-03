@@ -5,17 +5,21 @@ import { logger } from "@/lib/logger";
 import type { ChordsGridSchema, ExerciseSchema } from "@/types/entities";
 import { Status, type ServerResponse } from "@/types/server-response";
 import { Controller } from "./Controller";
-import GameRepository from "@/repositories/gameRepository";
 import MMAContentGenerator from "@/lib/mma-content-generator";
 import { AppError } from "@/lib/errors";
+import { MMAGrooveTitle } from "@/lib/generated/prisma/enums";
+import ExerciseRepository from "@/repositories/exerciseRepository";
 
 export type ExerciseWithForcedChordGrid = ExerciseSchema & { chordsGrid: ChordsGridSchema };
 
 export default class MidiController extends Controller {
-  private repository = new GameRepository(this.client);
+  private exerciseRepository = new ExerciseRepository(this.client);
 
-  public async getMidiFile(exerciseId: number): Promise<ServerResponse<Buffer>> {
-    const request = await this.repository.findOne(exerciseId, this.user?.id ?? null);
+  public async getMidiFile(
+    exerciseId: number,
+    groove?: MMAGrooveTitle
+  ): Promise<ServerResponse<Buffer>> {
+    const request = await this.exerciseRepository.findOne(exerciseId, this.user?.id ?? null);
 
     if (!request.success) return request;
 
@@ -29,7 +33,20 @@ export default class MidiController extends Controller {
       );
     }
 
-    const file = await this.generateMidiFile(exercise as ExerciseWithForcedChordGrid);
+    let file: Buffer<ArrayBufferLike>;
+
+    if (groove && exercise.defaultConfig.groove !== groove) {
+      // get the correct groove
+    } else if (this.user?.id) {
+      // try getting the user groove
+    } else {
+      // get the default groove
+    }
+
+    file = await this.generateMidiFile(
+      exercise as ExerciseWithForcedChordGrid,
+      groove ?? exercise.defaultConfig.groove
+    );
 
     return {
       success: true,
@@ -38,9 +55,13 @@ export default class MidiController extends Controller {
     };
   }
 
-  private async generateMidiFile(exercise: ExerciseWithForcedChordGrid): Promise<Buffer> {
+  private async generateMidiFile(
+    exercise: ExerciseWithForcedChordGrid,
+    groove: MMAGrooveTitle
+  ): Promise<Buffer> {
     const start = Date.now();
-    const content = new MMAContentGenerator(exercise, "BossaNova").generate();
+    logger.info("Midi file generation asked for ", exercise.title, " with groove: ", groove);
+    const content = new MMAContentGenerator(exercise, groove).generate();
     const buffer = await this.generateMidiBuffer(content);
     return buffer;
   }

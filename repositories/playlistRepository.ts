@@ -2,7 +2,6 @@ import type { PlaylistCardDto, PlaylistDetailDto } from "@/types/dtos/playlist";
 import type { Playlist, PlaylistSchema } from "@/types/entities";
 import { type ServerResponse, Status } from "@/types/server-response";
 import { Repository } from "./repository";
-import { logger } from "@/lib/logger";
 
 export class PlaylistRepository extends Repository {
   async create(playlist: PlaylistSchema & { imageId?: string }, userId: number): Promise<Playlist> {

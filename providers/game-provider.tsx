@@ -9,7 +9,7 @@ import {
 import { useLanguage } from "@/hooks/use-language";
 import type { Exercise } from "@/types/entities";
 import type { State as state } from "@/midi-editor/types/instance";
-import { convertMidiFileToState, getMidiFileFromBuffer } from "@/midi-editor/lib/midiconverter";
+import { convertMidiFileToState, getMidiFileFromBuffer } from "@/converters/midiconverter";
 import { errorToast } from "@/lib/toaster";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { Action, type MidiAction } from "@/midi-editor/types/actions";
@@ -30,6 +30,7 @@ export interface GameContextType {
   activeTab: TabID;
   setActiveTab: Dispatch<SetStateAction<TabID>>;
   midiLoading: boolean;
+  setMidiLoading: Dispatch<SetStateAction<boolean>>;
 }
 
 export const GameContext = createContext<GameContextType | null>(null);
@@ -96,6 +97,7 @@ export default function GameProvider({
     activeTab,
     setActiveTab,
     midiLoading,
+    setMidiLoading,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
