@@ -218,7 +218,7 @@ def process_music(file_path):
         "defaultConfig": {
             "bpm": default_bpm,
             "key": default_key,
-            "groove": "Generic",  # Remplacer par ta valeur par défaut issue de MMAGrooveTitle
+            "groove": "Custom",  
             "timeSignatureTop": default_ts_top,
             "timeSignatureBottom": default_ts_bottom
         },

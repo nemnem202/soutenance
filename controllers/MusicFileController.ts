@@ -5,6 +5,7 @@ import { logger } from "@/lib/logger";
 import { randomBytes } from "node:crypto";
 import { unlink, writeFile } from "node:fs/promises";
 import { AppError } from "@/lib/errors";
+import { exerciseSchema } from "@/schemas/entities.schema";
 
 const ALLOWED_EXTENSIONS = new Set([
   ".xml",
@@ -111,6 +112,13 @@ export default class MusicFileController extends Controller {
       });
 
       logger.success("[MusicFileController] : files generated in ", Date.now() - time, "ms");
+
+      try {
+        exerciseSchema.parse(result.exercise);
+        logger.success("Exercise parsed");
+      } catch (err) {
+        logger.error("ExerciseParseError", err);
+      }
 
       return {
         success: true,
