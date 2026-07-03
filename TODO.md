@@ -8,6 +8,7 @@
 
 //// piano roll ///
 
+- leak de performances a chaque changement de mesure
 - changer la couleur des notes midi jouées
 - ajouter des particules dans le piano roll
 - corriger le bug du piano roll qui ne se met pas à jour quand on change de fichier midi
@@ -16,6 +17,8 @@
 //// audio ///
 
 - telecharger mma en local pour ajouter ses propres fichier de librairie
+- leak de performances a chaque changement de mesure
+- ajouter un event listener sur les inputs midi pour gerer les connexions / deconnexions
 
 //// exercice ///
 
@@ -23,3 +26,7 @@
 - corriger la navigation dans le chord grid
 - ajouter diagrammes d'accords de guitare
 - corriger l'affichage de diagrammes identiques lors du symbole de repetition (voir "it had to be you" )
+
+/// general ///
+
+- BUG: si je vais dans une playlist des favoris et qu'ensuite je vais dans une playlist propriétaire, les musiques de la playlist des favoris s'ajoutent a ma playlist propriétaire
