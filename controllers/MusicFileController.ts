@@ -80,14 +80,14 @@ export default class MusicFileController extends Controller {
     await writeFile(filePath, buffer);
 
     try {
-      const result = await new Promise<{ content: unknown; midi: string }>((resolve, reject) => {
+      const result = await new Promise<{ exercise: any; midi: string }>((resolve, reject) => {
         const pythonProcess = spawn("python3", ["/app/lib/process_music.py", filePath]);
 
-        let resultData = "";
+        let dataBuffer = "";
         let errorData = "";
 
-        pythonProcess.stdout.on("data", (chunk) => {
-          resultData += chunk;
+        pythonProcess.stdout.on("data", (data) => {
+          dataBuffer += data.toString();
         });
         pythonProcess.stderr.on("data", (chunk) => {
           errorData += chunk;
@@ -95,11 +95,11 @@ export default class MusicFileController extends Controller {
 
         pythonProcess.on("close", (code) => {
           if (code !== 0) {
-            logger.error("Erreur Python stderr:", errorData);
             return reject(new Error(`Erreur Python (Code ${code}): ${errorData}`));
           }
           try {
-            resolve(JSON.parse(resultData));
+            const parsed = JSON.parse(dataBuffer.trim());
+            resolve(parsed); // Résout l'objet { exercise: ..., midi: ... }
           } catch (e) {
             reject(new Error(`Erreur parsing JSON: ${e}`));
           }
@@ -110,13 +110,15 @@ export default class MusicFileController extends Controller {
         });
       });
 
-      const midiBuffer = Buffer.from(result.midi, "base64");
       logger.success("[MusicFileController] : files generated in ", Date.now() - time, "ms");
 
       return {
         success: true,
         status: Status.Ok,
-        data: { json: result.content as JSON, midiFile: midiBuffer },
+        data: {
+          json: result.exercise as JSON,
+          midiFile: Buffer.from(result.midi, "base64"),
+        },
       };
     } finally {
       await unlink(filePath).catch(() => {});
