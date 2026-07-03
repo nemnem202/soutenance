@@ -6,6 +6,7 @@ import { randomBytes } from "node:crypto";
 import { unlink, writeFile } from "node:fs/promises";
 import { AppError } from "@/lib/errors";
 import { exerciseSchema } from "@/schemas/entities.schema";
+import { ExerciseSchema } from "@/types/entities";
 
 const ALLOWED_EXTENSIONS = new Set([
   ".xml",
@@ -48,7 +49,7 @@ const magicChecks: Record<string, (b: Buffer) => boolean> = {
 };
 
 export type JsonAndMidiOutput = {
-  json: JSON;
+  exercise: ExerciseSchema;
   midiFile: Buffer;
 };
 
@@ -113,18 +114,13 @@ export default class MusicFileController extends Controller {
 
       logger.success("[MusicFileController] : files generated in ", Date.now() - time, "ms");
 
-      try {
-        exerciseSchema.parse(result.exercise);
-        logger.success("Exercise parsed");
-      } catch (err) {
-        logger.error("ExerciseParseError", err);
-      }
+      exerciseSchema.parse(result.exercise);
 
       return {
         success: true,
         status: Status.Ok,
         data: {
-          json: result.exercise as JSON,
+          exercise: result.exercise as ExerciseSchema,
           midiFile: Buffer.from(result.midi, "base64"),
         },
       };
