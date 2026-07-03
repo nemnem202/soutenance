@@ -69,24 +69,6 @@ export default function BackingTrackSettings() {
             {instance.getItem("style")}
           </Label>
           <StyleSelectCombobox />
-          {/* <Select defaultValue="original">
-            <SelectTrigger className="w-full max-w-30" id="style-select">
-              <SelectValue className="text-left" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>{instance.getItem("styles")}</SelectLabel>
-                <SelectItem value="original">
-                  {instance.getItem("original")} {`(${state?.config.groove})`}
-                </SelectItem>
-                {Array.from(MMA_GROOVES.entries()).map(([title]) => (
-                  <SelectItem key={title} value={title}>
-                    {title}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select> */}
         </div>
       </div>
     </ParamsAccordion>
