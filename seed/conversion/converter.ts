@@ -318,8 +318,6 @@ function parseComments(comments: string[]): ParsedComments {
     }
   }
 
-  if (result.navigation) logger.info("Comment navigation found: ", result.navigation);
-
   return result;
 }
 

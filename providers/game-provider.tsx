@@ -77,7 +77,6 @@ export default function GameProvider({
     loadResources();
 
     return () => {
-      logger.info("Reset");
       dispatch({ type: Action.RESET_STATE });
       isMounted = false;
       useMidiStore.getState().reset();

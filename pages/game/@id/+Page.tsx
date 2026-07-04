@@ -39,10 +39,6 @@ function GameContent() {
   const { exercise } = useGame();
   const [sidebarOpen, setOpen] = useState(false);
 
-  useEffect(() => {
-    logger.info("Exercise: ", exercise);
-  }, []);
-
   return (
     <div className="flex flex-row w-screen h-[100dvh] overflow-hidden">
       <GameSidebar sidebarOpen={sidebarOpen} setOpen={setOpen} />
