@@ -228,7 +228,7 @@ export function FullScreenButton({
   return (
     <IconButton
       onClick={() => setFullScreen(!fullScreen)}
-      className={`stroke-muted-foreground !hover:stroke-foreground ${className}`}
+      className={`stroke-muted-foreground !hover:stroke-foreground  ${className}`}
     >
       {fullScreen ? <Minimize /> : <Maximize />}
     </IconButton>

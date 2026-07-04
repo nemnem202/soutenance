@@ -2,6 +2,7 @@ import MUSICAL_SYMBOLS from "@/config/musical-symbols";
 import useGame from "@/hooks/use-game";
 import { useLanguage } from "@/hooks/use-language";
 import useScreen from "@/hooks/use-screen";
+import { logger } from "@/lib/logger";
 import { chordCellsWithTransposition, musicalNotationRootNote } from "@/lib/utils";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { Action } from "@/midi-editor/types/actions";
@@ -102,7 +103,12 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
     const measureStart = state?.measuresStarts.get(measure.index)?.[0];
     const measureEnd = state?.measuresStarts.get(measure.index + 1)?.[0];
 
-    if (measureStart && measureEnd && state?.transport.start) {
+    if (
+      !!measureStart &&
+      measureEnd &&
+      state?.transport.start !== undefined &&
+      state?.transport.start !== null
+    ) {
       setIsMeasureStart(
         state.transport.start >= measureStart && state.transport.start < measureEnd
       );

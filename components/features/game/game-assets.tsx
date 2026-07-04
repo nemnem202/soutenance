@@ -296,7 +296,11 @@ export function Tab({ children }: { children: ReactNode }) {
           <div className="flex gap-3 pointer-events-auto">
             {activeTab === "piano-roll" && <ZoomButtons />}
             {activeTab === "piano-roll" && <TrackSelect />}
-            <FullScreenButton fullScreen={fullScreen} setFullScreen={handleFullScreen} />
+            <FullScreenButton
+              fullScreen={fullScreen}
+              setFullScreen={handleFullScreen}
+              className="aspect-square"
+            />
           </div>
           {(activeTab === "chords-grid" || activeTab === "chords-carousel") && (
             <div className="pointer-events-auto">
