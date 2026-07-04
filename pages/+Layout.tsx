@@ -13,6 +13,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     logger.warn(
       "✅ useEffect exécuté — si ce message apparaît UNE seule fois, StrictMode est désactivé"
     );
+    logger.warn("✅ Log effectué, ce log ne doit pas apparaitre dans la console en production");
   }, []);
   return (
     <AudioProvider>

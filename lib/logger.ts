@@ -1,9 +1,9 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Intentional */
 
-// import { env } from "./env";
+const isBrowser = typeof window !== "undefined";
+const isProd = import.meta?.env?.MODE || import.meta?.env?.PROD;
+const canLog = !isBrowser || !isProd;
 
-// const isTest = import.meta.env.MODE === "test";
-const isTest = false;
 type LogLevel = "info" | "success" | "warn" | "error" | "draw";
 
 const colors = {
@@ -26,22 +26,22 @@ const formatLog = (level: LogLevel, message: string) => {
 
 export const logger = {
   info: (msg: string, ...args: any[]) => {
-    !isTest && console.log(...formatLog("info", msg), ...args);
+    canLog && console.log(...formatLog("info", msg), ...args);
   },
   success: (msg: string, ...args: any[]) => {
-    !isTest && console.log(...formatLog("success", msg), ...args);
+    canLog && console.log(...formatLog("success", msg), ...args);
   },
   warn: (msg: string, ...args: any[]) => {
-    !isTest && console.warn(...formatLog("warn", msg), ...args);
+    canLog && console.warn(...formatLog("warn", msg), ...args);
   },
   draw: (msg: string, ...args: any[]) => {
-    !isTest && console.log(...formatLog("draw", msg), ...args);
+    canLog && console.log(...formatLog("draw", msg), ...args);
   },
   error: (msg: string, ...args: any[]) => {
-    console.error(...formatLog("error", msg), ...args);
+    canLog && console.error(...formatLog("error", msg), ...args);
   },
   table: (data: any, msg?: string) => {
     if (msg) console.log(...formatLog("info", msg));
-    !isTest && console.table(data);
+    canLog && console.table(data);
   },
 };
