@@ -81,6 +81,7 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
   const { state } = useMidiStore();
   const { size } = useScreen();
   const [isActive, setIsActive] = useState(false);
+  const [isMeasureStart, setIsMeasureStart] = useState(false);
   const measureRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (isActive && measureRef.current && size === "sm") {
@@ -91,10 +92,22 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
       });
     }
   }, [isActive]);
+
   useEffect(() => {
     if (!state) return;
     setIsActive(measure.index === state.transport.currentMeasureIndex);
   }, [state?.transport.currentMeasureIndex]);
+
+  useEffect(() => {
+    const measureStart = state?.measuresStarts.get(measure.index)?.[0];
+    const measureEnd = state?.measuresStarts.get(measure.index + 1)?.[0];
+
+    if (measureStart && measureEnd && state?.transport.start) {
+      setIsMeasureStart(
+        state.transport.start >= measureStart && state.transport.start < measureEnd
+      );
+    }
+  }, [state?.transport.start, state?.measuresStarts]);
 
   const cells = useMemo(
     () =>
@@ -106,7 +119,7 @@ function MeasureBlock({ measure, volta }: { measure: MeasureSchema; volta?: numb
   return (
     <div
       ref={measureRef}
-      className={`flex w-full h-12 relative items-center relative group/measure ${isActive && state?.config.currentMeasureOverline && "bg-foreground/20"}`}
+      className={`flex w-full h-12 relative items-center relative group/measure ${isActive && state?.config.currentMeasureOverline && "bg-foreground/20"} ${isMeasureStart && "bg-primary/20"}`}
       id={String(measure.index)}
     >
       {volta && <VoltaBracket volta={volta} />}
