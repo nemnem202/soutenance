@@ -1,7 +1,14 @@
 import { Separator } from "@/components/ui/separator";
-import { BpmControl, ControlsSection, RepeatsDisplay, TrackSelect } from "./game-assets";
+import {
+  BpmControl,
+  ControlsSection,
+  RepeatsDisplay,
+  TrackSelect,
+  ZoomButtons,
+} from "./game-assets";
 import useGame from "@/hooks/use-game";
 import {
+  FullScreenButton,
   MetronomeButton,
   PlayButton,
   SettingsButton,
@@ -13,6 +20,7 @@ import { Action } from "@/midi-editor/types/actions";
 import useScreen from "@/hooks/use-screen";
 import useAudio from "@/hooks/use-audio";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
+import { useFullscreen } from "@/hooks/use-full-screen";
 
 interface Gameprops {
   toggleSidebar: () => void;
@@ -37,52 +45,38 @@ export default function DesktopGameControlsSection({ ...props }: Gameprops) {
 export function MobileGameControlSection({ ...props }: Gameprops) {
   const { activeTab } = useGame();
   const { state, dispatch } = useMidiStore();
+  const { fullScreen, setFullScreen } = useFullscreen();
   const isHorizontal = useScreen().orientation === "horizontal";
   return (
-    <div className=" flex w-full justify-evenly">
+    <div className="flex w-full justify-evenly flex-wrap gap-y-5 items-center">
       {isHorizontal && activeTab === "piano-roll"
-        ? (
-            <div className="flex gap-1 border rounded-md">
-              <ZoomInButton
-                onClick={(e) => {
-                  e.stopPropagation();
-                  dispatch({
-                    type: Action.ZoomY,
-                    zoomY: Math.min(100, (state?.display.zoomY ?? 0) + 10),
-                  });
-                }}
-              />
-              <ZoomOutButton
-                onClick={(e) => {
-                  e.stopPropagation();
-                  dispatch({
-                    type: Action.ZoomY,
-                    zoomY: Math.max(0, (state?.display.zoomY ?? 0) - 10),
-                  });
-                }}
-              />
-            </div>
-          )!
+        ? (<ZoomButtons />)!
         : isHorizontal && <div className="w-40" />}
 
-      <SettingsButton onClick={() => props.toggleSidebar()} />
+      <div className="flex-1 flex justify-evenly items-center">
+        <SettingsButton onClick={() => props.toggleSidebar()} />
 
-      {state && (
-        <>
-          <StopButton />
-          <PlayButton />
-          <MetronomeButton />
-
-          {isHorizontal &&
-            (activeTab === "piano-roll" ? (
-              <div className="w-40">
-                <TrackSelect />
-              </div>
-            ) : (
-              <div className="w-40" />
-            ))}
-        </>
-      )}
+        {state && (
+          <>
+            <StopButton />
+            <PlayButton />
+            <FullScreenButton
+              fullScreen={fullScreen}
+              setFullScreen={setFullScreen}
+              className="stroke-foreground"
+            />
+          </>
+        )}
+      </div>
+      {isHorizontal &&
+        state &&
+        (activeTab === "piano-roll" ? (
+          <div className="w-40">
+            <TrackSelect />
+          </div>
+        ) : (
+          <div className="w-40" />
+        ))}
     </div>
   );
 }

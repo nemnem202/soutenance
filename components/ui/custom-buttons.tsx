@@ -15,6 +15,8 @@ import {
   Timer,
   ZoomIn,
   ZoomOut,
+  Minimize,
+  Maximize,
 } from "lucide-react";
 import { Button, type ButtonProps } from "./button";
 import { useLanguage } from "@/hooks/use-language";
@@ -210,6 +212,25 @@ export function ZoomOutButton({ ...props }: ButtonProps) {
   return (
     <IconButton {...props}>
       <ZoomOut className="stroke-inherit" />
+    </IconButton>
+  );
+}
+
+export function FullScreenButton({
+  fullScreen,
+  setFullScreen,
+  className,
+}: {
+  fullScreen: boolean;
+  setFullScreen: (full: boolean) => void;
+  className?: string;
+}) {
+  return (
+    <IconButton
+      onClick={() => setFullScreen(!fullScreen)}
+      className={`stroke-muted-foreground !hover:stroke-foreground  ${className}`}
+    >
+      {fullScreen ? <Minimize /> : <Maximize />}
     </IconButton>
   );
 }

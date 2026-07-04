@@ -16,6 +16,7 @@ const EMPTY_STATE: State = {
     subdivision: [0, 0],
     transposition: 0,
     transpositionPractice: 0,
+    userInputChannel: 0,
   },
   currentTrackId: 0,
   display: {
