@@ -1,27 +1,15 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export function useFullscreenOnInteraction(enabled: boolean = true) {
-  const ref = useRef<HTMLElement>(null);
+export function useFullscreen() {
+  const [fullScreen, setFullScreen] = useState(!!document.fullscreenElement);
 
   useEffect(() => {
-    if (!enabled || !ref.current) return;
-
-    const el = ref.current;
-
-    const tryFullscreen = () => {
+    if (fullScreen && !document.fullscreenElement) {
       document.documentElement.requestFullscreen?.().catch(() => {});
-    };
-
-    el.addEventListener("pointerdown", tryFullscreen, { once: true });
-    return () => el.removeEventListener("pointerdown", tryFullscreen);
-  }, [enabled]);
-
-  useEffect(() => {
-    if (enabled) return;
-    if (document.fullscreenElement) {
+    } else if (!fullScreen && document.fullscreenElement) {
       document.exitFullscreen?.().catch(() => {});
     }
-  }, [enabled]);
+  }, [fullScreen]);
 
-  return ref;
+  return { fullScreen, setFullScreen };
 }

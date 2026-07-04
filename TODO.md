@@ -25,7 +25,7 @@
 - ajouter l'enregistrement des paramètres utilisateur
 - corriger la navigation dans le chord grid
 - ajouter diagrammes d'accords de guitare
-- corriger l'affichage de diagrammes identiques lors du symbole de repetition (voir "it had to be you" )
+- corriger l'affichage des accords semi diminues (et autres)
 
 /// general ///
 

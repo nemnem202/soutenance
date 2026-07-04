@@ -32,6 +32,8 @@ import {
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { Action } from "@/midi-editor/types/actions";
 import {
+  CloseButton,
+  FullScreenButton,
   PlayButton,
   StopButton,
   ZoomInButton,
@@ -228,24 +230,6 @@ export function SmallCheckboxGroup({
   );
 }
 
-export function FullScreenButton({
-  fullScreen,
-  setFullScreen,
-}: {
-  fullScreen: boolean;
-  setFullScreen: (full: boolean) => void;
-}) {
-  return (
-    <Button variant={"ghost"} onClick={() => setFullScreen(!fullScreen)}>
-      {fullScreen ? (
-        <Minimize className=" stroke-muted-foreground !hover:stroke-foreground" />
-      ) : (
-        <Maximize className=" stroke-muted-foreground !hover:stroke-foreground" />
-      )}
-    </Button>
-  );
-}
-
 export function Tab({ children }: { children: ReactNode }) {
   const [fullScreen, setFullScreen] = useState(false);
   const { activeTab, tabs, setActiveTab } = useGame();
@@ -308,37 +292,16 @@ export function Tab({ children }: { children: ReactNode }) {
         {...interactiveProps}
         className="md:size-full md:bg-card md:rounded-md relative overflow-hidden group min-h-0"
       >
-        {/* <div className="hidden z-10 absolute p-2 top-0 right-0 inset-0 transition opacity-0 group-hover:opacity-100 md:flex flex-col justify-between items-end">
-          <div className="flex gap-3">
-            {activeTab === "piano-roll" && <TrackSelect />}
-            <FullScreenButton fullScreen={fullScreen} setFullScreen={handleFullScreen} />
-          </div>
-          {activeTab === "piano-roll" && (
-            <div className="flex-1 max-h-[50%] relative m-1">
-              <ZoomSlider />
-            </div>
-          )}
-          {(activeTab === "chords-grid" || activeTab === "chords-carousel") && (
-            <ChordDisplaySelector />
-          )}
-          {activeTab === "piano-roll" && <div />}
-        </div> */}
-        <div
-          // Ajout de pointer-events-none pour que les clics passent à travers la zone vide
-          className="hidden z-10 absolute p-2 top-0 right-0 inset-0 transition opacity-0 group-hover:opacity-100 md:flex flex-col justify-between items-end pointer-events-none"
-        >
-          {/* On remet pointer-events-auto sur les blocs de boutons réels */}
+        <div className="hidden z-10 absolute p-2 top-0 right-0 inset-0 transition opacity-0 group-hover:opacity-100 md:flex flex-col justify-between items-end pointer-events-none">
           <div className="flex gap-3 pointer-events-auto">
+            {activeTab === "piano-roll" && <ZoomButtons />}
             {activeTab === "piano-roll" && <TrackSelect />}
-            <FullScreenButton fullScreen={fullScreen} setFullScreen={handleFullScreen} />
+            <FullScreenButton
+              fullScreen={fullScreen}
+              setFullScreen={handleFullScreen}
+              className="aspect-square"
+            />
           </div>
-
-          {activeTab === "piano-roll" && (
-            <div className="flex-1 max-h-[50%] relative m-1 pointer-events-auto">
-              <ZoomSlider />
-            </div>
-          )}
-
           {(activeTab === "chords-grid" || activeTab === "chords-carousel") && (
             <div className="pointer-events-auto">
               <ChordDisplaySelector />
@@ -358,7 +321,7 @@ export function Tab({ children }: { children: ReactNode }) {
         }`}
       >
         <div
-          className={`z-10 absolute top-0 left-0 w-full inset-0 transition-opacity duration-300 flex flex-col justify-between p-2 ${
+          className={`z-10 absolute top-0 left-0 w-full transition-opacity duration-300 flex flex-col justify-between p-2 ${
             isIdle ? "opacity-0 pointer-events-none" : "opacity-100"
           }`}
         >
@@ -378,6 +341,7 @@ export function Tab({ children }: { children: ReactNode }) {
               />
             </div>
             <div className="flex gap-3 flex-1 justify-end">
+              {activeTab === "piano-roll" && <ZoomButtons />}
               {activeTab === "piano-roll" && (
                 <div className="w-max-50">
                   <TrackSelect />
@@ -386,11 +350,6 @@ export function Tab({ children }: { children: ReactNode }) {
               <FullScreenButton fullScreen={fullScreen} setFullScreen={handleFullScreen} />
             </div>
           </div>
-          {activeTab === "piano-roll" && (
-            <div className="flex-1 max-h-[50%] relative m-1 w-full flex justify-end">
-              <ZoomSlider />
-            </div>
-          )}
           <div></div>
         </div>
         <div
@@ -468,29 +427,26 @@ export function BpmControl() {
   );
 }
 
-function ZoomSlider() {
+export function ZoomButtons() {
   const { dispatch, state } = useMidiStore();
   return (
-    <div className="flex flex-col items-center justify-center h-full">
+    <div className="flex gap-1 border rounded-md bg-background h-10 items-center">
       <ZoomInButton
-        onClick={() => {
-          dispatch({ type: Action.ZoomY, zoomY: Math.min(100, (state?.display.zoomY ?? 0) + 10) });
-        }}
-      />
-      <Slider
-        orientation="vertical"
-        min={0}
-        max={100}
-        step={1}
-        className="flex-1"
-        value={state?.display.zoomY ? [state.display.zoomY] : [0]}
-        onValueChange={(values) => {
-          dispatch({ type: Action.ZoomY, zoomY: values[0] });
+        onClick={(e) => {
+          e.stopPropagation();
+          dispatch({
+            type: Action.ZoomY,
+            zoomY: Math.min(100, (state?.display.zoomY ?? 0) + 10),
+          });
         }}
       />
       <ZoomOutButton
-        onClick={() => {
-          dispatch({ type: Action.ZoomY, zoomY: Math.max(0, (state?.display.zoomY ?? 0) - 10) });
+        onClick={(e) => {
+          e.stopPropagation();
+          dispatch({
+            type: Action.ZoomY,
+            zoomY: Math.max(0, (state?.display.zoomY ?? 0) - 10),
+          });
         }}
       />
     </div>
@@ -539,65 +495,37 @@ export function RepeatsDisplay() {
 }
 
 export function ChordsDiagramsView() {
-  const { state } = useMidiStore();
-  const { exercise } = useGame();
+  const { state, dispatch } = useMidiStore();
   const { size } = useScreen();
+  const { exercise } = useGame();
+  const [currentMeasure, setCurrentMeasure] = useState<MeasureSchema | null>(null);
+  const [currentChords, setCurrentChords] = useState<ChordSchema[]>([]);
+  const allMeasures = useMemo(
+    () =>
+      exercise.chordsGrid?.sections.flatMap((s) => [
+        ...s.commonMeasures,
+        ...s.voltas.flatMap((v) => v.measures),
+      ]) ?? [],
+    [exercise]
+  );
 
-  const allMeasures = useMemo<MeasureSchema[]>(() => {
-    if (!exercise.chordsGrid) return [];
-    return exercise.chordsGrid.sections.flatMap((section) => [
-      ...section.commonMeasures,
-      ...section.voltas.flatMap((volta) => volta.measures),
-    ]);
-  }, [exercise.chordsGrid]);
-
-  const currentChords = useMemo<Chord[]>(() => {
-    if (!state || !allMeasures.length) return [];
-
-    const currentMeasureIndex = state.transport.currentMeasureIndex;
-    const currentMeasure = allMeasures.find((m) => m.index === currentMeasureIndex);
-    if (!currentMeasure) return [];
-
-    // Applique la transposition comme dans MeasureBlock
-    const transposedCells = chordCellsWithTransposition(
-      currentMeasure.cells,
-      state.config.transposition ?? 0
+  useEffect(() => {
+    if (!state?.transport.currentMeasureIndex) return;
+    const currentMeasure = allMeasures.find(
+      (m) => m.index === state?.transport.currentMeasureIndex
     );
+    if (currentMeasure) setCurrentMeasure(currentMeasure);
+  }, [state?.transport.currentMeasureIndex]);
 
-    const rawChords = transposedCells
-      .filter((cell) => cell.kind === "Chord" && cell.chord)
-      // @ts-expect-error
-      .map((cell) => (cell as CellSchema).chord!);
-
-    const findFallbackChord = (startIndex: number): ChordSchema | null => {
-      for (let i = startIndex - 1; i >= 0; i--) {
-        const prevMeasure = allMeasures.find((m) => m.index === i);
-        const chordCell = prevMeasure?.cells.find(
-          (cell) => cell.kind === "Chord" && cell.chord?.content.note !== "%"
-        );
-        // @ts-expect-error
-        if (chordCell?.chord) return (chordCell as CellSchema).chord;
-      }
-      return null;
-    };
-
-    const processedChords: ChordSchema[] = [];
-
-    rawChords.forEach((chord, index) => {
-      if (chord.content.note === "%") {
-        if (index > 0) {
-          processedChords.push(processedChords[processedChords.length - 1]);
-        } else {
-          const fallback = findFallbackChord(currentMeasureIndex);
-          if (fallback) processedChords.push(fallback);
-        }
-      } else {
-        processedChords.push(chord);
-      }
-    });
-
-    return processedChords;
-  }, [state?.transport.currentMeasureIndex, state?.config.transposition, allMeasures]);
+  useEffect(() => {
+    if (!currentMeasure) return;
+    setCurrentChords(
+      currentMeasure.cells
+        .flatMap((c) => (c.kind === "Chord" && c.chord.content.note !== "%" ? c : []))
+        .sort((a, b) => a.index - b.index)
+        .map((c) => c.chord)
+    );
+  }, [currentMeasure]);
 
   if (
     !state ||
@@ -609,14 +537,25 @@ export function ChordsDiagramsView() {
 
   return (
     <ClientOnly>
-      <div className="h-30 w-full flex md:flex-row flex-col justify-center gap-2 md:pb-0 pb-5">
-        {currentChords.map((chord, index) => (
-          <div key={index} className="flex flex-col items-center">
-            <p className="whitespace-nowrap font-mono bold text-primary">{chordToString(chord)}</p>
-            <PianoChordDiagram chord={chord} />
+      {currentChords.length ? (
+        <div className="h-30 mx-auto flex md:flex-row flex-col justify-center gap-2 md:pb-0 pb-5 relative">
+          <div className="absolute -right-5">
+            <CloseButton
+              onClick={() => dispatch({ type: Action.SHOW_PIANO_DIAGRAMS, display: false })}
+            />
           </div>
-        ))}
-      </div>
+          {currentChords.map((chord, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <p className="whitespace-nowrap font-mono bold text-primary">
+                {chordToString(chord)}
+              </p>
+              <PianoChordDiagram chord={chord} />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="h-30" />
+      )}
     </ClientOnly>
   );
 }
