@@ -333,7 +333,7 @@ export function Tab({ children }: { children: ReactNode }) {
         }`}
       >
         <div
-          className={`z-10 absolute top-0 left-0 w-full inset-0 transition-opacity duration-300 flex flex-col justify-between p-2 ${
+          className={`z-10 absolute top-0 left-0 w-full transition-opacity duration-300 flex flex-col justify-between p-2 ${
             isIdle ? "opacity-0 pointer-events-none" : "opacity-100"
           }`}
         >
