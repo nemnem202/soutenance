@@ -550,22 +550,22 @@ export function ChordsDiagramsView() {
       return null;
     };
 
-    const processedChords: ChordSchema[] = [];
+    const processedChords: Set<ChordSchema> = new Set();
 
     rawChords.forEach((chord, index) => {
       if (chord.content.note === "%") {
         if (index > 0) {
-          processedChords.push(processedChords[processedChords.length - 1]);
+          // processedChords.add(processedChords[processedChords.length - 1]);
         } else {
           const fallback = findFallbackChord(currentMeasureIndex);
-          if (fallback) processedChords.push(fallback);
+          if (fallback) processedChords.add(fallback);
         }
       } else {
-        processedChords.push(chord);
+        processedChords.add(chord);
       }
     });
 
-    return processedChords;
+    return Array.from(processedChords);
   }, [state?.transport.currentMeasureIndex, state?.config.transposition, allMeasures]);
 
   if (
