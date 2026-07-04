@@ -509,64 +509,36 @@ export function RepeatsDisplay() {
 
 export function ChordsDiagramsView() {
   const { state, dispatch } = useMidiStore();
-  const { exercise } = useGame();
   const { size } = useScreen();
+  const { exercise } = useGame();
+  const [currentMeasure, setCurrentMeasure] = useState<MeasureSchema | null>(null);
+  const [currentChords, setCurrentChords] = useState<ChordSchema[]>([]);
+  const allMeasures = useMemo(
+    () =>
+      exercise.chordsGrid?.sections.flatMap((s) => [
+        ...s.commonMeasures,
+        ...s.voltas.flatMap((v) => v.measures),
+      ]) ?? [],
+    [exercise]
+  );
 
-  const allMeasures = useMemo<MeasureSchema[]>(() => {
-    if (!exercise.chordsGrid) return [];
-    return exercise.chordsGrid.sections.flatMap((section) => [
-      ...section.commonMeasures,
-      ...section.voltas.flatMap((volta) => volta.measures),
-    ]);
-  }, [exercise.chordsGrid]);
-
-  const currentChords = useMemo<Chord[]>(() => {
-    if (!state || !allMeasures.length) return [];
-
-    const currentMeasureIndex = state.transport.currentMeasureIndex;
-    const currentMeasure = allMeasures.find((m) => m.index === currentMeasureIndex);
-    if (!currentMeasure) return [];
-
-    // Applique la transposition comme dans MeasureBlock
-    const transposedCells = chordCellsWithTransposition(
-      currentMeasure.cells,
-      state.config.transposition ?? 0
+  useEffect(() => {
+    if (!state?.transport.currentMeasureIndex) return;
+    const currentMeasure = allMeasures.find(
+      (m) => m.index === state?.transport.currentMeasureIndex
     );
+    if (currentMeasure) setCurrentMeasure(currentMeasure);
+  }, [state?.transport.currentMeasureIndex]);
 
-    const rawChords = transposedCells
-      .filter((cell) => cell.kind === "Chord" && cell.chord)
-      // @ts-expect-error
-      .map((cell) => (cell as CellSchema).chord!);
-
-    const findFallbackChord = (startIndex: number): ChordSchema | null => {
-      for (let i = startIndex - 1; i >= 0; i--) {
-        const prevMeasure = allMeasures.find((m) => m.index === i);
-        const chordCell = prevMeasure?.cells.find(
-          (cell) => cell.kind === "Chord" && cell.chord?.content.note !== "%"
-        );
-        // @ts-expect-error
-        if (chordCell?.chord) return (chordCell as CellSchema).chord;
-      }
-      return null;
-    };
-
-    const processedChords: Set<ChordSchema> = new Set();
-
-    rawChords.forEach((chord, index) => {
-      if (chord.content.note === "%") {
-        if (index > 0) {
-          // processedChords.add(processedChords[processedChords.length - 1]);
-        } else {
-          const fallback = findFallbackChord(currentMeasureIndex);
-          if (fallback) processedChords.add(fallback);
-        }
-      } else {
-        processedChords.add(chord);
-      }
-    });
-
-    return Array.from(processedChords);
-  }, [state?.transport.currentMeasureIndex, state?.config.transposition, allMeasures]);
+  useEffect(() => {
+    if (!currentMeasure) return;
+    setCurrentChords(
+      currentMeasure.cells
+        .flatMap((c) => (c.kind === "Chord" && c.chord.content.note !== "%" ? c : []))
+        .sort((a, b) => a.index - b.index)
+        .map((c) => c.chord)
+    );
+  }, [currentMeasure]);
 
   if (
     !state ||
@@ -578,19 +550,25 @@ export function ChordsDiagramsView() {
 
   return (
     <ClientOnly>
-      <div className="h-30 mx-auto flex md:flex-row flex-col justify-center gap-2 md:pb-0 pb-5 relative">
-        <div className="absolute -right-5">
-          <CloseButton
-            onClick={() => dispatch({ type: Action.SHOW_PIANO_DIAGRAMS, display: false })}
-          />
-        </div>
-        {currentChords.map((chord, index) => (
-          <div key={index} className="flex flex-col items-center">
-            <p className="whitespace-nowrap font-mono bold text-primary">{chordToString(chord)}</p>
-            <PianoChordDiagram chord={chord} />
+      {currentChords.length ? (
+        <div className="h-30 mx-auto flex md:flex-row flex-col justify-center gap-2 md:pb-0 pb-5 relative">
+          <div className="absolute -right-5">
+            <CloseButton
+              onClick={() => dispatch({ type: Action.SHOW_PIANO_DIAGRAMS, display: false })}
+            />
           </div>
-        ))}
-      </div>
+          {currentChords.map((chord, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <p className="whitespace-nowrap font-mono bold text-primary">
+                {chordToString(chord)}
+              </p>
+              <PianoChordDiagram chord={chord} />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="h-30" />
+      )}
     </ClientOnly>
   );
 }
