@@ -171,7 +171,7 @@ function logMeasureMapSummary(measureMap: MeasureMap) {
   }));
 
   logger.info(`Grille d'accords extraite — ${rows.length} mesures`);
-  console.table(rows);
+  logger.table(rows);
 }
 
 function convertToChordsGrid(measureMap: MeasureMap): ChordsGridSchema {

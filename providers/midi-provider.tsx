@@ -98,7 +98,6 @@ export default function MidiProvider({ children }: { children: ReactNode }) {
         });
 
         updateMidiInputs(inputs);
-        logger.info("MIDI initialized");
       } catch (err) {
         logger.error("MIDI access denied", err);
       }

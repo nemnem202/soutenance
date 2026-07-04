@@ -11,7 +11,6 @@ export default function IrealLinkConverter() {
   const [currentPlaylist, setCurrentPlaylist] = useState<PlaylistSchema | null>(null);
   const handleValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     const irealPlaylist = new IrealChartDecoder(e.target.value);
-    logger.info("Playlist", irealPlaylist);
     const converted = convertPlaylist(irealPlaylist);
     setCurrentPlaylist(converted.playlist);
   };
