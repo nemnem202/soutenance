@@ -1,5 +1,11 @@
 import { Separator } from "@/components/ui/separator";
-import { BpmControl, ControlsSection, RepeatsDisplay, TrackSelect } from "./game-assets";
+import {
+  BpmControl,
+  ControlsSection,
+  RepeatsDisplay,
+  TrackSelect,
+  ZoomButtons,
+} from "./game-assets";
 import useGame from "@/hooks/use-game";
 import {
   MetronomeButton,
@@ -41,28 +47,7 @@ export function MobileGameControlSection({ ...props }: Gameprops) {
   return (
     <div className=" flex w-full justify-evenly">
       {isHorizontal && activeTab === "piano-roll"
-        ? (
-            <div className="flex gap-1 border rounded-md">
-              <ZoomInButton
-                onClick={(e) => {
-                  e.stopPropagation();
-                  dispatch({
-                    type: Action.ZoomY,
-                    zoomY: Math.min(100, (state?.display.zoomY ?? 0) + 10),
-                  });
-                }}
-              />
-              <ZoomOutButton
-                onClick={(e) => {
-                  e.stopPropagation();
-                  dispatch({
-                    type: Action.ZoomY,
-                    zoomY: Math.max(0, (state?.display.zoomY ?? 0) - 10),
-                  });
-                }}
-              />
-            </div>
-          )!
+        ? (<ZoomButtons />)!
         : isHorizontal && <div className="w-40" />}
 
       <SettingsButton onClick={() => props.toggleSidebar()} />

@@ -308,37 +308,12 @@ export function Tab({ children }: { children: ReactNode }) {
         {...interactiveProps}
         className="md:size-full md:bg-card md:rounded-md relative overflow-hidden group min-h-0"
       >
-        {/* <div className="hidden z-10 absolute p-2 top-0 right-0 inset-0 transition opacity-0 group-hover:opacity-100 md:flex flex-col justify-between items-end">
-          <div className="flex gap-3">
-            {activeTab === "piano-roll" && <TrackSelect />}
-            <FullScreenButton fullScreen={fullScreen} setFullScreen={handleFullScreen} />
-          </div>
-          {activeTab === "piano-roll" && (
-            <div className="flex-1 max-h-[50%] relative m-1">
-              <ZoomSlider />
-            </div>
-          )}
-          {(activeTab === "chords-grid" || activeTab === "chords-carousel") && (
-            <ChordDisplaySelector />
-          )}
-          {activeTab === "piano-roll" && <div />}
-        </div> */}
-        <div
-          // Ajout de pointer-events-none pour que les clics passent à travers la zone vide
-          className="hidden z-10 absolute p-2 top-0 right-0 inset-0 transition opacity-0 group-hover:opacity-100 md:flex flex-col justify-between items-end pointer-events-none"
-        >
-          {/* On remet pointer-events-auto sur les blocs de boutons réels */}
+        <div className="hidden z-10 absolute p-2 top-0 right-0 inset-0 transition opacity-0 group-hover:opacity-100 md:flex flex-col justify-between items-end pointer-events-none">
           <div className="flex gap-3 pointer-events-auto">
+            {activeTab === "piano-roll" && <ZoomButtons />}
             {activeTab === "piano-roll" && <TrackSelect />}
             <FullScreenButton fullScreen={fullScreen} setFullScreen={handleFullScreen} />
           </div>
-
-          {activeTab === "piano-roll" && (
-            <div className="flex-1 max-h-[50%] relative m-1 pointer-events-auto">
-              <ZoomSlider />
-            </div>
-          )}
-
           {(activeTab === "chords-grid" || activeTab === "chords-carousel") && (
             <div className="pointer-events-auto">
               <ChordDisplaySelector />
@@ -378,6 +353,7 @@ export function Tab({ children }: { children: ReactNode }) {
               />
             </div>
             <div className="flex gap-3 flex-1 justify-end">
+              {activeTab === "piano-roll" && <ZoomButtons />}
               {activeTab === "piano-roll" && (
                 <div className="w-max-50">
                   <TrackSelect />
@@ -386,11 +362,6 @@ export function Tab({ children }: { children: ReactNode }) {
               <FullScreenButton fullScreen={fullScreen} setFullScreen={handleFullScreen} />
             </div>
           </div>
-          {activeTab === "piano-roll" && (
-            <div className="flex-1 max-h-[50%] relative m-1 w-full flex justify-end">
-              <ZoomSlider />
-            </div>
-          )}
           <div></div>
         </div>
         <div
@@ -468,29 +439,26 @@ export function BpmControl() {
   );
 }
 
-function ZoomSlider() {
+export function ZoomButtons() {
   const { dispatch, state } = useMidiStore();
   return (
-    <div className="flex flex-col items-center justify-center h-full">
+    <div className="flex gap-1 border rounded-md bg-background h-10 items-center">
       <ZoomInButton
-        onClick={() => {
-          dispatch({ type: Action.ZoomY, zoomY: Math.min(100, (state?.display.zoomY ?? 0) + 10) });
-        }}
-      />
-      <Slider
-        orientation="vertical"
-        min={0}
-        max={100}
-        step={1}
-        className="flex-1"
-        value={state?.display.zoomY ? [state.display.zoomY] : [0]}
-        onValueChange={(values) => {
-          dispatch({ type: Action.ZoomY, zoomY: values[0] });
+        onClick={(e) => {
+          e.stopPropagation();
+          dispatch({
+            type: Action.ZoomY,
+            zoomY: Math.min(100, (state?.display.zoomY ?? 0) + 10),
+          });
         }}
       />
       <ZoomOutButton
-        onClick={() => {
-          dispatch({ type: Action.ZoomY, zoomY: Math.max(0, (state?.display.zoomY ?? 0) - 10) });
+        onClick={(e) => {
+          e.stopPropagation();
+          dispatch({
+            type: Action.ZoomY,
+            zoomY: Math.max(0, (state?.display.zoomY ?? 0) - 10),
+          });
         }}
       />
     </div>
