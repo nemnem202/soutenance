@@ -353,7 +353,7 @@ export function Tab({ children }: { children: ReactNode }) {
           <div></div>
         </div>
         <div
-          className={`z-0 md:h-full md:min-h-0 ${activeTab !== "piano-roll" && "pt-12"} flex flex-col gap-5 border-5 `}
+          className={`z-0 md:h-full md:min-h-0 ${activeTab !== "piano-roll" && "pt-12"} flex flex-col gap-5`}
         >
           {children}
           <ChordsDiagramsView />
