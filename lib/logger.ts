@@ -1,7 +1,19 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Intentional */
 
 const isBrowser = typeof window !== "undefined";
-const isProd = import.meta?.env?.MODE || import.meta?.env?.PROD;
+let isViteProd = false;
+try {
+  isViteProd = import.meta.env.PROD;
+} catch (e) {
+  isViteProd = false;
+}
+let isNodeProd = false;
+try {
+  isNodeProd = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "prod";
+} catch (e) {
+  isNodeProd = false;
+}
+const isProd = isViteProd || isNodeProd;
 const canLog = !isBrowser || !isProd;
 
 type LogLevel = "info" | "success" | "warn" | "error" | "draw";
