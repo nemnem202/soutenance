@@ -339,7 +339,6 @@ export default class ExerciseRepository extends Repository {
       timeSignatureChangeTop,
     } = cell;
 
-    if (cell.navigation) logger.info("CELL NAVIGATION: ", cell.navigation);
     return {
       index,
       kind,

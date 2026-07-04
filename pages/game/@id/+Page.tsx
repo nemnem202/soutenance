@@ -39,10 +39,6 @@ function GameContent() {
   const { exercise } = useGame();
   const [sidebarOpen, setOpen] = useState(false);
 
-  useEffect(() => {
-    logger.info("Exercise: ", exercise);
-  }, []);
-
   return (
     <div className="flex flex-row w-screen h-[100dvh] overflow-hidden">
       <GameSidebar sidebarOpen={sidebarOpen} setOpen={setOpen} />
@@ -117,7 +113,7 @@ function MobileGameView({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>
       <Drawer modal={false} open={drawersVisible} onOpenChange={setDrawersVisible}>
         <DrawerTrigger asChild>
           <main className="flex-1 min-w-0 h-[100dvh] flex flex-col items-center p-2 max-w-screen min-h-0">
-            <div className="flex-1 w-full flex flex-col min-h-0">
+            <div className="flex-1 w-full flex flex-col min-h-0 ">
               <GameView toggleSidebar={() => setOpen((prev) => !prev)} />
             </div>
           </main>
@@ -140,7 +136,7 @@ function MobileGameView({ setOpen }: { setOpen: Dispatch<SetStateAction<boolean>
         direction={activeTab === "piano-roll" ? "top" : "bottom"}
       >
         <DrawerTrigger asChild>
-          <main className="flex-1 min-w-0 h-[100dvh] flex flex-col items-center p-2 max-w-screen min-h-0">
+          <main className="flex-1 min-w-0 h-[100dvh] flex flex-col items-center p-2 max-w-screen min-h-0 ">
             <GameView toggleSidebar={() => setOpen((prev) => !prev)} />
           </main>
         </DrawerTrigger>

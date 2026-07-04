@@ -274,7 +274,6 @@ function extractLoop(midi: Midi): Loop | null {
       start: loopStart.ticks,
       end: loopEnd.ticks,
     };
-    logger.info("Loop found: ", loop);
     return loop;
   } else {
     return null;
