@@ -32,6 +32,7 @@ import {
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { Action } from "@/midi-editor/types/actions";
 import {
+  CloseButton,
   PlayButton,
   StopButton,
   ZoomInButton,
@@ -507,7 +508,7 @@ export function RepeatsDisplay() {
 }
 
 export function ChordsDiagramsView() {
-  const { state } = useMidiStore();
+  const { state, dispatch } = useMidiStore();
   const { exercise } = useGame();
   const { size } = useScreen();
 
@@ -577,7 +578,12 @@ export function ChordsDiagramsView() {
 
   return (
     <ClientOnly>
-      <div className="h-30 w-full flex md:flex-row flex-col justify-center gap-2 md:pb-0 pb-5">
+      <div className="h-30 mx-auto flex md:flex-row flex-col justify-center gap-2 md:pb-0 pb-5 relative">
+        <div className="absolute -right-5">
+          <CloseButton
+            onClick={() => dispatch({ type: Action.SHOW_PIANO_DIAGRAMS, display: false })}
+          />
+        </div>
         {currentChords.map((chord, index) => (
           <div key={index} className="flex flex-col items-center">
             <p className="whitespace-nowrap font-mono bold text-primary">{chordToString(chord)}</p>
