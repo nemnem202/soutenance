@@ -33,6 +33,7 @@ import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { Action } from "@/midi-editor/types/actions";
 import {
   CloseButton,
+  FullScreenButton,
   PlayButton,
   StopButton,
   ZoomInButton,
@@ -226,24 +227,6 @@ export function SmallCheckboxGroup({
       </Label>
       <Checkbox id={id} {...checkboxProps} />
     </div>
-  );
-}
-
-export function FullScreenButton({
-  fullScreen,
-  setFullScreen,
-}: {
-  fullScreen: boolean;
-  setFullScreen: (full: boolean) => void;
-}) {
-  return (
-    <Button variant={"ghost"} onClick={() => setFullScreen(!fullScreen)}>
-      {fullScreen ? (
-        <Minimize className=" stroke-muted-foreground !hover:stroke-foreground" />
-      ) : (
-        <Maximize className=" stroke-muted-foreground !hover:stroke-foreground" />
-      )}
-    </Button>
   );
 }
 
