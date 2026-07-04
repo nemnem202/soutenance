@@ -13,12 +13,14 @@
 - ajouter des particules dans le piano roll
 - corriger le bug du piano roll qui ne se met pas à jour quand on change de fichier midi
 - corriger le bug lors de l'ouverture de la sidebar: le piano ne ce redessine pas par rapport à sa gauche
+- afficher le retour au debut au moment du stop / retour au depart au moment de play  + redessiner la ligne
 
 //// audio ///
 
 - telecharger mma en local pour ajouter ses propres fichier de librairie
 - leak de performances a chaque changement de mesure
 - ajouter un event listener sur les inputs midi pour gerer les connexions / deconnexions
+- trop de latence pour le midi
 
 //// exercice ///
 
@@ -26,7 +28,10 @@
 - corriger la navigation dans le chord grid
 - ajouter diagrammes d'accords de guitare
 - corriger l'affichage des accords semi diminues (et autres)
+- mobile: piano roll : bug d'affichage quand on passe du fullscreen au min screen puis encore au fullscreen
 
 /// general ///
 
 - BUG: si je vais dans une playlist des favoris et qu'ensuite je vais dans une playlist propriétaire, les musiques de la playlist des favoris s'ajoutent a ma playlist propriétaire
+- ajouter la modification de playlist
+- les playlists recentses ne sont qu'une copie de celles créées par l'utilisateur. A modifier

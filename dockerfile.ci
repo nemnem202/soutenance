@@ -14,10 +14,10 @@ RUN wget https://www.mellowood.ca/mma/mma-bin-25.05.0.tar.gz && \
     cd /opt/mma && python3 mma.py -G
 
 # music21 install
-RUN apk add --no-cache python3-dev py3-pip
-RUN python3 -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-RUN pip install --no-cache-dir music21
+# RUN apk add --no-cache python3-dev py3-pip
+# RUN python3 -m venv /opt/venv
+# ENV PATH="/opt/venv/bin:$PATH"
+# RUN pip install --no-cache-dir music21
 
 WORKDIR /app
 

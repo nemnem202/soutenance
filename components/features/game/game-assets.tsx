@@ -290,7 +290,7 @@ export function Tab({ children }: { children: ReactNode }) {
     return (
       <div
         {...interactiveProps}
-        className="md:size-full md:bg-card md:rounded-md relative overflow-hidden group min-h-0"
+        className="size-full md:bg-card md:rounded-md relative overflow-hidden group min-h-0"
       >
         <div className="hidden z-10 absolute p-2 top-0 right-0 inset-0 transition opacity-0 group-hover:opacity-100 md:flex flex-col justify-between items-end pointer-events-none">
           <div className="flex gap-3 pointer-events-auto">
@@ -353,7 +353,7 @@ export function Tab({ children }: { children: ReactNode }) {
           <div></div>
         </div>
         <div
-          className={`z-0 md:h-full md:min-h-0 ${activeTab !== "piano-roll" && "pt-12"} flex flex-col gap-5`}
+          className={`z-0 md:h-full md:min-h-0 ${activeTab !== "piano-roll" && "pt-12"} flex flex-col gap-5 border-5 `}
         >
           {children}
           <ChordsDiagramsView />
