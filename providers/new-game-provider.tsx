@@ -1,7 +1,8 @@
 import { useLanguage } from "@/hooks/use-language";
 import { Exercise } from "@/types/entities";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { GameContext, GameContextType, Tab, TabID } from "./game-provider";
+import { logger } from "@/lib/logger";
 
 export default function NewGameProvider({
   defaultExercise,
@@ -21,6 +22,10 @@ export default function NewGameProvider({
     { id: "sheet", label: instance.getItem("sheet"), disabled: true },
     { id: "guitar", label: instance.getItem("guitar"), disabled: true },
   ];
+
+  useEffect(() => {
+    logger.info("New exercise: ", exercise);
+  }, [exercise]);
 
   const value: GameContextType = {
     exercise,
