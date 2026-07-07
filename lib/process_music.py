@@ -213,6 +213,8 @@ def process_music(file_path):
 
     # 6. Structuration finale calquée sur exerciseSchema
     exercise_payload = {
+        "id": 0,
+        "session": None,
         "title": title,
         "composer": composer,
         "defaultConfig": {

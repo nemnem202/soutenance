@@ -24,7 +24,7 @@ export type Account = {
 
 export type ExerciseSchema = z.infer<typeof exerciseSchema>;
 
-export type Exercise = ExerciseSchema & { id: number; author: Session };
+export type Exercise = ExerciseSchema & { id: number; author: Session | null };
 
 export type PlaylistSchema = z.infer<typeof playlistSchema>;
 

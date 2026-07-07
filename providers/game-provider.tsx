@@ -26,6 +26,7 @@ export type Tab = { id: TabID; label: string; disabled?: boolean };
 
 export interface GameContextType {
   exercise: Exercise;
+  updateExercise: Dispatch<SetStateAction<Exercise>>;
   tabs: Tab[];
   activeTab: TabID;
   setActiveTab: Dispatch<SetStateAction<TabID>>;
@@ -36,17 +37,17 @@ export interface GameContextType {
 export const GameContext = createContext<GameContextType | null>(null);
 
 export default function GameProvider({
-  exercise,
+  defaultExercise,
   children,
 }: {
-  exercise: Exercise;
+  defaultExercise: Exercise;
   children: ReactNode;
 }) {
   const { instance } = useLanguage();
   const [activeTab, setActiveTab] = useState<TabID>("chords-grid");
   const [midiLoading, setMidiLoading] = useState(true);
+  const [exercise, updateExercise] = useState(defaultExercise);
   const dispatch = useMidiStore((s) => s.dispatch);
-  const state = useMidiStore((s) => s.state);
 
   useShortcuts();
 
@@ -92,6 +93,7 @@ export default function GameProvider({
 
   const value: GameContextType = {
     exercise,
+    updateExercise,
     tabs,
     activeTab,
     setActiveTab,

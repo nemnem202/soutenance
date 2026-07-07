@@ -21,7 +21,6 @@ import useGame from "@/hooks/use-game";
 import { Spinner } from "@/components/ui/spinner";
 import useAudio from "@/hooks/use-audio";
 import useScreen from "@/hooks/use-screen";
-import { logger } from "@/lib/logger";
 
 export default function Page() {
   const { exercise } = useData<Data>();
@@ -29,7 +28,7 @@ export default function Page() {
   if (!exercise.success) return null;
 
   return (
-    <GameProvider exercise={exercise.data}>
+    <GameProvider defaultExercise={exercise.data}>
       <GameContent />
     </GameProvider>
   );

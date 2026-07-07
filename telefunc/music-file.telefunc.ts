@@ -1,10 +1,14 @@
 import MusicFileController, { JsonAndMidiOutput } from "@/controllers/MusicFileController";
 import prismaClient from "@/lib/prisma-client";
 import { handleAction } from "@/lib/response-handler";
+import { ChordsGridSchema } from "@/types/entities";
 import { ServerResponse, Status } from "@/types/server-response";
 import { getContext, shield } from "telefunc";
 
-export default async function onMusicFile(file: File): Promise<ServerResponse<JsonAndMidiOutput>> {
+export default async function onMusicFile(
+  file: File,
+  chordsGrid?: ChordsGridSchema
+): Promise<ServerResponse<JsonAndMidiOutput>> {
   const { user } = getContext();
   if (!user?.id)
     return {
