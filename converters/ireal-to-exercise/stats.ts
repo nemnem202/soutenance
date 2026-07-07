@@ -1,4 +1,4 @@
-import links from "../links.json";
+import links from "@/seed/links.json";
 import { IrealChartDecoder } from "./chart_decoder";
 import StatsCollector from "./statsCollector";
 
