@@ -17,6 +17,7 @@ interface ProgressUploadProps {
   maxSize?: number;
   accept?: string;
   multiple?: boolean;
+  title: string;
   className?: string;
   onFilesChange?: (files: FileWithPreview[]) => void;
   simulateUpload?: boolean;
@@ -27,6 +28,7 @@ export function FileUploadSection({
   maxSize = 10 * 1024 * 1024,
   accept = "*",
   multiple = true,
+  title,
   className,
   onFilesChange,
   simulateUpload = true,
@@ -105,7 +107,7 @@ export function FileUploadSection({
   return (
     <div
       className={cn(
-        "rounded-lg relative border border-dashed p-8 text-center transition-colors",
+        "rounded-lg relative border border-dashed p-8 text-center transition-colors size-full",
         isDragging
           ? "border-primary bg-primary/5"
           : "border-muted-foreground/25 hover:border-muted-foreground/50",
@@ -116,9 +118,8 @@ export function FileUploadSection({
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
-      <input {...getInputProps()} className="sr-only" />
-
-      <div className="flex flex-col items-center gap-4">
+      <input {...getInputProps()} className="sr-only" id="file-input" />
+      <div className="flex flex-col items-center gap-4 justify-center size-full">
         <div
           className={cn(
             "flex h-16 w-16 items-center justify-center rounded-full",
@@ -131,7 +132,7 @@ export function FileUploadSection({
         </div>
 
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold">Upload a midi or audio file</h3>
+          <h3 className="text-lg font-semibold">{title}</h3>
           <p className="text-muted-foreground text-sm">
             Drag and drop files here or click to browse
           </p>

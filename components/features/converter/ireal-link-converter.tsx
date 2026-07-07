@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { logger } from "@/lib/logger";
-import { IrealChartDecoder } from "@/seed/conversion/chart_decoder";
-import { convertPlaylist } from "@/seed/conversion/converter";
+import { IrealChartDecoder } from "@/converters/ireal-to-exercise/chart_decoder";
+import { convertPlaylist } from "@/converters/ireal-to-exercise/converter";
 import { PlaylistSchema } from "@/types/entities";
 import { useState, type ChangeEvent } from "react";
 import ReactJson from "react-json-view";

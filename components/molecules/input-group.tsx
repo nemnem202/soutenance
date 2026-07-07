@@ -133,7 +133,10 @@ function InputGroupInput({ className, ...props }: React.ComponentProps<"input">)
     <Input
       data-slot="input-group-control"
       className={cn(
-        "flex-1 rounded-none border-0 bg-transparent shadow-none !ring-0 !ring-offset-0 !shadow-none dark:bg-transparent",
+        "flex-1 rounded-none bg-transparent dark:bg-transparent",
+        "!border-0 !shadow-none !ring-0 !ring-offset-0",
+        // Les deux classes magiques pour tuer l'ombre du pseudo-élément et le focus ring :
+        "before:hidden has-focus-visible:ring-0 has-focus-visible:!border-transparent",
         className
       )}
       {...props}

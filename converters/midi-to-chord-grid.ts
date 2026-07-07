@@ -1,5 +1,5 @@
 import { ChordsGridSchema, MeasureSchema } from "@/types/entities";
-import { getMidiFileFromBuffer } from "./midiconverter";
+import { getMidiFileFromBuffer } from "./midi-to-state";
 import { Midi } from "@tonejs/midi";
 import { Note } from "@tonejs/midi/dist/Note";
 import { Chord as ChordType } from "@/types/music";

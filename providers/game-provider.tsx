@@ -9,7 +9,7 @@ import {
 import { useLanguage } from "@/hooks/use-language";
 import type { Exercise } from "@/types/entities";
 import type { State as state } from "@/midi-editor/types/instance";
-import { convertMidiFileToState, getMidiFileFromBuffer } from "@/converters/midiconverter";
+import { convertMidiFileToState, getMidiFileFromBuffer } from "@/converters/midi-to-state";
 import { errorToast } from "@/lib/toaster";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { Action, type MidiAction } from "@/midi-editor/types/actions";
