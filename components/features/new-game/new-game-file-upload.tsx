@@ -61,9 +61,18 @@ export default function NewGameFileUpload() {
     }
 
     if (
-      [".xml", ".mxl", ".musicxml", ".mid", ".midi", ".abc", ".krn", ".mei", "audio/midi"].includes(
-        actualFile.type
-      )
+      [
+        ".xml",
+        ".mxl",
+        ".musicxml",
+        ".mid",
+        ".midi",
+        ".abc",
+        ".krn",
+        ".mei",
+        "audio/midi",
+        "text/vnd.abc",
+      ].includes(actualFile.type)
     ) {
       const response = await onMusicFile(actualFile, chordsGrid);
       if (response.success) {

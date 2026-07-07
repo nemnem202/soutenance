@@ -20,4 +20,4 @@ export default async function onMusicFile(
   return handleAction("Music file process", () => controller.getJsonAndMidi());
 }
 
-shield(onMusicFile, [shield.type.any], {});
+shield(onMusicFile, [shield.type.any, shield.type.any], {});
