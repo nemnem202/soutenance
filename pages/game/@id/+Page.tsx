@@ -10,13 +10,10 @@ import SizeAdapter from "@/components/molecules/size-adapter";
 import AnimatedTabs from "@/components/organisms/animated-tabs";
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/organisms/drawer";
 import Headline from "@/components/ui/headline";
-import MobileHeaderNavContainer from "@/components/features/layout/mobile-header-nav-container";
-import { HistoryBackButton } from "@/components/ui/custom-buttons";
 import { useData } from "vike-react/useData";
 import type { Data } from "./+data";
 import GameProvider, { type TabID } from "@/providers/game-provider";
 import PianoRoll from "@/midi-editor/components/piano-roll";
-import { ClientOnly } from "vike-react/ClientOnly";
 import useGame from "@/hooks/use-game";
 import { Spinner } from "@/components/ui/spinner";
 import useAudio from "@/hooks/use-audio";
@@ -59,7 +56,7 @@ function GameContent() {
   );
 }
 
-function GameView({ toggleSidebar }: { toggleSidebar: () => void }) {
+export function GameView({ toggleSidebar }: { toggleSidebar: () => void }) {
   const { activeTab, tabs, setActiveTab } = useGame();
   const { audioLoaded } = useAudio();
   return (
@@ -86,7 +83,7 @@ function GameView({ toggleSidebar }: { toggleSidebar: () => void }) {
         <Tab>
           {(activeTab === "chords-grid" || activeTab === "chords-carousel") && <ChordTab />}
           {activeTab === "piano-roll" && (
-            <ClientOnly>
+            <>
               {!audioLoaded ? (
                 <div className="size-full flex items-center justify-center">
                   <Spinner />
@@ -94,7 +91,7 @@ function GameView({ toggleSidebar }: { toggleSidebar: () => void }) {
               ) : (
                 <PianoRoll />
               )}
-            </ClientOnly>
+            </>
           )}
         </Tab>
         <ChordsDiagramsView />

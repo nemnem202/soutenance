@@ -22,10 +22,11 @@ export default async function convertMidiFileToChordGrid(
   file: File
 ): Promise<ChordsGridSchema | null> {
   const buffer = await file.arrayBuffer();
-  const midi = await getMidiFileFromBuffer(buffer);
+  const midi = await getMidiFileFromBuffer(buffer); // retourne @tonejs/midi
   const notes = midi.tracks.flatMap((t) => t.notes);
   const measureMap = extractMeasureMap(midi, notes);
   defineChords(measureMap);
+  addMidiMetaEvents(measureMap, midi);
   return convertToChordsGrid(measureMap);
 }
 
@@ -226,4 +227,14 @@ function convertToChordsGrid(measureMap: MeasureMap): ChordsGridSchema {
       },
     ],
   };
+}
+
+function addMidiMetaEvents(measureMap: MeasureMap, midi: Midi) {
+  for (const [startTick, measure] of measureMap) {
+    midi.header.meta.push({
+      text: `Bar_${measure.measureIndex}`,
+      ticks: startTick,
+      type: "marker",
+    });
+  }
 }

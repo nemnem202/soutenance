@@ -10,12 +10,13 @@ import { errorToast } from "@/lib/toaster";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { Action } from "@/midi-editor/types/actions";
 import onMusicFile from "@/telefunc/music-file.telefunc";
-import { ChordsGridSchema } from "@/types/entities";
+import { Exercise } from "@/types/entities";
+import { Midi } from "@tonejs/midi";
 import { useState } from "react";
 import { navigate } from "vike/client/router";
 
 export default function NewGameFileUpload() {
-  const { updateExercise } = useGame();
+  const { updateExercise, exercise } = useGame();
   const { dispatch } = useMidiStore();
   const [progess, setProgress] = useState(0);
 
@@ -35,15 +36,23 @@ export default function NewGameFileUpload() {
         ? await convertMidiFileToChordGrid(fileToProcess)
         : undefined;
 
-      const response = await onMusicFile(fileToProcess, chordsGrid ?? undefined);
+      let newExercise: Exercise;
+      let midi: Midi;
 
-      if (!response.success) throw new Error("Échec du traitement serveur");
+      if (chordsGrid) {
+        newExercise = { ...exercise, chordsGrid: chordsGrid, title: fileToProcess.name };
+        const buffer = await fileToProcess.arrayBuffer();
+        midi = await getMidiFileFromBuffer(buffer);
+      } else {
+        const response = await onMusicFile(fileToProcess, chordsGrid ?? undefined);
+        if (!response.success) throw new Error("Échec du traitement serveur");
+        newExercise = response.data.exercise;
+        midi = await getMidiFileFromBuffer(response.data.midiFile);
+      }
 
-      const { exercise, midiFile } = response.data;
-      updateExercise(exercise);
+      updateExercise(newExercise);
 
-      const midi = await getMidiFileFromBuffer(midiFile);
-      useMidiStore.setState({ state: convertMidiFileToState(midi, exercise) });
+      useMidiStore.setState({ state: convertMidiFileToState(midi, newExercise) });
       dispatch({ type: Action.RESET_STATE });
 
       logger.success("Fichier traité avec succès");
