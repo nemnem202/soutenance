@@ -5,6 +5,8 @@ import { formatBytes, useFileUpload, type FileWithPreview } from "@/hooks/use-fi
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { UploadIcon } from "lucide-react";
+import { Progress } from "../ui/progress";
+import { progress } from "motion/react";
 
 interface FileUploadItem extends FileWithPreview {
   progress: number;
@@ -21,6 +23,7 @@ interface ProgressUploadProps {
   className?: string;
   onFilesChange?: (files: FileWithPreview[]) => void;
   simulateUpload?: boolean;
+  progress: number;
 }
 
 export function FileUploadSection({
@@ -32,6 +35,7 @@ export function FileUploadSection({
   className,
   onFilesChange,
   simulateUpload = true,
+  progress,
 }: ProgressUploadProps) {
   const [uploadFiles, setUploadFiles] = useState<FileUploadItem[]>([]);
 
@@ -145,6 +149,8 @@ export function FileUploadSection({
           <UploadIcon className="h-4 w-4" />
           Select files
         </Button>
+
+        {progress > 0 && <Progress value={progress} />}
       </div>
     </div>
   );

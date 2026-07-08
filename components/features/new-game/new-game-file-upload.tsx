@@ -4,105 +4,63 @@ import convertMidiFileToChordGrid from "@/converters/midi-to-chord-grid";
 import { convertMidiFileToState, getMidiFileFromBuffer } from "@/converters/midi-to-state";
 import { FileWithPreview } from "@/hooks/use-file-upload";
 import useGame from "@/hooks/use-game";
+import { getFileFromEntry, isMidi, processAudioToMidi } from "@/hooks/use-music-file-processor";
 import { logger } from "@/lib/logger";
+import { errorToast } from "@/lib/toaster";
 import { useMidiStore } from "@/midi-editor/stores/use-midi-store";
 import { Action } from "@/midi-editor/types/actions";
 import onMusicFile from "@/telefunc/music-file.telefunc";
 import { ChordsGridSchema } from "@/types/entities";
+import { useState } from "react";
+import { navigate } from "vike/client/router";
 
 export default function NewGameFileUpload() {
   const { updateExercise } = useGame();
   const { dispatch } = useMidiStore();
+  const [progess, setProgress] = useState(0);
+
   const handleFilesChange = async (files: FileWithPreview[]) => {
-    if (!files || files.length === 0) {
-      logger.info("Aucun fichier sélectionné ou liste réinitialisée.");
-      return;
-    }
+    setProgress(1);
+    const rawFile = files[0] ? getFileFromEntry(files[0]) : null;
+    if (!rawFile) return logger.error("Fichier invalide");
 
-    const fileEntry = files[0];
-    const file = fileEntry.file || fileEntry;
-    if (!file) {
-      logger.error("Structure de fichier invalide");
-      return;
-    }
-    let actualFile: File =
-      (fileEntry as any).file instanceof File ? (fileEntry as any).file : fileEntry;
+    try {
+      let fileToProcess = rawFile;
 
-    if (!(actualFile instanceof File)) {
-      logger.error("L'objet n'est pas un fichier valide");
-      return;
-    } else {
-      logger.info("Fichier selectionné: ", actualFile.name, "avec le type: ", actualFile.type);
-    }
-
-    const extension = actualFile.name
-      .slice(((actualFile.name.lastIndexOf(".") - 1) >>> 0) + 2)
-      .toLowerCase();
-
-    const isMusicXML = extension === "musicxml" || extension === "mxl";
-
-    const MIDI_MIME_TYPES = ["audio/midi", "audio/mid", "audio/sp-midi", "audio/x-midi"];
-
-    if (
-      actualFile.type &&
-      actualFile.type.startsWith("audio/") &&
-      !MIDI_MIME_TYPES.includes(actualFile.type)
-    ) {
-      const midiFile = await convertAudioFileToMidiFile(actualFile);
-      const midiBytes = midiFile.toArray();
-
-      const arrayBuffer = midiBytes.buffer.slice(
-        midiBytes.byteOffset,
-        midiBytes.byteOffset + midiBytes.byteLength
-      ) as ArrayBuffer;
-
-      actualFile = new File([arrayBuffer], actualFile.name.replace(/\.[^/.]+$/, "") + ".mid", {
-        type: "audio/midi",
-        lastModified: Date.now(),
-      });
-    }
-
-    let chordsGrid: ChordsGridSchema | undefined = undefined;
-
-    if (actualFile.type === "audio/midi") {
-      chordsGrid = (await convertMidiFileToChordGrid(actualFile)) ?? undefined;
-    }
-
-    if (
-      [
-        ".xml",
-        ".mxl",
-        ".musicxml",
-        ".mid",
-        ".midi",
-        ".abc",
-        ".krn",
-        ".mei",
-        "audio/midi",
-        "text/vnd.abc",
-      ].includes(actualFile.type) ||
-      isMusicXML
-    ) {
-      const response = await onMusicFile(actualFile, chordsGrid);
-      if (response.success) {
-        const { exercise, midiFile } = response.data;
-        updateExercise(exercise);
-        const midi = await getMidiFileFromBuffer(midiFile);
-        const newState = convertMidiFileToState(midi, exercise);
-        useMidiStore.setState({ state: newState });
-        dispatch({ type: Action.RESET_STATE });
-        logger.success(actualFile.name, " converted sucessfully !");
+      if (rawFile.type.startsWith("audio/") && !isMidi(rawFile)) {
+        fileToProcess = await processAudioToMidi(rawFile, setProgress);
       }
-    } else {
-      logger.error("File format not supported: ", actualFile.type);
+
+      const chordsGrid = isMidi(fileToProcess)
+        ? await convertMidiFileToChordGrid(fileToProcess)
+        : undefined;
+
+      const response = await onMusicFile(fileToProcess, chordsGrid ?? undefined);
+
+      if (!response.success) throw new Error("Échec du traitement serveur");
+
+      const { exercise, midiFile } = response.data;
+      updateExercise(exercise);
+
+      const midi = await getMidiFileFromBuffer(midiFile);
+      useMidiStore.setState({ state: convertMidiFileToState(midi, exercise) });
+      dispatch({ type: Action.RESET_STATE });
+
+      logger.success("Fichier traité avec succès");
+      setProgress(100);
+      navigate("/new-game/editor");
+    } catch (err) {
+      errorToast("Erreur lors du traitement", String(err));
     }
   };
+
   return (
     <FileUploadSection
       multiple={false}
       accept="audio/*, .mid, .midi, audio/midi, application/x-midi .xml, .mxl, .musicxml, .abc, .krn, .mei"
       title="Upload a midi, music or audio file"
       onFilesChange={handleFilesChange}
+      progress={progess}
     />
   );
 }
