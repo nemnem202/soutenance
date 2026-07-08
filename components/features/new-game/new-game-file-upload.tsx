@@ -31,7 +31,15 @@ export default function NewGameFileUpload() {
     if (!(actualFile instanceof File)) {
       logger.error("L'objet n'est pas un fichier valide");
       return;
+    } else {
+      logger.info("Fichier selectionné: ", actualFile.name, "avec le type: ", actualFile.type);
     }
+
+    const extension = actualFile.name
+      .slice(((actualFile.name.lastIndexOf(".") - 1) >>> 0) + 2)
+      .toLowerCase();
+
+    const isMusicXML = extension === "musicxml" || extension === "mxl";
 
     const MIDI_MIME_TYPES = ["audio/midi", "audio/mid", "audio/sp-midi", "audio/x-midi"];
 
@@ -72,7 +80,8 @@ export default function NewGameFileUpload() {
         ".mei",
         "audio/midi",
         "text/vnd.abc",
-      ].includes(actualFile.type)
+      ].includes(actualFile.type) ||
+      isMusicXML
     ) {
       const response = await onMusicFile(actualFile, chordsGrid);
       if (response.success) {
@@ -82,6 +91,7 @@ export default function NewGameFileUpload() {
         const newState = convertMidiFileToState(midi, exercise);
         useMidiStore.setState({ state: newState });
         dispatch({ type: Action.RESET_STATE });
+        logger.success(actualFile.name, " converted sucessfully !");
       }
     } else {
       logger.error("File format not supported: ", actualFile.type);

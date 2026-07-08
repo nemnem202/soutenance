@@ -26,7 +26,6 @@ export default async function convertMidiFileToChordGrid(
   const notes = midi.tracks.flatMap((t) => t.notes);
   const measureMap = extractMeasureMap(midi, notes);
   defineChords(measureMap);
-  logMeasureMapSummary(measureMap);
   return convertToChordsGrid(measureMap);
 }
 

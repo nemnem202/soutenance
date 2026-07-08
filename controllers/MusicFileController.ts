@@ -65,6 +65,7 @@ export default class MusicFileController extends Controller {
   }
 
   public async getJsonAndMidi(): Promise<ServerResponse<JsonAndMidiOutput>> {
+    logger.info("Process file");
     const time = Date.now();
     const arrayBuffer = await this.file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);

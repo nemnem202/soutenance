@@ -23,10 +23,6 @@ export default function NewGameProvider({
     { id: "guitar", label: instance.getItem("guitar"), disabled: true },
   ];
 
-  useEffect(() => {
-    logger.info("New exercise: ", exercise);
-  }, [exercise]);
-
   const value: GameContextType = {
     exercise,
     updateExercise,
