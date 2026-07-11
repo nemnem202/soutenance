@@ -4,10 +4,14 @@ import Headline from "@/components/ui/headline";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/hooks/use-language";
+import { logger } from "@/lib/logger";
 import { cn } from "@/lib/utils";
+
+import { useEffect } from "react";
 
 export default function Page() {
   const { instance } = useLanguage();
+
   return (
     <>
       <Headline>{instance.getItem("start_building_your_own_exercise")}</Headline>
